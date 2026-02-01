@@ -58,38 +58,6 @@ class DataPoint {
   }
 }
 
-class Publication {
-  final String id;
-  final String title;
-  final String description;
-  final String category;
-  final DateTime publishDate;
-  final String pdfUrl;
-  final String thumbnailUrl;
-
-  Publication({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.category,
-    required this.publishDate,
-    required this.pdfUrl,
-    required this.thumbnailUrl,
-  });
-
-  factory Publication.fromJson(Map<String, dynamic> json) {
-    return Publication(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      category: json['category'],
-      publishDate: DateTime.parse(json['publish_date']),
-      pdfUrl: json['pdf_url'],
-      thumbnailUrl: json['thumbnail_url'],
-    );
-  }
-}
-
 class Province {
   final String id;
   final String name;

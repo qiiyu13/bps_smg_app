@@ -594,12 +594,12 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsPurple.withOpacity(0.1),
+                  color: _bpsBlue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.info_rounded,
-                  color: _bpsPurple,
+                  color: _bpsBlue,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -623,7 +623,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsPurple.withOpacity(0.1),
+                    color: _bpsBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -631,7 +631,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsPurple,
+                        color: _bpsBlue,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -639,7 +639,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsPurple,
+                          color: _bpsBlue,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -656,7 +656,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                 context: context,
                 value: _formatNumber(angkatanKerja),
                 label: 'Angkatan Kerja',
-                color: _bpsPurple,
+                color: _bpsBlue,
                 icon: Icons.groups_rounded,
                 description: 'Total penduduk usia kerja (15 tahun ke atas) yang bekerja atau sedang mencari pekerjaan. Angkatan kerja adalah penjumlahan dari penduduk yang bekerja dan pengangguran.',
                 isFirst: true,
@@ -666,7 +666,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                 context: context,
                 value: _formatNumber(bkbk),
                 label: 'Bukan Angkatan Kerja',
-                color: _bpsTeal,
+                color: _bpsBlue,
                 icon: Icons.people_outline_rounded,
                 description: 'Penduduk usia kerja yang tidak bekerja dan tidak mencari pekerjaan. Termasuk di dalamnya adalah yang bersekolah, mengurus rumah tangga, pensiunan, dan lain-lain.',
               ),
@@ -675,7 +675,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                 context: context,
                 value: '${tingkatKesempatan.toStringAsFixed(2)}%',
                 label: 'Tingkat Kesempatan Kerja',
-                color: _bpsGreen,
+                color: _bpsBlue,
                 icon: Icons.work_history_rounded,
                 description: 'Persentase penduduk yang bekerja terhadap angkatan kerja. Indikator ini menunjukkan seberapa besar kesempatan kerja yang tersedia bagi angkatan kerja.',
                 isLast: true,
@@ -750,7 +750,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: color,
+                    color: _bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -913,7 +913,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: color,
+                                  color: _bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -1247,12 +1247,12 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
+                  color: _bpsBlue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.pie_chart_rounded,
-                  color: _bpsOrange,
+                  color: _bpsBlue,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),

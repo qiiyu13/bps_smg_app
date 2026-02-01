@@ -345,7 +345,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(color: _bpsBlue),
+                    CircularProgressIndicator(color: _bpsGreen),
                     SizedBox(height: 16),
                     Text('Memuat data...', style: TextStyle(color: _bpsTextSecondary)),
                   ],
@@ -396,8 +396,8 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
   Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsBlue,
-        boxShadow: [BoxShadow(color: _bpsBlue.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 4))],
+        color: _bpsGreen,
+        boxShadow: [BoxShadow(color: _bpsGreen.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 4))],
       ),
       child: SafeArea(
         bottom: false,
@@ -465,12 +465,12 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: _bpsGreen.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.calendar_today_rounded,
-                  color: _bpsBlue,
+                  color: _bpsGreen,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -494,7 +494,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
             children: availableYears.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsBlue : _bpsBackground,
+                color: isSelected ? _bpsGreen : _bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () => setState(() => selectedYear = year),
@@ -510,13 +510,13 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsBlue : _bpsBorder,
+                        color: isSelected ? _bpsGreen : _bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsBlue.withOpacity(0.3),
+                                color: _bpsGreen.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -566,12 +566,12 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: _bpsGreen.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.analytics_rounded,
-                  color: _bpsBlue,
+                  color: _bpsGreen,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -595,7 +595,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsBlue.withOpacity(0.1),
+                    color: _bpsGreen.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -603,7 +603,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsBlue,
+                        color: _bpsGreen,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -611,7 +611,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsBlue,
+                          color: _bpsGreen,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -628,7 +628,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                 context: context,
                 value: '${data.populationInMillions} Jt',
                 label: 'Total Penduduk',
-                color: _bpsBlue,
+                color: _bpsGreen,
                 icon: Icons.groups,
                 description: 'Total jumlah penduduk Kota Semarang berdasarkan data BPS tahun $selectedYear.',
                 isFirst: true,
@@ -736,7 +736,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: color,
+                    color: _bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -899,7 +899,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: color,
+                                  color: _bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -970,7 +970,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
         children: [
           Row(
             children: [
-              Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.show_chart, color: _bpsBlue, size: isSmallScreen ? 16 : 18)),
+              Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsGreen.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.show_chart, color: _bpsGreen, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Laju Pertumbuhan Penduduk (%)', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary)), Text('Kota Semarang', style: TextStyle(fontSize: isSmallScreen ? 11 : 12, color: _bpsTextSecondary))])),
             ],
@@ -993,7 +993,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                   LineChartBarData(
                     spots: _cachedSpots,
                     isCurved: true,
-                    color: _bpsBlue,
+                    color: _bpsGreen,
                     barWidth: 3,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
@@ -1001,13 +1001,13 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: 4,
-                          color: _bpsBlue,
+                          color: _bpsGreen,
                           strokeWidth: 2,
                           strokeColor: Colors.white,
                         );
                       },
                     ),
-                    belowBarData: BarAreaData(show: true, color: _bpsBlue.withOpacity(0.15)),
+                    belowBarData: BarAreaData(show: true, color: _bpsGreen.withOpacity(0.15)),
                   ),
                 ],
                 lineTouchData: LineTouchData(
@@ -1108,7 +1108,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
           SizedBox(height: isSmallScreen ? 12 : 16),
           Row(
             children: [
-              Expanded(child: _buildAdminCard('${data.districts}', 'Kecamatan', Icons.account_balance, _bpsBlue, isSmallScreen)),
+              Expanded(child: _buildAdminCard('${data.districts}', 'Kecamatan', Icons.account_balance, _bpsGreen, isSmallScreen)),
               const SizedBox(width: 12),
               Expanded(child: _buildAdminCard('${data.villages}', 'Kelurahan', Icons.location_on, _bpsGreen, isSmallScreen)),
               const SizedBox(width: 12),

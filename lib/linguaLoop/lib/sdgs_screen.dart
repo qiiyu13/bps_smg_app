@@ -151,7 +151,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen> with TickerProviderStat
     if (isLoading) {
       return Scaffold(
         backgroundColor: _bpsBackground,
-        body: Column(children: [_buildHeader(context, sizing, isSmallScreen), const Expanded(child: Center(child: CircularProgressIndicator(color: _bpsBlue)))]),
+        body: Column(children: [_buildHeader(context, sizing, isSmallScreen), const Expanded(child: Center(child: CircularProgressIndicator(color: _bpsOrange)))]),
       );
     }
 
@@ -161,35 +161,31 @@ class _UserSDGsScreenState extends State<UserSDGsScreen> with TickerProviderStat
         children: [
           _buildHeader(context, sizing, isSmallScreen),
           Expanded(
-            child: RefreshIndicator(
-              onRefresh: _refreshData,
-              color: _bpsBlue,
-              child: CustomScrollView(
-                physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                slivers: [
-                  SliverPadding(
-                    padding: EdgeInsets.all(sizing.horizontalPadding),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate([
-                        _buildYearSelector(sizing, isSmallScreen),
-                        SizedBox(height: sizing.sectionSpacing),
-                        _buildSearchBar(sizing, isSmallScreen),
-                        SizedBox(height: sizing.sectionSpacing),
-                        _buildKotaSelector(sizing, isSmallScreen),
-                        SizedBox(height: sizing.sectionSpacing),
-                        _buildIndicatorCards(sizing, isSmallScreen),
-                        SizedBox(height: sizing.sectionSpacing),
-                        _buildChartSection(sizing, isSmallScreen),
-                        SizedBox(height: sizing.sectionSpacing),
-                        _buildComparisonChart(sizing, isSmallScreen),
-                        SizedBox(height: sizing.sectionSpacing),
-                        _buildSDGsInfo(sizing, isSmallScreen),
-                        SizedBox(height: sizing.sectionSpacing),
-                      ]),
-                    ),
+            child: CustomScrollView(
+              physics: const ClampingScrollPhysics(),
+              slivers: [
+                SliverPadding(
+                  padding: EdgeInsets.all(sizing.horizontalPadding),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      _buildYearSelector(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                      _buildSearchBar(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                      _buildKotaSelector(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                      _buildIndicatorCards(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                      _buildChartSection(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                      _buildComparisonChart(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                      _buildSDGsInfo(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                    ]),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
@@ -199,7 +195,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen> with TickerProviderStat
 
   Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
-      decoration: BoxDecoration(color: _bpsBlue, boxShadow: [BoxShadow(color: _bpsBlue.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 4))]),
+      decoration: BoxDecoration(color: _bpsOrange, boxShadow: [BoxShadow(color: _bpsOrange.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 4))]),
       child: SafeArea(
         bottom: false,
         child: Padding(
@@ -242,12 +238,12 @@ class _UserSDGsScreenState extends State<UserSDGsScreen> with TickerProviderStat
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: _bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.calendar_today_rounded,
-                  color: _bpsBlue,
+                  color: _bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -271,7 +267,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen> with TickerProviderStat
             children: availableYears.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsBlue : _bpsBackground,
+                color: isSelected ? _bpsOrange : _bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () {
@@ -291,13 +287,13 @@ class _UserSDGsScreenState extends State<UserSDGsScreen> with TickerProviderStat
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsBlue : _bpsBorder,
+                        color: isSelected ? _bpsOrange : _bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsBlue.withOpacity(0.3),
+                                color: _bpsOrange.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -333,7 +329,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen> with TickerProviderStat
         Container(
           decoration: BoxDecoration(color: _bpsBackground, borderRadius: BorderRadius.circular(12), border: Border.all(color: _bpsBorder)),
           child: TextField(
-            decoration: InputDecoration(hintText: 'Ketik nama kota/kabupaten...', hintStyle: TextStyle(color: _bpsTextSecondary, fontSize: isSmallScreen ? 13 : 14), prefixIcon: Icon(Icons.location_city, color: _bpsBlue, size: isSmallScreen ? 18 : 20), suffixIcon: searchQuery.isNotEmpty ? IconButton(icon: const Icon(Icons.clear, color: _bpsTextSecondary), onPressed: () => _filterSearch('')) : null, border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12)),
+            decoration: InputDecoration(hintText: 'Ketik nama kota/kabupaten...', hintStyle: TextStyle(color: _bpsTextSecondary, fontSize: isSmallScreen ? 13 : 14), prefixIcon: Icon(Icons.location_city, color: _bpsOrange, size: isSmallScreen ? 18 : 20), suffixIcon: searchQuery.isNotEmpty ? IconButton(icon: const Icon(Icons.clear, color: _bpsTextSecondary), onPressed: () => _filterSearch('')) : null, border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12)),
             style: TextStyle(fontSize: isSmallScreen ? 13 : 14),
             onChanged: _filterSearch,
           ),
@@ -368,7 +364,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen> with TickerProviderStat
     if (kotaData == null) return Container(padding: EdgeInsets.all(sizing.statsCardPadding), decoration: BoxDecoration(color: _bpsCardBg, borderRadius: BorderRadius.circular(16)), child: const Center(child: Text('Tidak ada data untuk kota yang dipilih', style: TextStyle(color: _bpsTextSecondary))));
 
     final stats = [
-      {'title': 'Samitasilayak', 'value': _isYearAvailable('samitasilayak') ? _getIndicatorValue(kotaData, 'samitasilayak') : 0.0, 'icon': Icons.clean_hands, 'color': _bpsBlue, 'available': _isYearAvailable('samitasilayak')},
+      {'title': 'Samitasilayak', 'value': _isYearAvailable('samitasilayak') ? _getIndicatorValue(kotaData, 'samitasilayak') : 0.0, 'icon': Icons.clean_hands, 'color': _bpsOrange, 'available': _isYearAvailable('samitasilayak')},
       {'title': 'TIK Remaja', 'value': _isYearAvailable('tikRemaja') ? _getIndicatorValue(kotaData, 'tikRemaja') : 0.0, 'icon': Icons.computer, 'color': _bpsGreen, 'available': _isYearAvailable('tikRemaja')},
       {'title': 'Akta Lahir', 'value': _isYearAvailable('aktaLahir') ? _getIndicatorValue(kotaData, 'aktaLahir') : 0.0, 'icon': Icons.assignment, 'color': _bpsOrange, 'available': _isYearAvailable('aktaLahir')},
       {'title': 'APM', 'value': _isYearAvailable('apm') ? _getIndicatorValue(kotaData, 'apm') : 0.0, 'icon': Icons.school, 'color': _bpsPurple, 'available': _isYearAvailable('apm')},
@@ -379,7 +375,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen> with TickerProviderStat
       padding: EdgeInsets.all(isSmallScreen ? sizing.statsCardPadding - 4 : sizing.statsCardPadding),
       decoration: BoxDecoration(color: _bpsCardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))]),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.analytics_rounded, color: _bpsBlue, size: isSmallScreen ? 16 : 18)), SizedBox(width: sizing.itemSpacing), Text('Indikator SDGs - $selectedYear', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary))]),
+        Row(children: [Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.analytics_rounded, color: _bpsOrange, size: isSmallScreen ? 16 : 18)), SizedBox(width: sizing.itemSpacing), Text('Indikator SDGs - $selectedYear', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary))]),
         SizedBox(height: isSmallScreen ? 12 : 16),
         SizedBox(
           height: 140,
@@ -412,7 +408,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen> with TickerProviderStat
         const SizedBox(height: 10),
         Text(title, style: TextStyle(fontSize: isSmallScreen ? 10 : 11, color: _bpsTextPrimary, fontWeight: FontWeight.w600), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
         const SizedBox(height: 4),
-        Text(available ? '${value.toStringAsFixed(1)}%' : 'N/A', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.bold, color: available ? color : _bpsTextSecondary)),
+        Text(available ? '${value.toStringAsFixed(1)}%' : 'N/A', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.bold, color: _bpsTextPrimary)),
       ]),
     );
   }
@@ -452,13 +448,13 @@ class _UserSDGsScreenState extends State<UserSDGsScreen> with TickerProviderStat
       padding: EdgeInsets.all(isSmallScreen ? sizing.statsCardPadding - 4 : sizing.statsCardPadding),
       decoration: BoxDecoration(color: _bpsCardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))]),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.leaderboard_rounded, color: _bpsBlue, size: isSmallScreen ? 16 : 18)), SizedBox(width: sizing.itemSpacing), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('TIK Remaja - Antar Kota', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary)), Text('Tahun $selectedYear', style: TextStyle(fontSize: isSmallScreen ? 10 : 11, color: _bpsTextSecondary))]))]),
+        Row(children: [Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.leaderboard_rounded, color: _bpsOrange, size: isSmallScreen ? 16 : 18)), SizedBox(width: sizing.itemSpacing), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('TIK Remaja - Antar Kota', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary)), Text('Tahun $selectedYear', style: TextStyle(fontSize: isSmallScreen ? 10 : 11, color: _bpsTextSecondary))]))]),
         SizedBox(height: isSmallScreen ? 12 : 16),
         Container(
           padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-          decoration: BoxDecoration(color: _bpsBlue.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
+          decoration: BoxDecoration(color: _bpsOrange.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            _buildComparisonStatItem('Rata-rata', '${average.toStringAsFixed(1)}%', Icons.bar_chart, _bpsBlue, isSmallScreen),
+            _buildComparisonStatItem('Rata-rata', '${average.toStringAsFixed(1)}%', Icons.bar_chart, _bpsOrange, isSmallScreen),
             _buildComparisonStatItem('Tertinggi', '${highest.toStringAsFixed(1)}%', Icons.arrow_upward, _bpsGreen, isSmallScreen),
             _buildComparisonStatItem('Terendah', '${lowest.toStringAsFixed(1)}%', Icons.arrow_downward, _bpsRed, isSmallScreen),
           ]),
@@ -473,11 +469,11 @@ class _UserSDGsScreenState extends State<UserSDGsScreen> with TickerProviderStat
                 width: max(MediaQuery.of(context).size.width - 60, sortedNames.length * 35.0),
                 child: BarChart(BarChartData(
                   alignment: BarChartAlignment.spaceEvenly, maxY: highest + 10,
-                  barGroups: List.generate(sortedNames.length, (index) { final isSelected = sortedNames[index] == selectedKota; return BarChartGroupData(x: index, barRods: [BarChartRodData(toY: sortedValues[index], color: isSelected ? _bpsBlue : _bpsBlue.withOpacity(0.4), width: 18, borderRadius: const BorderRadius.vertical(top: Radius.circular(6)))]); }),
+                  barGroups: List.generate(sortedNames.length, (index) { final isSelected = sortedNames[index] == selectedKota; return BarChartGroupData(x: index, barRods: [BarChartRodData(toY: sortedValues[index], color: isSelected ? _bpsOrange : _bpsOrange.withOpacity(0.4), width: 18, borderRadius: const BorderRadius.vertical(top: Radius.circular(6)))]); }),
                   borderData: FlBorderData(show: false),
                   gridData: FlGridData(show: true, drawVerticalLine: false, horizontalInterval: 20, getDrawingHorizontalLine: (value) => FlLine(color: _bpsBorder, strokeWidth: 0.5)),
                   titlesData: FlTitlesData(
-                    bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 50, getTitlesWidget: (value, meta) { if (value.toInt() >= sortedNames.length) return const SizedBox(); final nama = sortedNames[value.toInt()]; final isSelected = nama == selectedKota; return SideTitleWidget(axisSide: meta.axisSide, child: Padding(padding: const EdgeInsets.only(top: 8), child: RotatedBox(quarterTurns: 1, child: Text(nama.length > 12 ? '${nama.substring(0, 10)}..' : nama, style: TextStyle(fontSize: 8, fontWeight: isSelected ? FontWeight.bold : FontWeight.w500, color: isSelected ? _bpsBlue : _bpsTextSecondary))))); })),
+                    bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 50, getTitlesWidget: (value, meta) { if (value.toInt() >= sortedNames.length) return const SizedBox(); final nama = sortedNames[value.toInt()]; final isSelected = nama == selectedKota; return SideTitleWidget(axisSide: meta.axisSide, child: Padding(padding: const EdgeInsets.only(top: 8), child: RotatedBox(quarterTurns: 1, child: Text(nama.length > 12 ? '${nama.substring(0, 10)}..' : nama, style: TextStyle(fontSize: 8, fontWeight: isSelected ? FontWeight.bold : FontWeight.w500, color: isSelected ? _bpsOrange : _bpsTextSecondary))))); })),
                     leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, interval: 20, getTitlesWidget: (value, meta) => Text('${value.toInt()}%', style: TextStyle(fontSize: 9, color: _bpsTextSecondary)))),
                     topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),

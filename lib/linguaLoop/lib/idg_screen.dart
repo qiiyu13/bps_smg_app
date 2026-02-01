@@ -143,7 +143,7 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
             _buildHeader(context, sizing, isSmallScreen),
             const Expanded(
               child: Center(
-                child: CircularProgressIndicator(color: _bpsBlue),
+                child: CircularProgressIndicator(color: _bpsOrange),
               ),
             ),
           ],
@@ -188,8 +188,8 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
   Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsBlue,
-        boxShadow: [BoxShadow(color: _bpsBlue.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 4))],
+        color: _bpsOrange,
+        boxShadow: [BoxShadow(color: _bpsOrange.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 4))],
       ),
       child: SafeArea(
         bottom: false,
@@ -257,12 +257,12 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: _bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.calendar_today_rounded,
-                  color: _bpsBlue,
+                  color: _bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -286,7 +286,7 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
             children: availableYears.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsBlue : _bpsBackground,
+                color: isSelected ? _bpsOrange : _bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () => setState(() => selectedYear = year),
@@ -302,13 +302,13 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsBlue : _bpsBorder,
+                        color: isSelected ? _bpsOrange : _bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsBlue.withOpacity(0.3),
+                                color: _bpsOrange.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -358,12 +358,12 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: _bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.analytics_rounded,
-                  color: _bpsBlue,
+                  color: _bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -387,7 +387,7 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsBlue.withOpacity(0.1),
+                    color: _bpsOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -395,7 +395,7 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsBlue,
+                        color: _bpsOrange,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -403,7 +403,7 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsBlue,
+                          color: _bpsOrange,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -528,7 +528,7 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: color,
+                    color: _bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -691,7 +691,7 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: color,
+                                  color: _bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -859,9 +859,9 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
         children: [
           Row(
             children: [
-              Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.trending_down, color: _bpsBlue, size: isSmallScreen ? 16 : 18)),
+              Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.trending_down, color: _bpsOrange, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Tren IKG (Ketimpangan)', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary)), Text('Nilai lebih rendah = lebih baik', style: TextStyle(fontSize: isSmallScreen ? 10 : 11, color: _bpsBlue))])),
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Tren IKG (Ketimpangan)', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary)), Text('Nilai lebih rendah = lebih baik', style: TextStyle(fontSize: isSmallScreen ? 10 : 11, color: _bpsOrange))])),
             ],
           ),
           SizedBox(height: isSmallScreen ? 16 : 20),

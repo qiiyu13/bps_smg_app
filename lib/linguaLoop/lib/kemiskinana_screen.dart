@@ -708,7 +708,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: color,
+                    color: _bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -878,7 +878,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: isDialogSmall ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: color,
+                                  color: _bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),

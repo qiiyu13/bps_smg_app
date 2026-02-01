@@ -187,7 +187,7 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const CircularProgressIndicator(color: _bpsBlue),
+                        const CircularProgressIndicator(color: _bpsOrange),
                         SizedBox(height: sizing.sectionSpacing - 8),
                         Text(
                           'Memuat data IPG...',
@@ -266,10 +266,10 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
   Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsBlue,
+        color: _bpsOrange,
         boxShadow: [
           BoxShadow(
-            color: _bpsBlue.withOpacity(0.2),
+            color: _bpsOrange.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -373,12 +373,12 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: _bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.calendar_today_rounded,
-                  color: _bpsBlue,
+                  color: _bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -402,7 +402,7 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
             children: availableYears.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsBlue : _bpsBackground,
+                color: isSelected ? _bpsOrange : _bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () => setState(() => selectedYear = year),
@@ -418,13 +418,13 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsBlue : _bpsBorder,
+                        color: isSelected ? _bpsOrange : _bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsBlue.withOpacity(0.3),
+                                color: _bpsOrange.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -477,12 +477,12 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: _bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.analytics_rounded,
-                  color: _bpsBlue,
+                  color: _bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -506,7 +506,7 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsBlue.withOpacity(0.1),
+                    color: _bpsOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -514,7 +514,7 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsBlue,
+                        color: _bpsOrange,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -522,7 +522,7 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsBlue,
+                          color: _bpsOrange,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -610,12 +610,12 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: _bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.analytics_rounded,
-                  color: _bpsBlue,
+                  color: _bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -639,7 +639,7 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsBlue.withOpacity(0.1),
+                    color: _bpsOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -647,7 +647,7 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsBlue,
+                        color: _bpsOrange,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -655,7 +655,7 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsBlue,
+                          color: _bpsOrange,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1035,12 +1035,12 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: _bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.bar_chart_rounded,
-                  color: _bpsBlue,
+                  color: _bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -1064,7 +1064,7 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                       'Indeks Ketimpangan Gender — nilai lebih rendah = lebih baik',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 13,
-                        color: _bpsBlue,
+                        color: _bpsOrange,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1201,12 +1201,12 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.15),
+                  color: _bpsOrange.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.info_outline_rounded,
-                  color: _bpsBlue,
+                  color: _bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -1346,7 +1346,7 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
           '• ',
           style: TextStyle(
             fontSize: sizing.categoryLabelFontSize,
-            color: _bpsBlue,
+            color: _bpsOrange,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -1418,7 +1418,7 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: color,
+                    color: _bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -1620,7 +1620,7 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: color,
+                                  color: _bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),

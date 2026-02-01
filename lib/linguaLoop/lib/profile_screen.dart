@@ -2,20 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'app_theme.dart';
 import 'responsive_sizing.dart';
 import 'home_screen.dart';
-
-// BPS Color Palette - Aligned with home_screen.dart
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsTextLabel = Color(0xFFA0A0A0);
-const Color _bpsBorder = Color(0xFFE0E0E0);
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -29,8 +18,6 @@ class _ProfileScreenState extends State<ProfileScreen>
   String appVersion = '1.1.0';
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-  int _tapCount = 0;
-  bool _isRefreshing = false;
 
   @override
   void initState() {
@@ -66,33 +53,6 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
   }
 
-  Future<void> _handleRefresh() async {
-    setState(() => _isRefreshing = true);
-    HapticFeedback.mediumImpact();
-    await _loadAppInfo();
-    await Future.delayed(const Duration(milliseconds: 800));
-    if (mounted) {
-      setState(() => _isRefreshing = false);
-    }
-  }
-
-  void _handleLogoTap() {
-    setState(() => _tapCount++);
-
-    // Reset counter after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() => _tapCount = 0);
-      }
-    });
-
-    // If tap 7 times within 3 seconds, open admin login
-    if (_tapCount >= 7) {
-      _tapCount = 0;
-      Navigator.pushNamed(context, '/login');
-    }
-  }
-
   void _navigateToHome() {
     Navigator.pushAndRemoveUntil(
       context,
@@ -106,56 +66,39 @@ class _ProfileScreenState extends State<ProfileScreen>
     final sizing = ResponsiveSizing(context);
 
     return Scaffold(
-      backgroundColor: _bpsBackground,
-      body: RefreshIndicator(
-        onRefresh: _handleRefresh,
-        color: _bpsBlue,
-        backgroundColor: _bpsCardBg,
-        child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(
-            parent: BouncingScrollPhysics(),
-          ),
-          slivers: [
-            _buildAppBar(sizing),
-            SliverPadding(
-              padding: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
-              sliver: SliverToBoxAdapter(
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 800),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: sizing.sectionSpacing - 8),
-                          _buildSectionHeader(
-                            sizing: sizing,
-                            icon: Icons.apps_rounded,
-                            title: 'Menu',
-                          ),
-                          SizedBox(height: sizing.itemSpacing),
-                          _buildInfoCards(sizing),
-                          SizedBox(height: sizing.sectionSpacing),
-                          _buildSectionHeader(
-                            sizing: sizing,
-                            icon: Icons.contact_mail_rounded,
-                            title: 'Kontak Kami',
-                          ),
-                          SizedBox(height: sizing.itemSpacing),
-                          _buildContactCards(sizing),
-                          SizedBox(height: sizing.sectionSpacing + 8),
-                          _buildFooter(sizing),
-                          SizedBox(height: sizing.sectionSpacing),
-                        ],
-                      ),
+      backgroundColor: bpsBackground,
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          _buildAppBar(sizing),
+          SliverPadding(
+            padding: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
+            sliver: SliverToBoxAdapter(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 800),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: sizing.sectionSpacing - 8),
+                        _buildSectionHeader(
+                          sizing: sizing,
+                          icon: Icons.contact_mail_rounded,
+                          title: 'Kontak Kami',
+                        ),
+                        SizedBox(height: sizing.itemSpacing),
+                        _buildContactCards(sizing),
+                        SizedBox(height: sizing.sectionSpacing),
+                      ],
                     ),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: _buildBottomNav(sizing),
     );
@@ -163,107 +106,53 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   Widget _buildAppBar(ResponsiveSizing sizing) {
     return SliverAppBar(
-      expandedHeight: sizing.isVerySmall ? 200.0 : 240.0,
+      expandedHeight: sizing.isVerySmall ? 120.0 : 140.0,
       pinned: true,
-      stretch: true,
-      backgroundColor: _bpsBlue,
+      backgroundColor: bpsBlue,
       elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: BoxDecoration(
-            color: _bpsBlue,
-            boxShadow: [
-              BoxShadow(
-                color: _bpsBlue.withOpacity(0.2),
-                blurRadius: 30,
-                offset: const Offset(0, 10),
-              ),
-            ],
+            color: bpsBlue,
+            boxShadow: [BPSShadows.headerShadow],
           ),
           child: SafeArea(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: sizing.isVerySmall ? 16 : 24),
-                  // Logo with hidden admin access (tap 7 times)
-                  GestureDetector(
-                    onTap: _handleLogoTap,
-                    child: Container(
-                      width: sizing.isVerySmall ? 80 : 100,
-                      height: sizing.isVerySmall ? 80 : 100,
-                      decoration: BoxDecoration(
+            child: Stack(
+              children: [
+                // Center logo
+                Center(
+                  child: Image.asset(
+                    'assets/images/logo_white.png',
+                    width: sizing.isVerySmall ? 60 : 80,
+                    height: sizing.isVerySmall ? 60 : 80,
+                    filterQuality: FilterQuality.medium,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(
+                        Icons.account_balance_rounded,
+                        size: sizing.isVerySmall ? 48 : 64,
                         color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      padding: EdgeInsets.all(sizing.isVerySmall ? 14 : 16),
-                      child: Center(
-                        child: Image.asset(
-                          'assets/images/jelly.jpg',
-                          width: sizing.isVerySmall ? 60 : 72,
-                          height: sizing.isVerySmall ? 60 : 72,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.network(
-                              'https://semarangkota.bps.go.id/images/logo-bps.png',
-                              width: sizing.isVerySmall ? 52 : 64,
-                              height: sizing.isVerySmall ? 52 : 64,
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) {
-                                return Icon(
-                                  Icons.account_balance_rounded,
-                                  size: sizing.isVerySmall ? 40 : 48,
-                                  color: _bpsBlue,
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
-                  SizedBox(height: sizing.isVerySmall ? 16 : 20),
-                  Text(
-                    'BPS KOTA SEMARANG',
+                ),
+                // Version at bottom left
+                Positioned(
+                  left: sizing.horizontalPadding,
+                  bottom: sizing.itemSpacing,
+                  child: Text(
+                    'V$appVersion',
                     style: TextStyle(
-                      fontSize: sizing.isVerySmall ? 16 : 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      letterSpacing: 1.0,
+                      fontSize: sizing.categorySubLabelFontSize,
+                      color: Colors.white.withOpacity(0.8),
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(height: sizing.isVerySmall ? 4 : 8),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: sizing.isVerySmall ? 12 : 16,
-                      vertical: sizing.isVerySmall ? 4 : 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.2),
-                        width: 1,
-                      ),
-                    ),
-                    child: Text(
-                      'Badan Pusat Statistik',
-                      style: TextStyle(
-                        fontSize: sizing.isVerySmall ? 12 : 14,
-                        color: Colors.white.withOpacity(0.95),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -280,132 +169,19 @@ class _ProfileScreenState extends State<ProfileScreen>
       children: [
         Icon(
           icon,
-          color: _bpsBlue,
+          color: bpsBlue,
           size: sizing.sectionIconSize,
         ),
-        SizedBox(width: sizing.itemSpacing - 2),
+        SizedBox(width: sizing.itemSpacing),
         Text(
           title,
           style: TextStyle(
             fontSize: sizing.sectionTitleSize,
             fontWeight: FontWeight.w700,
-            color: _bpsTextPrimary,
+            color: bpsTextPrimary,
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildInfoCards(ResponsiveSizing sizing) {
-    final cards = [
-      {
-        'icon': Icons.help_outline_rounded,
-        'title': 'Bantuan',
-        'subtitle': 'Panduan aplikasi',
-        'color': _bpsBlue,
-        'onTap': _showHelpDialog,
-      },
-      {
-        'icon': Icons.info_outline_rounded,
-        'title': 'Tentang',
-        'subtitle': 'Versi aplikasi',
-        'color': _bpsGreen,
-        'onTap': _showAboutDialog,
-      },
-    ];
-
-    return Row(
-      children: cards.map((card) {
-        return Expanded(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: sizing.gridSpacing / 2),
-            child: _buildActionCard(
-              sizing: sizing,
-              icon: card['icon'] as IconData,
-              title: card['title'] as String,
-              subtitle: card['subtitle'] as String,
-              color: card['color'] as Color,
-              onTap: card['onTap'] as VoidCallback,
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildActionCard({
-    required ResponsiveSizing sizing,
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return Material(
-      color: _bpsCardBg,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          onTap();
-        },
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: EdgeInsets.all(sizing.categoryCardPadding),
-          decoration: BoxDecoration(
-            color: _bpsCardBg,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: _bpsBorder,
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: EdgeInsets.all(sizing.categoryIconContainerPadding + 2),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: sizing.categoryIconSize + 4,
-                ),
-              ),
-              SizedBox(height: sizing.itemSpacing),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: sizing.categoryLabelFontSize,
-                  fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
-                ),
-              ),
-              SizedBox(height: sizing.itemSpacing - 6),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: sizing.categorySubLabelFontSize,
-                  color: _bpsTextLabel,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -415,25 +191,25 @@ class _ProfileScreenState extends State<ProfileScreen>
         'icon': Icons.language_rounded,
         'title': 'Website',
         'value': 'semarangkota.bps.go.id',
-        'color': _bpsBlue,
+        'color': bpsContactColors['Website']!,
       },
       {
         'icon': Icons.email_rounded,
         'title': 'Email',
         'value': 'bps3374@bps.go.id',
-        'color': _bpsOrange,
+        'color': bpsContactColors['Email']!,
       },
       {
         'icon': Icons.phone_rounded,
         'title': 'Telepon',
         'value': '(024) 3546713',
-        'color': _bpsGreen,
+        'color': bpsContactColors['Telepon']!,
       },
       {
         'icon': Icons.location_on_rounded,
         'title': 'Alamat',
         'value': 'Jl. Inspeksi Kali Semarang No.1, Sekayu',
-        'color': _bpsRed,
+        'color': bpsContactColors['Alamat']!,
       },
     ];
 
@@ -461,7 +237,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     required Color color,
   }) {
     return Material(
-      color: _bpsCardBg,
+      color: bpsCardBg,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () async {
@@ -472,19 +248,13 @@ class _ProfileScreenState extends State<ProfileScreen>
         child: Container(
           padding: EdgeInsets.all(sizing.categoryCardPadding),
           decoration: BoxDecoration(
-            color: _bpsCardBg,
+            color: bpsCardBg,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: _bpsBorder,
+              color: bpsBorder,
               width: 1,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
+            boxShadow: [BPSShadows.cardShadow],
           ),
           child: Row(
             children: [
@@ -510,7 +280,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       style: TextStyle(
                         fontSize: sizing.categorySubLabelFontSize,
                         fontWeight: FontWeight.w500,
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                       ),
                     ),
                     SizedBox(height: sizing.itemSpacing - 6),
@@ -519,7 +289,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       style: TextStyle(
                         fontSize: sizing.categoryLabelFontSize - 1,
                         fontWeight: FontWeight.w600,
-                        color: _bpsTextPrimary,
+                        color: bpsTextPrimary,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -528,8 +298,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
               ),
               Icon(
-                Icons.arrow_forward_ios_rounded,
-                color: _bpsTextLabel,
+                Icons.open_in_new_rounded,
+                color: bpsTextLabel,
                 size: sizing.categoryArrowSize,
               ),
             ],
@@ -562,7 +332,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Tidak dapat membuka $title'),
-            backgroundColor: _bpsRed,
+            backgroundColor: bpsRed,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -573,64 +343,11 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
   }
 
-  Widget _buildFooter(ResponsiveSizing sizing) {
-    return Container(
-      padding: EdgeInsets.all(sizing.categoryCardPadding),
-      decoration: BoxDecoration(
-        color: _bpsCardBg,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: _bpsBorder,
-          width: 1,
-        ),
-      ),
-      child: Column(
-        children: [
-          if (_isRefreshing)
-            Padding(
-              padding: EdgeInsets.only(bottom: sizing.itemSpacing),
-              child: SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(_bpsBlue),
-                ),
-              ),
-            ),
-          Text(
-            'Versi $appVersion',
-            style: TextStyle(
-              fontSize: sizing.categorySubLabelFontSize,
-              color: _bpsTextSecondary,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: sizing.itemSpacing - 4),
-          Text(
-            '© Badan Pusat Statistik Kota Semarang',
-            style: TextStyle(
-              fontSize: sizing.categorySubLabelFontSize - 1,
-              color: _bpsTextLabel,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildBottomNav(ResponsiveSizing sizing) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsCardBg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
-          ),
-        ],
+        color: bpsCardBg,
+        boxShadow: [BPSShadows.bottomNavShadow],
       ),
       child: SafeArea(
         top: false,
@@ -676,22 +393,22 @@ class _ProfileScreenState extends State<ProfileScreen>
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
-          highlightColor: _bpsBlue.withOpacity(0.1),
+          highlightColor: bpsBlue.withOpacity(0.1),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 icon,
-                color: isSelected ? _bpsBlue : _bpsTextLabel,
+                color: isSelected ? bpsBlue : bpsTextLabel,
                 size: sizing.bottomNavIconSize,
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 label,
                 style: TextStyle(
                   fontSize: sizing.bottomNavLabelSize,
-                  color: isSelected ? _bpsBlue : _bpsTextLabel,
+                  color: isSelected ? bpsBlue : bpsTextLabel,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
@@ -700,207 +417,5 @@ class _ProfileScreenState extends State<ProfileScreen>
         ),
       ),
     );
-  }
-
-  void _showAboutDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: _bpsGreen.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.info_rounded,
-                  size: 40,
-                  color: _bpsGreen,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Tentang Aplikasi',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                decoration: BoxDecoration(
-                  color: _bpsGreen.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  'Versi $appVersion',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: _bpsGreen,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Aplikasi resmi Badan Pusat Statistik Kota Semarang untuk menyajikan data statistik yang akurat dan terpercaya.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: _bpsTextSecondary,
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _bpsGreen,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Tutup',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showHelpDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.help_center_rounded,
-                  size: 40,
-                  color: _bpsBlue,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Panduan Aplikasi',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ..._buildHelpSteps(),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _bpsBlue,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Mengerti',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _buildHelpSteps() {
-    final steps = [
-      'Pilih kategori statistik di beranda',
-      'Jelajahi data dengan grafik interaktif',
-      'Gunakan filter untuk data spesifik',
-      'Akses informasi terbaru secara real-time',
-    ];
-
-    return steps.asMap().entries.map((entry) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                color: _bpsBlue,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  '${entry.key + 1}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  entry.value,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: _bpsTextSecondary,
-                    height: 1.4,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }).toList();
   }
 }

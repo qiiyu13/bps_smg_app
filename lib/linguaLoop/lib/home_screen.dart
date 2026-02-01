@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'app_theme.dart';
 import 'profile_screen.dart';
 import 'ipm_screen.dart';
 import 'kemiskinana_screen.dart';
@@ -14,18 +16,6 @@ import 'idg_screen.dart';
 import 'sdgs_screen.dart';
 import 'responsive_sizing.dart';
 
-// BPS Logo Color Palette - Moved outside class for compile-time constants
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsTextLabel = Color(0xFFA0A0A0);
-const Color _bpsBorder = Color(0xFFE0E0E0);
-
 // Category data model - Made immutable for better performance
 @immutable
 class CategoryItem {
@@ -34,6 +24,7 @@ class CategoryItem {
   final IconData icon;
   final Widget screen;
   final String group;
+  final Color groupColor;
 
   const CategoryItem({
     required this.label,
@@ -41,6 +32,7 @@ class CategoryItem {
     required this.icon,
     required this.screen,
     required this.group,
+    required this.groupColor,
   });
 
   @override
@@ -60,6 +52,7 @@ class CategoryItem {
     IconData? icon,
     Widget? screen,
     String? group,
+    Color? groupColor,
   }) {
     return CategoryItem(
       label: label ?? this.label,
@@ -67,6 +60,7 @@ class CategoryItem {
       icon: icon ?? this.icon,
       screen: screen ?? this.screen,
       group: group ?? this.group,
+      groupColor: groupColor ?? this.groupColor,
     );
   }
 }
@@ -81,6 +75,7 @@ class _HomeScreenCache {
       icon: Icons.show_chart_rounded,
       screen: PertumbuhanEkonomiScreen(),
       group: 'Economic',
+      groupColor: bpsEconomicColor,
     ),
     const CategoryItem(
       label: 'Inflasi',
@@ -88,6 +83,7 @@ class _HomeScreenCache {
       icon: Icons.payments_rounded,
       screen: InflasiScreen(),
       group: 'Economic',
+      groupColor: bpsEconomicColor,
     ),
     const CategoryItem(
       label: 'Tenaga Kerja',
@@ -95,6 +91,7 @@ class _HomeScreenCache {
       icon: Icons.work_rounded,
       screen: TenagaKerjaScreen(),
       group: 'Economic',
+      groupColor: bpsEconomicColor,
     ),
     const CategoryItem(
       label: 'Kemiskinan',
@@ -102,6 +99,7 @@ class _HomeScreenCache {
       icon: Icons.volunteer_activism_rounded,
       screen: KemiskinanScreen(),
       group: 'Economic',
+      groupColor: bpsEconomicColor,
     ),
 
     // Social Indicators Group
@@ -111,6 +109,7 @@ class _HomeScreenCache {
       icon: Icons.people_rounded,
       screen: PendudukScreen(),
       group: 'Social',
+      groupColor: bpsSocialColor,
     ),
     const CategoryItem(
       label: 'Pendidikan',
@@ -118,6 +117,7 @@ class _HomeScreenCache {
       icon: Icons.school_rounded,
       screen: PendidikanScreen(),
       group: 'Social',
+      groupColor: bpsSocialColor,
     ),
 
     // Development Indices Group
@@ -127,6 +127,7 @@ class _HomeScreenCache {
       icon: Icons.trending_up_rounded,
       screen: IpmScreen(),
       group: 'Development',
+      groupColor: bpsDevelopmentColor,
     ),
     const CategoryItem(
       label: 'Indeks Pembangunan Gender',
@@ -134,6 +135,7 @@ class _HomeScreenCache {
       icon: Icons.balance_rounded,
       screen: IPGScreen(),
       group: 'Development',
+      groupColor: bpsDevelopmentColor,
     ),
     const CategoryItem(
       label: 'Indeks Ketimpangan Gender',
@@ -141,6 +143,7 @@ class _HomeScreenCache {
       icon: Icons.bar_chart_rounded,
       screen: IDGScreen(),
       group: 'Development',
+      groupColor: bpsDevelopmentColor,
     ),
     const CategoryItem(
       label: 'Sustainable Development Goals',
@@ -148,15 +151,28 @@ class _HomeScreenCache {
       icon: Icons.public_rounded,
       screen: UserSDGsScreen(),
       group: 'Development',
+      groupColor: bpsDevelopmentColor,
     ),
   ];
 
   static List<CategoryItem> get allCategories => _allCategories;
 
   static final Map<String, Map<String, dynamic>> _groupInfo = {
-    'Economic': {'title': 'Indikator Ekonomi', 'icon': Icons.monetization_on_rounded},
-    'Social': {'title': 'Indikator Sosial', 'icon': Icons.groups_rounded},
-    'Development': {'title': 'Indeks Pembangunan', 'icon': Icons.rocket_launch_rounded},
+    'Economic': {
+      'title': 'Indikator Ekonomi',
+      'icon': Icons.monetization_on_rounded,
+      'color': bpsEconomicColor,
+    },
+    'Social': {
+      'title': 'Indikator Sosial',
+      'icon': Icons.groups_rounded,
+      'color': bpsSocialColor,
+    },
+    'Development': {
+      'title': 'Indeks Pembangunan',
+      'icon': Icons.rocket_launch_rounded,
+      'color': bpsDevelopmentColor,
+    },
   };
 
   static Map<String, Map<String, dynamic>> get groupInfo => _groupInfo;
@@ -172,9 +188,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   late final PageController _statsPageController;
-  int _currentStatsPage = 0;
+  
+  // FIX 1: Use ValueNotifier for page indicators to avoid setState on every scroll
+  final ValueNotifier<int> _currentPageNotifier = ValueNotifier<int>(0);
+  
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
+  DateTime _lastUpdated = DateTime(2024, 12, 1);
   
   // Debounce for search
   Timer? _searchDebounce;
@@ -184,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600), // Optimized duration for 60fps
+      duration: const Duration(milliseconds: 600),
     )..forward();
     
     _statsPageController = PageController(
@@ -192,16 +212,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       keepPage: true,
     );
     
-    // Use a more efficient listener
     _statsPageController.addListener(_handlePageChange);
   }
 
+  // FIX 5: Immediate page change with threshold for stability
   void _handlePageChange() {
-    final page = _statsPageController.page?.round() ?? 0;
-    if (_currentStatsPage != page && mounted) {
-      setState(() {
-        _currentStatsPage = page;
-      });
+    if (!mounted) return;
+    
+    final page = _statsPageController.page;
+    if (page == null) return;
+    
+    final newPage = page.round();
+    
+    // Only update when we've crossed the page threshold (page is close to integer)
+    // This prevents flickering during mid-swipe while still being responsive
+    final distanceFromPage = (page - newPage).abs();
+    
+    if (distanceFromPage < 0.3 && _currentPageNotifier.value != newPage) {
+      _currentPageNotifier.value = newPage;
     }
   }
 
@@ -212,6 +240,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     _statsPageController.dispose();
     _searchController.dispose();
     _searchDebounce?.cancel();
+    _currentPageNotifier.dispose();
     super.dispose();
   }
 
@@ -233,6 +262,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       setState(() {
         _searchQuery = '';
       });
+    }
+  }
+
+  Future<void> _refreshData() async {
+    // Simulate data refresh
+    await Future.delayed(const Duration(seconds: 1));
+    if (mounted) {
+      setState(() {
+        _lastUpdated = DateTime.now();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Data berhasil diperbarui'),
+          backgroundColor: bpsGreen,
+        ),
+      );
     }
   }
 
@@ -262,17 +307,32 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return result;
   }
 
+  String get _formattedLastUpdated {
+    final now = DateTime.now();
+    final difference = now.difference(_lastUpdated);
+    
+    if (difference.inDays == 0) {
+      if (difference.inHours == 0) {
+        return '${difference.inMinutes} menit yang lalu';
+      }
+      return '${difference.inHours} jam yang lalu';
+    } else if (difference.inDays == 1) {
+      return 'Kemarin';
+    } else {
+      return '${_lastUpdated.day}/${_lastUpdated.month}/${_lastUpdated.year}';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Cache the sizing object
     final sizing = ResponsiveSizing(context);
     
     return Scaffold(
-      backgroundColor: _bpsBackground,
+      backgroundColor: bpsBackground,
       body: _HomeScreenContent(
         animationController: _animationController,
         statsPageController: _statsPageController,
-        currentStatsPage: _currentStatsPage,
+        currentPageNotifier: _currentPageNotifier,
         searchController: _searchController,
         searchQuery: _searchQuery,
         onSearchChanged: _handleSearch,
@@ -280,6 +340,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         filteredCategories: _filteredCategories,
         groupedCategories: _groupedCategories,
         sizing: sizing,
+        lastUpdated: _formattedLastUpdated,
       ),
       bottomNavigationBar: _buildModernBottomNav(sizing),
     );
@@ -295,14 +356,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget _buildModernBottomNav(ResponsiveSizing sizing) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsCardBg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
-          ),
-        ],
+        color: bpsCardBg,
+        boxShadow: [BPSShadows.bottomNavShadow],
       ),
       child: SafeArea(
         top: false,
@@ -348,14 +403,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
-          highlightColor: _bpsBlue.withOpacity(0.1),
+          highlightColor: bpsBlue.withOpacity(0.1),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 icon,
-                color: isSelected ? _bpsBlue : _bpsTextLabel,
+                color: isSelected ? bpsBlue : bpsTextLabel,
                 size: sizing.bottomNavIconSize,
               ),
               const SizedBox(height: 4),
@@ -363,7 +418,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 label,
                 style: TextStyle(
                   fontSize: sizing.bottomNavLabelSize,
-                  color: isSelected ? _bpsBlue : _bpsTextLabel,
+                  color: isSelected ? bpsBlue : bpsTextLabel,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
@@ -379,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 class _HomeScreenContent extends StatelessWidget {
   final AnimationController animationController;
   final PageController statsPageController;
-  final int currentStatsPage;
+  final ValueNotifier<int> currentPageNotifier;
   final TextEditingController searchController;
   final String searchQuery;
   final ValueChanged<String> onSearchChanged;
@@ -387,11 +442,12 @@ class _HomeScreenContent extends StatelessWidget {
   final List<CategoryItem> filteredCategories;
   final Map<String, List<CategoryItem>> groupedCategories;
   final ResponsiveSizing sizing;
+  final String lastUpdated;
 
   const _HomeScreenContent({
     required this.animationController,
     required this.statsPageController,
-    required this.currentStatsPage,
+    required this.currentPageNotifier,
     required this.searchController,
     required this.searchQuery,
     required this.onSearchChanged,
@@ -399,6 +455,7 @@ class _HomeScreenContent extends StatelessWidget {
     required this.filteredCategories,
     required this.groupedCategories,
     required this.sizing,
+    required this.lastUpdated,
   });
 
   @override
@@ -408,6 +465,9 @@ class _HomeScreenContent extends StatelessWidget {
       slivers: [
         // Header with search
         _buildHeader(),
+        
+        // Last updated indicator
+        _buildLastUpdatedIndicator(),
         
         // Stats snapshot section
         _buildStatsSection(context),
@@ -432,14 +492,8 @@ class _HomeScreenContent extends StatelessWidget {
         opacity: animationController,
         child: Container(
           decoration: BoxDecoration(
-            color: _bpsBlue,
-            boxShadow: [
-              BoxShadow(
-                color: _bpsBlue.withOpacity(0.2),
-                blurRadius: 30,
-                offset: const Offset(0, 10),
-              ),
-            ],
+            color: bpsBlue,
+            boxShadow: [BPSShadows.headerShadow],
           ),
           child: SafeArea(
             bottom: false,
@@ -459,14 +513,25 @@ class _HomeScreenContent extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.all(sizing.headerLogoPadding),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withOpacity(0.08),
                           borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.15),
+                            width: 1,
+                          ),
                         ),
                         child: Image.asset(
                           'assets/images/logo_white.png',
                           width: sizing.headerLogoSize,
                           height: sizing.headerLogoSize,
                           filterQuality: FilterQuality.medium,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              Icons.account_balance_rounded,
+                              color: Colors.white,
+                              size: sizing.headerLogoSize,
+                            );
+                          },
                         ),
                       ),
                       SizedBox(width: sizing.itemSpacing),
@@ -501,7 +566,7 @@ class _HomeScreenContent extends StatelessWidget {
                   // Search bar
                   Container(
                     decoration: BoxDecoration(
-                      color: _bpsCardBg,
+                      color: bpsCardBg,
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
@@ -517,19 +582,19 @@ class _HomeScreenContent extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: 'Cari kategori statistik...',
                         hintStyle: TextStyle(
-                          color: _bpsTextLabel,
+                          color: bpsTextLabel,
                           fontSize: sizing.searchFontSize,
                         ),
                         prefixIcon: Icon(
                           Icons.search_rounded,
-                          color: _bpsBlue,
+                          color: bpsBlue,
                           size: sizing.searchIconSize,
                         ),
                         suffixIcon: searchQuery.isNotEmpty
                             ? IconButton(
                                 icon: Icon(
                                   Icons.clear_rounded,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                   size: sizing.searchClearIconSize,
                                 ),
                                 onPressed: onClearSearch,
@@ -547,6 +612,50 @@ class _HomeScreenContent extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _buildLastUpdatedIndicator() {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.fromLTRB(
+          sizing.horizontalPadding,
+          sizing.itemSpacing,
+          sizing.horizontalPadding,
+          0,
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: sizing.itemSpacing,
+          vertical: 6,
+        ),
+        decoration: BoxDecoration(
+          color: bpsGreen.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: bpsGreen.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.update_rounded,
+              size: 14,
+              color: bpsGreen,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Terakhir diperbarui: $lastUpdated',
+              style: TextStyle(
+                fontSize: 11,
+                color: bpsGreen,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -576,7 +685,7 @@ class _HomeScreenContent extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.analytics_rounded,
-                    color: _bpsBlue,
+                    color: bpsBlue,
                     size: sizing.sectionIconSize,
                   ),
                   SizedBox(width: sizing.itemSpacing - 2),
@@ -585,51 +694,60 @@ class _HomeScreenContent extends StatelessWidget {
                     style: TextStyle(
                       fontSize: sizing.sectionTitleSize,
                       fontWeight: FontWeight.w700,
-                      color: _bpsTextPrimary,
+                      color: bpsTextPrimary,
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(
+            // Glass cards need a gradient background to show the blur effect
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
               height: sizing.statsCardHeight,
-              child: RepaintBoundary(
-                child: PageView(
-                  controller: statsPageController,
-                  padEnds: false,
-                  children: const [
-                    _StatsCard1(),
-                    _StatsCard2(),
-                    _StatsCard3(),
-                    _StatsCard4(),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    bpsBlue.withOpacity(0.15),
+                    bpsGreen.withOpacity(0.1),
+                    bpsOrange.withOpacity(0.08),
                   ],
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: RepaintBoundary(
+                  child: PageView.builder(
+                    controller: statsPageController,
+                    itemCount: 4,
+                    physics: const PageScrollPhysics(),
+                    allowImplicitScrolling: true,
+                    itemBuilder: (context, index) {
+                      return switch (index) {
+                        0 => const _StatsCard1(),
+                        1 => const _StatsCard2(),
+                        2 => const _StatsCard3(),
+                        3 => const _StatsCard4(),
+                        _ => const SizedBox(),
+                      };
+                    },
+                  ),
                 ),
               ),
             ),
             SizedBox(height: sizing.itemSpacing),
-            // Page indicators - wrapped in RepaintBoundary for performance
-            RepaintBoundary(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(4, (index) {
-                  final isActive = currentStatsPage == index;
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: isActive
-                        ? sizing.pageIndicatorActiveWidth
-                        : sizing.pageIndicatorHeight,
-                    height: sizing.pageIndicatorHeight,
-                    decoration: BoxDecoration(
-                      color: isActive
-                          ? _bpsBlue
-                          : _bpsBorder,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  );
-                }),
-              ),
+            // FIX 1: Use ValueListenableBuilder to isolate page indicator rebuilds
+            ValueListenableBuilder<int>(
+              valueListenable: currentPageNotifier,
+              builder: (context, currentPage, child) {
+                return _PageIndicators(
+                  currentPage: currentPage,
+                  pageController: statsPageController,
+                  sizing: sizing,
+                );
+              },
             ),
           ],
         ),
@@ -650,7 +768,7 @@ class _HomeScreenContent extends StatelessWidget {
           children: [
             Icon(
               Icons.grid_view_rounded,
-              color: _bpsBlue,
+              color: bpsBlue,
               size: sizing.sectionIconSize,
             ),
             SizedBox(width: sizing.itemSpacing - 2),
@@ -659,7 +777,7 @@ class _HomeScreenContent extends StatelessWidget {
               style: TextStyle(
                 fontSize: sizing.sectionTitleSize,
                 fontWeight: FontWeight.w700,
-                color: _bpsTextPrimary,
+                color: bpsTextPrimary,
               ),
             ),
             const Spacer(),
@@ -670,7 +788,7 @@ class _HomeScreenContent extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: bpsBlue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -678,7 +796,7 @@ class _HomeScreenContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: sizing.bottomNavLabelSize,
                     fontWeight: FontWeight.w600,
-                    color: _bpsBlue,
+                    color: bpsBlue,
                   ),
                 ),
               ),
@@ -697,6 +815,7 @@ class _HomeScreenContent extends StatelessWidget {
       if (categories.isEmpty) return;
 
       final info = _HomeScreenCache.groupInfo[groupKey]!;
+      final groupColor = info['color'] as Color;
 
       // Group header
       widgets.add(
@@ -712,13 +831,10 @@ class _HomeScreenContent extends StatelessWidget {
               children: [
                 Container(
                   padding: EdgeInsets.all(sizing.groupIconPadding),
-                  decoration: BoxDecoration(
-                    color: _bpsBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  decoration: BPSDecorations.groupIconContainerDecoration(groupColor),
                   child: Icon(
                     info['icon'] as IconData,
-                    color: _bpsBlue,
+                    color: groupColor,
                     size: sizing.groupIconSize,
                   ),
                 ),
@@ -728,7 +844,7 @@ class _HomeScreenContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
                 SizedBox(width: sizing.itemSpacing - 2),
@@ -738,7 +854,7 @@ class _HomeScreenContent extends StatelessWidget {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsBlue.withOpacity(0.08),
+                    color: groupColor.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -746,7 +862,7 @@ class _HomeScreenContent extends StatelessWidget {
                     style: TextStyle(
                       fontSize: sizing.bottomNavLabelSize,
                       fontWeight: FontWeight.w600,
-                      color: _bpsBlue,
+                      color: groupColor,
                     ),
                   ),
                 ),
@@ -773,7 +889,7 @@ class _HomeScreenContent extends StatelessWidget {
                 sizing: sizing,
               ),
               childCount: categories.length,
-              addAutomaticKeepAlives: true, // Keep cards in memory
+              addAutomaticKeepAlives: true,
             ),
           ),
         ),
@@ -791,7 +907,7 @@ class _HomeScreenContent extends StatelessWidget {
             ),
             padding: EdgeInsets.all(sizing.sectionSpacing),
             decoration: BoxDecoration(
-              color: _bpsCardBg,
+              color: bpsCardBg,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -799,7 +915,7 @@ class _HomeScreenContent extends StatelessWidget {
                 Icon(
                   Icons.search_off_rounded,
                   size: sizing.isVerySmall ? 48 : 64,
-                  color: _bpsTextLabel,
+                  color: bpsTextLabel,
                 ),
                 SizedBox(height: sizing.horizontalPadding - 4),
                 Text(
@@ -807,7 +923,7 @@ class _HomeScreenContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: sizing.sectionTitleSize - 2,
                     fontWeight: FontWeight.w600,
-                    color: _bpsTextSecondary,
+                    color: bpsTextSecondary,
                   ),
                 ),
                 SizedBox(height: sizing.itemSpacing - 2),
@@ -815,7 +931,7 @@ class _HomeScreenContent extends StatelessWidget {
                   'Coba kata kunci lain',
                   style: TextStyle(
                     fontSize: sizing.categoryLabelFontSize - 1,
-                    color: _bpsTextLabel,
+                    color: bpsTextLabel,
                   ),
                 ),
               ],
@@ -829,20 +945,109 @@ class _HomeScreenContent extends StatelessWidget {
   }
 }
 
-// Extract individual stat cards to separate widgets for better performance
-class _StatsCard1 extends StatelessWidget {
-  const _StatsCard1();
+// FIX 1: Extracted page indicators to separate widget for better performance
+class _PageIndicators extends StatelessWidget {
+  final int currentPage;
+  final PageController pageController;
+  final ResponsiveSizing sizing;
+
+  const _PageIndicators({
+    required this.currentPage,
+    required this.pageController,
+    required this.sizing,
+  });
+
+  void _animateToPage(int index) {
+    final currentPage = this.currentPage;
+    final distance = (index - currentPage).abs();
+    
+    if (distance <= 2) {
+      pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
+      );
+    } else {
+      pageController.jumpToPage(index);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return _StatsCard(
+    return RepaintBoundary(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(4, (index) {
+          final isActive = currentPage == index;
+          return _PageIndicatorDot(
+            isActive: isActive,
+            onTap: () => _animateToPage(index),
+            sizing: sizing,
+          );
+        }),
+      ),
+    );
+  }
+}
+
+// FIX 2: Individual page indicator dot for granular rebuilds
+class _PageIndicatorDot extends StatelessWidget {
+  final bool isActive;
+  final VoidCallback onTap;
+  final ResponsiveSizing sizing;
+
+  const _PageIndicatorDot({
+    required this.isActive,
+    required this.onTap,
+    required this.sizing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          width: isActive
+              ? sizing.pageIndicatorActiveWidth
+              : sizing.pageIndicatorHeight,
+          height: sizing.pageIndicatorHeight,
+          decoration: BoxDecoration(
+            color: isActive ? bpsBlue : bpsBorder,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Extract individual stat cards to separate widgets for better performance
+// FIX 3: Cache chart spots with static const to avoid recreation
+class _StatsCard1 extends StatelessWidget {
+  const _StatsCard1();
+
+  // Pre-computed chart data and spots
+  static const List<double> _chartData = [1.68, 1.69, 1.69, 1.70, 1.71];
+  static final List<FlSpot> _spots = List.generate(
+    _chartData.length,
+    (index) => FlSpot(index.toDouble(), _chartData[index]),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return _GlassStatsCard(
       label: 'Penduduk',
       value: '1.709M',
       change: '+1.2%',
       isPositive: true,
-      accentColor: _bpsBlue,
+      accentColor: bpsBlue,
       icon: Icons.people_rounded,
-      chartData: const [1.68, 1.69, 1.69, 1.70, 1.71],
+      chartSpots: _spots,
       screen: const PendudukScreen(),
     );
   }
@@ -851,16 +1056,22 @@ class _StatsCard1 extends StatelessWidget {
 class _StatsCard2 extends StatelessWidget {
   const _StatsCard2();
 
+  static const List<double> _chartData = [80.5, 81.2, 81.8, 82.1, 82.4];
+  static final List<FlSpot> _spots = List.generate(
+    _chartData.length,
+    (index) => FlSpot(index.toDouble(), _chartData[index]),
+  );
+
   @override
   Widget build(BuildContext context) {
-    return _StatsCard(
+    return _GlassStatsCard(
       label: 'IPM',
       value: '82.39',
       change: '+2.3%',
       isPositive: true,
-      accentColor: _bpsGreen,
+      accentColor: bpsGreen,
       icon: Icons.trending_up_rounded,
-      chartData: const [80.5, 81.2, 81.8, 82.1, 82.4],
+      chartSpots: _spots,
       screen: const IpmScreen(),
     );
   }
@@ -869,16 +1080,22 @@ class _StatsCard2 extends StatelessWidget {
 class _StatsCard3 extends StatelessWidget {
   const _StatsCard3();
 
+  static const List<double> _chartData = [4.5, 4.3, 4.2, 4.1, 4.0];
+  static final List<FlSpot> _spots = List.generate(
+    _chartData.length,
+    (index) => FlSpot(index.toDouble(), _chartData[index]),
+  );
+
   @override
   Widget build(BuildContext context) {
-    return _StatsCard(
+    return _GlassStatsCard(
       label: 'Kemiskinan',
       value: '4.03%',
       change: '-0.87%',
       isPositive: false,
-      accentColor: _bpsOrange,
+      accentColor: bpsOrange,
       icon: Icons.volunteer_activism_rounded,
-      chartData: const [4.5, 4.3, 4.2, 4.1, 4.0],
+      chartSpots: _spots,
       screen: const KemiskinanScreen(),
     );
   }
@@ -887,39 +1104,46 @@ class _StatsCard3 extends StatelessWidget {
 class _StatsCard4 extends StatelessWidget {
   const _StatsCard4();
 
+  static const List<double> _chartData = [2.1, 2.5, 2.8, 2.9, 2.9];
+  static final List<FlSpot> _spots = List.generate(
+    _chartData.length,
+    (index) => FlSpot(index.toDouble(), _chartData[index]),
+  );
+
   @override
   Widget build(BuildContext context) {
-    return _StatsCard(
+    return _GlassStatsCard(
       label: 'Inflasi',
       value: '2.89%',
       change: '+0.39%',
       isPositive: true,
-      accentColor: _bpsRed,
+      accentColor: bpsRed,
       icon: Icons.payments_rounded,
-      chartData: const [2.1, 2.5, 2.8, 2.9, 2.9],
+      chartSpots: _spots,
       screen: const InflasiScreen(),
     );
   }
 }
 
-class _StatsCard extends StatelessWidget {
+// Performance-optimized Glass Card Widget
+class _GlassStatsCard extends StatelessWidget {
   final String label;
   final String value;
   final String change;
   final bool isPositive;
   final Color accentColor;
   final IconData icon;
-  final List<double> chartData;
+  final List<FlSpot> chartSpots;
   final Widget screen;
 
-  const _StatsCard({
+  const _GlassStatsCard({
     required this.label,
     required this.value,
     required this.change,
     required this.isPositive,
     required this.accentColor,
     required this.icon,
-    required this.chartData,
+    required this.chartSpots,
     required this.screen,
   });
 
@@ -927,131 +1151,208 @@ class _StatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final sizing = ResponsiveSizing(context);
     
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
-      child: Material(
-        color: _bpsCardBg,
-        borderRadius: BorderRadius.circular(20),
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => screen),
-            );
-          },
+    return RepaintBoundary(
+        child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: Container(
-            decoration: BoxDecoration(
-              color: _bpsCardBg,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Material(
+              color: Colors.white.withOpacity(0.15),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: accentColor.withOpacity(0.2),
-                width: 2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: accentColor.withOpacity(0.1),
-                  blurRadius: 15,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            padding: EdgeInsets.all(sizing.statsCardPadding),
-            child: Row(
-              children: [
-                // Icon container
-                Container(
-                  width: sizing.statsIconContainerSize,
-                  height: sizing.statsIconContainerSize,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => screen),
+                  );
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
                   decoration: BoxDecoration(
-                    color: accentColor.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.25),
+                      width: 1.5,
+                    ),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white.withOpacity(0.25),
+                        Colors.white.withOpacity(0.08),
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: accentColor.withOpacity(0.15),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
                   ),
-                  child: Icon(
-                    icon,
-                    color: accentColor,
-                    size: sizing.statsIconSize,
-                  ),
-                ),
-                SizedBox(width: sizing.statsCardPadding - 4),
-                // Data column
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  padding: EdgeInsets.all(sizing.statsCardPadding),
+                  child: Row(
                     children: [
-                      Text(
-                        label,
-                        style: TextStyle(
-                          fontSize: sizing.statsLabelFontSize,
-                          fontWeight: FontWeight.w600,
-                          color: _bpsTextSecondary,
-                          letterSpacing: 0.2,
+                      // Glass icon container
+                      Container(
+                        width: sizing.statsIconContainerSize,
+                        height: sizing.statsIconContainerSize,
+                        decoration: BoxDecoration(
+                          color: accentColor.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Icon(
+                          icon,
+                          color: accentColor,
+                          size: sizing.statsIconSize,
                         ),
                       ),
-                      SizedBox(height: sizing.isVerySmall ? 4 : 6),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              value,
+                      SizedBox(width: sizing.statsCardPadding - 4),
+                      // Data column
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              label,
                               style: TextStyle(
-                                fontSize: sizing.statsValueFontSize,
-                                fontWeight: FontWeight.w800,
-                                color: _bpsTextPrimary,
-                                height: 1,
-                                letterSpacing: -0.5,
+                                fontSize: sizing.statsLabelFontSize,
+                                fontWeight: FontWeight.w600,
+                                color: bpsTextSecondary.withOpacity(0.9),
+                                letterSpacing: 0.2,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                          SizedBox(width: sizing.isVerySmall ? 4 : 8),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: sizing.isVerySmall ? 5 : 8,
-                              vertical: sizing.isVerySmall ? 2 : 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isPositive
-                                  ? _bpsGreen.withOpacity(0.15)
-                                  : _bpsOrange.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
+                            SizedBox(height: sizing.isVerySmall ? 4 : 6),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Icon(
-                                  isPositive
-                                      ? Icons.arrow_upward_rounded
-                                      : Icons.arrow_downward_rounded,
-                                  color: isPositive ? _bpsGreen : _bpsOrange,
-                                  size: sizing.statsChangeIconSize,
+                                Flexible(
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                      fontSize: sizing.statsValueFontSize,
+                                      fontWeight: FontWeight.w800,
+                                      color: bpsTextPrimary,
+                                      height: 1,
+                                      letterSpacing: -0.5,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                                const SizedBox(width: 2),
-                                Text(
-                                  change,
-                                  style: TextStyle(
-                                    fontSize: sizing.statsChangeFontSize,
-                                    fontWeight: FontWeight.w700,
-                                    color: isPositive ? _bpsGreen : _bpsOrange,
+                                SizedBox(width: sizing.isVerySmall ? 4 : 8),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: sizing.isVerySmall ? 5 : 8,
+                                    vertical: sizing.isVerySmall ? 2 : 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isPositive
+                                        ? bpsGreen.withOpacity(0.2)
+                                        : bpsOrange.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: isPositive
+                                          ? bpsGreen.withOpacity(0.3)
+                                          : bpsOrange.withOpacity(0.3),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        isPositive
+                                            ? Icons.arrow_upward_rounded
+                                            : Icons.arrow_downward_rounded,
+                                        color: isPositive ? bpsGreen : bpsOrange,
+                                        size: sizing.statsChangeIconSize,
+                                      ),
+                                      const SizedBox(width: 2),
+                                      Text(
+                                        change,
+                                        style: TextStyle(
+                                          fontSize: sizing.statsChangeFontSize,
+                                          fontWeight: FontWeight.w700,
+                                          color: isPositive ? bpsGreen : bpsOrange,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                      ),
+                      // Mini chart with glass effect
+                      SizedBox(
+                        width: sizing.statsMiniChartWidth,
+                        child: _GlassMiniChart(spots: chartSpots, color: accentColor),
                       ),
                     ],
                   ),
                 ),
-                // Mini chart
-                SizedBox(
-                  width: sizing.statsMiniChartWidth,
-                  child: _MiniChart(data: chartData, color: accentColor),
-                ),
-              ],
+              ),
             ),
+          ),
+      ),
+    );
+  }
+}
+
+class _MiniChart extends StatelessWidget {
+  final List<FlSpot> spots;
+  final Color color;
+
+  const _MiniChart({
+    required this.spots,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (spots.isEmpty) return const SizedBox();
+
+    return RepaintBoundary(
+      child: SizedBox(
+        width: 80,
+        height: 40,
+        child: LineChart(
+          LineChartData(
+            minY: spots.map((s) => s.y).reduce((a, b) => a < b ? a : b) * 0.95,
+            maxY: spots.map((s) => s.y).reduce((a, b) => a > b ? a : b) * 1.05,
+            minX: 0,
+            maxX: (spots.length - 1).toDouble(),
+            gridData: const FlGridData(show: false),
+            titlesData: const FlTitlesData(show: false),
+            borderData: FlBorderData(show: false),
+            lineBarsData: [
+              LineChartBarData(
+                spots: spots,
+                isCurved: true,
+                curveSmoothness: 0.4,
+                color: color,
+                barWidth: 2,
+                dotData: const FlDotData(show: false),
+                belowBarData: BarAreaData(
+                  show: true,
+                  gradient: LinearGradient(
+                    colors: [
+                      color.withOpacity(0.3),
+                      color.withOpacity(0.0),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+              ),
+            ],
+            lineTouchData: const LineTouchData(enabled: false),
           ),
         ),
       ),
@@ -1059,55 +1360,56 @@ class _StatsCard extends StatelessWidget {
   }
 }
 
-class _MiniChart extends StatelessWidget {
-  final List<double> data;
+// Glass morphism mini chart - brighter colors for glass card
+class _GlassMiniChart extends StatelessWidget {
+  final List<FlSpot> spots;
   final Color color;
 
-  const _MiniChart({
-    required this.data,
+  const _GlassMiniChart({
+    required this.spots,
     required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (data.isEmpty) return const SizedBox();
+    if (spots.isEmpty) return const SizedBox();
 
-    final spots = List.generate(data.length, (index) => FlSpot(index.toDouble(), data[index]));
-
-    return SizedBox(
-      width: 80,
-      height: 40,
-      child: LineChart(
-        LineChartData(
-          minY: data.reduce((a, b) => a < b ? a : b) * 0.95,
-          maxY: data.reduce((a, b) => a > b ? a : b) * 1.05,
-          minX: 0,
-          maxX: (data.length - 1).toDouble(),
-          gridData: const FlGridData(show: false),
-          titlesData: const FlTitlesData(show: false),
-          borderData: FlBorderData(show: false),
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              isCurved: true,
-              curveSmoothness: 0.4,
-              color: color,
-              barWidth: 2,
-              dotData: const FlDotData(show: false),
-              belowBarData: BarAreaData(
-                show: true,
-                gradient: LinearGradient(
-                  colors: [
-                    color.withOpacity(0.3),
-                    color.withOpacity(0.0),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+    return RepaintBoundary(
+      child: SizedBox(
+        width: 80,
+        height: 40,
+        child: LineChart(
+          LineChartData(
+            minY: spots.map((s) => s.y).reduce((a, b) => a < b ? a : b) * 0.95,
+            maxY: spots.map((s) => s.y).reduce((a, b) => a > b ? a : b) * 1.05,
+            minX: 0,
+            maxX: (spots.length - 1).toDouble(),
+            gridData: const FlGridData(show: false),
+            titlesData: const FlTitlesData(show: false),
+            borderData: FlBorderData(show: false),
+            lineBarsData: [
+              LineChartBarData(
+                spots: spots,
+                isCurved: true,
+                curveSmoothness: 0.4,
+                color: color,
+                barWidth: 2.5,
+                dotData: const FlDotData(show: false),
+                belowBarData: BarAreaData(
+                  show: true,
+                  gradient: LinearGradient(
+                    colors: [
+                      color.withOpacity(0.4),
+                      color.withOpacity(0.05),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
                 ),
               ),
-            ),
-          ],
-          lineTouchData: const LineTouchData(enabled: false),
+            ],
+            lineTouchData: const LineTouchData(enabled: false),
+          ),
         ),
       ),
     );
@@ -1126,7 +1428,7 @@ class _CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: _bpsCardBg,
+      color: bpsCardBg,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: () {
@@ -1138,19 +1440,13 @@ class _CategoryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Container(
           decoration: BoxDecoration(
-            color: _bpsCardBg,
+            color: bpsCardBg,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: _bpsBorder,
+              color: bpsBorder,
               width: 1.5,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
+            boxShadow: [BPSShadows.cardShadow],
           ),
           padding: EdgeInsets.all(sizing.categoryCardPadding),
           child: Column(
@@ -1162,19 +1458,19 @@ class _CategoryCard extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(sizing.categoryIconContainerPadding),
                     decoration: BoxDecoration(
-                      color: _bpsBlue.withOpacity(0.1),
+                      color: category.groupColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       category.icon,
-                      color: _bpsBlue,
+                      color: category.groupColor,
                       size: sizing.categoryIconSize,
                     ),
                   ),
                   const Spacer(),
                   Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: _bpsTextLabel,
+                    color: bpsTextLabel,
                     size: sizing.categoryArrowSize,
                   ),
                 ],
@@ -1187,7 +1483,7 @@ class _CategoryCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: sizing.categoryLabelFontSize,
                       fontWeight: FontWeight.w700,
-                      color: _bpsTextPrimary,
+                      color: bpsTextPrimary,
                       height: 1.2,
                     ),
                     maxLines: 2,
@@ -1199,7 +1495,7 @@ class _CategoryCard extends StatelessWidget {
                       category.label,
                       style: TextStyle(
                         fontSize: sizing.categorySubLabelFontSize,
-                        color: _bpsTextLabel,
+                        color: bpsTextLabel,
                         height: 1.2,
                       ),
                       maxLines: 1,

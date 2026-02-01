@@ -510,7 +510,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: color,
+                    color: _bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -673,7 +673,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: color,
+                                  color: _bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -919,7 +919,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
             style: TextStyle(
               fontSize: isSmallScreen ? 18 : 20,
               fontWeight: FontWeight.w800,
-              color: color,
+              color: _bpsTextPrimary,
             ),
           ),
           SizedBox(height: isSmallScreen ? 4 : 6),

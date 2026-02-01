@@ -132,7 +132,7 @@ class _IpmScreenState extends State<IpmScreen> with AutomaticKeepAliveClientMixi
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const CircularProgressIndicator(color: _bpsBlue),
+                        const CircularProgressIndicator(color: _bpsOrange),
                         SizedBox(height: sizing.sectionSpacing - 8),
                         Text(
                           'Memuat data IPM...',
@@ -180,7 +180,7 @@ class _IpmScreenState extends State<IpmScreen> with AutomaticKeepAliveClientMixi
                                 icon: const Icon(Icons.refresh),
                                 label: const Text('Coba Lagi'),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: _bpsBlue,
+                                  backgroundColor: _bpsOrange,
                                   foregroundColor: _bpsCardBg,
                                   padding: EdgeInsets.symmetric(
                                     horizontal: sizing.horizontalPadding,
@@ -211,10 +211,10 @@ class _IpmScreenState extends State<IpmScreen> with AutomaticKeepAliveClientMixi
   Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsBlue,
+        color: _bpsOrange,
         boxShadow: [
           BoxShadow(
-            color: _bpsBlue.withOpacity(0.2),
+            color: _bpsOrange.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -414,12 +414,12 @@ class _IpmScreenContent extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: _bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.analytics_rounded,
-                  color: _bpsBlue,
+                  color: _bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -443,7 +443,7 @@ class _IpmScreenContent extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsBlue.withOpacity(0.1),
+                    color: _bpsOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -451,7 +451,7 @@ class _IpmScreenContent extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsBlue,
+                        color: _bpsOrange,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -459,7 +459,7 @@ class _IpmScreenContent extends StatelessWidget {
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsBlue,
+                          color: _bpsOrange,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -578,7 +578,7 @@ class _IpmScreenContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: color,
+                    color: _bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -745,7 +745,7 @@ class _IpmScreenContent extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: isDialogSmall ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: color,
+                                  color: _bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -853,12 +853,12 @@ class _YearSelector extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: _bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.calendar_today_rounded,
-                  color: _bpsBlue,
+                  color: _bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -882,7 +882,7 @@ class _YearSelector extends StatelessWidget {
             children: years.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsBlue : _bpsBackground,
+                color: isSelected ? _bpsOrange : _bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () => onYearSelected(year),
@@ -898,13 +898,13 @@ class _YearSelector extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsBlue : _bpsBorder,
+                        color: isSelected ? _bpsOrange : _bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsBlue.withOpacity(0.3),
+                                color: _bpsOrange.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -1247,12 +1247,12 @@ class _IpmInformationPanel extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.15),
+                  color: _bpsOrange.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.info_outline_rounded,
-                  color: _bpsBlue,
+                  color: _bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -1392,7 +1392,7 @@ class _IpmInformationPanel extends StatelessWidget {
           '• ',
           style: TextStyle(
             fontSize: sizing.categoryLabelFontSize,
-            color: _bpsBlue,
+            color: _bpsOrange,
             fontWeight: FontWeight.bold,
           ),
         ),

@@ -712,7 +712,7 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: color,
+                    color: _bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -875,7 +875,7 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: color,
+                                  color: _bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
