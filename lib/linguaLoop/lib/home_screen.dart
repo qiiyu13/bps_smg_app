@@ -700,21 +700,14 @@ class _HomeScreenContent extends StatelessWidget {
                 ],
               ),
             ),
-            // Glass cards need a gradient background to show the blur effect
+            // Frosted glass container
             Container(
               margin: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
               height: sizing.statsCardHeight,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    bpsBlue.withOpacity(0.15),
-                    bpsGreen.withOpacity(0.1),
-                    bpsOrange.withOpacity(0.08),
-                  ],
-                ),
+                // Slightly darker background for glass contrast
+                color: const Color(0xFFE8EDF2),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
@@ -1125,7 +1118,7 @@ class _StatsCard4 extends StatelessWidget {
   }
 }
 
-// Performance-optimized Glass Card Widget
+// Frosted Glass Card - Based on learned pattern
 class _GlassStatsCard extends StatelessWidget {
   final String label;
   final String value;
@@ -1151,14 +1144,40 @@ class _GlassStatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final sizing = ResponsiveSizing(context);
     
-    return RepaintBoundary(
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-            child: Material(
-              color: Colors.white.withOpacity(0.15),
+    return Padding(
+      padding: EdgeInsets.all(sizing.horizontalPadding - 4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20), // 1. Clip the blur
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // 2. Apply blur
+          child: Container(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
+              // 3. Semi-transparent gradient for the "frosty" look
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.25),
+                  Colors.white.withOpacity(0.10),
+                ],
+              ),
+              // 4. Thin border makes the glass edge pop
+              border: Border.all(
+                color: Colors.white.withOpacity(0.40),
+                width: 1.5,
+              ),
+              // 5. Soft shadow for depth
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
               child: InkWell(
                 onTap: () {
                   Navigator.push(
@@ -1167,43 +1186,17 @@ class _GlassStatsCard extends StatelessWidget {
                   );
                 },
                 borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.25),
-                      width: 1.5,
-                    ),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white.withOpacity(0.25),
-                        Colors.white.withOpacity(0.08),
-                      ],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: accentColor.withOpacity(0.15),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
+                child: Padding(
                   padding: EdgeInsets.all(sizing.statsCardPadding),
                   child: Row(
                     children: [
-                      // Glass icon container
+                      // Icon with subtle accent tint
                       Container(
                         width: sizing.statsIconContainerSize,
                         height: sizing.statsIconContainerSize,
                         decoration: BoxDecoration(
                           color: accentColor.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 1,
-                          ),
                         ),
                         child: Icon(
                           icon,
@@ -1211,8 +1204,8 @@ class _GlassStatsCard extends StatelessWidget {
                           size: sizing.statsIconSize,
                         ),
                       ),
-                      SizedBox(width: sizing.statsCardPadding - 4),
-                      // Data column
+                      SizedBox(width: sizing.statsCardPadding - 2),
+                      // Data
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1223,73 +1216,24 @@ class _GlassStatsCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: sizing.statsLabelFontSize,
                                 fontWeight: FontWeight.w600,
-                                color: bpsTextSecondary.withOpacity(0.9),
-                                letterSpacing: 0.2,
+                                color: bpsTextSecondary,
                               ),
                             ),
                             SizedBox(height: sizing.isVerySmall ? 4 : 6),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    value,
-                                    style: TextStyle(
-                                      fontSize: sizing.statsValueFontSize,
-                                      fontWeight: FontWeight.w800,
-                                      color: bpsTextPrimary,
-                                      height: 1,
-                                      letterSpacing: -0.5,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                SizedBox(width: sizing.isVerySmall ? 4 : 8),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: sizing.isVerySmall ? 5 : 8,
-                                    vertical: sizing.isVerySmall ? 2 : 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isPositive
-                                        ? bpsGreen.withOpacity(0.2)
-                                        : bpsOrange.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: isPositive
-                                          ? bpsGreen.withOpacity(0.3)
-                                          : bpsOrange.withOpacity(0.3),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        isPositive
-                                            ? Icons.arrow_upward_rounded
-                                            : Icons.arrow_downward_rounded,
-                                        color: isPositive ? bpsGreen : bpsOrange,
-                                        size: sizing.statsChangeIconSize,
-                                      ),
-                                      const SizedBox(width: 2),
-                                      Text(
-                                        change,
-                                        style: TextStyle(
-                                          fontSize: sizing.statsChangeFontSize,
-                                          fontWeight: FontWeight.w700,
-                                          color: isPositive ? bpsGreen : bpsOrange,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              value,
+                              style: TextStyle(
+                                fontSize: sizing.statsValueFontSize,
+                                fontWeight: FontWeight.w800,
+                                color: bpsTextPrimary,
+                                height: 1,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
                       ),
-                      // Mini chart with glass effect
+                      // Chart
                       SizedBox(
                         width: sizing.statsMiniChartWidth,
                         child: _GlassMiniChart(spots: chartSpots, color: accentColor),
@@ -1300,10 +1244,13 @@ class _GlassStatsCard extends StatelessWidget {
               ),
             ),
           ),
+        ),
       ),
     );
   }
 }
+
+
 
 class _MiniChart extends StatelessWidget {
   final List<FlSpot> spots;
