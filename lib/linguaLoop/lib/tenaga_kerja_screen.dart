@@ -35,6 +35,11 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
   Map<int, Map<String, dynamic>> indikatorData = {};
   Map<int, Map<String, double>> distribusiData = {};
   Map<int, Map<String, dynamic>> jatengData = {};
+  
+  int? touchedPieIndex;
+  bool showRealValues = false;
+  String? selectedSector;
+  String? selectedSectorValue;
 
   @override
   bool get wantKeepAlive => true;
@@ -1204,16 +1209,26 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
     final data = distribusiData[selectedYear];
     if (data == null) return const SizedBox.shrink();
 
+    // Get total workers for the selected year to calculate real values
+    final yearInfo = yearData[selectedYear];
+    final totalWorkers = yearInfo?['bekerja'] ?? 0;
+
     final sections = data.entries.map((entry) {
       final index = data.keys.toList().indexOf(entry.key);
-      final isTouched = index == touchedIndex;
-      final fontSize = isTouched ? (isSmallScreen ? 14.0 : 16.0) : (isSmallScreen ? 11.0 : 12.0);
+      final isTouched = index == touchedPieIndex;
+      final fontSize = isTouched ? (isSmallScreen ? 12.0 : 14.0) : (isSmallScreen ? 11.0 : 12.0);
       final radius = isTouched ? (isSmallScreen ? 65.0 : 75.0) : (isSmallScreen ? 55.0 : 65.0);
+      
+      // Calculate real value (number of workers) based on percentage
+      final realValue = (totalWorkers * entry.value / 100).round();
+      final displayTitle = (showRealValues && isTouched) 
+          ? _formatCompactNumber(realValue)
+          : '${entry.value.toStringAsFixed(1)}%';
 
       return PieChartSectionData(
         color: _getSectorColor(entry.key),
         value: entry.value,
-        title: '${entry.value.toStringAsFixed(1)}%',
+        title: displayTitle,
         radius: radius,
         titleStyle: TextStyle(
           fontSize: fontSize,
@@ -1243,6 +1258,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
@@ -1258,25 +1274,69 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
+                  alignment: Alignment.centerLeft,
                   children: [
-                    Text(
-                      'Distribusi Lapangan Usaha',
-                      style: TextStyle(
-                        fontSize: isSmallScreen
-                            ? sizing.groupTitleSize - 2
-                            : sizing.groupTitleSize,
-                        fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary,
+                    // Default state (visible when no sector selected)
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 150),
+                      opacity: selectedSector == null ? 1.0 : 0.0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Distribusi Lapangan Usaha',
+                            style: TextStyle(
+                              fontSize: isSmallScreen
+                                  ? sizing.groupTitleSize - 2
+                                  : sizing.groupTitleSize,
+                              fontWeight: FontWeight.w700,
+                              color: _bpsTextPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Persentase Tenaga Kerja per Sektor',
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 12 : 13,
+                              color: _bpsTextSecondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Persentase Tenaga Kerja per Sektor',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 12 : 13,
-                        color: _bpsTextSecondary,
+                    // Selected state (visible when sector selected)
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 150),
+                      opacity: selectedSector != null ? 1.0 : 0.0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            selectedSector != null 
+                                ? '$selectedSector - $selectedSectorValue'
+                                : '',
+                            style: TextStyle(
+                              fontSize: isSmallScreen
+                                  ? sizing.groupTitleSize - 2
+                                  : sizing.groupTitleSize,
+                              fontWeight: FontWeight.w700,
+                              color: selectedSector != null 
+                                  ? _getSectorColor(selectedSector!)
+                                  : _bpsTextPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Tenaga kerja di sektor',
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 12 : 13,
+                              color: _bpsTextSecondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -1295,12 +1355,29 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                       if (!event.isInterestedForInteractions ||
                           pieTouchResponse == null ||
                           pieTouchResponse.touchedSection == null) {
-                        touchedIndex = -1;
+                        touchedPieIndex = null;
+                        showRealValues = false;
+                        selectedSector = null;
+                        selectedSectorValue = null;
                         return;
                       }
-                      touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                      touchedPieIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                      showRealValues = true;
+                      // Update header with selected sector info
+                      final sectorIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                      if (sectorIndex >= 0 && sectorIndex < data.length) {
+                        final sectorName = data.keys.toList()[sectorIndex];
+                        final percentage = data.values.toList()[sectorIndex];
+                        final realValue = (totalWorkers * percentage / 100).round();
+                        selectedSector = sectorName;
+                        selectedSectorValue = _formatCompactNumber(realValue);
+                      } else {
+                        selectedSector = null;
+                        selectedSectorValue = null;
+                      }
                     });
                   },
+                  enabled: true,
                 ),
                 borderData: FlBorderData(show: false),
                 sectionsSpace: 2,
@@ -1386,6 +1463,15 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
   String _formatNumber(int number) {
     if (number >= 1000000) {
       return '${(number / 1000000).toStringAsFixed(2)}M';
+    } else if (number >= 1000) {
+      return '${(number / 1000).toStringAsFixed(1)}K';
+    }
+    return number.toString();
+  }
+
+  String _formatCompactNumber(int number) {
+    if (number >= 1000000) {
+      return '${(number / 1000000).toStringAsFixed(1)}M';
     } else if (number >= 1000) {
       return '${(number / 1000).toStringAsFixed(1)}K';
     }

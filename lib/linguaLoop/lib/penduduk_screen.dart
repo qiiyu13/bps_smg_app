@@ -95,6 +95,11 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
   Map<int, Map<String, dynamic>> _ageDataByYear = {};
   List<Color> _districtColors = [];
   
+  int? touchedPieIndex;
+  bool showRealValues = false;
+  String? selectedAgeGroup;
+  String? selectedAgeValue;
+  
   late AnimationController _pieChartAnimationController;
   late Animation<double> _pieChartAnimation;
 
@@ -1035,6 +1040,13 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
   Widget _buildAgeDistributionChart(ResponsiveSizing sizing, bool isSmallScreen) {
     if (!_ageDataByYear.containsKey(selectedYear)) return const SizedBox.shrink();
 
+    final ageData = _ageDataByYear[selectedYear]!;
+    final sections = [
+      _buildAgePieSection('usiaMuda', _bpsBlue, 0, isSmallScreen),
+      _buildAgePieSection('usiaProduktif', _bpsGreen, 1, isSmallScreen),
+      _buildAgePieSection('usiaTua', _bpsOrange, 2, isSmallScreen),
+    ];
+
     return Container(
       padding: EdgeInsets.all(isSmallScreen ? sizing.statsCardPadding - 4 : sizing.statsCardPadding),
       decoration: BoxDecoration(color: _bpsCardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))]),
@@ -1042,10 +1054,75 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.pie_chart, color: _bpsOrange, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
-              Text('Distribusi Umur Penduduk', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary)),
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    // Default state (visible when no age group selected)
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 150),
+                      opacity: selectedAgeGroup == null ? 1.0 : 0.0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Distribusi Umur Penduduk',
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 14 : 16,
+                              fontWeight: FontWeight.w700,
+                              color: _bpsTextPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Persentase Penduduk per Kelompok Umur',
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 11 : 12,
+                              color: _bpsTextSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Selected state (visible when age group selected)
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 150),
+                      opacity: selectedAgeGroup != null ? 1.0 : 0.0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            selectedAgeGroup != null
+                                ? '$selectedAgeGroup - $selectedAgeValue'
+                                : '',
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 14 : 16,
+                              fontWeight: FontWeight.w700,
+                              color: selectedAgeGroup != null 
+                                  ? _getAgeGroupColor(selectedAgeGroup!)
+                                  : _bpsTextPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Jumlah penduduk',
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 11 : 12,
+                              color: _bpsTextSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           SizedBox(height: isSmallScreen ? 16 : 20),
@@ -1054,13 +1131,44 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
             child: Center(
               child: SizedBox(
                 height: 160, width: 160,
-                child: AnimatedBuilder(
-                  animation: _pieChartAnimation,
-                  builder: (context, child) {
-                    final animationValue = 0.95 + (_pieChartAnimation.value * 0.1);
-                    final sections = _cachedPieDataByYear[selectedYear] ?? [];
-                    return PieChart(PieChartData(sectionsSpace: 2, centerSpaceRadius: 30, sections: sections.map((section) => PieChartSectionData(color: section.color, value: section.value, title: section.title, radius: 60 * animationValue, titleStyle: section.titleStyle)).toList()));
-                  },
+                child: PieChart(
+                  PieChartData(
+                    sectionsSpace: 2,
+                    centerSpaceRadius: 30,
+                    sections: sections,
+                    pieTouchData: PieTouchData(
+                      touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                        setState(() {
+                          if (!event.isInterestedForInteractions ||
+                              pieTouchResponse == null ||
+                              pieTouchResponse.touchedSection == null) {
+                            touchedPieIndex = null;
+                            showRealValues = false;
+                            selectedAgeGroup = null;
+                            selectedAgeValue = null;
+                            return;
+                          }
+                          touchedPieIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                          showRealValues = true;
+                          // Update header with selected age group info
+                          final ageIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                          final ageKeys = ['usiaMuda', 'usiaProduktif', 'usiaTua'];
+                          final ageLabels = ['Usia Muda (0-14)', 'Usia Produktif (15-64)', 'Usia Tua (65+)'];
+                          if (ageIndex >= 0 && ageIndex < ageKeys.length) {
+                            final ageKey = ageKeys[ageIndex];
+                            final ageLabel = ageLabels[ageIndex];
+                            final total = ageData[ageKey]['total'] as int;
+                            selectedAgeGroup = ageLabel;
+                            selectedAgeValue = _formatCompactNumber(total);
+                          } else {
+                            selectedAgeGroup = null;
+                            selectedAgeValue = null;
+                          }
+                        });
+                      },
+                      enabled: true,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -1068,15 +1176,69 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
           const SizedBox(height: 16),
           Column(
             children: [
-              _buildLegendItem('Usia Muda (0-14)', _bpsBlue, isSmallScreen),
+              _buildAgeLegendItem('Usia Muda (0-14)', _bpsBlue, ageData['usiaMuda']['total'], isSmallScreen),
               const SizedBox(height: 8),
-              _buildLegendItem('Usia Produktif (15-64)', _bpsGreen, isSmallScreen),
+              _buildAgeLegendItem('Usia Produktif (15-64)', _bpsGreen, ageData['usiaProduktif']['total'], isSmallScreen),
               const SizedBox(height: 8),
-              _buildLegendItem('Usia Tua (65+)', _bpsOrange, isSmallScreen),
+              _buildAgeLegendItem('Usia Tua (65+)', _bpsOrange, ageData['usiaTua']['total'], isSmallScreen),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  PieChartSectionData _buildAgePieSection(String ageKey, Color color, int index, bool isSmallScreen) {
+    final ageData = _ageDataByYear[selectedYear]!;
+    final percentage = ageData[ageKey]['percentage'].toDouble();
+    final total = ageData[ageKey]['total'] as int;
+    final isTouched = index == touchedPieIndex;
+    final radius = isTouched ? (isSmallScreen ? 70.0 : 75.0) : 60.0;
+    final fontSize = isTouched ? (isSmallScreen ? 11.0 : 12.0) : (isSmallScreen ? 10.0 : 11.0);
+    
+    final displayTitle = (showRealValues && isTouched)
+        ? _formatCompactNumber(total)
+        : '${percentage.toStringAsFixed(1)}%';
+
+    return PieChartSectionData(
+      color: color,
+      value: percentage,
+      title: displayTitle,
+      radius: radius,
+      titleStyle: TextStyle(
+        fontSize: fontSize,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  String _formatCompactNumber(int number) {
+    if (number >= 1000000) {
+      return '${(number / 1000000).toStringAsFixed(2)}M';
+    } else if (number >= 1000) {
+      return '${(number / 1000).toStringAsFixed(1)}K';
+    }
+    return number.toString();
+  }
+
+  Widget _buildAgeLegendItem(String title, Color color, int value, bool isSmallScreen) {
+    return Row(
+      children: [
+        Container(width: 14, height: 14, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(title, style: TextStyle(fontSize: isSmallScreen ? 12 : 14, color: _bpsTextPrimary)),
+        ),
+        Text(
+          _formatCompactNumber(value),
+          style: TextStyle(
+            fontSize: isSmallScreen ? 11 : 12,
+            color: _bpsTextSecondary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 
@@ -1088,6 +1250,17 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
         Text(title, style: TextStyle(fontSize: isSmallScreen ? 12 : 14, color: _bpsTextPrimary)),
       ],
     );
+  }
+
+  Color _getAgeGroupColor(String ageGroup) {
+    if (ageGroup.contains('Muda')) {
+      return _bpsBlue;
+    } else if (ageGroup.contains('Produktif')) {
+      return _bpsGreen;
+    } else if (ageGroup.contains('Tua')) {
+      return _bpsOrange;
+    }
+    return _bpsTextPrimary;
   }
 
   Widget _buildAdministrativeData(ResponsiveSizing sizing, bool isSmallScreen) {

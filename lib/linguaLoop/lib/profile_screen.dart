@@ -66,11 +66,11 @@ class _ProfileScreenState extends State<ProfileScreen>
     final sizing = ResponsiveSizing(context);
 
     return Scaffold(
-      backgroundColor: bpsBackground,
+      backgroundColor: Colors.white,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          _buildAppBar(sizing),
+          _buildHeader(sizing),
           SliverPadding(
             padding: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
             sliver: SliverToBoxAdapter(
@@ -104,55 +104,72 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _buildAppBar(ResponsiveSizing sizing) {
-    return SliverAppBar(
-      expandedHeight: sizing.isVerySmall ? 120.0 : 140.0,
-      pinned: true,
-      backgroundColor: bpsBlue,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
+  Widget _buildHeader(ResponsiveSizing sizing) {
+    return SliverToBoxAdapter(
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Container(
           decoration: BoxDecoration(
             color: bpsBlue,
             boxShadow: [BPSShadows.headerShadow],
           ),
           child: SafeArea(
-            child: Stack(
-              children: [
-                // Center logo
-                Center(
-                  child: Image.asset(
-                    'assets/images/logo_white.png',
-                    width: sizing.isVerySmall ? 60 : 80,
-                    height: sizing.isVerySmall ? 60 : 80,
-                    filterQuality: FilterQuality.medium,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Icon(
-                        Icons.account_balance_rounded,
-                        size: sizing.isVerySmall ? 48 : 64,
-                        color: Colors.white,
-                      );
-                    },
-                  ),
-                ),
-                // Version at bottom left
-                Positioned(
-                  left: sizing.horizontalPadding,
-                  bottom: sizing.itemSpacing,
-                  child: Text(
-                    'V$appVersion',
-                    style: TextStyle(
-                      fontSize: sizing.categorySubLabelFontSize,
-                      color: Colors.white.withOpacity(0.8),
-                      fontWeight: FontWeight.w500,
+            bottom: false,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                sizing.horizontalPadding,
+                sizing.horizontalPadding,
+                sizing.horizontalPadding,
+                sizing.horizontalPadding + 4,
+              ),
+              child: SizedBox(
+                height: sizing.headerLogoSize + sizing.itemSpacing + sizing.searchBarHeight,
+                child: Stack(
+                  children: [
+                    // Back button at top left
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                        onPressed: () => Navigator.of(context).pop(),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        iconSize: 28,
+                      ),
                     ),
-                  ),
+                    // Logo centered vertically and horizontally - larger size
+                    Center(
+                      child: Image.asset(
+                        'assets/images/logo_white.png',
+                        width: (sizing.headerLogoSize * 2) + 8,
+                        height: (sizing.headerLogoSize * 2) + 8,
+                        filterQuality: FilterQuality.medium,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            Icons.account_balance_rounded,
+                            color: Colors.white,
+                            size: (sizing.headerLogoSize * 2) + 8,
+                          );
+                        },
+                      ),
+                    ),
+                    // Version at bottom right
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: Text(
+                        'V$appVersion',
+                        style: TextStyle(
+                          fontSize: sizing.headerSubtitleSize,
+                          color: Colors.white.withOpacity(0.8),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

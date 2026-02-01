@@ -328,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     final sizing = ResponsiveSizing(context);
     
     return Scaffold(
-      backgroundColor: bpsBackground,
+      backgroundColor: Colors.white,
       body: _HomeScreenContent(
         animationController: _animationController,
         statsPageController: _statsPageController,
@@ -356,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget _buildModernBottomNav(ResponsiveSizing sizing) {
     return Container(
       decoration: BoxDecoration(
-        color: bpsCardBg,
+        color: Colors.white,
         boxShadow: [BPSShadows.bottomNavShadow],
       ),
       child: SafeArea(
@@ -466,9 +466,6 @@ class _HomeScreenContent extends StatelessWidget {
         // Header with search
         _buildHeader(),
         
-        // Last updated indicator
-        _buildLastUpdatedIndicator(),
-        
         // Stats snapshot section
         _buildStatsSection(context),
         
@@ -566,7 +563,7 @@ class _HomeScreenContent extends StatelessWidget {
                   // Search bar
                   Container(
                     decoration: BoxDecoration(
-                      color: bpsCardBg,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
@@ -700,34 +697,37 @@ class _HomeScreenContent extends StatelessWidget {
                 ],
               ),
             ),
-            // Frosted glass container
+            // Stats cards section
             Container(
               margin: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
               height: sizing.statsCardHeight,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                // Slightly darker background for glass contrast
-                color: const Color(0xFFE8EDF2),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: RepaintBoundary(
-                  child: PageView.builder(
-                    controller: statsPageController,
-                    itemCount: 4,
-                    physics: const PageScrollPhysics(),
-                    allowImplicitScrolling: true,
-                    itemBuilder: (context, index) {
-                      return switch (index) {
-                        0 => const _StatsCard1(),
-                        1 => const _StatsCard2(),
-                        2 => const _StatsCard3(),
-                        3 => const _StatsCard4(),
-                        _ => const SizedBox(),
-                      };
-                    },
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: bpsBlue.withOpacity(0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, 4),
+                    spreadRadius: -4,
                   ),
-                ),
+                ],
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: PageView.builder(
+                controller: statsPageController,
+                itemCount: 4,
+                physics: const PageScrollPhysics(),
+                allowImplicitScrolling: true,
+                itemBuilder: (context, index) {
+                  return switch (index) {
+                    0 => const _StatsCard1(),
+                    1 => const _StatsCard2(),
+                    2 => const _StatsCard3(),
+                    3 => const _StatsCard4(),
+                    _ => const SizedBox(),
+                  };
+                },
               ),
             ),
             SizedBox(height: sizing.itemSpacing),
@@ -900,7 +900,7 @@ class _HomeScreenContent extends StatelessWidget {
             ),
             padding: EdgeInsets.all(sizing.sectionSpacing),
             decoration: BoxDecoration(
-              color: bpsCardBg,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -1118,7 +1118,7 @@ class _StatsCard4 extends StatelessWidget {
   }
 }
 
-// Frosted Glass Card - Based on learned pattern
+// Clean Card with subtle tint - No blur, content clearly visible
 class _GlassStatsCard extends StatelessWidget {
   final String label;
   final String value;
@@ -1145,102 +1145,102 @@ class _GlassStatsCard extends StatelessWidget {
     final sizing = ResponsiveSizing(context);
     
     return Padding(
-      padding: EdgeInsets.all(sizing.horizontalPadding - 4),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20), // 1. Clip the blur
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // 2. Apply blur
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              // 3. Semi-transparent gradient for the "frosty" look
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withOpacity(0.25),
-                  Colors.white.withOpacity(0.10),
-                ],
-              ),
-              // 4. Thin border makes the glass edge pop
-              border: Border.all(
-                color: Colors.white.withOpacity(0.40),
-                width: 1.5,
-              ),
-              // 5. Soft shadow for depth
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+      padding: const EdgeInsets.all(9),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          // Subtle white base with tint
+          color: Colors.white.withOpacity(0.8),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.95),
+              accentColor.withOpacity(0.08),
+            ],
+          ),
+          border: Border.all(
+            color: accentColor.withOpacity(0.2),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: accentColor.withOpacity(0.12),
+              blurRadius: 20,
+              offset: const Offset(0, 6),
+              spreadRadius: -4,
             ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => screen),
-                  );
-                },
-                borderRadius: BorderRadius.circular(20),
-                child: Padding(
-                  padding: EdgeInsets.all(sizing.statsCardPadding),
-                  child: Row(
-                    children: [
-                      // Icon with subtle accent tint
-                      Container(
-                        width: sizing.statsIconContainerSize,
-                        height: sizing.statsIconContainerSize,
-                        decoration: BoxDecoration(
-                          color: accentColor.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Icon(
-                          icon,
-                          color: accentColor,
-                          size: sizing.statsIconSize,
-                        ),
-                      ),
-                      SizedBox(width: sizing.statsCardPadding - 2),
-                      // Data
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              label,
-                              style: TextStyle(
-                                fontSize: sizing.statsLabelFontSize,
-                                fontWeight: FontWeight.w600,
-                                color: bpsTextSecondary,
-                              ),
-                            ),
-                            SizedBox(height: sizing.isVerySmall ? 4 : 6),
-                            Text(
-                              value,
-                              style: TextStyle(
-                                fontSize: sizing.statsValueFontSize,
-                                fontWeight: FontWeight.w800,
-                                color: bpsTextPrimary,
-                                height: 1,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Chart
-                      SizedBox(
-                        width: sizing.statsMiniChartWidth,
-                        child: _GlassMiniChart(spots: chartSpots, color: accentColor),
-                      ),
-                    ],
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => screen),
+              );
+            },
+            borderRadius: BorderRadius.circular(20),
+            child: Padding(
+              padding: EdgeInsets.all(sizing.statsCardPadding),
+              child: Row(
+                children: [
+                  // Icon with accent tint
+                  Container(
+                    width: sizing.statsIconContainerSize,
+                    height: sizing.statsIconContainerSize,
+                    decoration: BoxDecoration(
+                      color: accentColor.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(
+                      icon,
+                      color: accentColor,
+                      size: sizing.statsIconSize,
+                    ),
                   ),
-                ),
+                  SizedBox(width: sizing.statsCardPadding - 2),
+                  // Data
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          label,
+                          style: TextStyle(
+                            fontSize: sizing.statsLabelFontSize,
+                            fontWeight: FontWeight.w600,
+                            color: bpsTextSecondary,
+                          ),
+                        ),
+                        SizedBox(height: sizing.isVerySmall ? 4 : 6),
+                        Text(
+                          value,
+                          style: TextStyle(
+                            fontSize: sizing.statsValueFontSize,
+                            fontWeight: FontWeight.w800,
+                            color: bpsTextPrimary,
+                            height: 1,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Chart
+                  SizedBox(
+                    width: sizing.statsMiniChartWidth,
+                    child: _GlassMiniChart(spots: chartSpots, color: accentColor),
+                  ),
+                ],
               ),
             ),
           ),
@@ -1375,7 +1375,7 @@ class _CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: bpsCardBg,
+      color: Colors.white,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: () {
@@ -1387,7 +1387,7 @@ class _CategoryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Container(
           decoration: BoxDecoration(
-            color: bpsCardBg,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: bpsBorder,

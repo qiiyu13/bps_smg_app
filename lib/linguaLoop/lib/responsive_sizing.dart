@@ -47,6 +47,7 @@ class ResponsiveSizing {
   double get searchClearIconSize => _select(16.0, 18.0, 20.0);
   double get searchFontSize => _select(12.0, 13.0, 14.0);
   double get searchPadding => _select(12.0, 14.0, 16.0);
+  double get searchBarHeight => horizontalPadding + (searchPadding * 2) + 20;
 
   // Stats cards
   double get statsCardHeight => _select(120.0, 140.0, 160.0);
