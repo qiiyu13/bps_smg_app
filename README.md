@@ -1,10 +1,11 @@
-# J-Recovery Project Overview
+# Lawang - BPS Statistik Kota Semarang
 
 ## Quick Summary
-**Project Name**: STARA (Statistik Indonesia) / BPS Statistik Kota Semarang
-**Type**: Hybrid Flutter mobile app + Node.js Express API
-**Purpose**: Statistics information platform for Semarang City (BPS - Indonesian Statistics Agency)
-**Architecture**: Flutter frontend with local storage + optional Node.js backend API
+**Project Name**: Lawang (Layanan data Wilayah Semarang)  
+**Type**: Hybrid Flutter mobile app + Node.js Express API  
+**Purpose**: Statistics information platform for Semarang City (BPS - Indonesian Statistics Agency)  
+**Architecture**: Flutter frontend with local storage + optional Node.js backend API  
+**Meaning**: Lawang stands for "Layanan data Wilayah Semarang" (Semarang Regional Data Service)
 
 ## Tech Stack
 
@@ -16,6 +17,7 @@
 - **Storage**: SharedPreferences (local), Hive
 - **Charts**: fl_chart, syncfusion_flutter_charts
 - **Networking**: http, dio
+- **Video**: video_player (for splash screen animation)
 
 ### Backend (Node.js)
 - **Runtime**: Node.js v25.1.0
@@ -31,22 +33,26 @@ Android (min SDK 21), iOS (12+), Web, Linux, macOS, Windows
 ## Project Structure
 
 ```
-/home/qiu/J-Recovery/
-├── lib/linguaLoop/              # Main application code
-│   ├── *.dart                   # 40+ screen/service files
-│   ├── server.js                # Express API server
-│   ├── package.json             # Node.js dependencies
-│   ├── pubspec.yaml             # Flutter dependencies (main)
-│   ├── routes/                  # API route handlers
-│   │   ├── data.js
-│   │   ├── statistik.js
-│   │   ├── publikasi.js
-│   │   └── [5 more]
-│   └── assets/                  # Images, fonts, animations
-├── android/                     # Android native config
-├── ios/                         # iOS native config
-├── pubspec.yaml                 # Root Flutter config (minimal)
-└── README.md
+/home/qiu/STARA_BPS_ID/           # Project root
+├── lib/                          # Main application code
+│   ├── *.dart                    # 47+ screen/service files
+│   ├── main.dart                 # App entry point
+│   ├── splash_screen.dart        # Animated splash screen
+│   ├── home_screen.dart          # Main dashboard
+│   └── ...                       # Admin screens, data services
+├── android/                      # Android native config
+│   └── app/
+│       ├── build.gradle.kts      # Build config with signing
+│       └── src/main/kotlin/      # MainActivity.kt
+├── ios/                          # iOS native config
+├── linux/                        # Linux config
+├── assets/                       # Static resources
+│   ├── images/                   # Logos, icons
+│   ├── fonts/                    # Poppins, Montserrat
+│   └── animations/               # Splash video (ringan.mp4)
+├── pubspec.yaml                  # Flutter dependencies
+├── analysis_options.yaml         # Dart lint rules
+└── README.md                     # This file
 ```
 
 ## Key Application Features
@@ -67,31 +73,39 @@ Android (min SDK 21), iOS (12+), Web, Linux, macOS, Windows
 - **Public Users**: Browse all statistics (read-only)
 - **Admin**: Manage data via admin panels (username: `admin`, password: `admin123`)
 
+### Splash Screen
+- **Animated logo** using video_player with MP4 animation
+- **Audio focus handling**: Uses `mixWithOthers: true` to avoid interrupting calls/music
+- **Auto-fallback**: Shows progress spinner if video fails to load
+- **Timeout protection**: Maximum 8-second splash duration
+
 ## Setup Instructions
 
 ### Prerequisites
 ```bash
 # Required
-- Flutter SDK 3.10+ (NOT currently installed)
+- Flutter SDK 3.10+ 
 - Node.js v14+ (currently installed: v25.1.0)
 - MySQL 5.7+ (for backend, if using)
 - Redis (optional, for caching)
-
-# Platform-specific
 - Android Studio + Android SDK (for Android)
 - Xcode (for iOS, macOS only)
 ```
 
 ### Quick Start
+
 ```bash
-# 1. Install Flutter dependencies
-cd /home/qiu/J-Recovery/lib/linguaLoop
+# 1. Navigate to project root
+cd /home/qiu/STARA_BPS_ID
+
+# 2. Install Flutter dependencies
 flutter pub get
 
-# 2. Install Node.js dependencies
+# 3. Install Node.js dependencies (if using backend)
+cd backend  # or wherever server.js is located
 npm install
 
-# 3. Create .env file
+# 4. Create .env file for backend (optional)
 cat > .env << 'EOF'
 PORT=3000
 NODE_ENV=development
@@ -104,58 +118,113 @@ REDIS_PORT=6379
 JWT_SECRET=your_secret_key_here
 EOF
 
-# 4. Start backend server
+# 5. Start backend server (optional)
 npm run dev
 
-# 5. Run Flutter app (new terminal)
+# 6. Run Flutter app (new terminal)
+cd /home/qiu/STARA_BPS_ID
 flutter run
 ```
 
-### Important Configuration
-- **API URL**: Set in `lib/linguaLoop/api_services.dart` → `baseUrl = 'http://10.0.2.2:3000/api'`
-- **CORS Origins**: Configured in `lib/linguaLoop/server.js`
-- **Rate Limit**: 100 requests/15 minutes
-- **Admin Credentials**: Hardcoded in login screen
+## Release Build Guide
+
+### Step 1: Generate Release Keystore
+
+Create your release signing key:
+
+```bash
+cd /home/qiu/STARA_BPS_ID/android/app
+keytool -genkey -v -keystore lawang-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias lawang
+```
+
+When prompted:
+- Enter keystore password (remember this!)
+- Enter key password (can be same as keystore)
+- Fill in your organization details
+
+### Step 2: Configure Signing
+
+Edit `/home/qiu/STARA_BPS_ID/android/app/key.properties`:
+
+```properties
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=lawang
+storeFile=lawang-release-key.jks
+```
+
+⚠️ **IMPORTANT**: Never commit this file to Git! It's already in `.gitignore`.
+
+### Step 3: Update Version
+
+Edit `pubspec.yaml` before each release:
+
+```yaml
+version: 1.1.0+2  # versionName+versionCode (increment versionCode!)
+```
+
+**Rules:**
+- Always increment `versionCode` (+1, +2, +3...)
+- Android requires higher versionCode for updates
+- Use same keystore for all releases
+
+### Step 4: Build Release APK
+
+```bash
+cd /home/qiu/STARA_BPS_ID
+flutter build apk --release
+```
+
+**Output**: `build/app/outputs/flutter-apk/app-release.apk`
+
+### Step 5: Install/Update
+
+**Fresh install:**
+```bash
+adb install build/app/outputs/flutter-apk/app-release.apk
+```
+
+**Update over existing:**
+```bash
+adb install -r build/app/outputs/flutter-apk/app-release.apk
+```
+
+### Important Notes
+
+- **Keep your keystore safe**: If you lose `lawang-release-key.jks`, you cannot update the app on Play Store
+- **Same keystore for all releases**: Using different keystores breaks update capability
+- **Version code must increase**: Android rejects APKs with same/lower versionCode
+- **Never lose passwords**: Without them, the keystore is useless
 
 ## Critical Files Reference
 
 ### For UI Changes
 | Task | Files to Check |
 |------|---------------|
-| Home screen | `lib/linguaLoop/HomeScreen.dart`, `lib/linguaLoop/HomeAdminScreen.dart` |
-| Splash screen | `lib/linguaLoop/SplashScreen.dart` |
-| Login/Auth | `lib/linguaLoop/LoginScreen.dart` |
-| Population stats | `lib/linguaLoop/PendudukScreen.dart`, `lib/linguaLoop/AdminPendudukScreen.dart` |
-| Inflation stats | `lib/linguaLoop/InflasiScreen.dart`, `lib/linguaLoop/AdminInflasiScreen.dart` |
-| Education stats | `lib/linguaLoop/education_screen.dart`, `lib/linguaLoop/admin_education_screen.dart` |
-| SDGs dashboard | `lib/linguaLoop/sdgs_screen.dart`, `lib/linguaLoop/AdminSDGsScreen.dart` |
-| Economic growth | `lib/linguaLoop/pertumbuhan_ekonomi_screen.dart`, `lib/lingualoop/AdminPertumbuhanEkonomiScreen.dart` |
+| Home screen | `lib/home_screen.dart`, `lib/admin_home_screen.dart` |
+| Splash screen | `lib/splash_screen.dart` |
+| Login/Auth | `lib/login_admin.dart` |
+| Population stats | `lib/penduduk_screen.dart`, `lib/admin_penduduk_screen.dart` |
+| Inflation stats | `lib/inflasi_screen.dart`, `lib/admin_inflasi_screen.dart` |
+| Education stats | `lib/pendidikan_screen.dart`, `lib/admin_education_screen.dart` |
+| SDGs dashboard | `lib/sdgs_screen.dart`, `lib/admin_sdgs_dashboard_screen.dart` |
+| Economic growth | `lib/pertumbuhan_ekonomi_screen.dart`, `lib/admin_pertumbuhan_ekonomi_screen.dart` |
 
 ### For Data/State Management
 | Task | Files to Check |
 |------|---------------|
-| Education data service | `lib/linguaLoop/education_data_service.dart` |
-| SDGs data model | `lib/linguaLoop/kota_data.dart` |
-| API client | `lib/linguaLoop/api_services.dart` |
-| SharedPreferences keys | Check individual screen files |
-
-### For Backend/API Changes
-| Task | Files to Check |
-|------|---------------|
-| Server setup | `lib/linguaLoop/server.js` |
-| Statistics routes | `lib/linguaLoop/routes/statistik.js` |
-| Publications routes | `lib/linguaLoop/routes/publikasi.js` |
-| Data export | `lib/linguaLoop/routes/export.js` |
-| Regions/areas | `lib/linguaLoop/routes/wilayah.js` |
-| Test server | `lib/linguaLoop/test-server.js` |
+| Education data | `lib/education_data.dart`, `lib/education_service.dart` |
+| SDGs data | `lib/sdgs_data_service.dart` |
+| Statistics data | `lib/statistics_data.dart` |
+| SharedPreferences | Check individual screen files |
 
 ### For Platform Config
 | Task | Files to Check |
 |------|---------------|
 | Android config | `android/app/build.gradle.kts` |
 | iOS config | `ios/Runner/Info.plist` |
-| Flutter dependencies | `lib/linguaLoop/pubspec.yaml` |
-| Node.js dependencies | `lib/linguaLoop/package.json` |
+| Signing config | `android/app/key.properties` |
+| Flutter dependencies | `pubspec.yaml` |
 | Gradle properties | `android/gradle.properties` |
 
 ## Data Architecture
@@ -181,78 +250,50 @@ flutter run
 ## Common Tasks
 
 ### Add New Statistical Category
-1. Create screen file: `lib/linguaLoop/NewCategoryScreen.dart`
-2. Create admin screen: `lib/linguaLoop/AdminNewCategoryScreen.dart`
-3. Create data service: `lib/linguaLoop/new_category_data_service.dart`
-4. Add navigation from `HomeScreen.dart`
-5. Add admin navigation from `HomeAdminScreen.dart`
-6. Update assets in `lib/linguaLoop/pubspec.yaml` if needed
+1. Create screen file: `lib/new_category_screen.dart`
+2. Create admin screen: `lib/admin_new_category_screen.dart`
+3. Create data service: `lib/new_category_data.dart`
+4. Add navigation from `home_screen.dart`
+5. Add admin navigation from `admin_home_screen.dart`
+6. Update assets in `pubspec.yaml` if needed
 
 ### Modify Chart/Visualization
-- Check screen file for category (e.g., `PendudukScreen.dart`)
+- Check screen file for category (e.g., `penduduk_screen.dart`)
 - Charts use `fl_chart` package
 - Look for `LineChart`, `BarChart`, or `PieChart` widgets
 
 ### Update API Endpoint
-1. Modify route file in `lib/linguaLoop/routes/`
+1. Modify route file in backend routes folder
 2. Restart backend: `npm run dev`
-3. Update API service if needed: `lib/linguaLoop/api_services.dart`
+3. Update API service in relevant dart file
 
 ### Change Admin Credentials
-- File: `lib/linguaLoop/LoginScreen.dart`
-- Find hardcoded check: `username == 'admin' && password == 'admin123'`
+- File: `lib/login_admin.dart`
+- Find hardcoded check and update
 
 ### Add New Dependency
 ```bash
 # Flutter
-cd /home/qiu/J-Recovery/lib/linguaLoop
+cd /home/qiu/STARA_BPS_ID
 flutter pub add package_name
 
-# Node.js
-cd /home/qiu/J-Recovery/lib/linguaLoop
+# Node.js (if using backend)
 npm install package-name
 ```
-
-## API Endpoints Reference
-
-```
-Base: http://10.0.2.2:3000/api
-
-Statistics:
-- GET /statistik/terbaru
-- GET /statistik?kategori={category}
-
-Publications:
-- GET /publikasi/recent
-- GET /publikasi?page={n}&limit={n}
-
-Data:
-- GET /data/{dataId}?tahun={year}
-- GET /data/search?query={q}
-
-Regions:
-- GET /wilayah/provinsi
-- GET /wilayah/kabupaten?provinsi={id}
-
-Export:
-- GET /export/{dataId}?format={format}
-```
-
-## Known Limitations
-
-1. **Flutter SDK Not Installed**: Need to install Flutter before running
-2. **Hardcoded Credentials**: Admin auth is basic, not production-ready
-3. **No .env File**: Must create manually for backend
-4. **Mixed Data Sources**: App uses local storage, backend has separate data
-5. **API Keys**: Google Maps and Syncfusion require setup
 
 ## Build Commands
 
 ```bash
-# Android APK
+# Development
+flutter run
+
+# Android APK (debug)
 flutter build apk
 
-# Android App Bundle
+# Android APK (release)
+flutter build apk --release
+
+# Android App Bundle (for Play Store)
 flutter build appbundle
 
 # iOS
@@ -263,17 +304,40 @@ flutter build web
 
 # Run tests
 flutter test
-npm test
 ```
 
 ## Dependencies Count
 - **Flutter**: 37 runtime + 7 dev packages
-- **Node.js**: 15 runtime + 3 dev packages
+- **Node.js**: 15 runtime + 3 dev packages (backend optional)
 
 ## Additional Notes
 - App works offline-first with local storage
 - Backend is optional but provides additional features
 - Charts require data for years 2020-2024
 - Material Design with custom fonts (Poppins, Montserrat)
-- Rate limiting on API prevents abuse
+- Splash screen uses MP4 video with audio focus handling
 - Includes admin CRUD functionality for all categories
+- Release builds require proper keystore configuration
+
+## Troubleshooting
+
+### App crashes on launch
+- Check MainActivity.kt package matches applicationId in build.gradle.kts
+- Run `flutter clean && flutter pub get`
+
+### Video splash screen stuck
+- Check `mixWithOthers: true` in splash_screen.dart
+- Video will auto-fallback to spinner after 3 seconds if stuck
+
+### Cannot update installed app
+- Ensure using same keystore (`lawang-release-key.jks`)
+- Ensure versionCode is higher than installed version
+- Check app signing config in build.gradle.kts
+
+### Build fails with resource errors
+- Ensure all mipmap files are lowercase (`lawang.png`, not `Lawang.png`)
+- Run `flutter clean` before building
+
+---
+**Lawang** - Layanan data Wilayah Semarang  
+BPS Kota Semarang © 2024
