@@ -18,14 +18,24 @@ class _SplashScreenState extends State<SplashScreen>
   bool _isVideoInitialized = false;
   bool _isDisposed = false;
   Timer? _timeoutTimer;
+  Timer? _stuckCheckTimer;
+  Timer? _maxDurationTimer;
   bool _hasNavigated = false;
+  Duration _lastPosition = Duration.zero;
+  int _stuckCounter = 0;
 
   @override
   void initState() {
     super.initState();
     _initializeAnimations();
     _initializeVideo();
-    // Remove timeout - let video play to completion
+    // Safety net: ensure we navigate after max 8 seconds no matter what
+    _maxDurationTimer = Timer(const Duration(seconds: 8), () {
+      if (!_hasNavigated && !_isDisposed) {
+        print('Max splash duration reached, forcing navigation');
+        _navigateToHome();
+      }
+    });
   }
 
   void _initializeAnimations() {
@@ -56,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen>
       _videoController = VideoPlayerController.asset(
         'assets/animations/ringan.mp4',
         videoPlayerOptions: VideoPlayerOptions(
-          mixWithOthers: false,
+          mixWithOthers: true, // Allow playing without taking audio focus
           allowBackgroundPlayback: false,
         ),
       );
@@ -79,8 +89,17 @@ class _SplashScreenState extends State<SplashScreen>
 
       print('Video duration: ${_videoController!.value.duration}');
 
-      await _videoController!.play();
-      _videoController!.addListener(_checkVideoCompletion);
+      // Try to play video with error handling
+      try {
+        await _videoController!.play();
+        _videoController!.addListener(_checkVideoCompletion);
+      } catch (playError) {
+        print('Error playing video: $playError');
+        // If video fails to play (e.g., audio focus issue), show fallback
+        if (!_isDisposed && mounted) {
+          _showFallbackSplash();
+        }
+      }
     } catch (error) {
       print('Error initializing video: $error');
       _timeoutTimer?.cancel();
@@ -97,6 +116,21 @@ class _SplashScreenState extends State<SplashScreen>
     final duration = _videoController!.value.duration;
 
     print('Video position: $position / $duration');
+
+    // Check if video is stuck (position not changing)
+    if (position == _lastPosition) {
+      _stuckCounter++;
+      if (_stuckCounter > 3) {
+        // Stuck for ~3 seconds
+        print('Video appears stuck, using fallback');
+        _videoController?.pause();
+        _showFallbackSplash();
+        return;
+      }
+    } else {
+      _stuckCounter = 0;
+      _lastPosition = position;
+    }
 
     // Check if video completed
     if (position >= duration && !_hasNavigated) {
@@ -151,6 +185,8 @@ class _SplashScreenState extends State<SplashScreen>
   void dispose() {
     _isDisposed = true;
     _timeoutTimer?.cancel();
+    _stuckCheckTimer?.cancel();
+    _maxDurationTimer?.cancel();
 
     if (_videoController != null) {
       _videoController!.removeListener(_checkVideoCompletion);
@@ -221,12 +257,14 @@ class _SplashScreenState extends State<SplashScreen>
                         valueListenable: _videoController!,
                         builder: (context, VideoPlayerValue value, child) {
                           final progress = value.duration.inMilliseconds > 0
-                              ? value.position.inMilliseconds / value.duration.inMilliseconds
+                              ? value.position.inMilliseconds /
+                                  value.duration.inMilliseconds
                               : 0.0;
                           return Container(
                             height: 6,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFD1D5DB), // Darker gray background
+                              color: const Color(
+                                  0xFFD1D5DB), // Darker gray background
                               borderRadius: BorderRadius.circular(3),
                             ),
                             child: ClipRRect(

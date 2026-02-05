@@ -1,7 +1,7 @@
-name: stara
+name: lawang
 description: Aplikasi Statistik Indonesia - Data terpercaya dan komprehensif.
 publish_to: 'none' # Mencegah publikasi yang tidak disengaja
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

@@ -1,4 +1,4 @@
-package com.example.statistik_indonesia
+package com.bps.lawang
 
 import io.flutter.embedding.android.FlutterActivity
 

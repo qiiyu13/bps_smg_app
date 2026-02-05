@@ -377,8 +377,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 sizing: sizing,
               ),
               _buildNavItem(
-                icon: Icons.person_rounded,
-                label: 'Profile',
+                icon: Icons.info_rounded,
+                label: 'About Us',
                 isSelected: false,
                 sizing: sizing,
                 onTap: _navigateToProfile,

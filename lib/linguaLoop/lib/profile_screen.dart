@@ -385,8 +385,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                 onTap: _navigateToHome,
               ),
               _buildNavItem(
-                icon: Icons.person_rounded,
-                label: 'Profile',
+                icon: Icons.info_rounded,
+                label: 'About Us',
                 isSelected: true,
                 sizing: sizing,
               ),
