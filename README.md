@@ -2,9 +2,9 @@
 
 ## Quick Summary
 **Project Name**: Lawang (Layanan data Wilayah Semarang)  
-**Type**: Hybrid Flutter mobile app + Node.js Express API  
+**Type**: Flutter mobile app (offline-first)  
 **Purpose**: Statistics information platform for Semarang City (BPS - Indonesian Statistics Agency)  
-**Architecture**: Flutter frontend with local storage + optional Node.js backend API  
+**Architecture**: Flutter mobile app with local storage - works completely offline  
 **Meaning**: Lawang stands for "Layanan data Wilayah Semarang" (Semarang Regional Data Service)
 
 ## Tech Stack
@@ -16,16 +16,7 @@
 - **State Management**: Provider + GetX
 - **Storage**: SharedPreferences (local), Hive
 - **Charts**: fl_chart, syncfusion_flutter_charts
-- **Networking**: http, dio
 - **Video**: video_player (for splash screen animation)
-
-### Backend (Node.js)
-- **Runtime**: Node.js v25.1.0
-- **Framework**: Express.js
-- **Database**: MySQL + Sequelize ORM, Redis caching
-- **Auth**: JWT + bcryptjs
-- **Security**: Helmet, CORS, rate-limit
-- **API Base**: `http://10.0.2.2:3000/api` (Android emulator)
 
 ### Platform Support
 Android (min SDK 21), iOS (12+), Web, Linux, macOS, Windows
@@ -79,15 +70,18 @@ Android (min SDK 21), iOS (12+), Web, Linux, macOS, Windows
 - **Auto-fallback**: Shows progress spinner if video fails to load
 - **Timeout protection**: Maximum 8-second splash duration
 
+### Offline-First Design
+- **No internet required** - All data stored locally
+- **SharedPreferences** for persistent storage
+- **Works without any backend or API**
+- **Instant data access** - No loading from servers
+
 ## Setup Instructions
 
 ### Prerequisites
 ```bash
 # Required
 - Flutter SDK 3.10+ 
-- Node.js v14+ (currently installed: v25.1.0)
-- MySQL 5.7+ (for backend, if using)
-- Redis (optional, for caching)
 - Android Studio + Android SDK (for Android)
 - Xcode (for iOS, macOS only)
 ```
@@ -101,28 +95,7 @@ cd /home/qiu/STARA_BPS_ID
 # 2. Install Flutter dependencies
 flutter pub get
 
-# 3. Install Node.js dependencies (if using backend)
-cd backend  # or wherever server.js is located
-npm install
-
-# 4. Create .env file for backend (optional)
-cat > .env << 'EOF'
-PORT=3000
-NODE_ENV=development
-DB_HOST=localhost
-DB_USER=your_mysql_user
-DB_PASSWORD=your_mysql_password
-DB_NAME=statistik_indonesia
-REDIS_HOST=localhost
-REDIS_PORT=6379
-JWT_SECRET=your_secret_key_here
-EOF
-
-# 5. Start backend server (optional)
-npm run dev
-
-# 6. Run Flutter app (new terminal)
-cd /home/qiu/STARA_BPS_ID
+# 3. Run Flutter app
 flutter run
 ```
 
@@ -231,15 +204,15 @@ adb install -r build/app/outputs/flutter-apk/app-release.apk
 
 ### Storage Pattern
 - **Primary**: SharedPreferences (local storage)
-- **Backend**: Optional MySQL database (configured but using sample data)
 - **Structure**: Year-based data (2020-2024) per category
+- **Offline-only**: No server or API required
 
 ### Data Flow
 1. App initializes with default data on first run
 2. Data persists in SharedPreferences
 3. Admin updates through admin panels
 4. Changes saved locally and reflected immediately
-5. Backend API available but app works offline-first
+5. Data available instantly without network calls
 
 ### Key Data Models
 - **EducationData**: Literacy rates, schooling years, enrollment
@@ -262,23 +235,14 @@ adb install -r build/app/outputs/flutter-apk/app-release.apk
 - Charts use `fl_chart` package
 - Look for `LineChart`, `BarChart`, or `PieChart` widgets
 
-### Update API Endpoint
-1. Modify route file in backend routes folder
-2. Restart backend: `npm run dev`
-3. Update API service in relevant dart file
-
 ### Change Admin Credentials
 - File: `lib/login_admin.dart`
 - Find hardcoded check and update
 
 ### Add New Dependency
 ```bash
-# Flutter
 cd /home/qiu/STARA_BPS_ID
 flutter pub add package_name
-
-# Node.js (if using backend)
-npm install package-name
 ```
 
 ## Build Commands
@@ -308,12 +272,11 @@ flutter test
 
 ## Dependencies Count
 - **Flutter**: 37 runtime + 7 dev packages
-- **Node.js**: 15 runtime + 3 dev packages (backend optional)
 
 ## Additional Notes
-- App works offline-first with local storage
-- Backend is optional but provides additional features
-- Charts require data for years 2020-2024
+- App works completely offline - no internet required
+- All data stored locally using SharedPreferences
+- Instant data access without server delays
 - Material Design with custom fonts (Poppins, Montserrat)
 - Splash screen uses MP4 video with audio focus handling
 - Includes admin CRUD functionality for all categories
