@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'sdgs_data_service.dart';
-import 'sdgs_from_edit.dart'; // Import form yang terpisah
+import 'sdgs_from_edit.dart';
+import 'number_format_utils.dart'; // Import form yang terpisah
 
 class AdminSDGsDashboardScreen extends StatefulWidget {
   const AdminSDGsDashboardScreen({Key? key}) : super(key: key);
@@ -890,7 +891,7 @@ class _DetailKotaDialog extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          '$year: ${value.toStringAsFixed(2)}%',
+                          '$year: ${NumberFormatUtils.formatPercentage(value)}',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'number_format_utils.dart';
 
 class AdminKemiskinanScreen extends StatefulWidget {
   const AdminKemiskinanScreen({super.key});
@@ -23,14 +24,13 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedData = prefs.getString('kemiskinan_data');
-      
+
       if (mounted) {
         setState(() {
           if (savedData != null) {
             final decoded = json.decode(savedData) as Map<String, dynamic>;
-            yearlyData = decoded.map((key, value) =>
-              MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map))
-            );
+            yearlyData = decoded.map((key, value) => MapEntry(
+                int.parse(key), Map<String, dynamic>.from(value as Map)));
           } else {
             // Data default
             yearlyData = {
@@ -96,8 +96,7 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final encoded = json.encode(
-        yearlyData.map((key, value) => MapEntry(key.toString(), value))
-      );
+          yearlyData.map((key, value) => MapEntry(key.toString(), value)));
       await prefs.setString('kemiskinan_data', encoded);
     } catch (e) {
       debugPrint('Error saving data: $e');
@@ -130,8 +129,10 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
                         children: [
                           _buildHeaderCard(yearlyData.length),
                           const SizedBox(height: 20),
-                          ...(yearlyData.keys.toList()..sort((a, b) => b.compareTo(a)))
-                              .map((year) => _buildDataCard(year, yearlyData[year]!)),
+                          ...(yearlyData.keys.toList()
+                                ..sort((a, b) => b.compareTo(a)))
+                              .map((year) =>
+                                  _buildDataCard(year, yearlyData[year]!)),
                         ],
                       ),
               ),
@@ -280,7 +281,8 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFFFF5722), Color(0xFFE64A19)],
@@ -299,7 +301,8 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
               Row(
                 children: [
                   IconButton(
-                    onPressed: () => _showAddEditDialog(context, year: year, data: data),
+                    onPressed: () =>
+                        _showAddEditDialog(context, year: year, data: data),
                     icon: const Icon(Icons.edit, color: Color(0xFFFF5722)),
                     tooltip: 'Edit',
                   ),
@@ -313,11 +316,16 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
             ],
           ),
           const Divider(height: 24),
-          _buildInfoRow('Jumlah Penduduk Miskin', data['pendudukMiskin']?.toString() ?? '-', Icons.people_outline),
-          _buildInfoRow('Persentase Kemiskinan', data['persentase']?.toString() ?? '-', Icons.pie_chart),
-          _buildInfoRow('Garis Kemiskinan', data['garisMiskin']?.toString() ?? '-', Icons.attach_money),
-          _buildInfoRow('Indeks Kedalaman (P1)', data['indeksKedalaman']?.toString() ?? '-', Icons.analytics),
-          _buildInfoRow('Indeks Keparahan (P2)', data['indeksKeparahan']?.toString() ?? '-', Icons.trending_down),
+          _buildInfoRow('Jumlah Penduduk Miskin',
+              data['pendudukMiskin']?.toString() ?? '-', Icons.people_outline),
+          _buildInfoRow('Persentase Kemiskinan',
+              data['persentase']?.toString() ?? '-', Icons.pie_chart),
+          _buildInfoRow('Garis Kemiskinan',
+              data['garisMiskin']?.toString() ?? '-', Icons.attach_money),
+          _buildInfoRow('Indeks Kedalaman (P1)',
+              data['indeksKedalaman']?.toString() ?? '-', Icons.analytics),
+          _buildInfoRow('Indeks Keparahan (P2)',
+              data['indeksKeparahan']?.toString() ?? '-', Icons.trending_down),
         ],
       ),
     );
@@ -359,17 +367,25 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
     );
   }
 
-  void _showAddEditDialog(BuildContext context, {int? year, Map<String, dynamic>? data}) {
+  void _showAddEditDialog(BuildContext context,
+      {int? year, Map<String, dynamic>? data}) {
     final isEdit = year != null;
-    
+
     final tahunController = TextEditingController(text: year?.toString() ?? '');
-    final pendudukMiskinController = TextEditingController(text: data?['pendudukMiskin']?.toString() ?? '');
-    final pendudukMiskinValueController = TextEditingController(text: data?['pendudukMiskinValue']?.toString() ?? '');
-    final persentaseController = TextEditingController(text: data?['persentase']?.toString() ?? '');
-    final persentaseValueController = TextEditingController(text: data?['persentaseValue']?.toString() ?? '');
-    final garisMiskinController = TextEditingController(text: data?['garisMiskin']?.toString() ?? '');
-    final indeksKedalamanController = TextEditingController(text: data?['indeksKedalaman']?.toString() ?? '');
-    final indeksKeparahanController = TextEditingController(text: data?['indeksKeparahan']?.toString() ?? '');
+    final pendudukMiskinController =
+        TextEditingController(text: data?['pendudukMiskin']?.toString() ?? '');
+    final pendudukMiskinValueController = TextEditingController(
+        text: data?['pendudukMiskinValue']?.toString() ?? '');
+    final persentaseController =
+        TextEditingController(text: data?['persentase']?.toString() ?? '');
+    final persentaseValueController =
+        TextEditingController(text: data?['persentaseValue']?.toString() ?? '');
+    final garisMiskinController =
+        TextEditingController(text: data?['garisMiskin']?.toString() ?? '');
+    final indeksKedalamanController =
+        TextEditingController(text: data?['indeksKedalaman']?.toString() ?? '');
+    final indeksKeparahanController =
+        TextEditingController(text: data?['indeksKeparahan']?.toString() ?? '');
 
     showDialog(
       context: context,
@@ -484,9 +500,11 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
 
               final newData = {
                 'pendudukMiskin': pendudukMiskinController.text,
-                'pendudukMiskinValue': double.tryParse(pendudukMiskinValueController.text) ?? 0,
+                'pendudukMiskinValue':
+                    double.tryParse(pendudukMiskinValueController.text) ?? 0,
                 'persentase': persentaseController.text,
-                'persentaseValue': double.tryParse(persentaseValueController.text) ?? 0,
+                'persentaseValue':
+                    double.tryParse(persentaseValueController.text) ?? 0,
                 'garisMiskin': garisMiskinController.text,
                 'indeksKedalaman': indeksKedalamanController.text,
                 'indeksKeparahan': indeksKeparahanController.text,
@@ -512,12 +530,14 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
 
               await _saveData();
               setState(() {});
-              
+
               if (context.mounted) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(isEdit ? 'Data berhasil diupdate' : 'Data berhasil ditambahkan'),
+                    content: Text(isEdit
+                        ? 'Data berhasil diupdate'
+                        : 'Data berhasil ditambahkan'),
                     backgroundColor: Colors.green,
                   ),
                 );
@@ -550,7 +570,7 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
               yearlyData.remove(year);
               await _saveData();
               setState(() {});
-              
+
               if (context.mounted) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(

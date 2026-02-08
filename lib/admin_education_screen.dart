@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'education_data.dart';
 import 'education_service.dart';
 import 'add_edit_education.dart';
+import 'number_format_utils.dart';
 
 class AdminEducationScreen extends StatefulWidget {
   const AdminEducationScreen({Key? key}) : super(key: key);
@@ -428,15 +429,24 @@ class _AdminEducationScreenState extends State<AdminEducationScreen> {
       children: [
         _buildStatCard(
             'Total Murid',
-            '${(totalMurid / 1000).toStringAsFixed(1)}k',
+            NumberFormatUtils.formatCompact(totalMurid),
             Icons.groups,
             Colors.blue),
-        _buildStatCard('Melek Huruf', '${data.angkaMelekHuruf}%',
-            Icons.menu_book, Colors.green),
-        _buildStatCard('Rata-rata Lama Sekolah',
-            '${data.rataRataLamaSekolah} tahun', Icons.timer, Colors.orange),
-        _buildStatCard('Tingkat Kelulusan', '${data.tingkatKelulusan}%',
-            Icons.emoji_events, Colors.purple),
+        _buildStatCard(
+            'Melek Huruf',
+            NumberFormatUtils.formatPercentage(data.angkaMelekHuruf),
+            Icons.menu_book,
+            Colors.green),
+        _buildStatCard(
+            'Rata-rata Lama Sekolah',
+            '${NumberFormatUtils.formatDecimal(data.rataRataLamaSekolah, decimalPlaces: 1)} tahun',
+            Icons.timer,
+            Colors.orange),
+        _buildStatCard(
+            'Tingkat Kelulusan',
+            NumberFormatUtils.formatPercentage(data.tingkatKelulusan),
+            Icons.emoji_events,
+            Colors.purple),
       ],
     );
   }
@@ -748,7 +758,7 @@ class _AdminEducationScreenState extends State<AdminEducationScreen> {
                       if (groupIndex >= rasioData.length) return null;
                       String label = rodIndex == 0 ? 'Sekolah' : 'Guru';
                       return BarTooltipItem(
-                        '${rasioData[groupIndex].jenjang}\n1 $label : ${rod.toY.toStringAsFixed(2)} murid',
+                        '${rasioData[groupIndex].jenjang}\n1 $label : ${NumberFormatUtils.formatDecimal(rod.toY, decimalPlaces: 2)} murid',
                         const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -922,7 +932,7 @@ class _AdminEducationScreenState extends State<AdminEducationScreen> {
                       if (groupIndex >= partisipasiData.length) return null;
                       String label = rodIndex == 0 ? 'APM' : 'APK';
                       return BarTooltipItem(
-                        '${partisipasiData[groupIndex].jenjang}\n$label: ${rod.toY.toStringAsFixed(2)}%',
+                        '${partisipasiData[groupIndex].jenjang}\n$label: ${NumberFormatUtils.formatPercentage(rod.toY)}',
                         const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

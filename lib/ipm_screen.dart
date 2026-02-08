@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
+import 'number_format_utils.dart';
 
 // BPS Color Palette (matching home_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -25,7 +26,8 @@ class IpmScreen extends StatefulWidget {
   State<IpmScreen> createState() => _IpmScreenState();
 }
 
-class _IpmScreenState extends State<IpmScreen> with AutomaticKeepAliveClientMixin {
+class _IpmScreenState extends State<IpmScreen>
+    with AutomaticKeepAliveClientMixin {
   int selectedYear = 2024;
   Map<int, Map<String, dynamic>> ipmData = {};
   Map<int, Map<String, dynamic>> komponenData = {};
@@ -93,11 +95,41 @@ class _IpmScreenState extends State<IpmScreen> with AutomaticKeepAliveClientMixi
 
   void _initializeDefaultIpmData() {
     ipmData = {
-      2020: {'uhh': 77.34, 'rls': 10.53, 'hls': 15.52, 'pengeluaran': 15243.00, 'ipm': 83.05},
-      2021: {'uhh': 77.51, 'rls': 10.78, 'hls': 15.53, 'pengeluaran': 15425.00, 'ipm': 83.55},
-      2022: {'uhh': 77.69, 'rls': 10.80, 'hls': 15.54, 'pengeluaran': 16047.00, 'ipm': 84.08},
-      2023: {'uhh': 77.90, 'rls': 10.81, 'hls': 15.55, 'pengeluaran': 16420.00, 'ipm': 84.43},
-      2024: {'uhh': 78.23, 'rls': 11.05, 'hls': 15.57, 'pengeluaran': 17250.00, 'ipm': 85.24},
+      2020: {
+        'uhh': 77.34,
+        'rls': 10.53,
+        'hls': 15.52,
+        'pengeluaran': 15243.00,
+        'ipm': 83.05
+      },
+      2021: {
+        'uhh': 77.51,
+        'rls': 10.78,
+        'hls': 15.53,
+        'pengeluaran': 15425.00,
+        'ipm': 83.55
+      },
+      2022: {
+        'uhh': 77.69,
+        'rls': 10.80,
+        'hls': 15.54,
+        'pengeluaran': 16047.00,
+        'ipm': 84.08
+      },
+      2023: {
+        'uhh': 77.90,
+        'rls': 10.81,
+        'hls': 15.55,
+        'pengeluaran': 16420.00,
+        'ipm': 84.43
+      },
+      2024: {
+        'uhh': 78.23,
+        'rls': 11.05,
+        'hls': 15.57,
+        'pengeluaran': 17250.00,
+        'ipm': 85.24
+      },
     };
   }
 
@@ -112,8 +144,7 @@ class _IpmScreenState extends State<IpmScreen> with AutomaticKeepAliveClientMixi
   }
 
   String _formatNumber(double number) {
-    if (number >= 1000) return '${(number / 1000).toStringAsFixed(2)} Ribu';
-    return number.toStringAsFixed(2);
+    return NumberFormatUtils.formatCompact(number);
   }
 
   @override
@@ -197,7 +228,8 @@ class _IpmScreenState extends State<IpmScreen> with AutomaticKeepAliveClientMixi
                         ipmData: ipmData,
                         komponenData: komponenData,
                         cachedSortedYears: _cachedSortedYears,
-                        onYearSelected: (year) => setState(() => selectedYear = year),
+                        onYearSelected: (year) =>
+                            setState(() => selectedYear = year),
                         sizing: sizing,
                         isSmallScreen: isSmallScreen,
                         formatNumber: _formatNumber,
@@ -208,7 +240,8 @@ class _IpmScreenState extends State<IpmScreen> with AutomaticKeepAliveClientMixi
     );
   }
 
-  Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildHeader(
+      BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
         color: _bpsOrange,
@@ -357,7 +390,8 @@ class _IpmScreenContent extends StatelessWidget {
     final currentData = ipmData[selectedYear]!;
 
     return CustomScrollView(
-      physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      physics:
+          const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       slivers: [
         SliverPadding(
           padding: EdgeInsets.all(sizing.horizontalPadding),
@@ -380,7 +414,8 @@ class _IpmScreenContent extends StatelessWidget {
                 isSmallScreen: isSmallScreen,
               ),
               SizedBox(height: sizing.sectionSpacing),
-              _IpmInformationPanel(sizing: sizing, isSmallScreen: isSmallScreen),
+              _IpmInformationPanel(
+                  sizing: sizing, isSmallScreen: isSmallScreen),
               SizedBox(height: sizing.sectionSpacing),
             ]),
           ),
@@ -474,39 +509,47 @@ class _IpmScreenContent extends StatelessWidget {
             children: [
               _buildCompactIndicatorRow(
                 context: context,
-                value: data['ipm'].toStringAsFixed(2),
+                value: NumberFormatUtils.formatDecimal(data['ipm'] as double,
+                    decimalPlaces: 2),
                 label: 'IPM',
                 color: _bpsGreen,
                 icon: Icons.trending_up_rounded,
-                description: 'Indeks Pembangunan Manusia (IPM) mengukur capaian pembangunan manusia berbasis sejumlah komponen dasar kualitas hidup meliputi umur panjang dan hidup sehat, pengetahuan, dan standar hidup layak.',
+                description:
+                    'Indeks Pembangunan Manusia (IPM) mengukur capaian pembangunan manusia berbasis sejumlah komponen dasar kualitas hidup meliputi umur panjang dan hidup sehat, pengetahuan, dan standar hidup layak.',
                 isFirst: true,
               ),
               _buildIndicatorDivider(),
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${data['uhh'].toStringAsFixed(2)} Tahun',
+                value:
+                    '${NumberFormatUtils.formatDecimal(data['uhh'] as double, decimalPlaces: 2)} Tahun',
                 label: 'UHH',
                 color: _bpsRed,
                 icon: Icons.favorite,
-                description: 'Umur Harapan Hidup (UHH) saat lahir didefinisikan sebagai rata-rata perkiraan banyak tahun yang dapat ditempuh oleh seseorang sejak lahir. UHH mencerminkan derajat kesehatan suatu masyarakat.',
+                description:
+                    'Umur Harapan Hidup (UHH) saat lahir didefinisikan sebagai rata-rata perkiraan banyak tahun yang dapat ditempuh oleh seseorang sejak lahir. UHH mencerminkan derajat kesehatan suatu masyarakat.',
               ),
               _buildIndicatorDivider(),
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${data['hls'].toStringAsFixed(2)} Tahun',
+                value:
+                    '${NumberFormatUtils.formatDecimal(data['hls'] as double, decimalPlaces: 2)} Tahun',
                 label: 'HLS',
                 color: _bpsBlue,
                 icon: Icons.school,
-                description: 'Harapan Lama Sekolah (HLS) didefinisikan sebagai lamanya sekolah (dalam tahun) yang diharapkan akan dirasakan oleh anak pada umur tertentu di masa mendatang.',
+                description:
+                    'Harapan Lama Sekolah (HLS) didefinisikan sebagai lamanya sekolah (dalam tahun) yang diharapkan akan dirasakan oleh anak pada umur tertentu di masa mendatang.',
               ),
               _buildIndicatorDivider(),
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${data['rls'].toStringAsFixed(2)} Tahun',
+                value:
+                    '${NumberFormatUtils.formatDecimal(data['rls'] as double, decimalPlaces: 2)} Tahun',
                 label: 'RLS',
                 color: _bpsGreen,
                 icon: Icons.auto_stories,
-                description: 'Rata-rata Lama Sekolah (RLS) didefinisikan sebagai jumlah tahun yang digunakan oleh penduduk dalam menjalani pendidikan formal.',
+                description:
+                    'Rata-rata Lama Sekolah (RLS) didefinisikan sebagai jumlah tahun yang digunakan oleh penduduk dalam menjalani pendidikan formal.',
               ),
               _buildIndicatorDivider(),
               _buildCompactIndicatorRow(
@@ -515,7 +558,8 @@ class _IpmScreenContent extends StatelessWidget {
                 label: 'Pengeluaran per Kapita',
                 color: _bpsOrange,
                 icon: Icons.monetization_on,
-                description: 'Pengeluaran per kapita disesuaikan merupakan rata-rata pengeluaran per kapita per tahun yang telah disesuaikan dengan paritas daya beli (Purchasing Power Parity).',
+                description:
+                    'Pengeluaran per kapita disesuaikan merupakan rata-rata pengeluaran per kapita per tahun yang telah disesuaikan dengan paritas daya beli (Purchasing Power Parity).',
                 isLast: true,
               ),
             ],
@@ -538,7 +582,8 @@ class _IpmScreenContent extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => _showDetailDialog(context, label, value, icon, color, description),
+        onTap: () =>
+            _showDetailDialog(context, label, value, icon, color, description),
         splashColor: color.withOpacity(0.1),
         highlightColor: color.withOpacity(0.05),
         child: Padding(
@@ -915,7 +960,8 @@ class _YearSelector extends StatelessWidget {
                       year.toString(),
                       style: TextStyle(
                         fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w600,
                         color: isSelected ? Colors.white : _bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
@@ -1066,7 +1112,8 @@ class _IpmComparisonChart extends StatelessWidget {
                         interval: 4,
                         getTitlesWidget: (value, meta) {
                           return Text(
-                            value.toStringAsFixed(0),
+                            NumberFormatUtils.formatDecimal(value,
+                                decimalPlaces: 0),
                             style: TextStyle(
                               fontSize: isSmallScreen ? 10 : 12,
                               color: _bpsTextSecondary,
@@ -1085,7 +1132,8 @@ class _IpmComparisonChart extends StatelessWidget {
                           final index = value.toInt();
                           if (index >= 0 && index < yearLabels.length) {
                             return Padding(
-                              padding: EdgeInsets.only(top: isSmallScreen ? 6 : 8),
+                              padding:
+                                  EdgeInsets.only(top: isSmallScreen ? 6 : 8),
                               child: Text(
                                 yearLabels[index],
                                 style: TextStyle(
@@ -1100,8 +1148,10 @@ class _IpmComparisonChart extends StatelessWidget {
                         },
                       ),
                     ),
-                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
+                    topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
                   ),
                   borderData: FlBorderData(show: false),
                   lineTouchData: LineTouchData(
@@ -1109,20 +1159,26 @@ class _IpmComparisonChart extends StatelessWidget {
                     touchTooltipData: LineTouchTooltipData(
                       getTooltipColor: (spot) => _bpsCardBg,
                       tooltipRoundedRadius: 8,
-                      tooltipBorder: BorderSide(color: Colors.grey[300]!, width: 1),
-                      tooltipPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      tooltipBorder:
+                          BorderSide(color: Colors.grey[300]!, width: 1),
+                      tooltipPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       getTooltipItems: (touchedSpots) {
                         return touchedSpots.map((barSpot) {
                           final index = barSpot.x.toInt();
                           if (index >= 0 && index < yearLabels.length) {
                             String label = barSpot.barIndex == 0
                                 ? 'Semarang'
-                                : (barSpot.barIndex == 1 ? 'Jateng' : 'Nasional');
+                                : (barSpot.barIndex == 1
+                                    ? 'Jateng'
+                                    : 'Nasional');
                             Color color = barSpot.barIndex == 0
                                 ? _bpsGreen
-                                : (barSpot.barIndex == 1 ? _bpsBlue : _bpsOrange);
+                                : (barSpot.barIndex == 1
+                                    ? _bpsBlue
+                                    : _bpsOrange);
                             return LineTooltipItem(
-                              '${yearLabels[index]}\n$label: ${barSpot.y.toStringAsFixed(2)}',
+                              '${yearLabels[index]}\n$label: ${NumberFormatUtils.formatDecimal(barSpot.y, decimalPlaces: 2)}',
                               TextStyle(
                                 color: color,
                                 fontWeight: FontWeight.bold,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'number_format_utils.dart';
 
 class AdminInflasiScreen extends StatefulWidget {
   const AdminInflasiScreen({Key? key}) : super(key: key);
@@ -18,11 +19,76 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
 
   // Default data
   Map<int, List<double>> monthlyInflationData = {
-    2019: [0.32, 0.01, 0.11, -0.10, 0.48, 0.55, 0.31, -0.02, -0.27, 0.02, -0.16, 0.30],
-    2020: [0.40, 0.28, 0.10, -0.10, 0.07, 0.18, -0.05, -0.05, -0.05, -0.09, 0.28, 0.45],
-    2021: [0.26, 0.10, 0.08, -0.13, 0.32, 0.33, 0.21, 0.03, 0.12, 0.12, 0.37, 0.57],
-    2022: [0.56, 0.64, 0.66, 0.95, 0.40, 0.56, 0.64, 0.21, 1.17, 0.12, 0.03, 0.66],
-    2023: [0.34, -0.02, 0.12, -0.07, 0.09, 0.59, 0.21, 0.18, -0.04, -0.06, 0.08, 0.15],
+    2019: [
+      0.32,
+      0.01,
+      0.11,
+      -0.10,
+      0.48,
+      0.55,
+      0.31,
+      -0.02,
+      -0.27,
+      0.02,
+      -0.16,
+      0.30
+    ],
+    2020: [
+      0.40,
+      0.28,
+      0.10,
+      -0.10,
+      0.07,
+      0.18,
+      -0.05,
+      -0.05,
+      -0.05,
+      -0.09,
+      0.28,
+      0.45
+    ],
+    2021: [
+      0.26,
+      0.10,
+      0.08,
+      -0.13,
+      0.32,
+      0.33,
+      0.21,
+      0.03,
+      0.12,
+      0.12,
+      0.37,
+      0.57
+    ],
+    2022: [
+      0.56,
+      0.64,
+      0.66,
+      0.95,
+      0.40,
+      0.56,
+      0.64,
+      0.21,
+      1.17,
+      0.12,
+      0.03,
+      0.66
+    ],
+    2023: [
+      0.34,
+      -0.02,
+      0.12,
+      -0.07,
+      0.09,
+      0.59,
+      0.21,
+      0.18,
+      -0.04,
+      -0.06,
+      0.08,
+      0.15
+    ],
   };
 
   Map<int, double> yearlyInflation = {
@@ -50,16 +116,71 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
   };
 
   Map<String, Map<String, double>> inflationComponents = {
-    'Makanan, Minuman & Tembakau': {'2019': 4.55, '2020': 3.28, '2021': 2.84, '2022': 5.33, '2023': 4.12},
-    'Pakaian & Alas Kaki': {'2019': 0.84, '2020': 0.45, '2021': 0.67, '2022': 1.23, '2023': 0.92},
-    'Perumahan & Fasilitas': {'2019': 1.69, '2020': 1.45, '2021': 1.52, '2022': 2.15, '2023': 1.78},
-    'Perawatan Kesehatan': {'2019': 2.43, '2020': 2.15, '2021': 2.67, '2022': 3.45, '2023': 2.89},
-    'Transportasi': {'2019': 1.24, '2020': 0.89, '2021': 1.45, '2022': 4.67, '2023': 2.34},
-    'Komunikasi & Keuangan': {'2019': 1.02, '2020': 0.78, '2021': 0.95, '2022': 1.34, '2023': 1.12},
-    'Rekreasi & Olahraga': {'2019': 2.18, '2020': 1.67, '2021': 2.05, '2022': 2.89, '2023': 2.45},
+    'Makanan, Minuman & Tembakau': {
+      '2019': 4.55,
+      '2020': 3.28,
+      '2021': 2.84,
+      '2022': 5.33,
+      '2023': 4.12
+    },
+    'Pakaian & Alas Kaki': {
+      '2019': 0.84,
+      '2020': 0.45,
+      '2021': 0.67,
+      '2022': 1.23,
+      '2023': 0.92
+    },
+    'Perumahan & Fasilitas': {
+      '2019': 1.69,
+      '2020': 1.45,
+      '2021': 1.52,
+      '2022': 2.15,
+      '2023': 1.78
+    },
+    'Perawatan Kesehatan': {
+      '2019': 2.43,
+      '2020': 2.15,
+      '2021': 2.67,
+      '2022': 3.45,
+      '2023': 2.89
+    },
+    'Transportasi': {
+      '2019': 1.24,
+      '2020': 0.89,
+      '2021': 1.45,
+      '2022': 4.67,
+      '2023': 2.34
+    },
+    'Komunikasi & Keuangan': {
+      '2019': 1.02,
+      '2020': 0.78,
+      '2021': 0.95,
+      '2022': 1.34,
+      '2023': 1.12
+    },
+    'Rekreasi & Olahraga': {
+      '2019': 2.18,
+      '2020': 1.67,
+      '2021': 2.05,
+      '2022': 2.89,
+      '2023': 2.45
+    },
   };
 
-  final List<String> fullMonths = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+  final List<String> fullMonths = [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember'
+  ];
 
   int _selectedYear = 2023;
   bool _isLoading = true;
@@ -77,27 +198,27 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      
+
       final monthlyDataString = prefs.getString(_monthlyDataKey);
       if (monthlyDataString != null) {
         monthlyInflationData = _parseMonthlyData(monthlyDataString);
       }
-      
+
       final yearlyDataString = prefs.getString(_yearlyDataKey);
       if (yearlyDataString != null) {
         yearlyInflation = _parseYearlyData(yearlyDataString);
       }
-      
+
       final coreDataString = prefs.getString(_coreDataKey);
       if (coreDataString != null) {
         coreInflation = _parseYearlyData(coreDataString);
       }
-      
+
       final ihkDataString = prefs.getString(_ihkDataKey);
       if (ihkDataString != null) {
         ihkData = _parseYearlyData(ihkDataString);
       }
-      
+
       final componentsString = prefs.getString(_componentsKey);
       if (componentsString != null) {
         inflationComponents = _parseComponentsData(componentsString);
@@ -114,7 +235,7 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
   Map<int, List<double>> _parseMonthlyData(String data) {
     final Map<int, List<double>> result = {};
     final lines = data.split(';');
-    
+
     for (final line in lines) {
       final parts = line.split(':');
       if (parts.length == 2) {
@@ -123,14 +244,14 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
         result[year] = values;
       }
     }
-    
+
     return result;
   }
 
   Map<int, double> _parseYearlyData(String data) {
     final Map<int, double> result = {};
     final lines = data.split(';');
-    
+
     for (final line in lines) {
       final parts = line.split(':');
       if (parts.length == 2) {
@@ -139,64 +260,62 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
         result[year] = value;
       }
     }
-    
+
     return result;
   }
 
   Map<String, Map<String, double>> _parseComponentsData(String data) {
     final Map<String, Map<String, double>> result = {};
     final lines = data.split(';');
-    
+
     for (final line in lines) {
       final parts = line.split(':');
       if (parts.length == 2) {
         final componentName = parts[0];
         final yearData = parts[1].split(',');
         final Map<String, double> componentData = {};
-        
+
         for (final yearValue in yearData) {
           final yearParts = yearValue.split('=');
           if (yearParts.length == 2) {
             componentData[yearParts[0]] = double.parse(yearParts[1]);
           }
         }
-        
+
         result[componentName] = componentData;
       }
     }
-    
+
     return result;
   }
 
   Future<void> _saveData() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      
+
       final monthlyDataString = monthlyInflationData.entries
           .map((e) => '${e.key}:${e.value.join(",")}')
           .join(';');
       await prefs.setString(_monthlyDataKey, monthlyDataString);
-      
-      final yearlyDataString = yearlyInflation.entries
-          .map((e) => '${e.key}:${e.value}')
-          .join(';');
+
+      final yearlyDataString =
+          yearlyInflation.entries.map((e) => '${e.key}:${e.value}').join(';');
       await prefs.setString(_yearlyDataKey, yearlyDataString);
-      
-      final coreDataString = coreInflation.entries
-          .map((e) => '${e.key}:${e.value}')
-          .join(';');
+
+      final coreDataString =
+          coreInflation.entries.map((e) => '${e.key}:${e.value}').join(';');
       await prefs.setString(_coreDataKey, coreDataString);
-      
-      final ihkDataString = ihkData.entries
-          .map((e) => '${e.key}:${e.value}')
-          .join(';');
+
+      final ihkDataString =
+          ihkData.entries.map((e) => '${e.key}:${e.value}').join(';');
       await prefs.setString(_ihkDataKey, ihkDataString);
-      
+
       final componentsString = inflationComponents.entries
-          .map((e) => '${e.key}:${e.value.entries.map((y) => '${y.key}=${y.value}').join(",")}')
+          .map((e) =>
+              '${e.key}:${e.value.entries.map((y) => '${y.key}=${y.value}').join(",")}')
           .join(';');
       await prefs.setString(_componentsKey, componentsString);
-      
+
       _showSuccessSnackbar('Data berhasil disimpan!');
     } catch (e) {
       _showErrorSnackbar('Gagal menyimpan data: $e');
@@ -208,7 +327,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Reset Data'),
-        content: const Text('Apakah Anda yakin ingin mengembalikan data ke nilai default? Data yang telah diubah akan hilang.'),
+        content: const Text(
+            'Apakah Anda yakin ingin mengembalikan data ke nilai default? Data yang telah diubah akan hilang.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -229,26 +349,151 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
     if (confirm == true) {
       setState(() {
         monthlyInflationData = {
-          2019: [0.32, 0.01, 0.11, -0.10, 0.48, 0.55, 0.31, -0.02, -0.27, 0.02, -0.16, 0.30],
-          2020: [0.40, 0.28, 0.10, -0.10, 0.07, 0.18, -0.05, -0.05, -0.05, -0.09, 0.28, 0.45],
-          2021: [0.26, 0.10, 0.08, -0.13, 0.32, 0.33, 0.21, 0.03, 0.12, 0.12, 0.37, 0.57],
-          2022: [0.56, 0.64, 0.66, 0.95, 0.40, 0.56, 0.64, 0.21, 1.17, 0.12, 0.03, 0.66],
-          2023: [0.34, -0.02, 0.12, -0.07, 0.09, 0.59, 0.21, 0.18, -0.04, -0.06, 0.08, 0.15],
+          2019: [
+            0.32,
+            0.01,
+            0.11,
+            -0.10,
+            0.48,
+            0.55,
+            0.31,
+            -0.02,
+            -0.27,
+            0.02,
+            -0.16,
+            0.30
+          ],
+          2020: [
+            0.40,
+            0.28,
+            0.10,
+            -0.10,
+            0.07,
+            0.18,
+            -0.05,
+            -0.05,
+            -0.05,
+            -0.09,
+            0.28,
+            0.45
+          ],
+          2021: [
+            0.26,
+            0.10,
+            0.08,
+            -0.13,
+            0.32,
+            0.33,
+            0.21,
+            0.03,
+            0.12,
+            0.12,
+            0.37,
+            0.57
+          ],
+          2022: [
+            0.56,
+            0.64,
+            0.66,
+            0.95,
+            0.40,
+            0.56,
+            0.64,
+            0.21,
+            1.17,
+            0.12,
+            0.03,
+            0.66
+          ],
+          2023: [
+            0.34,
+            -0.02,
+            0.12,
+            -0.07,
+            0.09,
+            0.59,
+            0.21,
+            0.18,
+            -0.04,
+            -0.06,
+            0.08,
+            0.15
+          ],
         };
-        yearlyInflation = {2019: 2.72, 2020: 1.68, 2021: 1.87, 2022: 4.21, 2023: 2.61};
-        coreInflation = {2019: 3.04, 2020: 1.59, 2021: 1.64, 2022: 3.04, 2023: 1.93};
-        ihkData = {2019: 106.02, 2020: 107.80, 2021: 109.82, 2022: 114.44, 2023: 113.59};
+        yearlyInflation = {
+          2019: 2.72,
+          2020: 1.68,
+          2021: 1.87,
+          2022: 4.21,
+          2023: 2.61
+        };
+        coreInflation = {
+          2019: 3.04,
+          2020: 1.59,
+          2021: 1.64,
+          2022: 3.04,
+          2023: 1.93
+        };
+        ihkData = {
+          2019: 106.02,
+          2020: 107.80,
+          2021: 109.82,
+          2022: 114.44,
+          2023: 113.59
+        };
         inflationComponents = {
-          'Makanan, Minuman & Tembakau': {'2019': 4.55, '2020': 3.28, '2021': 2.84, '2022': 5.33, '2023': 4.12},
-          'Pakaian & Alas Kaki': {'2019': 0.84, '2020': 0.45, '2021': 0.67, '2022': 1.23, '2023': 0.92},
-          'Perumahan & Fasilitas': {'2019': 1.69, '2020': 1.45, '2021': 1.52, '2022': 2.15, '2023': 1.78},
-          'Perawatan Kesehatan': {'2019': 2.43, '2020': 2.15, '2021': 2.67, '2022': 3.45, '2023': 2.89},
-          'Transportasi': {'2019': 1.24, '2020': 0.89, '2021': 1.45, '2022': 4.67, '2023': 2.34},
-          'Komunikasi & Keuangan': {'2019': 1.02, '2020': 0.78, '2021': 0.95, '2022': 1.34, '2023': 1.12},
-          'Rekreasi & Olahraga': {'2019': 2.18, '2020': 1.67, '2021': 2.05, '2022': 2.89, '2023': 2.45},
+          'Makanan, Minuman & Tembakau': {
+            '2019': 4.55,
+            '2020': 3.28,
+            '2021': 2.84,
+            '2022': 5.33,
+            '2023': 4.12
+          },
+          'Pakaian & Alas Kaki': {
+            '2019': 0.84,
+            '2020': 0.45,
+            '2021': 0.67,
+            '2022': 1.23,
+            '2023': 0.92
+          },
+          'Perumahan & Fasilitas': {
+            '2019': 1.69,
+            '2020': 1.45,
+            '2021': 1.52,
+            '2022': 2.15,
+            '2023': 1.78
+          },
+          'Perawatan Kesehatan': {
+            '2019': 2.43,
+            '2020': 2.15,
+            '2021': 2.67,
+            '2022': 3.45,
+            '2023': 2.89
+          },
+          'Transportasi': {
+            '2019': 1.24,
+            '2020': 0.89,
+            '2021': 1.45,
+            '2022': 4.67,
+            '2023': 2.34
+          },
+          'Komunikasi & Keuangan': {
+            '2019': 1.02,
+            '2020': 0.78,
+            '2021': 0.95,
+            '2022': 1.34,
+            '2023': 1.12
+          },
+          'Rekreasi & Olahraga': {
+            '2019': 2.18,
+            '2020': 1.67,
+            '2021': 2.05,
+            '2022': 2.89,
+            '2023': 2.45
+          },
         };
       });
-      
+
       _saveData();
     }
   }
@@ -278,7 +523,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
     if (yearData == null) return;
 
     final List<TextEditingController> controllers = yearData
-        .map((value) => TextEditingController(text: value.toStringAsFixed(2)))
+        .map((value) => TextEditingController(
+            text: NumberFormatUtils.formatDecimal(value, decimalPlaces: 2)))
         .toList();
 
     showDialog(
@@ -307,12 +553,17 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                       Expanded(
                         child: TextField(
                           controller: controllers[index],
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
+                          inputFormatters: [
+                            IndonesianNumberInputFormatter(allowDecimal: true)
+                          ],
                           decoration: InputDecoration(
                             labelText: 'Nilai (%)',
                             border: const OutlineInputBorder(),
                             suffixText: '%',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
                           ),
                         ),
                       ),
@@ -332,13 +583,17 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
             onPressed: () {
               try {
                 final List<double> newData = controllers
-                    .map((controller) => double.parse(controller.text))
+                    .map((controller) =>
+                        NumberFormatUtils.parseIndonesianNumber(
+                            controller.text) ??
+                        0.0)
                     .toList();
 
                 setState(() {
                   monthlyInflationData[_selectedYear] = newData;
-                  final avg = newData.fold(0.0, (sum, value) => sum + value) / 12;
-                  yearlyInflation[_selectedYear] = double.parse(avg.toStringAsFixed(2));
+                  final avg =
+                      newData.fold(0.0, (sum, value) => sum + value) / 12;
+                  yearlyInflation[_selectedYear] = avg;
                 });
 
                 _saveData();
@@ -355,12 +610,15 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
     );
   }
 
-  void _editYearlyData(String title, Map<int, double> data, Function(Map<int, double>) onUpdate) {
+  void _editYearlyData(String title, Map<int, double> data,
+      Function(Map<int, double>) onUpdate) {
     final List<TextEditingController> controllers = [];
     final years = data.keys.toList()..sort();
 
     for (final year in years) {
-      controllers.add(TextEditingController(text: data[year]?.toStringAsFixed(2) ?? ''));
+      controllers.add(TextEditingController(
+          text: NumberFormatUtils.formatDecimal(data[year] ?? 0.0,
+              decimalPlaces: 2)));
     }
 
     showDialog(
@@ -389,12 +647,18 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                       Expanded(
                         child: TextField(
                           controller: controllers[index],
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
+                          inputFormatters: [
+                            IndonesianNumberInputFormatter(allowDecimal: true)
+                          ],
                           decoration: InputDecoration(
-                            labelText: 'Nilai ${title.contains('IHK') ? '' : '(%)'}',
+                            labelText:
+                                'Nilai ${title.contains('IHK') ? '' : '(%)'}',
                             border: const OutlineInputBorder(),
                             suffixText: title.contains('IHK') ? '' : '%',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
                           ),
                         ),
                       ),
@@ -415,7 +679,9 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
               try {
                 final Map<int, double> newData = {};
                 for (int i = 0; i < years.length; i++) {
-                  newData[years[i]] = double.parse(controllers[i].text);
+                  newData[years[i]] = NumberFormatUtils.parseIndonesianNumber(
+                          controllers[i].text) ??
+                      0.0;
                 }
 
                 onUpdate(newData);
@@ -451,15 +717,18 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                 TextField(
                   controller: controller,
                   keyboardType: TextInputType.number,
+                  inputFormatters: [IndonesianNumberInputFormatter()],
                   decoration: const InputDecoration(
                     labelText: 'Tahun',
                     border: OutlineInputBorder(),
                     hintText: 'Contoh: 2024',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text('Data Inflasi Bulanan:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text('Data Inflasi Bulanan:',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 ...List.generate(12, (index) {
                   return Padding(
@@ -474,11 +743,16 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                         Expanded(
                           child: TextField(
                             controller: monthControllers[index],
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            inputFormatters: [
+                              IndonesianNumberInputFormatter(allowDecimal: true)
+                            ],
                             decoration: const InputDecoration(
                               labelText: '%',
                               border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 12),
                             ),
                           ),
                         ),
@@ -498,23 +772,27 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
           ElevatedButton(
             onPressed: () {
               try {
-                final year = int.parse(controller.text);
+                final year =
+                    NumberFormatUtils.parseIndonesianInteger(controller.text) ??
+                        0;
                 if (year < 2000 || year > 2100) {
                   _showErrorSnackbar('Tahun harus antara 2000-2100');
                   return;
                 }
 
                 final List<double> monthlyData = monthControllers
-                    .map((c) => double.parse(c.text))
+                    .map((c) =>
+                        NumberFormatUtils.parseIndonesianNumber(c.text) ?? 0.0)
                     .toList();
 
                 setState(() {
                   monthlyInflationData[year] = monthlyData;
-                  final avg = monthlyData.fold(0.0, (sum, value) => sum + value) / 12;
-                  yearlyInflation[year] = double.parse(avg.toStringAsFixed(2));
+                  final avg =
+                      monthlyData.fold(0.0, (sum, value) => sum + value) / 12;
+                  yearlyInflation[year] = avg;
                   coreInflation[year] = 0.0;
                   ihkData[year] = 0.0;
-                  
+
                   for (final component in inflationComponents.keys) {
                     inflationComponents[component]![year.toString()] = 0.0;
                   }
@@ -551,7 +829,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
               final year = years[index];
               return ListTile(
                 title: Text('Tahun $year'),
-                subtitle: Text('Inflasi: ${yearlyInflation[year]?.toStringAsFixed(2)}%'),
+                subtitle: Text(
+                    'Inflasi: ${yearlyInflation[year]?.toStringAsFixed(2)}%'),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
@@ -577,7 +856,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Konfirmasi Hapus'),
-        content: Text('Apakah Anda yakin ingin menghapus semua data tahun $year?'),
+        content:
+            Text('Apakah Anda yakin ingin menghapus semua data tahun $year?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -590,7 +870,7 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                 yearlyInflation.remove(year);
                 coreInflation.remove(year);
                 ihkData.remove(year);
-                
+
                 for (final component in inflationComponents.keys) {
                   inflationComponents[component]!.remove(year.toString());
                 }
@@ -656,7 +936,9 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                     final componentData = inflationComponents[component]!;
                     final controllers = years.map((year) {
                       return TextEditingController(
-                        text: componentData[year]?.toStringAsFixed(2) ?? '',
+                        text: NumberFormatUtils.formatDecimal(
+                            componentData[year] ?? 0.0,
+                            decimalPlaces: 2),
                       );
                     }).toList();
 
@@ -677,7 +959,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                           const SizedBox(height: 16),
                           ...List.generate(years.length, (index) {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 6.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 6.0),
                               child: Row(
                                 children: [
                                   SizedBox(
@@ -688,12 +971,19 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                                   Expanded(
                                     child: TextField(
                                       controller: controllers[index],
-                                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                              decimal: true),
+                                      inputFormatters: [
+                                        IndonesianNumberInputFormatter(
+                                            allowDecimal: true)
+                                      ],
                                       decoration: const InputDecoration(
                                         labelText: 'Nilai (%)',
                                         border: OutlineInputBorder(),
                                         suffixText: '%',
-                                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 12),
                                       ),
                                     ),
                                   ),
@@ -707,7 +997,10 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                               try {
                                 final Map<String, double> newData = {};
                                 for (int i = 0; i < years.length; i++) {
-                                  newData[years[i]] = double.parse(controllers[i].text);
+                                  newData[years[i]] =
+                                      NumberFormatUtils.parseIndonesianNumber(
+                                              controllers[i].text) ??
+                                          0.0;
                                 }
 
                                 setState(() {
@@ -715,7 +1008,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                                 });
 
                                 _saveData();
-                                _showSuccessSnackbar('Data komponen berhasil diperbarui!');
+                                _showSuccessSnackbar(
+                                    'Data komponen berhasil diperbarui!');
                               } catch (e) {
                                 _showErrorSnackbar('Format angka tidak valid');
                               }
@@ -788,7 +1082,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3F51B5)),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFF3F51B5)),
                   ),
                   SizedBox(height: 16),
                   Text(
@@ -833,7 +1128,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                                       color: Colors.white.withOpacity(0.2),
                                       shape: BoxShape.circle,
                                     ),
-                                    child: const Icon(Icons.trending_up, color: Colors.white, size: 24),
+                                    child: const Icon(Icons.trending_up,
+                                        color: Colors.white, size: 24),
                                   ),
                                   const SizedBox(width: 12),
                                   const Expanded(
@@ -857,7 +1153,7 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                                 ),
                               ),
                               Text(
-                                'Inflasi: ${yearlyInflation[_selectedYear]?.toStringAsFixed(2)}%',
+                                'Inflasi: ${NumberFormatUtils.formatPercentage(yearlyInflation[_selectedYear] ?? 0)}',
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.white70,
@@ -882,7 +1178,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                             children: [
                               const Row(
                                 children: [
-                                  Icon(Icons.settings, color: Color(0xFF3F51B5)),
+                                  Icon(Icons.settings,
+                                      color: Color(0xFF3F51B5)),
                                   SizedBox(width: 8),
                                   Text(
                                     'Aksi Utama',
@@ -939,7 +1236,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                             children: [
                               const Row(
                                 children: [
-                                  Icon(Icons.filter_list, color: Color(0xFF3F51B5)),
+                                  Icon(Icons.filter_list,
+                                      color: Color(0xFF3F51B5)),
                                   SizedBox(width: 8),
                                   Text(
                                     'Pilih Tahun',
@@ -956,9 +1254,13 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                                 child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
                                   shrinkWrap: true,
-                                  itemCount: (monthlyInflationData.keys.toList()..sort()).length,
+                                  itemCount: (monthlyInflationData.keys.toList()
+                                        ..sort())
+                                      .length,
                                   itemBuilder: (context, index) {
-                                    final year = (monthlyInflationData.keys.toList()..sort())[index];
+                                    final year =
+                                        (monthlyInflationData.keys.toList()
+                                          ..sort())[index];
                                     final isSelected = year == _selectedYear;
                                     return Padding(
                                       padding: const EdgeInsets.only(right: 8),
@@ -966,7 +1268,9 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                                         label: Text(
                                           year.toString(),
                                           style: TextStyle(
-                                            color: isSelected ? Colors.white : Colors.black,
+                                            color: isSelected
+                                                ? Colors.white
+                                                : Colors.black,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -978,11 +1282,15 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                                         },
                                         selectedColor: const Color(0xFF3F51B5),
                                         backgroundColor: Colors.grey[100],
-                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 4),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
                                           side: BorderSide(
-                                            color: isSelected ? const Color(0xFF3F51B5) : Colors.grey[300]!,
+                                            color: isSelected
+                                                ? const Color(0xFF3F51B5)
+                                                : Colors.grey[300]!,
                                           ),
                                         ),
                                       ),
@@ -1018,7 +1326,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                             'Edit data inflasi tahunan',
                             Icons.timeline,
                             Colors.green,
-                            () => _editYearlyData('Inflasi Tahunan', yearlyInflation, (newData) {
+                            () => _editYearlyData(
+                                'Inflasi Tahunan', yearlyInflation, (newData) {
                               setState(() => yearlyInflation = newData);
                             }),
                           ),
@@ -1027,7 +1336,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                             'Edit data inflasi inti',
                             Icons.insights,
                             Colors.purple,
-                            () => _editYearlyData('Inflasi Inti', coreInflation, (newData) {
+                            () => _editYearlyData('Inflasi Inti', coreInflation,
+                                (newData) {
                               setState(() => coreInflation = newData);
                             }),
                           ),
@@ -1085,9 +1395,19 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                               ),
                               const SizedBox(height: 12),
                               _buildPreviewItem('Tahun', '$_selectedYear'),
-                              _buildPreviewItem('Inflasi Tahunan', '${yearlyInflation[_selectedYear]?.toStringAsFixed(2)}%'),
-                              _buildPreviewItem('Inflasi Inti', '${coreInflation[_selectedYear]?.toStringAsFixed(2)}%'),
-                              _buildPreviewItem('IHK', ihkData[_selectedYear]?.toStringAsFixed(2) ?? '0.00'),
+                              _buildPreviewItem(
+                                  'Inflasi Tahunan',
+                                  NumberFormatUtils.formatPercentage(
+                                      yearlyInflation[_selectedYear] ?? 0)),
+                              _buildPreviewItem(
+                                  'Inflasi Inti',
+                                  NumberFormatUtils.formatPercentage(
+                                      coreInflation[_selectedYear] ?? 0)),
+                              _buildPreviewItem(
+                                  'IHK',
+                                  NumberFormatUtils.formatDecimal(
+                                      ihkData[_selectedYear] ?? 0,
+                                      decimalPlaces: 2)),
                               const SizedBox(height: 8),
                               const Text(
                                 'Data Bulanan:',
@@ -1106,8 +1426,9 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                                 ),
                                 child: Text(
                                   monthlyInflationData[_selectedYear]
-                                      ?.map((e) => e.toStringAsFixed(2))
-                                      .join(', ') ?? 'Tidak ada data',
+                                          ?.map((e) => e.toStringAsFixed(2))
+                                          .join(', ') ??
+                                      'Tidak ada data',
                                   style: const TextStyle(fontSize: 12),
                                 ),
                               ),
@@ -1124,7 +1445,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
     );
   }
 
-  Widget _buildActionButton(String label, IconData icon, Color color, VoidCallback onPressed) {
+  Widget _buildActionButton(
+      String label, IconData icon, Color color, VoidCallback onPressed) {
     return ElevatedButton.icon(
       onPressed: onPressed,
       icon: Icon(icon, size: 18),
@@ -1146,7 +1468,8 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
     );
   }
 
-  Widget _buildEditCard(String title, String subtitle, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildEditCard(String title, String subtitle, IconData icon,
+      Color color, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),

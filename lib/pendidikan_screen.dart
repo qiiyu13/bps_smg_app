@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
+import 'number_format_utils.dart';
 
 // BPS Color Palette (matching other screens)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -25,7 +26,8 @@ class PendidikanScreen extends StatefulWidget {
   _PendidikanScreenState createState() => _PendidikanScreenState();
 }
 
-class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepAliveClientMixin {
+class _PendidikanScreenState extends State<PendidikanScreen>
+    with AutomaticKeepAliveClientMixin {
   int selectedYear = 2024;
   bool isLoading = true;
 
@@ -63,8 +65,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
         setState(() {
           if (savedData != null) {
             final decoded = json.decode(savedData) as Map<String, dynamic>;
-            educationData = decoded.map((key, value) =>
-              MapEntry(
+            educationData = decoded.map(
+              (key, value) => MapEntry(
                 int.parse(key),
                 Map<String, dynamic>.from(value as Map),
               ),
@@ -107,10 +109,26 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
           {'jenjang': 'MA', 'sekolah': 30, 'guru': 720, 'murid': 6400},
         ],
         'rasioData': [
-          {'jenjang': 'TK/RA', 'rasioSekolahMurid': 43.4, 'rasioGuruMurid': 12.8},
-          {'jenjang': 'SD/MI', 'rasioSekolahMurid': 260.8, 'rasioGuruMurid': 18.4},
-          {'jenjang': 'SMP/MTs', 'rasioSekolahMurid': 335.7, 'rasioGuruMurid': 16.8},
-          {'jenjang': 'SMA/SMK/MA', 'rasioSekolahMurid': 405.5, 'rasioGuruMurid': 16.3},
+          {
+            'jenjang': 'TK/RA',
+            'rasioSekolahMurid': 43.4,
+            'rasioGuruMurid': 12.8
+          },
+          {
+            'jenjang': 'SD/MI',
+            'rasioSekolahMurid': 260.8,
+            'rasioGuruMurid': 18.4
+          },
+          {
+            'jenjang': 'SMP/MTs',
+            'rasioSekolahMurid': 335.7,
+            'rasioGuruMurid': 16.8
+          },
+          {
+            'jenjang': 'SMA/SMK/MA',
+            'rasioSekolahMurid': 405.5,
+            'rasioGuruMurid': 16.3
+          },
         ],
         'angkaPutusSekolah': [
           {'tingkat': 'SD', 'persentase': 0.7},
@@ -142,10 +160,26 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
           {'jenjang': 'MA', 'sekolah': 32, 'guru': 742, 'murid': 6521},
         ],
         'rasioData': [
-          {'jenjang': 'TK/RA', 'rasioSekolahMurid': 46.91, 'rasioGuruMurid': 12.74},
-          {'jenjang': 'SD/MI', 'rasioSekolahMurid': 251.84, 'rasioGuruMurid': 18.10},
-          {'jenjang': 'SMP/MTs', 'rasioSekolahMurid': 316.15, 'rasioGuruMurid': 15.86},
-          {'jenjang': 'SMA/SMK/MA', 'rasioSekolahMurid': 391.47, 'rasioGuruMurid': 14.75},
+          {
+            'jenjang': 'TK/RA',
+            'rasioSekolahMurid': 46.91,
+            'rasioGuruMurid': 12.74
+          },
+          {
+            'jenjang': 'SD/MI',
+            'rasioSekolahMurid': 251.84,
+            'rasioGuruMurid': 18.10
+          },
+          {
+            'jenjang': 'SMP/MTs',
+            'rasioSekolahMurid': 316.15,
+            'rasioGuruMurid': 15.86
+          },
+          {
+            'jenjang': 'SMA/SMK/MA',
+            'rasioSekolahMurid': 391.47,
+            'rasioGuruMurid': 14.75
+          },
         ],
         'angkaPutusSekolah': [
           {'tingkat': 'SD', 'persentase': 0.6},
@@ -177,10 +211,26 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
           {'jenjang': 'MA', 'sekolah': 32, 'guru': 742, 'murid': 6521},
         ],
         'rasioData': [
-          {'jenjang': 'TK/RA', 'rasioSekolahMurid': 46.91, 'rasioGuruMurid': 12.74},
-          {'jenjang': 'SD/MI', 'rasioSekolahMurid': 251.84, 'rasioGuruMurid': 18.10},
-          {'jenjang': 'SMP/MTs', 'rasioSekolahMurid': 316.15, 'rasioGuruMurid': 15.86},
-          {'jenjang': 'SMA/SMK/MA', 'rasioSekolahMurid': 391.47, 'rasioGuruMurid': 14.75},
+          {
+            'jenjang': 'TK/RA',
+            'rasioSekolahMurid': 46.91,
+            'rasioGuruMurid': 12.74
+          },
+          {
+            'jenjang': 'SD/MI',
+            'rasioSekolahMurid': 251.84,
+            'rasioGuruMurid': 18.10
+          },
+          {
+            'jenjang': 'SMP/MTs',
+            'rasioSekolahMurid': 316.15,
+            'rasioGuruMurid': 15.86
+          },
+          {
+            'jenjang': 'SMA/SMK/MA',
+            'rasioSekolahMurid': 391.47,
+            'rasioGuruMurid': 14.75
+          },
         ],
         'angkaPutusSekolah': [
           {'tingkat': 'SD', 'persentase': 0.5},
@@ -212,10 +262,26 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
           {'jenjang': 'MA', 'sekolah': 35, 'guru': 780, 'murid': 6800},
         ],
         'rasioData': [
-          {'jenjang': 'TK/RA', 'rasioSekolahMurid': 43.2, 'rasioGuruMurid': 12.5},
-          {'jenjang': 'SD/MI', 'rasioSekolahMurid': 260.2, 'rasioGuruMurid': 18.2},
-          {'jenjang': 'SMP/MTs', 'rasioSekolahMurid': 328.8, 'rasioGuruMurid': 16.5},
-          {'jenjang': 'SMA/SMK/MA', 'rasioSekolahMurid': 379.1, 'rasioGuruMurid': 14.9},
+          {
+            'jenjang': 'TK/RA',
+            'rasioSekolahMurid': 43.2,
+            'rasioGuruMurid': 12.5
+          },
+          {
+            'jenjang': 'SD/MI',
+            'rasioSekolahMurid': 260.2,
+            'rasioGuruMurid': 18.2
+          },
+          {
+            'jenjang': 'SMP/MTs',
+            'rasioSekolahMurid': 328.8,
+            'rasioGuruMurid': 16.5
+          },
+          {
+            'jenjang': 'SMA/SMK/MA',
+            'rasioSekolahMurid': 379.1,
+            'rasioGuruMurid': 14.9
+          },
         ],
         'angkaPutusSekolah': [
           {'tingkat': 'SD', 'persentase': 0.4},
@@ -247,10 +313,26 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
           {'jenjang': 'MA', 'sekolah': 38, 'guru': 800, 'murid': 7000},
         ],
         'rasioData': [
-          {'jenjang': 'TK/RA', 'rasioSekolahMurid': 42.8, 'rasioGuruMurid': 12.3},
-          {'jenjang': 'SD/MI', 'rasioSekolahMurid': 260.2, 'rasioGuruMurid': 18.1},
-          {'jenjang': 'SMP/MTs', 'rasioSekolahMurid': 325.7, 'rasioGuruMurid': 16.4},
-          {'jenjang': 'SMA/SMK/MA', 'rasioSekolahMurid': 375.9, 'rasioGuruMurid': 14.7},
+          {
+            'jenjang': 'TK/RA',
+            'rasioSekolahMurid': 42.8,
+            'rasioGuruMurid': 12.3
+          },
+          {
+            'jenjang': 'SD/MI',
+            'rasioSekolahMurid': 260.2,
+            'rasioGuruMurid': 18.1
+          },
+          {
+            'jenjang': 'SMP/MTs',
+            'rasioSekolahMurid': 325.7,
+            'rasioGuruMurid': 16.4
+          },
+          {
+            'jenjang': 'SMA/SMK/MA',
+            'rasioSekolahMurid': 375.9,
+            'rasioGuruMurid': 14.7
+          },
         ],
         'angkaPutusSekolah': [
           {'tingkat': 'SD', 'persentase': 0.3},
@@ -329,7 +411,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                         ),
                       )
                     : CustomScrollView(
-                        physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                        physics: const ClampingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics()),
                         slivers: [
                           SliverPadding(
                             padding: EdgeInsets.all(sizing.horizontalPadding),
@@ -339,7 +422,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                                 SizedBox(height: sizing.sectionSpacing),
                                 _buildMainIndicators(sizing, isSmallScreen),
                                 SizedBox(height: sizing.sectionSpacing),
-                                _buildEducationLevelChart(sizing, isSmallScreen),
+                                _buildEducationLevelChart(
+                                    sizing, isSmallScreen),
                                 SizedBox(height: sizing.sectionSpacing),
                                 _buildRasioChart(sizing, isSmallScreen),
                                 SizedBox(height: sizing.sectionSpacing),
@@ -360,7 +444,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
     );
   }
 
-  Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildHeader(
+      BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
         color: _bpsGreen,
@@ -518,19 +603,22 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                         color: isSelected ? _bpsGreen : _bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
-                      boxShadow: isSelected ? [
-                        BoxShadow(
-                          color: _bpsGreen.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ] : null,
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: _bpsGreen.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Text(
                       year.toString(),
                       style: TextStyle(
                         fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w600,
                         color: isSelected ? Colors.white : _bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
@@ -630,11 +718,13 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
             children: [
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${(getTotalMurid(selectedYear) / 1000).toStringAsFixed(1)}k',
+                value:
+                    '${NumberFormatUtils.formatCompact(getTotalMurid(selectedYear))}',
                 label: 'Total Murid',
                 color: _bpsGreen,
                 icon: Icons.groups,
-                description: 'Total jumlah murid di seluruh jenjang pendidikan di Kota Semarang, mencakup TK, RA, SD, MI, SMP, MTs, SMA, SMK, dan MA.',
+                description:
+                    'Total jumlah murid di seluruh jenjang pendidikan di Kota Semarang, mencakup TK, RA, SD, MI, SMP, MTs, SMA, SMK, dan MA.',
                 isFirst: true,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -644,7 +734,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                 label: 'Angka Melek Huruf',
                 color: _bpsGreen,
                 icon: Icons.menu_book,
-                description: 'Angka Melek Huruf (AMH) menunjukkan persentase penduduk usia 15 tahun ke atas yang mampu membaca dan menulis huruf latin atau huruf lainnya.',
+                description:
+                    'Angka Melek Huruf (AMH) menunjukkan persentase penduduk usia 15 tahun ke atas yang mampu membaca dan menulis huruf latin atau huruf lainnya.',
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
@@ -653,7 +744,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                 label: 'Rata-rata Lama Sekolah',
                 color: _bpsOrange,
                 icon: Icons.timer,
-                description: 'Rata-rata Lama Sekolah (RLS) menunjukkan jumlah tahun rata-rata yang dihabiskan oleh penduduk usia 25 tahun ke atas untuk menempuh pendidikan formal.',
+                description:
+                    'Rata-rata Lama Sekolah (RLS) menunjukkan jumlah tahun rata-rata yang dihabiskan oleh penduduk usia 25 tahun ke atas untuk menempuh pendidikan formal.',
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
@@ -662,7 +754,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                 label: 'Angka Kelulusan',
                 color: _bpsGreen,
                 icon: Icons.emoji_events,
-                description: 'Angka Kelulusan menunjukkan persentase siswa yang berhasil menyelesaikan pendidikan pada jenjang tertentu dalam satu tahun ajaran.',
+                description:
+                    'Angka Kelulusan menunjukkan persentase siswa yang berhasil menyelesaikan pendidikan pada jenjang tertentu dalam satu tahun ajaran.',
                 isLast: true,
               ),
             ],
@@ -688,7 +781,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => _showDetailDialog(context, label, value, icon, color, description),
+        onTap: () =>
+            _showDetailDialog(context, label, value, icon, color, description),
         splashColor: color.withOpacity(0.1),
         highlightColor: color.withOpacity(0.05),
         child: Padding(
@@ -953,7 +1047,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
     );
   }
 
-  Widget _buildEducationLevelChart(ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildEducationLevelChart(
+      ResponsiveSizing sizing, bool isSmallScreen) {
     final data = currentData['jenjangPendidikan'] as List;
     final colors = [
       _bpsBlue,
@@ -1042,7 +1137,7 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                     tooltipRoundedRadius: 8,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       String jenjang = data[groupIndex]['jenjang'] ?? '';
-                      String jumlah = (rod.toY / 1000).toStringAsFixed(1);
+                      String jumlah = NumberFormatUtils.formatCompact(rod.toY);
                       return BarTooltipItem(
                         '$jenjang\n$jumlah ribu murid',
                         const TextStyle(
@@ -1093,8 +1188,10 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                       },
                     ),
                   ),
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
                 ),
                 gridData: FlGridData(
                   show: true,
@@ -1120,7 +1217,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                         toY: muridDouble,
                         color: colors[index % colors.length],
                         width: isSmallScreen ? 12 : 16,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(4)),
                       ),
                     ],
                   );
@@ -1227,8 +1325,12 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                         tooltipRoundedRadius: 8,
                         getTooltipItem: (group, groupIndex, rod, rodIndex) {
                           if (groupIndex >= rasioData.length) return null;
-                          String jenjang = rasioData[groupIndex]['jenjang']?.toString() ?? '';
-                          String rasio = rod.toY.toStringAsFixed(1);
+                          String jenjang =
+                              rasioData[groupIndex]['jenjang']?.toString() ??
+                                  '';
+                          String rasio = NumberFormatUtils.formatDecimal(
+                              rod.toY,
+                              decimalPlaces: 1);
                           return BarTooltipItem(
                             '$jenjang\n$rasio murid/sekolah',
                             const TextStyle(
@@ -1280,8 +1382,10 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                           },
                         ),
                       ),
-                      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                      rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
                     ),
                     gridData: FlGridData(
                       show: true,
@@ -1309,7 +1413,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                             toY: rasioSekolah,
                             color: _bpsOrange,
                             width: isSmallScreen ? 20 : 28,
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(4)),
                           ),
                         ],
                       );
@@ -1399,7 +1504,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                   children: [
                     if (index > 0)
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 12 : 16),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: isSmallScreen ? 12 : 16),
                         child: Divider(
                           height: 1,
                           thickness: 1,
@@ -1433,7 +1539,7 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                             ),
                           ),
                           Text(
-                            '1 : ${rasioGuru.toStringAsFixed(1)}',
+                            '1 : ${NumberFormatUtils.formatDecimal(rasioGuru, decimalPlaces: 1)}',
                             style: TextStyle(
                               fontSize: isSmallScreen ? 15 : 17,
                               fontWeight: FontWeight.w800,
@@ -1545,9 +1651,12 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                     tooltipRoundedRadius: 8,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       if (groupIndex >= partisipasiData.length) return null;
-                      String jenjang = partisipasiData[groupIndex]['jenjang']?.toString() ?? '';
+                      String jenjang =
+                          partisipasiData[groupIndex]['jenjang']?.toString() ??
+                              '';
                       String label = rodIndex == 0 ? 'APM' : 'APK';
-                      String nilai = rod.toY.toStringAsFixed(2);
+                      String nilai = NumberFormatUtils.formatDecimal(rod.toY,
+                          decimalPlaces: 2);
                       return BarTooltipItem(
                         '$jenjang\n$label: $nilai%',
                         const TextStyle(
@@ -1567,7 +1676,9 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                       getTitlesWidget: (value, meta) {
                         final index = value.toInt();
                         if (index >= 0 && index < partisipasiData.length) {
-                          String jenjang = partisipasiData[index]['jenjang']?.toString() ?? '';
+                          String jenjang =
+                              partisipasiData[index]['jenjang']?.toString() ??
+                                  '';
                           if (jenjang.length > 15) {
                             jenjang = jenjang.replaceAll('Sederajat', '');
                           }
@@ -1604,8 +1715,10 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                       },
                     ),
                   ),
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
                 ),
                 gridData: FlGridData(
                   show: true,
@@ -1640,13 +1753,15 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                         toY: apm,
                         color: _bpsGreen,
                         width: isSmallScreen ? 14 : 18,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(4)),
                       ),
                       BarChartRodData(
                         toY: apk,
                         color: _bpsBlue,
                         width: isSmallScreen ? 14 : 18,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(4)),
                       ),
                     ],
                   );
@@ -1860,7 +1975,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                 label: 'Rasio Guru:Murid',
                 color: _bpsGreen,
                 icon: Icons.people,
-                description: 'Rasio Guru terhadap Murid menunjukkan perbandingan jumlah guru dengan jumlah murid di seluruh jenjang pendidikan. Semakin kecil rasio, semakin ideal kondisi pembelajaran.',
+                description:
+                    'Rasio Guru terhadap Murid menunjukkan perbandingan jumlah guru dengan jumlah murid di seluruh jenjang pendidikan. Semakin kecil rasio, semakin ideal kondisi pembelajaran.',
                 isFirst: true,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -1870,7 +1986,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                 label: 'Harapan Lama Sekolah',
                 color: _bpsGreen,
                 icon: Icons.school,
-                description: 'Harapan Lama Sekolah (HLS) menunjukkan lamanya sekolah (dalam tahun) yang diharapkan akan dirasakan oleh anak pada umur tertentu di masa mendatang.',
+                description:
+                    'Harapan Lama Sekolah (HLS) menunjukkan lamanya sekolah (dalam tahun) yang diharapkan akan dirasakan oleh anak pada umur tertentu di masa mendatang.',
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
@@ -1879,7 +1996,8 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
                 label: 'Akses Pendidikan Tinggi',
                 color: _bpsOrange,
                 icon: Icons.business,
-                description: 'Akses Pendidikan Tinggi menunjukkan persentase penduduk yang memiliki akses dan kesempatan untuk melanjutkan pendidikan ke jenjang perguruan tinggi.',
+                description:
+                    'Akses Pendidikan Tinggi menunjukkan persentase penduduk yang memiliki akses dan kesempatan untuk melanjutkan pendidikan ke jenjang perguruan tinggi.',
                 isLast: true,
               ),
             ],
@@ -1891,16 +2009,24 @@ class _PendidikanScreenState extends State<PendidikanScreen> with AutomaticKeepA
 
   Widget _buildLegendItem(String label, Color color, bool isSmallScreen) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 10 : 12, vertical: isSmallScreen ? 6 : 8),
+      padding: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 10 : 12, vertical: isSmallScreen ? 6 : 8),
       decoration: BoxDecoration(
         color: color.withOpacity(0.08),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color.withOpacity(0.3), width: 1.5),
       ),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
-        Container(width: isSmallScreen ? 8 : 10, height: isSmallScreen ? 8 : 10, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+            width: isSmallScreen ? 8 : 10,
+            height: isSmallScreen ? 8 : 10,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
         SizedBox(width: isSmallScreen ? 4 : 6),
-        Text(label, style: TextStyle(fontSize: isSmallScreen ? 12 : 13, color: color, fontWeight: FontWeight.w600)),
+        Text(label,
+            style: TextStyle(
+                fontSize: isSmallScreen ? 12 : 13,
+                color: color,
+                fontWeight: FontWeight.w600)),
       ]),
     );
   }

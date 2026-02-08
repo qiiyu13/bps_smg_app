@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
+import 'number_format_utils.dart';
 
 // BPS Color Palette (matching home_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -50,7 +51,8 @@ class PovertyData {
   factory PovertyData.fromMap(int year, Map<String, dynamic> map) {
     return PovertyData(
       year: year,
-      pendudukMiskinValue: (map['pendudukMiskinValue'] as num?)?.toDouble() ?? 0.0,
+      pendudukMiskinValue:
+          (map['pendudukMiskinValue'] as num?)?.toDouble() ?? 0.0,
       pendudukMiskinDisplay: map['pendudukMiskin']?.toString() ?? '-',
       persentaseValue: (map['persentaseValue'] as num?)?.toDouble() ?? 0.0,
       persentaseDisplay: map['persentase']?.toString() ?? '-',
@@ -66,18 +68,18 @@ class PovertyData {
 
   // For backwards compatibility with SharedPreferences
   Map<String, dynamic> toMap() => {
-    'pendudukMiskin': pendudukMiskinDisplay,
-    'pendudukMiskinValue': pendudukMiskinValue,
-    'persentase': persentaseDisplay,
-    'persentaseValue': persentaseValue,
-    'garisMiskin': garisMiskin,
-    'indeksKedalaman': indeksKedalaman,
-    'indeksKeparahan': indeksKeparahan,
-    'kemiskinanKota': kemiskinanKota,
-    'kemiskinanKotaChange': kemiskinanKotaChange,
-    'kemiskinanDesa': kemiskinanDesa,
-    'kemiskinanDesaChange': kemiskinanDesaChange,
-  };
+        'pendudukMiskin': pendudukMiskinDisplay,
+        'pendudukMiskinValue': pendudukMiskinValue,
+        'persentase': persentaseDisplay,
+        'persentaseValue': persentaseValue,
+        'garisMiskin': garisMiskin,
+        'indeksKedalaman': indeksKedalaman,
+        'indeksKeparahan': indeksKeparahan,
+        'kemiskinanKota': kemiskinanKota,
+        'kemiskinanKotaChange': kemiskinanKotaChange,
+        'kemiskinanDesa': kemiskinanDesa,
+        'kemiskinanDesaChange': kemiskinanDesaChange,
+      };
 }
 
 class KemiskinanScreen extends StatefulWidget {
@@ -87,7 +89,8 @@ class KemiskinanScreen extends StatefulWidget {
   State<KemiskinanScreen> createState() => _KemiskinanScreenState();
 }
 
-class _KemiskinanScreenState extends State<KemiskinanScreen> with AutomaticKeepAliveClientMixin {
+class _KemiskinanScreenState extends State<KemiskinanScreen>
+    with AutomaticKeepAliveClientMixin {
   int selectedYear = 2024;
   Map<int, PovertyData> yearlyData = {};
   bool isLoading = true;
@@ -113,10 +116,11 @@ class _KemiskinanScreenState extends State<KemiskinanScreen> with AutomaticKeepA
           if (savedData != null) {
             // Data dari admin
             final decoded = json.decode(savedData) as Map<String, dynamic>;
-            yearlyData = decoded.map((key, value) =>
-              MapEntry(
+            yearlyData = decoded.map(
+              (key, value) => MapEntry(
                 int.parse(key),
-                PovertyData.fromMap(int.parse(key), Map<String, dynamic>.from(value as Map)),
+                PovertyData.fromMap(
+                    int.parse(key), Map<String, dynamic>.from(value as Map)),
               ),
             );
           } else {
@@ -293,7 +297,8 @@ class _KemiskinanScreenState extends State<KemiskinanScreen> with AutomaticKeepA
                         selectedYear: selectedYear,
                         yearlyData: yearlyData,
                         cachedSortedYears: _cachedSortedYears,
-                        onYearSelected: (year) => setState(() => selectedYear = year),
+                        onYearSelected: (year) =>
+                            setState(() => selectedYear = year),
                         sizing: sizing,
                         isSmallScreen: isSmallScreen,
                       ),
@@ -303,7 +308,8 @@ class _KemiskinanScreenState extends State<KemiskinanScreen> with AutomaticKeepA
     );
   }
 
-  Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildHeader(
+      BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
         color: _bpsBlue,
@@ -448,7 +454,8 @@ class _KemiskinanScreenContent extends StatelessWidget {
     final currentData = yearlyData[selectedYear]!;
 
     return CustomScrollView(
-      physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      physics:
+          const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       slivers: [
         SliverPadding(
           padding: EdgeInsets.all(sizing.horizontalPadding),
@@ -466,12 +473,17 @@ class _KemiskinanScreenContent extends StatelessWidget {
               SizedBox(height: sizing.sectionSpacing),
               _PovertyTrendChart(
                 title: 'Jumlah Penduduk Miskin (Ribu Jiwa)',
-                subtitle: 'Tren dari tahun ${cachedSortedYears.first} hingga ${cachedSortedYears.last}',
+                subtitle:
+                    'Tren dari tahun ${cachedSortedYears.first} hingga ${cachedSortedYears.last}',
                 icon: Icons.people_outline,
                 accentColor: _bpsRed,
                 years: cachedSortedYears,
-                values: cachedSortedYears.map((y) => yearlyData[y]!.pendudukMiskinValue).toList(),
-                displayValues: cachedSortedYears.map((y) => yearlyData[y]!.pendudukMiskinDisplay).toList(),
+                values: cachedSortedYears
+                    .map((y) => yearlyData[y]!.pendudukMiskinValue)
+                    .toList(),
+                displayValues: cachedSortedYears
+                    .map((y) => yearlyData[y]!.pendudukMiskinDisplay)
+                    .toList(),
                 minY: 75,
                 maxY: 87,
                 yInterval: 2,
@@ -486,12 +498,17 @@ class _KemiskinanScreenContent extends StatelessWidget {
               SizedBox(height: sizing.sectionSpacing),
               _PovertyTrendChart(
                 title: 'Persentase Kemiskinan (%)',
-                subtitle: 'Tren dari tahun ${cachedSortedYears.first} hingga ${cachedSortedYears.last}',
+                subtitle:
+                    'Tren dari tahun ${cachedSortedYears.first} hingga ${cachedSortedYears.last}',
                 icon: Icons.percent,
                 accentColor: _bpsOrange,
                 years: cachedSortedYears,
-                values: cachedSortedYears.map((y) => yearlyData[y]!.persentaseValue).toList(),
-                displayValues: cachedSortedYears.map((y) => yearlyData[y]!.persentaseDisplay).toList(),
+                values: cachedSortedYears
+                    .map((y) => yearlyData[y]!.persentaseValue)
+                    .toList(),
+                displayValues: cachedSortedYears
+                    .map((y) => yearlyData[y]!.persentaseDisplay)
+                    .toList(),
                 minY: 3.8,
                 maxY: 4.8,
                 yInterval: 0.2,
@@ -504,7 +521,8 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 isSmallScreen: isSmallScreen,
               ),
               SizedBox(height: sizing.sectionSpacing),
-              _PovertyInformationPanel(sizing: sizing, isSmallScreen: isSmallScreen),
+              _PovertyInformationPanel(
+                  sizing: sizing, isSmallScreen: isSmallScreen),
               SizedBox(height: sizing.sectionSpacing),
             ]),
           ),
@@ -602,7 +620,8 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 label: 'Penduduk Miskin',
                 color: _bpsRed,
                 icon: Icons.people_outline,
-                description: 'Jumlah penduduk miskin adalah banyaknya penduduk yang memiliki rata-rata pengeluaran per kapita per bulan di bawah garis kemiskinan.',
+                description:
+                    'Jumlah penduduk miskin adalah banyaknya penduduk yang memiliki rata-rata pengeluaran per kapita per bulan di bawah garis kemiskinan.',
                 isFirst: true,
               ),
               _buildIndicatorDivider(),
@@ -612,7 +631,8 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 label: 'Garis Kemiskinan',
                 color: _bpsOrange,
                 icon: Icons.attach_money,
-                description: 'Garis Kemiskinan merupakan penjumlahan dari Garis Kemiskinan Makanan (GKM) dan Garis Kemiskinan Bukan Makanan (GKBM). Penduduk dengan pengeluaran di bawah GK dikategorikan miskin.',
+                description:
+                    'Garis Kemiskinan merupakan penjumlahan dari Garis Kemiskinan Makanan (GKM) dan Garis Kemiskinan Bukan Makanan (GKBM). Penduduk dengan pengeluaran di bawah GK dikategorikan miskin.',
               ),
               _buildIndicatorDivider(),
               _buildCompactIndicatorRow(
@@ -621,7 +641,8 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 label: 'Persentase (P0)',
                 color: _bpsBlue,
                 icon: Icons.pie_chart,
-                description: 'Persentase Penduduk Miskin (P0) menunjukkan proporsi penduduk yang berada di bawah garis kemiskinan terhadap total penduduk.',
+                description:
+                    'Persentase Penduduk Miskin (P0) menunjukkan proporsi penduduk yang berada di bawah garis kemiskinan terhadap total penduduk.',
               ),
               _buildIndicatorDivider(),
               _buildCompactIndicatorRow(
@@ -630,7 +651,8 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 label: 'Kedalaman (P1)',
                 color: Colors.purple,
                 icon: Icons.analytics,
-                description: 'Indeks Kedalaman Kemiskinan (P1) menggambarkan seberapa jauh rata-rata pengeluaran penduduk miskin dari garis kemiskinan. Semakin tinggi nilai, semakin dalam tingkat kemiskinan.',
+                description:
+                    'Indeks Kedalaman Kemiskinan (P1) menggambarkan seberapa jauh rata-rata pengeluaran penduduk miskin dari garis kemiskinan. Semakin tinggi nilai, semakin dalam tingkat kemiskinan.',
               ),
               _buildIndicatorDivider(),
               _buildCompactIndicatorRow(
@@ -639,7 +661,8 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 label: 'Keparahan (P2)',
                 color: Colors.deepOrange,
                 icon: Icons.trending_down,
-                description: 'Indeks Keparahan Kemiskinan (P2) menggambarkan ketimpangan pengeluaran di antara penduduk miskin. Semakin tinggi nilai, semakin tinggi ketimpangan pengeluaran penduduk miskin.',
+                description:
+                    'Indeks Keparahan Kemiskinan (P2) menggambarkan ketimpangan pengeluaran di antara penduduk miskin. Semakin tinggi nilai, semakin tinggi ketimpangan pengeluaran penduduk miskin.',
                 isLast: true,
               ),
             ],
@@ -662,7 +685,8 @@ class _KemiskinanScreenContent extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => _showDetailDialog(context, label, value, icon, color, description),
+        onTap: () =>
+            _showDetailDialog(context, label, value, icon, color, description),
         splashColor: color.withOpacity(0.1),
         highlightColor: color.withOpacity(0.05),
         child: Padding(
@@ -1034,19 +1058,22 @@ class _YearSelector extends StatelessWidget {
                         color: isSelected ? _bpsBlue : _bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
-                      boxShadow: isSelected ? [
-                        BoxShadow(
-                          color: _bpsBlue.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ] : null,
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: _bpsBlue.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Text(
                       year.toString(),
                       style: TextStyle(
                         fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w600,
                         color: isSelected ? Colors.white : _bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
@@ -1061,7 +1088,6 @@ class _YearSelector extends StatelessWidget {
     );
   }
 }
-
 
 // Unified poverty trend chart widget - eliminates 400+ lines of duplication
 class _PovertyTrendChart extends StatelessWidget {
@@ -1122,7 +1148,8 @@ class _PovertyTrendChart extends StatelessWidget {
 
     final selectedYearIndex = years.indexOf(selectedYear);
     final baseYearIndex = years.indexOf(baseYear);
-    final currentValue = selectedYearIndex >= 0 ? values[selectedYearIndex] : 0.0;
+    final currentValue =
+        selectedYearIndex >= 0 ? values[selectedYearIndex] : 0.0;
     final baseValue = baseYearIndex >= 0 ? values[baseYearIndex] : 0.0;
     final perubahan = baseValue - currentValue;
     final isPositive = perubahan > 0;
@@ -1210,12 +1237,14 @@ class _PovertyTrendChart extends StatelessWidget {
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: isSmallScreen ? (yAxisSuffix == '%' ? 38 : 42) : (yAxisSuffix == '%' ? 45 : 50),
+                        reservedSize: isSmallScreen
+                            ? (yAxisSuffix == '%' ? 38 : 42)
+                            : (yAxisSuffix == '%' ? 45 : 50),
                         interval: yInterval,
                         getTitlesWidget: (value, meta) {
                           return Text(
                             yAxisSuffix == '%'
-                                ? '${value.toStringAsFixed(1)}$yAxisSuffix'
+                                ? '${NumberFormatUtils.formatDecimal(value, decimalPlaces: 1)}$yAxisSuffix'
                                 : '${value.toInt()}$yAxisSuffix',
                             style: TextStyle(
                               fontSize: isSmallScreen ? 10 : 12,
@@ -1226,7 +1255,8 @@ class _PovertyTrendChart extends StatelessWidget {
                         },
                       ),
                     ),
-                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -1235,7 +1265,8 @@ class _PovertyTrendChart extends StatelessWidget {
                           final index = value.toInt();
                           if (index >= 0 && index < years.length) {
                             return Padding(
-                              padding: EdgeInsets.only(top: isSmallScreen ? 6 : 8),
+                              padding:
+                                  EdgeInsets.only(top: isSmallScreen ? 6 : 8),
                               child: Text(
                                 years[index].toString(),
                                 style: TextStyle(
@@ -1250,7 +1281,8 @@ class _PovertyTrendChart extends StatelessWidget {
                         },
                       ),
                     ),
-                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
                   ),
                   borderData: FlBorderData(show: false),
                   minY: minY,
@@ -1260,8 +1292,10 @@ class _PovertyTrendChart extends StatelessWidget {
                     touchTooltipData: LineTouchTooltipData(
                       getTooltipColor: (spot) => _bpsCardBg,
                       tooltipRoundedRadius: 8,
-                      tooltipBorder: BorderSide(color: Colors.grey[300]!, width: 1),
-                      tooltipPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      tooltipBorder:
+                          BorderSide(color: Colors.grey[300]!, width: 1),
+                      tooltipPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       getTooltipItems: (touchedSpots) {
                         return touchedSpots.map((spot) {
                           final index = spot.x.toInt();
@@ -1353,7 +1387,7 @@ class _PovertyTrendChart extends StatelessWidget {
                       Text(
                         selectedYear == baseYear
                             ? indicatorValue
-                            : '${perubahan.abs().toStringAsFixed(2)}$yAxisSuffix',
+                            : '${NumberFormatUtils.formatDecimal(perubahan.abs(), decimalPlaces: 2)}$yAxisSuffix',
                         style: TextStyle(
                           fontSize: isSmallScreen ? 24 : 28,
                           fontWeight: FontWeight.w800,
@@ -1374,7 +1408,8 @@ class _PovertyTrendChart extends StatelessWidget {
                       vertical: isSmallScreen ? 8 : 10,
                     ),
                     decoration: BoxDecoration(
-                      color: (isPositive ? _bpsGreen : _bpsRed).withOpacity(0.15),
+                      color:
+                          (isPositive ? _bpsGreen : _bpsRed).withOpacity(0.15),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(

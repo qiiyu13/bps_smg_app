@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'responsive_sizing.dart';
+import 'number_format_utils.dart';
 
 // BPS Color Palette (matching kemiskinana_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -23,7 +24,8 @@ class InflasiScreen extends StatefulWidget {
   State<InflasiScreen> createState() => _InflasiScreenState();
 }
 
-class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveClientMixin {
+class _InflasiScreenState extends State<InflasiScreen>
+    with AutomaticKeepAliveClientMixin {
   int selectedYear = 2023;
   int? selectedMonth;
 
@@ -31,20 +33,105 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
   bool get wantKeepAlive => true;
 
   final List<String> months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-    'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'Mei',
+    'Jun',
+    'Jul',
+    'Agu',
+    'Sep',
+    'Okt',
+    'Nov',
+    'Des',
   ];
   final List<String> fullMonths = [
-    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
   ];
 
   final Map<int, List<double>> monthlyInflationData = {
-    2019: [0.32, 0.01, 0.11, -0.10, 0.48, 0.55, 0.31, -0.02, -0.27, 0.02, -0.16, 0.30],
-    2020: [0.40, 0.28, 0.10, -0.10, 0.07, 0.18, -0.05, -0.05, -0.05, -0.09, 0.28, 0.45],
-    2021: [0.26, 0.10, 0.08, -0.13, 0.32, 0.33, 0.21, 0.03, 0.12, 0.12, 0.37, 0.57],
-    2022: [0.56, 0.64, 0.66, 0.95, 0.40, 0.56, 0.64, 0.21, 1.17, 0.12, 0.03, 0.66],
-    2023: [0.34, -0.02, 0.12, -0.07, 0.09, 0.59, 0.21, 0.18, -0.04, -0.06, 0.08, 0.15],
+    2019: [
+      0.32,
+      0.01,
+      0.11,
+      -0.10,
+      0.48,
+      0.55,
+      0.31,
+      -0.02,
+      -0.27,
+      0.02,
+      -0.16,
+      0.30
+    ],
+    2020: [
+      0.40,
+      0.28,
+      0.10,
+      -0.10,
+      0.07,
+      0.18,
+      -0.05,
+      -0.05,
+      -0.05,
+      -0.09,
+      0.28,
+      0.45
+    ],
+    2021: [
+      0.26,
+      0.10,
+      0.08,
+      -0.13,
+      0.32,
+      0.33,
+      0.21,
+      0.03,
+      0.12,
+      0.12,
+      0.37,
+      0.57
+    ],
+    2022: [
+      0.56,
+      0.64,
+      0.66,
+      0.95,
+      0.40,
+      0.56,
+      0.64,
+      0.21,
+      1.17,
+      0.12,
+      0.03,
+      0.66
+    ],
+    2023: [
+      0.34,
+      -0.02,
+      0.12,
+      -0.07,
+      0.09,
+      0.59,
+      0.21,
+      0.18,
+      -0.04,
+      -0.06,
+      0.08,
+      0.15
+    ],
   };
 
   final Map<int, double> yearlyInflation = {
@@ -72,13 +159,55 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
   };
 
   final Map<String, Map<String, double>> inflationComponents = {
-    'Makanan, Minuman & Tembakau': {'2019': 4.55, '2020': 3.28, '2021': 2.84, '2022': 5.33, '2023': 4.12},
-    'Pakaian & Alas Kaki': {'2019': 0.84, '2020': 0.45, '2021': 0.67, '2022': 1.23, '2023': 0.92},
-    'Perumahan & Fasilitas': {'2019': 1.69, '2020': 1.45, '2021': 1.52, '2022': 2.15, '2023': 1.78},
-    'Perawatan Kesehatan': {'2019': 2.43, '2020': 2.15, '2021': 2.67, '2022': 3.45, '2023': 2.89},
-    'Transportasi': {'2019': 1.24, '2020': 0.89, '2021': 1.45, '2022': 4.67, '2023': 2.34},
-    'Komunikasi & Keuangan': {'2019': 1.02, '2020': 0.78, '2021': 0.95, '2022': 1.34, '2023': 1.12},
-    'Rekreasi & Olahraga': {'2019': 2.18, '2020': 1.67, '2021': 2.05, '2022': 2.89, '2023': 2.45},
+    'Makanan, Minuman & Tembakau': {
+      '2019': 4.55,
+      '2020': 3.28,
+      '2021': 2.84,
+      '2022': 5.33,
+      '2023': 4.12
+    },
+    'Pakaian & Alas Kaki': {
+      '2019': 0.84,
+      '2020': 0.45,
+      '2021': 0.67,
+      '2022': 1.23,
+      '2023': 0.92
+    },
+    'Perumahan & Fasilitas': {
+      '2019': 1.69,
+      '2020': 1.45,
+      '2021': 1.52,
+      '2022': 2.15,
+      '2023': 1.78
+    },
+    'Perawatan Kesehatan': {
+      '2019': 2.43,
+      '2020': 2.15,
+      '2021': 2.67,
+      '2022': 3.45,
+      '2023': 2.89
+    },
+    'Transportasi': {
+      '2019': 1.24,
+      '2020': 0.89,
+      '2021': 1.45,
+      '2022': 4.67,
+      '2023': 2.34
+    },
+    'Komunikasi & Keuangan': {
+      '2019': 1.02,
+      '2020': 0.78,
+      '2021': 0.95,
+      '2022': 1.34,
+      '2023': 1.12
+    },
+    'Rekreasi & Olahraga': {
+      '2019': 2.18,
+      '2020': 1.67,
+      '2021': 2.05,
+      '2022': 2.89,
+      '2023': 2.45
+    },
   };
 
   List<int> get availableYears => monthlyInflationData.keys.toList()..sort();
@@ -173,7 +302,8 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
           _buildHeader(context, sizing, isSmallScreen),
           Expanded(
             child: CustomScrollView(
-              physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              physics: const ClampingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
               slivers: [
                 SliverPadding(
                   padding: EdgeInsets.all(sizing.horizontalPadding),
@@ -202,7 +332,8 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
     );
   }
 
-  Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildHeader(
+      BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
         color: _bpsBlue,
@@ -365,19 +496,22 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
                         color: isSelected ? _bpsBlue : _bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
-                      boxShadow: isSelected ? [
-                        BoxShadow(
-                          color: _bpsBlue.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ] : null,
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: _bpsBlue.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Text(
                       year.toString(),
                       style: TextStyle(
                         fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w600,
                         color: isSelected ? Colors.white : _bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
@@ -501,8 +635,10 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
                           months[index],
                           style: TextStyle(
                             fontSize: isSmallScreen ? 13 : 14,
-                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                            color: isSelected ? Colors.white : _bpsTextSecondary,
+                            fontWeight:
+                                isSelected ? FontWeight.w700 : FontWeight.w600,
+                            color:
+                                isSelected ? Colors.white : _bpsTextSecondary,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -607,39 +743,46 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
             children: [
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${yearInflation.toStringAsFixed(2)}%',
+                value: NumberFormatUtils.formatPercentage(yearInflation),
                 label: 'Inflasi Tahunan',
                 color: _bpsBlue,
                 icon: Icons.trending_up_rounded,
-                description: 'Inflasi tahunan (Year-on-Year) mengukur perubahan harga barang dan jasa secara umum selama satu tahun. Angka ini menjadi acuan utama kebijakan moneter.',
+                description:
+                    'Inflasi tahunan (Year-on-Year) mengukur perubahan harga barang dan jasa secara umum selama satu tahun. Angka ini menjadi acuan utama kebijakan moneter.',
                 isFirst: true,
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${currentInflationValue.toStringAsFixed(2)}%',
-                label: selectedMonth == null ? 'Inflasi Bulanan' : 'Inflasi $currentMonthLabel',
+                value:
+                    NumberFormatUtils.formatPercentage(currentInflationValue),
+                label: selectedMonth == null
+                    ? 'Inflasi Bulanan'
+                    : 'Inflasi $currentMonthLabel',
                 color: inflationColor,
                 icon: Icons.calendar_month_rounded,
-                description: 'Inflasi bulanan (Month-to-Month) mengukur perubahan harga barang dan jasa dari bulan ke bulan. Fluktuasi bulanan dipengaruhi oleh faktor musiman dan kebijakan harga.',
+                description:
+                    'Inflasi bulanan (Month-to-Month) mengukur perubahan harga barang dan jasa dari bulan ke bulan. Fluktuasi bulanan dipengaruhi oleh faktor musiman dan kebijakan harga.',
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${coreInfl.toStringAsFixed(2)}%',
+                value: NumberFormatUtils.formatPercentage(coreInfl),
                 label: 'Inflasi Inti',
                 color: _bpsGreen,
                 icon: Icons.insights_rounded,
-                description: 'Inflasi inti (Core Inflation) menghilangkan komponen harga yang bergejolak (volatile) seperti bahan makanan dan energi. Indikator ini mencerminkan tekanan inflasi yang lebih fundamental.',
+                description:
+                    'Inflasi inti (Core Inflation) menghilangkan komponen harga yang bergejolak (volatile) seperti bahan makanan dan energi. Indikator ini mencerminkan tekanan inflasi yang lebih fundamental.',
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
                 context: context,
-                value: ihk.toStringAsFixed(2),
+                value: NumberFormatUtils.formatDecimal(ihk, decimalPlaces: 2),
                 label: 'Indeks Harga Konsumen',
                 color: _bpsPurple,
                 icon: Icons.assessment_rounded,
-                description: 'Indeks Harga Konsumen (IHK) mengukur rata-rata perubahan harga dari suatu paket barang dan jasa yang dikonsumsi oleh rumah tangga. Basis perhitungan 2018=100.',
+                description:
+                    'Indeks Harga Konsumen (IHK) mengukur rata-rata perubahan harga dari suatu paket barang dan jasa yang dikonsumsi oleh rumah tangga. Basis perhitungan 2018=100.',
                 isLast: true,
               ),
             ],
@@ -944,7 +1087,8 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
       return FlSpot(e.key.toDouble(), val);
     }).toList();
 
-    final maxY = (yearlyInflation.values.reduce((a, b) => a > b ? a : b) + 0.5).ceilToDouble();
+    final maxY = (yearlyInflation.values.reduce((a, b) => a > b ? a : b) + 0.5)
+        .ceilToDouble();
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -1031,7 +1175,7 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
                       interval: 1,
                       getTitlesWidget: (value, meta) {
                         return Text(
-                          '${value.toStringAsFixed(1)}%',
+                          NumberFormatUtils.formatPercentage(value),
                           style: TextStyle(
                             fontSize: isSmallScreen ? 10 : 12,
                             color: _bpsTextSecondary,
@@ -1049,7 +1193,8 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
                         final index = value.toInt();
                         if (index >= 0 && index < years.length) {
                           return Padding(
-                            padding: EdgeInsets.only(top: isSmallScreen ? 6 : 8),
+                            padding:
+                                EdgeInsets.only(top: isSmallScreen ? 6 : 8),
                             child: Text(
                               years[index].toString(),
                               style: TextStyle(
@@ -1115,7 +1260,8 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
     );
   }
 
-  Widget _buildMonthlyInflationChart(ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildMonthlyInflationChart(
+      ResponsiveSizing sizing, bool isSmallScreen) {
     if (filteredMonthlyData.isEmpty) {
       return Container(
         padding: EdgeInsets.all(sizing.statsCardPadding),
@@ -1234,7 +1380,7 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
                       reservedSize: isSmallScreen ? 30 : 35,
                       getTitlesWidget: (value, meta) {
                         return Text(
-                          '${value.toStringAsFixed(1)}%',
+                          NumberFormatUtils.formatPercentage(value),
                           style: TextStyle(
                             fontSize: isSmallScreen ? 10 : 12,
                             color: _bpsTextSecondary,
@@ -1280,8 +1426,10 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
                       },
                     ),
                   ),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
                 ),
                 borderData: FlBorderData(show: false),
                 barGroups: List.generate(monthlyData.length, (index) {
@@ -1308,7 +1456,8 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
     );
   }
 
-  Widget _buildInflationComponents(ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildInflationComponents(
+      ResponsiveSizing sizing, bool isSmallScreen) {
     final yearStr = selectedYear.toString();
 
     return Container(
@@ -1410,7 +1559,7 @@ class _InflasiScreenState extends State<InflasiScreen> with AutomaticKeepAliveCl
                         ),
                       ),
                       child: Text(
-                        '${value.toStringAsFixed(2)}%',
+                        NumberFormatUtils.formatPercentage(value),
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 14,
                           fontWeight: FontWeight.w700,

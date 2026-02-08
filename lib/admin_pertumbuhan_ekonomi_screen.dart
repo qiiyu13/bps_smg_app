@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'ekonomi_data.dart';
+import 'number_format_utils.dart';
 
 class AdminPertumbuhanEkonomiScreen extends StatefulWidget {
   const AdminPertumbuhanEkonomiScreen({super.key});
 
   @override
-  State<AdminPertumbuhanEkonomiScreen> createState() => _AdminPertumbuhanEkonomiScreenState();
+  State<AdminPertumbuhanEkonomiScreen> createState() =>
+      _AdminPertumbuhanEkonomiScreenState();
 }
 
-class _AdminPertumbuhanEkonomiScreenState extends State<AdminPertumbuhanEkonomiScreen> {
+class _AdminPertumbuhanEkonomiScreenState
+    extends State<AdminPertumbuhanEkonomiScreen> {
   final dataManager = EkonomiDataManager();
 
   @override
@@ -184,7 +187,8 @@ class _AdminPertumbuhanEkonomiScreenState extends State<AdminPertumbuhanEkonomiS
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFF00BCD4), Color(0xFF00ACC1)],
@@ -217,11 +221,16 @@ class _AdminPertumbuhanEkonomiScreenState extends State<AdminPertumbuhanEkonomiS
             ],
           ),
           const Divider(height: 24),
-          _buildInfoRow('Pertumbuhan Ekonomi', data.pertumbuhanEkonomi, Icons.trending_up),
-          _buildInfoRow('Kontribusi PDRB', data.kontribusiPDRB, Icons.pie_chart),
-          _buildInfoRow('Sektor Perdagangan', data.sektorPerdagangan, Icons.store),
-          _buildInfoRow('PDRB per Kapita', data.pdrbPerKapita, Icons.account_balance_wallet),
-          _buildInfoRow('vs Jawa Tengah', data.vsJawaTengah, Icons.compare_arrows),
+          _buildInfoRow('Pertumbuhan Ekonomi', data.pertumbuhanEkonomi,
+              Icons.trending_up),
+          _buildInfoRow(
+              'Kontribusi PDRB', data.kontribusiPDRB, Icons.pie_chart),
+          _buildInfoRow(
+              'Sektor Perdagangan', data.sektorPerdagangan, Icons.store),
+          _buildInfoRow('PDRB per Kapita', data.pdrbPerKapita,
+              Icons.account_balance_wallet),
+          _buildInfoRow(
+              'vs Jawa Tengah', data.vsJawaTengah, Icons.compare_arrows),
           _buildInfoRow('vs Nasional', data.vsNasional, Icons.public),
           const SizedBox(height: 12),
           const Text(
@@ -313,15 +322,21 @@ class _AdminPertumbuhanEkonomiScreenState extends State<AdminPertumbuhanEkonomiS
 
   void _showAddEditDialog(BuildContext context, {EkonomiData? data}) {
     final isEdit = data != null;
-    
+
     final tahunController = TextEditingController(text: data?.tahun ?? '');
-    final pertumbuhanController = TextEditingController(text: data?.pertumbuhanEkonomi ?? '');
-    final kontribusiController = TextEditingController(text: data?.kontribusiPDRB ?? '');
-    final sektorController = TextEditingController(text: data?.sektorPerdagangan ?? '');
-    final pdrbController = TextEditingController(text: data?.pdrbPerKapita ?? '');
-    final vsJatengController = TextEditingController(text: data?.vsJawaTengah ?? '');
-    final vsNasionalController = TextEditingController(text: data?.vsNasional ?? '');
-    
+    final pertumbuhanController =
+        TextEditingController(text: data?.pertumbuhanEkonomi ?? '');
+    final kontribusiController =
+        TextEditingController(text: data?.kontribusiPDRB ?? '');
+    final sektorController =
+        TextEditingController(text: data?.sektorPerdagangan ?? '');
+    final pdrbController =
+        TextEditingController(text: data?.pdrbPerKapita ?? '');
+    final vsJatengController =
+        TextEditingController(text: data?.vsJawaTengah ?? '');
+    final vsNasionalController =
+        TextEditingController(text: data?.vsNasional ?? '');
+
     List<TextEditingController> distrikControllers = [];
     if (data != null) {
       for (var distrik in data.distrikTertinggi) {
@@ -337,21 +352,27 @@ class _AdminPertumbuhanEkonomiScreenState extends State<AdminPertumbuhanEkonomiS
     List<TextEditingController> semarangValueControllers = [];
     List<TextEditingController> jatengYearControllers = [];
     List<TextEditingController> jatengValueControllers = [];
-    
+
     if (data != null) {
       for (var point in data.semarangData) {
-        semarangYearControllers.add(TextEditingController(text: point.year.toString()));
-        semarangValueControllers.add(TextEditingController(text: point.value.toString()));
+        semarangYearControllers
+            .add(TextEditingController(text: point.year.toString()));
+        semarangValueControllers
+            .add(TextEditingController(text: point.value.toString()));
       }
       for (var point in data.jatengData) {
-        jatengYearControllers.add(TextEditingController(text: point.year.toString()));
-        jatengValueControllers.add(TextEditingController(text: point.value.toString()));
+        jatengYearControllers
+            .add(TextEditingController(text: point.year.toString()));
+        jatengValueControllers
+            .add(TextEditingController(text: point.value.toString()));
       }
     } else {
       for (int i = 0; i < 5; i++) {
-        semarangYearControllers.add(TextEditingController(text: (2020 + i).toString()));
+        semarangYearControllers
+            .add(TextEditingController(text: (2020 + i).toString()));
         semarangValueControllers.add(TextEditingController());
-        jatengYearControllers.add(TextEditingController(text: (2020 + i).toString()));
+        jatengYearControllers
+            .add(TextEditingController(text: (2020 + i).toString()));
         jatengValueControllers.add(TextEditingController());
       }
     }
@@ -539,10 +560,11 @@ class _AdminPertumbuhanEkonomiScreenState extends State<AdminPertumbuhanEkonomiS
             onPressed: () {
               List<ChartDataPoint> semarangData = [];
               List<ChartDataPoint> jatengData = [];
-              
+
               for (int i = 0; i < 5; i++) {
                 semarangData.add(ChartDataPoint(
-                  year: int.tryParse(semarangYearControllers[i].text) ?? 2020 + i,
+                  year:
+                      int.tryParse(semarangYearControllers[i].text) ?? 2020 + i,
                   value: double.tryParse(semarangValueControllers[i].text) ?? 0,
                 ));
                 jatengData.add(ChartDataPoint(
@@ -589,13 +611,15 @@ class _AdminPertumbuhanEkonomiScreenState extends State<AdminPertumbuhanEkonomiS
                   ),
                 );
               }
-              
+
               setState(() {}); // Refresh UI
-              
+
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(isEdit ? 'Data berhasil diupdate' : 'Data berhasil ditambahkan'),
+                  content: Text(isEdit
+                      ? 'Data berhasil diupdate'
+                      : 'Data berhasil ditambahkan'),
                   backgroundColor: Colors.green,
                 ),
               );
@@ -616,7 +640,8 @@ class _AdminPertumbuhanEkonomiScreenState extends State<AdminPertumbuhanEkonomiS
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Konfirmasi Hapus'),
-        content: Text('Apakah Anda yakin ingin menghapus data tahun ${data.tahun}?'),
+        content:
+            Text('Apakah Anda yakin ingin menghapus data tahun ${data.tahun}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -626,7 +651,7 @@ class _AdminPertumbuhanEkonomiScreenState extends State<AdminPertumbuhanEkonomiS
             onPressed: () {
               dataManager.deleteData(data.id);
               setState(() {}); // Refresh UI
-              
+
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(

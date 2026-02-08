@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:ui';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'app_theme.dart';
 import 'profile_screen.dart';
 import 'ipm_screen.dart';
@@ -15,6 +17,7 @@ import 'ipg_screen.dart';
 import 'idg_screen.dart';
 import 'sdgs_screen.dart';
 import 'responsive_sizing.dart';
+import 'number_format_utils.dart';
 
 // Category data model - Made immutable for better performance
 @immutable
@@ -185,17 +188,18 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   late final PageController _statsPageController;
-  
+
   // FIX 1: Use ValueNotifier for page indicators to avoid setState on every scroll
   final ValueNotifier<int> _currentPageNotifier = ValueNotifier<int>(0);
-  
+
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
   DateTime _lastUpdated = DateTime(2024, 12, 1);
-  
+
   // Debounce for search
   Timer? _searchDebounce;
 
@@ -206,28 +210,28 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       vsync: this,
       duration: const Duration(milliseconds: 600),
     )..forward();
-    
+
     _statsPageController = PageController(
       viewportFraction: 1.0,
       keepPage: true,
     );
-    
+
     _statsPageController.addListener(_handlePageChange);
   }
 
   // FIX 5: Immediate page change with threshold for stability
   void _handlePageChange() {
     if (!mounted) return;
-    
+
     final page = _statsPageController.page;
     if (page == null) return;
-    
+
     final newPage = page.round();
-    
+
     // Only update when we've crossed the page threshold (page is close to integer)
     // This prevents flickering during mid-swipe while still being responsive
     final distanceFromPage = (page - newPage).abs();
-    
+
     if (distanceFromPage < 0.3 && _currentPageNotifier.value != newPage) {
       _currentPageNotifier.value = newPage;
     }
@@ -284,11 +288,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   // Optimized filtered categories getter
   List<CategoryItem> get _filteredCategories {
     if (_searchQuery.isEmpty) return _HomeScreenCache.allCategories;
-    
+
     final query = _searchQuery.toLowerCase();
     return _HomeScreenCache.allCategories.where((cat) {
       return cat.label.toLowerCase().contains(query) ||
-             cat.shortLabel.toLowerCase().contains(query);
+          cat.shortLabel.toLowerCase().contains(query);
     }).toList();
   }
 
@@ -310,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   String get _formattedLastUpdated {
     final now = DateTime.now();
     final difference = now.difference(_lastUpdated);
-    
+
     if (difference.inDays == 0) {
       if (difference.inHours == 0) {
         return '${difference.inMinutes} menit yang lalu';
@@ -326,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final sizing = ResponsiveSizing(context);
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: _HomeScreenContent(
@@ -461,20 +465,21 @@ class _HomeScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      physics:
+          const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       slivers: [
         // Header with search
         _buildHeader(),
-        
+
         // Stats snapshot section
         _buildStatsSection(context),
-        
+
         // Categories header
         _buildCategoriesHeader(),
-        
+
         // Category groups
         ..._buildCategoryGroups(context),
-        
+
         // Footer spacing
         const SliverToBoxAdapter(
           child: SizedBox(height: 32),
@@ -699,7 +704,8 @@ class _HomeScreenContent extends StatelessWidget {
             ),
             // Stats cards section
             Container(
-              margin: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
+              margin:
+                  EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
               height: sizing.statsCardHeight,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
@@ -824,7 +830,8 @@ class _HomeScreenContent extends StatelessWidget {
               children: [
                 Container(
                   padding: EdgeInsets.all(sizing.groupIconPadding),
-                  decoration: BPSDecorations.groupIconContainerDecoration(groupColor),
+                  decoration:
+                      BPSDecorations.groupIconContainerDecoration(groupColor),
                   child: Icon(
                     info['icon'] as IconData,
                     color: groupColor,
@@ -953,7 +960,7 @@ class _PageIndicators extends StatelessWidget {
   void _animateToPage(int index) {
     final currentPage = this.currentPage;
     final distance = (index - currentPage).abs();
-    
+
     if (distance <= 2) {
       pageController.animateToPage(
         index,
@@ -1021,226 +1028,588 @@ class _PageIndicatorDot extends StatelessWidget {
 
 // Extract individual stat cards to separate widgets for better performance
 // FIX 3: Cache chart spots with static const to avoid recreation
-class _StatsCard1 extends StatelessWidget {
+class _StatsCard1 extends StatefulWidget {
   const _StatsCard1();
 
-  // Pre-computed chart data and spots
+  @override
+  State<_StatsCard1> createState() => _StatsCard1State();
+}
+
+class _StatsCard1State extends State<_StatsCard1> {
   static const List<double> _chartData = [1.68, 1.69, 1.69, 1.70, 1.71];
   static final List<FlSpot> _spots = List.generate(
     _chartData.length,
     (index) => FlSpot(index.toDouble(), _chartData[index]),
   );
 
+  DateTime? _latestDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLatestDate();
+  }
+
+  Future<void> _loadLatestDate() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedData = prefs.getString('semarang_population_data');
+      if (savedData != null) {
+        final decoded = json.decode(savedData) as Map<String, dynamic>;
+        final years = decoded.keys.map(int.parse).toList()..sort();
+        if (years.isNotEmpty) {
+          final latestYear = years.last;
+          // Set date to December 31st of the latest year
+          setState(() {
+            _latestDate = DateTime(latestYear, 12, 31);
+          });
+        }
+      } else {
+        // Default to 2024 if no data
+        setState(() {
+          _latestDate = DateTime(2024, 12, 31);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading penduduk date: $e');
+      setState(() {
+        _latestDate = DateTime(2024, 12, 31);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _GlassStatsCard(
       label: 'Penduduk',
-      value: '1.709M',
-      change: '+1.2%',
+      value: '1,7',
+      unit: 'Jt',
+      change: '+1,2%',
       isPositive: true,
       accentColor: bpsBlue,
       icon: Icons.people_rounded,
       chartSpots: _spots,
       screen: const PendudukScreen(),
+      latestDate: _latestDate,
     );
   }
 }
 
-class _StatsCard2 extends StatelessWidget {
+class _StatsCard2 extends StatefulWidget {
   const _StatsCard2();
 
+  @override
+  State<_StatsCard2> createState() => _StatsCard2State();
+}
+
+class _StatsCard2State extends State<_StatsCard2> {
   static const List<double> _chartData = [80.5, 81.2, 81.8, 82.1, 82.4];
   static final List<FlSpot> _spots = List.generate(
     _chartData.length,
     (index) => FlSpot(index.toDouble(), _chartData[index]),
   );
 
+  DateTime? _latestDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLatestDate();
+  }
+
+  Future<void> _loadLatestDate() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedData = prefs.getString('ipm_data');
+      if (savedData != null) {
+        final decoded = json.decode(savedData) as Map<String, dynamic>;
+        final years = decoded.keys.map(int.parse).toList()..sort();
+        if (years.isNotEmpty) {
+          final latestYear = years.last;
+          setState(() {
+            _latestDate = DateTime(latestYear, 12, 31);
+          });
+        }
+      } else {
+        setState(() {
+          _latestDate = DateTime(2024, 12, 31);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading IPM date: $e');
+      setState(() {
+        _latestDate = DateTime(2024, 12, 31);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _GlassStatsCard(
       label: 'IPM',
-      value: '82.39',
-      change: '+2.3%',
+      value: '82,39',
+      unit: '',
+      change: '+2,3%',
       isPositive: true,
-      accentColor: bpsGreen,
+      accentColor: bpsBlue,
       icon: Icons.trending_up_rounded,
       chartSpots: _spots,
       screen: const IpmScreen(),
+      latestDate: _latestDate,
     );
   }
 }
 
-class _StatsCard3 extends StatelessWidget {
+class _StatsCard3 extends StatefulWidget {
   const _StatsCard3();
 
+  @override
+  State<_StatsCard3> createState() => _StatsCard3State();
+}
+
+class _StatsCard3State extends State<_StatsCard3> {
   static const List<double> _chartData = [4.5, 4.3, 4.2, 4.1, 4.0];
   static final List<FlSpot> _spots = List.generate(
     _chartData.length,
     (index) => FlSpot(index.toDouble(), _chartData[index]),
   );
 
+  DateTime? _latestDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLatestDate();
+  }
+
+  Future<void> _loadLatestDate() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedData = prefs.getString('kemiskinan_data');
+      if (savedData != null) {
+        final decoded = json.decode(savedData) as Map<String, dynamic>;
+        final years = decoded.keys.map(int.parse).toList()..sort();
+        if (years.isNotEmpty) {
+          final latestYear = years.last;
+          setState(() {
+            _latestDate = DateTime(latestYear, 12, 31);
+          });
+        }
+      } else {
+        setState(() {
+          _latestDate = DateTime(2024, 12, 31);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading kemiskinan date: $e');
+      setState(() {
+        _latestDate = DateTime(2024, 12, 31);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _GlassStatsCard(
       label: 'Kemiskinan',
-      value: '4.03%',
-      change: '-0.87%',
+      value: '4,03',
+      unit: '%',
+      change: '-0,87%',
       isPositive: false,
-      accentColor: bpsOrange,
+      invertedLogic: true, // Lower poverty is good
+      accentColor: bpsBlue,
       icon: Icons.volunteer_activism_rounded,
       chartSpots: _spots,
       screen: const KemiskinanScreen(),
+      latestDate: _latestDate,
     );
   }
 }
 
-class _StatsCard4 extends StatelessWidget {
+class _StatsCard4 extends StatefulWidget {
   const _StatsCard4();
 
+  @override
+  State<_StatsCard4> createState() => _StatsCard4State();
+}
+
+class _StatsCard4State extends State<_StatsCard4> {
   static const List<double> _chartData = [2.1, 2.5, 2.8, 2.9, 2.9];
   static final List<FlSpot> _spots = List.generate(
     _chartData.length,
     (index) => FlSpot(index.toDouble(), _chartData[index]),
   );
 
+  DateTime? _latestDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLatestDate();
+  }
+
+  Future<void> _loadLatestDate() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedData = prefs.getString('inflasi_yearly_data');
+      if (savedData != null) {
+        final decoded = json.decode(savedData) as Map<String, dynamic>;
+        final years = decoded.keys.map(int.parse).toList()..sort();
+        if (years.isNotEmpty) {
+          final latestYear = years.last;
+          setState(() {
+            _latestDate = DateTime(latestYear, 12, 31);
+          });
+        }
+      } else {
+        setState(() {
+          _latestDate = DateTime(2024, 12, 31);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading inflasi date: $e');
+      setState(() {
+        _latestDate = DateTime(2024, 12, 31);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _GlassStatsCard(
       label: 'Inflasi',
-      value: '2.89%',
-      change: '+0.39%',
+      value: '2,89',
+      unit: '%',
+      change: '+0,39%',
       isPositive: true,
-      accentColor: bpsRed,
+      accentColor: bpsBlue,
       icon: Icons.payments_rounded,
       chartSpots: _spots,
       screen: const InflasiScreen(),
+      latestDate: _latestDate,
     );
   }
 }
 
-// Clean Card with subtle tint - No blur, content clearly visible
-class _GlassStatsCard extends StatelessWidget {
+// Enhanced Glassmorphism Card with improved visual hierarchy
+class _GlassStatsCard extends StatefulWidget {
   final String label;
   final String value;
+  final String unit;
   final String change;
   final bool isPositive;
   final Color accentColor;
   final IconData icon;
   final List<FlSpot> chartSpots;
   final Widget screen;
+  final DateTime? latestDate;
+  final bool invertedLogic;
 
   const _GlassStatsCard({
     required this.label,
     required this.value,
+    this.unit = '',
     required this.change,
     required this.isPositive,
     required this.accentColor,
     required this.icon,
     required this.chartSpots,
     required this.screen,
+    this.latestDate,
+    this.invertedLogic = false,
   });
+
+  @override
+  State<_GlassStatsCard> createState() => _GlassStatsCardState();
+}
+
+class _GlassStatsCardState extends State<_GlassStatsCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _scaleController;
+  bool _isPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scaleController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scaleController.dispose();
+    super.dispose();
+  }
+
+  String _formatFullDate(DateTime date) {
+    final months = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember'
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
+  }
+
+  // Determine delta color based on metric type and direction
+  Color _getDeltaColor() {
+    // Inverted logic: for metrics where increase is bad (e.g., Kemiskinan)
+    if (widget.invertedLogic) {
+      return widget.isPositive ? bpsRed : bpsGreen;
+    }
+    // Normal logic: for metrics where increase is good
+    return widget.isPositive ? bpsGreen : bpsRed;
+  }
+
+  IconData _getDeltaIcon() {
+    return widget.isPositive ? Icons.trending_up_rounded : Icons.trending_down_rounded;
+  }
+
+  void _handleTapDown(TapDownDetails details) {
+    setState(() => _isPressed = true);
+    _scaleController.forward();
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() => _isPressed = false);
+    _scaleController.reverse();
+  }
+
+  void _handleTapCancel() {
+    setState(() => _isPressed = false);
+    _scaleController.reverse();
+  }
 
   @override
   Widget build(BuildContext context) {
     final sizing = ResponsiveSizing(context);
-    
+
     return Padding(
       padding: const EdgeInsets.all(9),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          // Subtle white base with tint
-          color: Colors.white.withOpacity(0.8),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white.withOpacity(0.95),
-              accentColor.withOpacity(0.08),
-            ],
-          ),
-          border: Border.all(
-            color: accentColor.withOpacity(0.2),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: accentColor.withOpacity(0.12),
-              blurRadius: 20,
-              offset: const Offset(0, 6),
-              spreadRadius: -4,
+      child: GestureDetector(
+        onTapDown: _handleTapDown,
+        onTapUp: _handleTapUp,
+        onTapCancel: _handleTapCancel,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => widget.screen),
+          );
+        },
+        child: AnimatedBuilder(
+          animation: _scaleController,
+          builder: (context, child) {
+            final scale = 1.0 - (_scaleController.value * 0.02);
+            return Transform.scale(
+              scale: scale,
+              child: child,
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white.withOpacity(0.85),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.98),
+                  widget.accentColor.withOpacity(0.06),
+                ],
+              ),
+              border: Border.all(
+                color: _isPressed
+                    ? widget.accentColor.withOpacity(0.5)
+                    : widget.accentColor.withOpacity(0.18),
+                width: _isPressed ? 2.0 : 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: widget.accentColor.withOpacity(_isPressed ? 0.18 : 0.12),
+                  blurRadius: _isPressed ? 25 : 20,
+                  offset: const Offset(0, 6),
+                  spreadRadius: -4,
+                ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => screen),
-              );
-            },
-            borderRadius: BorderRadius.circular(20),
-            child: Padding(
-              padding: EdgeInsets.all(sizing.statsCardPadding),
-              child: Row(
-                children: [
-                  // Icon with accent tint
-                  Container(
-                    width: sizing.statsIconContainerSize,
-                    height: sizing.statsIconContainerSize,
-                    decoration: BoxDecoration(
-                      color: accentColor.withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Icon(
-                      icon,
-                      color: accentColor,
-                      size: sizing.statsIconSize,
-                    ),
-                  ),
-                  SizedBox(width: sizing.statsCardPadding - 2),
-                  // Data
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => widget.screen),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(20),
+                  splashColor: widget.accentColor.withOpacity(0.1),
+                  highlightColor: widget.accentColor.withOpacity(0.05),
+                  child: Padding(
+                    padding: EdgeInsets.all(sizing.statsCardPadding - 4),
+                    child: Row(
                       children: [
-                        Text(
-                          label,
-                          style: TextStyle(
-                            fontSize: sizing.statsLabelFontSize,
-                            fontWeight: FontWeight.w600,
-                            color: bpsTextSecondary,
+                        // Icon with accent tint
+                        Container(
+                          width: sizing.statsIconContainerSize - 4,
+                          height: sizing.statsIconContainerSize - 4,
+                          decoration: BoxDecoration(
+                            color: widget.accentColor.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            widget.icon,
+                            color: widget.accentColor,
+                            size: sizing.statsIconSize - 2,
                           ),
                         ),
-                        SizedBox(height: sizing.isVerySmall ? 4 : 6),
-                        Text(
-                          value,
-                          style: TextStyle(
-                            fontSize: sizing.statsValueFontSize,
-                            fontWeight: FontWeight.w800,
-                            color: bpsTextPrimary,
-                            height: 1,
+                        SizedBox(width: sizing.statsCardPadding - 6),
+                        // Data
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Label row
+                              Row(
+                                children: [
+                                  Text(
+                                    widget.label,
+                                    style: TextStyle(
+                                      fontSize: sizing.statsLabelFontSize,
+                                      fontWeight: FontWeight.w600,
+                                      color: bpsTextSecondary,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              // Date with improved contrast (WCAG AA)
+                              if (widget.latestDate != null) ...[
+                                const SizedBox(height: 1),
+                                Text(
+                                  _formatFullDate(widget.latestDate!),
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                    color: bpsTextSecondary, // Darker for better contrast
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                              ],
+                              const SizedBox(height: 4),
+                              // Big number with superscript unit
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    widget.value,
+                                    style: TextStyle(
+                                      fontSize: sizing.statsValueFontSize + 2,
+                                      fontWeight: FontWeight.w800,
+                                      color: bpsTextPrimary,
+                                      height: 1,
+                                      fontFamily: 'Poppins',
+                                      letterSpacing: -0.5,
+                                    ),
+                                  ),
+                                  if (widget.unit.isNotEmpty) ...[
+                                    const SizedBox(width: 2),
+                                    Baseline(
+                                      baseline: sizing.statsValueFontSize + 2,
+                                      baselineType: TextBaseline.alphabetic,
+                                      child: Text(
+                                        widget.unit,
+                                        style: TextStyle(
+                                          fontSize: (sizing.statsValueFontSize + 2) * 0.55,
+                                          fontWeight: FontWeight.w600,
+                                          color: bpsTextSecondary,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ],
                           ),
-                          overflow: TextOverflow.ellipsis,
+                        ),
+                        // Chart and delta indicator column
+                        SizedBox(
+                          width: sizing.statsMiniChartWidth + 20,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              // Delta indicator pill - green with white text
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: bpsGreen,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: bpsGreen.withOpacity(0.3),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      _getDeltaIcon(),
+                                      size: 12,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      widget.change,
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins',
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              // Sparkline chart
+                              _GlassMiniChart(
+                                spots: widget.chartSpots,
+                                color: widget.accentColor,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  // Chart
-                  SizedBox(
-                    width: sizing.statsMiniChartWidth,
-                    child: _GlassMiniChart(spots: chartSpots, color: accentColor),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -1249,8 +1618,6 @@ class _GlassStatsCard extends StatelessWidget {
     );
   }
 }
-
-
 
 class _MiniChart extends StatelessWidget {
   final List<FlSpot> spots;
@@ -1307,7 +1674,7 @@ class _MiniChart extends StatelessWidget {
   }
 }
 
-// Glass morphism mini chart - brighter colors for glass card
+// Glass morphism mini chart with end dot (static, no animation)
 class _GlassMiniChart extends StatelessWidget {
   final List<FlSpot> spots;
   final Color color;
@@ -1321,14 +1688,22 @@ class _GlassMiniChart extends StatelessWidget {
   Widget build(BuildContext context) {
     if (spots.isEmpty) return const SizedBox();
 
+    // Use tighter Y-axis padding to make line use more vertical space
+    final minY = spots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
+    final maxY = spots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
+    final range = maxY - minY;
+    
+    // Only add small padding if values are very close
+    final yPadding = range < 0.5 ? 0.1 : range * 0.05;
+
     return RepaintBoundary(
       child: SizedBox(
         width: 80,
-        height: 40,
+        height: 50, // Increased from 40 to 50
         child: LineChart(
           LineChartData(
-            minY: spots.map((s) => s.y).reduce((a, b) => a < b ? a : b) * 0.95,
-            maxY: spots.map((s) => s.y).reduce((a, b) => a > b ? a : b) * 1.05,
+            minY: minY - yPadding,
+            maxY: maxY + yPadding,
             minX: 0,
             maxX: (spots.length - 1).toDouble(),
             gridData: const FlGridData(show: false),
@@ -1340,13 +1715,28 @@ class _GlassMiniChart extends StatelessWidget {
                 isCurved: true,
                 curveSmoothness: 0.4,
                 color: color,
-                barWidth: 2.5,
-                dotData: const FlDotData(show: false),
+                barWidth: 3, // Thicker line (was 2.5)
+                dotData: FlDotData(
+                  show: true,
+                  getDotPainter: (spot, percent, bar, index) {
+                    // Only show dot on the last data point
+                    if (index == spots.length - 1) {
+                      return FlDotCirclePainter(
+                        radius: 4, // Slightly larger dot
+                        color: color,
+                        strokeWidth: 0,
+                        strokeColor: Colors.transparent,
+                      );
+                    }
+                    // Hide all other dots
+                    return FlDotCirclePainter(radius: 0);
+                  },
+                ),
                 belowBarData: BarAreaData(
                   show: true,
                   gradient: LinearGradient(
                     colors: [
-                      color.withOpacity(0.4),
+                      color.withOpacity(0.5), // More visible gradient
                       color.withOpacity(0.05),
                     ],
                     begin: Alignment.topCenter,
@@ -1403,7 +1793,8 @@ class _CategoryCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(sizing.categoryIconContainerPadding),
+                    padding:
+                        EdgeInsets.all(sizing.categoryIconContainerPadding),
                     decoration: BoxDecoration(
                       color: category.groupColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),

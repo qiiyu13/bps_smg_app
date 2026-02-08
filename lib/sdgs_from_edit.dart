@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'sdgs_data_service.dart';
+import 'number_format_utils.dart';
 
 class SDGsFormEditScreen extends StatefulWidget {
   final KotaData? kotaData;
@@ -777,7 +778,7 @@ class _SDGsFormEditScreenState extends State<SDGsFormEditScreen>
                               border: Border.all(color: color.withOpacity(0.4)),
                             ),
                             child: Text(
-                              '$year: ${value.toStringAsFixed(1)}%',
+                              '$year: ${NumberFormatUtils.formatPercentage(value)}',
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,

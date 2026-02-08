@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'ekonomi_data.dart';
 import 'responsive_sizing.dart';
+import 'number_format_utils.dart';
 
 // BPS Color Palette (matching kemiskinana_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -20,10 +21,12 @@ class PertumbuhanEkonomiScreen extends StatefulWidget {
   const PertumbuhanEkonomiScreen({super.key});
 
   @override
-  State<PertumbuhanEkonomiScreen> createState() => _PertumbuhanEkonomiScreenState();
+  State<PertumbuhanEkonomiScreen> createState() =>
+      _PertumbuhanEkonomiScreenState();
 }
 
-class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> with AutomaticKeepAliveClientMixin {
+class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
+    with AutomaticKeepAliveClientMixin {
   final dataManager = EkonomiDataManager();
   late int selectedYear;
   late List<int> availableYears;
@@ -57,7 +60,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
     });
   }
 
-  EkonomiData? get currentData => dataManager.getDataByYear(selectedYear.toString());
+  EkonomiData? get currentData =>
+      dataManager.getDataByYear(selectedYear.toString());
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +121,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
           _buildHeader(context, sizing, isSmallScreen),
           Expanded(
             child: CustomScrollView(
-              physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              physics: const ClampingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
               slivers: [
                 SliverPadding(
                   padding: EdgeInsets.all(sizing.horizontalPadding),
@@ -142,7 +147,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
     );
   }
 
-  Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildHeader(
+      BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
         color: _bpsBlue,
@@ -300,19 +306,22 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
                         color: isSelected ? _bpsBlue : _bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
-                      boxShadow: isSelected ? [
-                        BoxShadow(
-                          color: _bpsBlue.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ] : null,
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: _bpsBlue.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Text(
                       year.toString(),
                       style: TextStyle(
                         fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w600,
                         color: isSelected ? Colors.white : _bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
@@ -418,7 +427,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
                 label: 'Pertumbuhan Ekonomi',
                 color: _bpsBlue,
                 icon: Icons.trending_up_rounded,
-                description: 'Pertumbuhan ekonomi menunjukkan peningkatan aktivitas ekonomi dalam periode tertentu. Angka positif menandakan ekonomi sedang berkembang.',
+                description:
+                    'Pertumbuhan ekonomi menunjukkan peningkatan aktivitas ekonomi dalam periode tertentu. Angka positif menandakan ekonomi sedang berkembang.',
                 isFirst: true,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -428,7 +438,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
                 label: 'Kontribusi PDRB',
                 color: _bpsGreen,
                 icon: Icons.pie_chart_rounded,
-                description: 'Kontribusi PDRB menunjukkan seberapa besar peran wilayah ini terhadap produk domestik regional bruto.',
+                description:
+                    'Kontribusi PDRB menunjukkan seberapa besar peran wilayah ini terhadap produk domestik regional bruto.',
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
@@ -437,7 +448,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
                 label: 'Sektor Perdagangan',
                 color: _bpsOrange,
                 icon: Icons.store_rounded,
-                description: 'Sektor perdagangan merupakan salah satu penopang ekonomi utama wilayah.',
+                description:
+                    'Sektor perdagangan merupakan salah satu penopang ekonomi utama wilayah.',
                 isLast: true,
               ),
             ],
@@ -991,7 +1003,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Perbandingan Dua Wilayah (Pertumbuhan %)',
+                      'Tren Pertumbuhan Tahun 2023-2024 (%)',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 14,
                         color: _bpsTextSecondary,
@@ -1009,7 +1021,6 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
             alignment: WrapAlignment.center,
             children: [
               _buildLegendItem('Kota Semarang', _bpsBlue, isSmallScreen),
-              _buildLegendItem('Provinsi Jawa Tengah', _bpsGreen, isSmallScreen),
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
@@ -1020,7 +1031,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
-                  horizontalInterval: 10,
+                  horizontalInterval: 0.5,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
                       color: _bpsBorder,
@@ -1032,15 +1043,15 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: isSmallScreen ? 28 : 35,
-                      interval: 10,
+                      reservedSize: isSmallScreen ? 35 : 40,
+                      interval: 0.5,
                       getTitlesWidget: (value, meta) {
                         return Padding(
                           padding: const EdgeInsets.only(right: 4),
                           child: Text(
-                            value.toInt().toString(),
+                            '${value.toStringAsFixed(1)}%',
                             style: TextStyle(
-                              fontSize: isSmallScreen ? 10 : 12,
+                              fontSize: isSmallScreen ? 9 : 10,
                               color: _bpsTextSecondary,
                               fontWeight: FontWeight.w500,
                             ),
@@ -1061,7 +1072,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
                               ? "'${year.toString().substring(2)}"
                               : year.toString();
                           return Padding(
-                            padding: EdgeInsets.only(top: isSmallScreen ? 6 : 8),
+                            padding:
+                                EdgeInsets.only(top: isSmallScreen ? 6 : 8),
                             child: Text(
                               label,
                               style: TextStyle(
@@ -1086,11 +1098,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
                 borderData: FlBorderData(show: false),
                 minX: 0,
                 maxX: (data.semarangData.length - 1).toDouble(),
-                minY: 0,
-                maxY: (([
-                  ...data.semarangData.map((e) => e.value),
-                  ...data.jatengData.map((e) => e.value),
-                ].reduce((a, b) => a > b ? a : b) * 1.2) / 10).ceil() * 10.0,
+                minY: 4.0,
+                maxY: 6.0,
                 lineBarsData: [
                   LineChartBarData(
                     spots: data.semarangData.asMap().entries.map((e) {
@@ -1117,37 +1126,6 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen> wit
                         colors: [
                           _bpsBlue.withOpacity(0.15),
                           _bpsBlue.withOpacity(0.01),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                    ),
-                  ),
-                  LineChartBarData(
-                    spots: data.jatengData.asMap().entries.map((e) {
-                      return FlSpot(e.key.toDouble(), e.value.value);
-                    }).toList(),
-                    isCurved: true,
-                    color: _bpsGreen,
-                    barWidth: isSmallScreen ? 2.5 : 3.5,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, percent, barData, index) {
-                        return FlDotCirclePainter(
-                          radius: isSmallScreen ? 3 : 4,
-                          color: _bpsGreen,
-                          strokeWidth: isSmallScreen ? 1.5 : 2.5,
-                          strokeColor: Colors.white,
-                        );
-                      },
-                    ),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      gradient: LinearGradient(
-                        colors: [
-                          _bpsGreen.withOpacity(0.15),
-                          _bpsGreen.withOpacity(0.01),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,

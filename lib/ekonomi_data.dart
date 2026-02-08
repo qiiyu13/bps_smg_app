@@ -28,25 +28,25 @@ class EkonomiData {
 
 class DistrikData {
   String nama;
-  
+
   DistrikData({required this.nama});
 }
 
 class ChartDataPoint {
   final int year;
   final double value;
-  
+
   ChartDataPoint({required this.year, required this.value});
 }
 
 // Singleton class untuk menyimpan data global
 class EkonomiDataManager {
   static final EkonomiDataManager _instance = EkonomiDataManager._internal();
-  
+
   factory EkonomiDataManager() {
     return _instance;
   }
-  
+
   EkonomiDataManager._internal();
 
   // Data list yang bisa diakses dari mana saja
@@ -68,18 +68,12 @@ class EkonomiDataManager {
         DistrikData(nama: 'Kecamatan Genuk'),
       ],
       semarangData: [
-        ChartDataPoint(year: 2020, value: 10),
-        ChartDataPoint(year: 2021, value: 15),
-        ChartDataPoint(year: 2022, value: 30),
-        ChartDataPoint(year: 2023, value: 40),
-        ChartDataPoint(year: 2024, value: 50),
+        ChartDataPoint(year: 2023, value: 5.05),
+        ChartDataPoint(year: 2024, value: 5.31),
       ],
       jatengData: [
-        ChartDataPoint(year: 2020, value: 8),
-        ChartDataPoint(year: 2021, value: 12),
-        ChartDataPoint(year: 2022, value: 20),
-        ChartDataPoint(year: 2023, value: 25),
-        ChartDataPoint(year: 2024, value: 40),
+        ChartDataPoint(year: 2023, value: 5.05),
+        ChartDataPoint(year: 2024, value: 5.31),
       ],
     ),
     EkonomiData(
@@ -99,18 +93,12 @@ class EkonomiDataManager {
         DistrikData(nama: 'Kecamatan Pedurungan'),
       ],
       semarangData: [
-        ChartDataPoint(year: 2020, value: 8),
-        ChartDataPoint(year: 2021, value: 12),
-        ChartDataPoint(year: 2022, value: 25),
-        ChartDataPoint(year: 2023, value: 35),
-        ChartDataPoint(year: 2024, value: 45),
+        ChartDataPoint(year: 2023, value: 5.05),
+        ChartDataPoint(year: 2024, value: 5.31),
       ],
       jatengData: [
-        ChartDataPoint(year: 2020, value: 7),
-        ChartDataPoint(year: 2021, value: 10),
-        ChartDataPoint(year: 2022, value: 18),
-        ChartDataPoint(year: 2023, value: 22),
-        ChartDataPoint(year: 2024, value: 35),
+        ChartDataPoint(year: 2023, value: 5.05),
+        ChartDataPoint(year: 2024, value: 5.31),
       ],
     ),
   ];
@@ -153,6 +141,7 @@ class EkonomiDataManager {
 
   // Fungsi untuk mendapatkan list tahun yang tersedia
   List<int> getAvailableYears() {
-    return dataList.map((e) => int.parse(e.tahun)).toList()..sort((a, b) => b.compareTo(a));
+    return dataList.map((e) => int.parse(e.tahun)).toList()
+      ..sort((a, b) => b.compareTo(a));
   }
 }

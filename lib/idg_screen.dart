@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
+import 'number_format_utils.dart';
 
 // BPS Color Palette
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -35,11 +36,21 @@ class IDGData {
     this.ikg,
   });
 
-  String get idgFormatted => idg != null ? idg!.toStringAsFixed(2) : 'N/A';
-  String get ikgFormatted => ikg != null ? ikg!.toStringAsFixed(2) : 'N/A';
-  String get sumbanganFormatted => sumbangan != null ? sumbangan!.toStringAsFixed(2) : 'N/A';
-  String get tenagaFormatted => tenaga != null ? tenaga!.toStringAsFixed(2) : 'N/A';
-  String get parlemenFormatted => parlemen != null ? parlemen!.toStringAsFixed(2) : 'N/A';
+  String get idgFormatted => idg != null
+      ? NumberFormatUtils.formatDecimal(idg!, decimalPlaces: 2)
+      : 'N/A';
+  String get ikgFormatted => ikg != null
+      ? NumberFormatUtils.formatDecimal(ikg!, decimalPlaces: 2)
+      : 'N/A';
+  String get sumbanganFormatted => sumbangan != null
+      ? NumberFormatUtils.formatDecimal(sumbangan!, decimalPlaces: 2)
+      : 'N/A';
+  String get tenagaFormatted => tenaga != null
+      ? NumberFormatUtils.formatDecimal(tenaga!, decimalPlaces: 2)
+      : 'N/A';
+  String get parlemenFormatted => parlemen != null
+      ? NumberFormatUtils.formatDecimal(parlemen!, decimalPlaces: 2)
+      : 'N/A';
 }
 
 class IDGScreen extends StatefulWidget {
@@ -49,7 +60,8 @@ class IDGScreen extends StatefulWidget {
   State<IDGScreen> createState() => _IDGScreenState();
 }
 
-class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixin {
+class _IDGScreenState extends State<IDGScreen>
+    with AutomaticKeepAliveClientMixin {
   Map<int, IDGData> idgDataByYear = {};
   List<int> availableYears = [];
   int selectedYear = 2024;
@@ -68,9 +80,9 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? savedData = prefs.getString('idg_data');
-      
+
       Map<int, IDGData> processedData = {};
-      
+
       if (savedData != null) {
         Map<String, dynamic> decoded = json.decode(savedData);
         decoded.forEach((key, value) {
@@ -87,11 +99,46 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
         });
       } else {
         final List<Map<String, dynamic>> rawData = [
-          {"Tahun": 2020, "SUMBANGAN": 37.13, "TENAGA": 51.15, "PARLEMEN": 20.41, "IDG": 74.67, "IKG": 0.157},
-          {"Tahun": 2021, "SUMBANGAN": 37.46, "TENAGA": 51.30, "PARLEMEN": 18.75, "IDG": 73.64, "IKG": 0.142},
-          {"Tahun": 2022, "SUMBANGAN": 38.05, "TENAGA": 49.78, "PARLEMEN": 18.00, "IDG": 73.93, "IKG": 0.266},
-          {"Tahun": 2023, "SUMBANGAN": 37.93, "TENAGA": 48.76, "PARLEMEN": 18.00, "IDG": 73.86, "IKG": 0.168},
-          {"Tahun": 2024, "SUMBANGAN": 37.68, "TENAGA": 50.42, "PARLEMEN": 24.00, "IDG": 78.71, "IKG": 0.14},
+          {
+            "Tahun": 2020,
+            "SUMBANGAN": 37.13,
+            "TENAGA": 51.15,
+            "PARLEMEN": 20.41,
+            "IDG": 74.67,
+            "IKG": 0.157
+          },
+          {
+            "Tahun": 2021,
+            "SUMBANGAN": 37.46,
+            "TENAGA": 51.30,
+            "PARLEMEN": 18.75,
+            "IDG": 73.64,
+            "IKG": 0.142
+          },
+          {
+            "Tahun": 2022,
+            "SUMBANGAN": 38.05,
+            "TENAGA": 49.78,
+            "PARLEMEN": 18.00,
+            "IDG": 73.93,
+            "IKG": 0.266
+          },
+          {
+            "Tahun": 2023,
+            "SUMBANGAN": 37.93,
+            "TENAGA": 48.76,
+            "PARLEMEN": 18.00,
+            "IDG": 73.86,
+            "IKG": 0.168
+          },
+          {
+            "Tahun": 2024,
+            "SUMBANGAN": 37.68,
+            "TENAGA": 50.42,
+            "PARLEMEN": 24.00,
+            "IDG": 78.71,
+            "IKG": 0.14
+          },
         ];
 
         for (var row in rawData) {
@@ -158,7 +205,8 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
           _buildHeader(context, sizing, isSmallScreen),
           Expanded(
             child: CustomScrollView(
-              physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              physics: const ClampingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
               slivers: [
                 SliverPadding(
                   padding: EdgeInsets.all(sizing.horizontalPadding),
@@ -185,11 +233,17 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
     );
   }
 
-  Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildHeader(
+      BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
         color: _bpsOrange,
-        boxShadow: [BoxShadow(color: _bpsOrange.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+              color: _bpsOrange.withOpacity(0.2),
+              blurRadius: 20,
+              offset: const Offset(0, 4))
+        ],
       ),
       child: SafeArea(
         bottom: false,
@@ -205,7 +259,8 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                   borderRadius: BorderRadius.circular(12),
                   child: Padding(
                     padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                    child: Icon(Icons.arrow_back_rounded, color: Colors.white, size: isSmallScreen ? 20 : 24),
+                    child: Icon(Icons.arrow_back_rounded,
+                        color: Colors.white, size: isSmallScreen ? 20 : 24),
                   ),
                 ),
               ),
@@ -214,16 +269,33 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Indeks Pemberdayaan Gender', style: TextStyle(color: Colors.white, fontSize: isSmallScreen ? sizing.headerTitleSize - 2 : sizing.headerTitleSize, fontWeight: FontWeight.w700, height: 1.1), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text('Indeks Pemberdayaan Gender',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: isSmallScreen
+                                ? sizing.headerTitleSize - 2
+                                : sizing.headerTitleSize,
+                            fontWeight: FontWeight.w700,
+                            height: 1.1),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis),
                     SizedBox(height: isSmallScreen ? 2 : 4),
-                    Text('Data Tahun $selectedYear', style: TextStyle(color: Colors.white70, fontSize: isSmallScreen ? sizing.headerSubtitleSize - 2 : sizing.headerSubtitleSize)),
+                    Text('Data Tahun $selectedYear',
+                        style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: isSmallScreen
+                                ? sizing.headerSubtitleSize - 2
+                                : sizing.headerSubtitleSize)),
                   ],
                 ),
               ),
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(12)),
-                child: Icon(Icons.groups_rounded, color: Colors.white, size: isSmallScreen ? 20 : 24),
+                decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12)),
+                child: Icon(Icons.groups_rounded,
+                    color: Colors.white, size: isSmallScreen ? 20 : 24),
               ),
             ],
           ),
@@ -319,7 +391,8 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                       year.toString(),
                       style: TextStyle(
                         fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w600,
                         color: isSelected ? Colors.white : _bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
@@ -337,7 +410,9 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
   Widget _buildIDGMainCard(ResponsiveSizing sizing, bool isSmallScreen) {
     final data = currentIDGData;
     return Container(
-      padding: EdgeInsets.all(isSmallScreen ? sizing.statsCardPadding - 4 : sizing.statsCardPadding),
+      padding: EdgeInsets.all(isSmallScreen
+          ? sizing.statsCardPadding - 4
+          : sizing.statsCardPadding),
       decoration: BoxDecoration(
         color: _bpsCardBg,
         borderRadius: BorderRadius.circular(16),
@@ -422,7 +497,8 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                 label: 'IDG',
                 color: _bpsPurple,
                 icon: Icons.groups,
-                description: 'Indeks Pemberdayaan Gender (IDG) mengukur kesetaraan peran antara laki-laki dan perempuan dalam bidang ekonomi, politik, dan pengambilan keputusan.',
+                description:
+                    'Indeks Pemberdayaan Gender (IDG) mengukur kesetaraan peran antara laki-laki dan perempuan dalam bidang ekonomi, politik, dan pengambilan keputusan.',
                 isFirst: true,
                 isSmallScreen: isSmallScreen,
               ),
@@ -433,7 +509,8 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                 label: 'IKG',
                 color: _bpsBlue,
                 icon: Icons.balance,
-                description: 'Indeks Ketimpangan Gender (IKG) mengukur ketidaksetaraan pencapaian antara laki-laki dan perempuan dalam kesehatan reproduksi, pemberdayaan, dan pasar tenaga kerja.',
+                description:
+                    'Indeks Ketimpangan Gender (IKG) mengukur ketidaksetaraan pencapaian antara laki-laki dan perempuan dalam kesehatan reproduksi, pemberdayaan, dan pasar tenaga kerja.',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -443,7 +520,8 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                 label: 'Sumbangan Pendapatan',
                 color: _bpsGreen,
                 icon: Icons.attach_money,
-                description: 'Sumbangan pendapatan perempuan menunjukkan kontribusi ekonomi perempuan terhadap total pendapatan rumah tangga.',
+                description:
+                    'Sumbangan pendapatan perempuan menunjukkan kontribusi ekonomi perempuan terhadap total pendapatan rumah tangga.',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -453,7 +531,8 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                 label: 'Tenaga Profesional',
                 color: _bpsOrange,
                 icon: Icons.business_center,
-                description: 'Persentase perempuan sebagai tenaga profesional menunjukkan partisipasi perempuan dalam pekerjaan profesional dan teknis.',
+                description:
+                    'Persentase perempuan sebagai tenaga profesional menunjukkan partisipasi perempuan dalam pekerjaan profesional dan teknis.',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -463,7 +542,8 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                 label: 'Keterlibatan Parlemen',
                 color: _bpsRed,
                 icon: Icons.account_balance,
-                description: 'Keterlibatan perempuan di parlemen menunjukkan partisipasi politik perempuan dalam lembaga legislatif.',
+                description:
+                    'Keterlibatan perempuan di parlemen menunjukkan partisipasi politik perempuan dalam lembaga legislatif.',
                 isLast: true,
                 isSmallScreen: isSmallScreen,
               ),
@@ -488,7 +568,8 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => _showDetailDialog(context, label, value, icon, color, description),
+        onTap: () =>
+            _showDetailDialog(context, label, value, icon, color, description),
         splashColor: color.withOpacity(0.1),
         highlightColor: color.withOpacity(0.05),
         child: Padding(
@@ -767,16 +848,45 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
     }
 
     return Container(
-      padding: EdgeInsets.all(isSmallScreen ? sizing.statsCardPadding - 4 : sizing.statsCardPadding),
-      decoration: BoxDecoration(color: _bpsCardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))]),
+      padding: EdgeInsets.all(isSmallScreen
+          ? sizing.statsCardPadding - 4
+          : sizing.statsCardPadding),
+      decoration: BoxDecoration(
+          color: _bpsCardBg,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2))
+          ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsPurple.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.trending_up, color: _bpsPurple, size: isSmallScreen ? 16 : 18)),
+              Container(
+                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                  decoration: BoxDecoration(
+                      color: _bpsPurple.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Icon(Icons.trending_up,
+                      color: _bpsPurple, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Tren IDG', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary)), Text('Nilai lebih tinggi = lebih baik', style: TextStyle(fontSize: isSmallScreen ? 10 : 11, color: _bpsPurple))])),
+              Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    Text('Tren IDG',
+                        style: TextStyle(
+                            fontSize: isSmallScreen ? 14 : 16,
+                            fontWeight: FontWeight.w700,
+                            color: _bpsTextPrimary)),
+                    Text('Nilai lebih tinggi = lebih baik',
+                        style: TextStyle(
+                            fontSize: isSmallScreen ? 10 : 11,
+                            color: _bpsPurple))
+                  ])),
             ],
           ),
           SizedBox(height: isSmallScreen ? 16 : 20),
@@ -785,33 +895,85 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
             child: idgSpots.isNotEmpty
                 ? LineChart(
                     LineChartData(
-                      minY: 64, maxY: 80,
-                      gridData: FlGridData(show: true, drawVerticalLine: false, horizontalInterval: 2, getDrawingHorizontalLine: (value) => FlLine(color: _bpsBorder, strokeWidth: 0.5)),
+                      minY: 64,
+                      maxY: 80,
+                      gridData: FlGridData(
+                          show: true,
+                          drawVerticalLine: false,
+                          horizontalInterval: 2,
+                          getDrawingHorizontalLine: (value) =>
+                              FlLine(color: _bpsBorder, strokeWidth: 0.5)),
                       titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 35, interval: 4, getTitlesWidget: (value, meta) => Text(value.toInt().toString(), style: TextStyle(fontSize: isSmallScreen ? 9 : 10, color: _bpsTextSecondary)))),
-                        bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 30, interval: 1, getTitlesWidget: (value, meta) { final index = value.toInt(); if (index >= 0 && index < yearLabels.length) { return Padding(padding: const EdgeInsets.only(top: 8), child: Text(yearLabels[index], style: TextStyle(fontSize: isSmallScreen ? 9 : 10, color: _bpsTextSecondary))); } return const Text(''); })),
-                        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 35,
+                                interval: 4,
+                                getTitlesWidget: (value, meta) => Text(
+                                    value.toInt().toString(),
+                                    style: TextStyle(
+                                        fontSize: isSmallScreen ? 9 : 10,
+                                        color: _bpsTextSecondary)))),
+                        bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 30,
+                                interval: 1,
+                                getTitlesWidget: (value, meta) {
+                                  final index = value.toInt();
+                                  if (index >= 0 && index < yearLabels.length) {
+                                    return Padding(
+                                        padding: const EdgeInsets.only(top: 8),
+                                        child: Text(yearLabels[index],
+                                            style: TextStyle(
+                                                fontSize:
+                                                    isSmallScreen ? 9 : 10,
+                                                color: _bpsTextSecondary)));
+                                  }
+                                  return const Text('');
+                                })),
+                        rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
                       ),
                       borderData: FlBorderData(show: false),
                       lineBarsData: [
-                        LineChartBarData(spots: idgSpots, isCurved: true, color: _bpsPurple, barWidth: 3, dotData: const FlDotData(show: true), belowBarData: BarAreaData(show: true, color: _bpsPurple.withOpacity(0.15))),
+                        LineChartBarData(
+                            spots: idgSpots,
+                            isCurved: true,
+                            color: _bpsPurple,
+                            barWidth: 3,
+                            dotData: const FlDotData(show: true),
+                            belowBarData: BarAreaData(
+                                show: true,
+                                color: _bpsPurple.withOpacity(0.15))),
                       ],
                       lineTouchData: LineTouchData(
                         enabled: true,
                         touchTooltipData: LineTouchTooltipData(
-                          getTooltipItems: (touchedSpots) => touchedSpots.map((barSpot) {
-                            final index = barSpot.x.toInt();
-                            if (index >= 0 && index < yearLabels.length) {
-                              return LineTooltipItem('${yearLabels[index]}\nIDG: ${barSpot.y.toStringAsFixed(2)}', const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11));
-                            }
-                            return null;
-                          }).whereType<LineTooltipItem>().toList(),
+                          getTooltipItems: (touchedSpots) => touchedSpots
+                              .map((barSpot) {
+                                final index = barSpot.x.toInt();
+                                if (index >= 0 && index < yearLabels.length) {
+                                  return LineTooltipItem(
+                                      '${yearLabels[index]}\nIDG: ${NumberFormatUtils.formatDecimal(barSpot.y, decimalPlaces: 2)}',
+                                      const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 11));
+                                }
+                                return null;
+                              })
+                              .whereType<LineTooltipItem>()
+                              .toList(),
                         ),
                       ),
                     ),
                   )
-                : Center(child: Text('Data tidak tersedia', style: TextStyle(color: _bpsTextSecondary))),
+                : Center(
+                    child: Text('Data tidak tersedia',
+                        style: TextStyle(color: _bpsTextSecondary))),
           ),
         ],
       ),
@@ -852,16 +1014,45 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
     }
 
     return Container(
-      padding: EdgeInsets.all(isSmallScreen ? sizing.statsCardPadding - 4 : sizing.statsCardPadding),
-      decoration: BoxDecoration(color: _bpsCardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))]),
+      padding: EdgeInsets.all(isSmallScreen
+          ? sizing.statsCardPadding - 4
+          : sizing.statsCardPadding),
+      decoration: BoxDecoration(
+          color: _bpsCardBg,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2))
+          ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.trending_down, color: _bpsOrange, size: isSmallScreen ? 16 : 18)),
+              Container(
+                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                  decoration: BoxDecoration(
+                      color: _bpsOrange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Icon(Icons.trending_down,
+                      color: _bpsOrange, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Tren IKG (Ketimpangan)', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary)), Text('Nilai lebih rendah = lebih baik', style: TextStyle(fontSize: isSmallScreen ? 10 : 11, color: _bpsOrange))])),
+              Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    Text('Tren IKG (Ketimpangan)',
+                        style: TextStyle(
+                            fontSize: isSmallScreen ? 14 : 16,
+                            fontWeight: FontWeight.w700,
+                            color: _bpsTextPrimary)),
+                    Text('Nilai lebih rendah = lebih baik',
+                        style: TextStyle(
+                            fontSize: isSmallScreen ? 10 : 11,
+                            color: _bpsOrange))
+                  ])),
             ],
           ),
           SizedBox(height: isSmallScreen ? 16 : 20),
@@ -876,7 +1067,8 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                         show: true,
                         drawVerticalLine: false,
                         horizontalInterval: 0.05,
-                        getDrawingHorizontalLine: (value) => FlLine(color: _bpsBorder, strokeWidth: 0.5),
+                        getDrawingHorizontalLine: (value) =>
+                            FlLine(color: _bpsBorder, strokeWidth: 0.5),
                       ),
                       titlesData: FlTitlesData(
                         leftTitles: AxisTitles(
@@ -885,8 +1077,11 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                             reservedSize: 40,
                             interval: 0.05,
                             getTitlesWidget: (value, meta) => Text(
-                              value.toStringAsFixed(2),
-                              style: TextStyle(fontSize: isSmallScreen ? 9 : 10, color: _bpsTextSecondary),
+                              NumberFormatUtils.formatDecimal(value,
+                                  decimalPlaces: 2),
+                              style: TextStyle(
+                                  fontSize: isSmallScreen ? 9 : 10,
+                                  color: _bpsTextSecondary),
                             ),
                           ),
                         ),
@@ -899,15 +1094,20 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                               if (index >= 0 && index < yearLabels.length) {
                                 return Padding(
                                   padding: const EdgeInsets.only(top: 8),
-                                  child: Text(yearLabels[index], style: TextStyle(fontSize: isSmallScreen ? 9 : 10, color: _bpsTextSecondary)),
+                                  child: Text(yearLabels[index],
+                                      style: TextStyle(
+                                          fontSize: isSmallScreen ? 9 : 10,
+                                          color: _bpsTextSecondary)),
                                 );
                               }
                               return const Text('');
                             },
                           ),
                         ),
-                        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
                       ),
                       borderData: FlBorderData(show: false),
                       barGroups: barGroups,
@@ -915,13 +1115,17 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                         enabled: true,
                         touchTooltipData: BarTouchTooltipData(
                           tooltipRoundedRadius: 8,
-                          tooltipPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          tooltipPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                           getTooltipItem: (group, groupIndex, rod, rodIndex) {
                             final index = group.x;
                             if (index >= 0 && index < yearLabels.length) {
                               return BarTooltipItem(
-                                '${yearLabels[index]}\nIKG: ${rod.toY.toStringAsFixed(3)}',
-                                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
+                                '${yearLabels[index]}\nIKG: ${NumberFormatUtils.formatDecimal(rod.toY, decimalPlaces: 3)}',
+                                const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11),
                               );
                             }
                             return null;
@@ -930,7 +1134,9 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
                       ),
                     ),
                   )
-                : Center(child: Text('Data tidak tersedia', style: TextStyle(color: _bpsTextSecondary))),
+                : Center(
+                    child: Text('Data tidak tersedia',
+                        style: TextStyle(color: _bpsTextSecondary))),
           ),
         ],
       ),
@@ -939,37 +1145,77 @@ class _IDGScreenState extends State<IDGScreen> with AutomaticKeepAliveClientMixi
 
   Widget _buildIDGDescription(ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
-      padding: EdgeInsets.all(isSmallScreen ? sizing.statsCardPadding - 4 : sizing.statsCardPadding),
-      decoration: BoxDecoration(color: _bpsCardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))]),
+      padding: EdgeInsets.all(isSmallScreen
+          ? sizing.statsCardPadding - 4
+          : sizing.statsCardPadding),
+      decoration: BoxDecoration(
+          color: _bpsCardBg,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2))
+          ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsGreen.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.info_outline_rounded, color: _bpsGreen, size: isSmallScreen ? 16 : 18)),
+              Container(
+                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                  decoration: BoxDecoration(
+                      color: _bpsGreen.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Icon(Icons.info_outline_rounded,
+                      color: _bpsGreen, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
-              Text('Tentang IDG & IKG', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary)),
+              Text('Tentang IDG & IKG',
+                  style: TextStyle(
+                      fontSize: isSmallScreen ? 14 : 16,
+                      fontWeight: FontWeight.w700,
+                      color: _bpsTextPrimary)),
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
-          _buildDescriptionItem('IDG (Indeks Pemberdayaan Gender)', 'Mengukur kesetaraan peran antara laki-laki dan perempuan dalam bidang ekonomi, politik, dan pengambilan keputusan.', _bpsPurple, isSmallScreen),
+          _buildDescriptionItem(
+              'IDG (Indeks Pemberdayaan Gender)',
+              'Mengukur kesetaraan peran antara laki-laki dan perempuan dalam bidang ekonomi, politik, dan pengambilan keputusan.',
+              _bpsPurple,
+              isSmallScreen),
           const SizedBox(height: 12),
-          _buildDescriptionItem('IKG (Indeks Ketimpangan Gender)', 'Mengukur ketidaksetaraan pencapaian antara laki-laki dan perempuan dalam kesehatan reproduksi, pemberdayaan, dan pasar tenaga kerja.', _bpsBlue, isSmallScreen),
+          _buildDescriptionItem(
+              'IKG (Indeks Ketimpangan Gender)',
+              'Mengukur ketidaksetaraan pencapaian antara laki-laki dan perempuan dalam kesehatan reproduksi, pemberdayaan, dan pasar tenaga kerja.',
+              _bpsBlue,
+              isSmallScreen),
         ],
       ),
     );
   }
 
-  Widget _buildDescriptionItem(String title, String description, Color color, bool isSmallScreen) {
+  Widget _buildDescriptionItem(
+      String title, String description, Color color, bool isSmallScreen) {
     return Container(
       padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-      decoration: BoxDecoration(color: color.withOpacity(0.05), borderRadius: BorderRadius.circular(10), border: Border.all(color: color.withOpacity(0.15))),
+      decoration: BoxDecoration(
+          color: color.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: color.withOpacity(0.15))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(fontSize: isSmallScreen ? 12 : 13, fontWeight: FontWeight.w600, color: color)),
+          Text(title,
+              style: TextStyle(
+                  fontSize: isSmallScreen ? 12 : 13,
+                  fontWeight: FontWeight.w600,
+                  color: color)),
           const SizedBox(height: 4),
-          Text(description, style: TextStyle(fontSize: isSmallScreen ? 10 : 11, color: _bpsTextSecondary, height: 1.4)),
+          Text(description,
+              style: TextStyle(
+                  fontSize: isSmallScreen ? 10 : 11,
+                  color: _bpsTextSecondary,
+                  height: 1.4)),
         ],
       ),
     );

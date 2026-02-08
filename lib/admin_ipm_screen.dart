@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'number_format_utils.dart';
 
 class AdminIpmScreen extends StatefulWidget {
   final VoidCallback? onDataChanged;
-  
+
   const AdminIpmScreen({super.key, this.onDataChanged});
 
   @override
   State<AdminIpmScreen> createState() => _AdminIpmScreenState();
 }
 
-class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProviderStateMixin {
+class _AdminIpmScreenState extends State<AdminIpmScreen>
+    with SingleTickerProviderStateMixin {
   Map<int, Map<String, dynamic>> ipmData = {};
   Map<int, Map<String, dynamic>> komponenData = {};
   List<int> availableYears = [];
@@ -34,7 +36,7 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
   }
 
   // ============= DATA LOADING & SAVING =============
-  
+
   Future<void> _loadData() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -81,16 +83,14 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
   Future<void> _saveData() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      
-      await prefs.setString('ipm_data', 
-        json.encode(ipmData.map((k, v) => MapEntry(k.toString(), v)))
-      );
-      await prefs.setString('ipm_komponen_data', 
-        json.encode(komponenData.map((k, v) => MapEntry(k.toString(), v)))
-      );
-      
+
+      await prefs.setString('ipm_data',
+          json.encode(ipmData.map((k, v) => MapEntry(k.toString(), v))));
+      await prefs.setString('ipm_komponen_data',
+          json.encode(komponenData.map((k, v) => MapEntry(k.toString(), v))));
+
       widget.onDataChanged?.call();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -119,14 +119,44 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
   }
 
   // ============= DEFAULT DATA INITIALIZATION =============
-  
+
   void _initializeDefaultIpmData() {
     ipmData = {
-      2020: {'uhh': 77.34, 'rls': 10.53, 'hls': 15.52, 'pengeluaran': 15243.00, 'ipm': 83.05},
-      2021: {'uhh': 77.51, 'rls': 10.78, 'hls': 15.53, 'pengeluaran': 15425.00, 'ipm': 83.55},
-      2022: {'uhh': 77.69, 'rls': 10.80, 'hls': 15.54, 'pengeluaran': 16047.00, 'ipm': 84.08},
-      2023: {'uhh': 77.90, 'rls': 10.81, 'hls': 15.55, 'pengeluaran': 16420.00, 'ipm': 84.43},
-      2024: {'uhh': 78.23, 'rls': 11.05, 'hls': 15.57, 'pengeluaran': 17250.00, 'ipm': 85.24},
+      2020: {
+        'uhh': 77.34,
+        'rls': 10.53,
+        'hls': 15.52,
+        'pengeluaran': 15243.00,
+        'ipm': 83.05
+      },
+      2021: {
+        'uhh': 77.51,
+        'rls': 10.78,
+        'hls': 15.53,
+        'pengeluaran': 15425.00,
+        'ipm': 83.55
+      },
+      2022: {
+        'uhh': 77.69,
+        'rls': 10.80,
+        'hls': 15.54,
+        'pengeluaran': 16047.00,
+        'ipm': 84.08
+      },
+      2023: {
+        'uhh': 77.90,
+        'rls': 10.81,
+        'hls': 15.55,
+        'pengeluaran': 16420.00,
+        'ipm': 84.43
+      },
+      2024: {
+        'uhh': 78.23,
+        'rls': 11.05,
+        'hls': 15.57,
+        'pengeluaran': 17250.00,
+        'ipm': 85.24
+      },
     };
   }
 
@@ -141,15 +171,26 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
   }
 
   // ============= EDIT DIALOGS =============
-  
+
   void _showEditMainDataDialog(int year) {
     final data = ipmData[year] ?? {};
     final controllers = {
-      'uhh': TextEditingController(text: '${data['uhh'] ?? 0.0}'),
-      'rls': TextEditingController(text: '${data['rls'] ?? 0.0}'),
-      'hls': TextEditingController(text: '${data['hls'] ?? 0.0}'),
-      'pengeluaran': TextEditingController(text: '${data['pengeluaran'] ?? 0.0}'),
-      'ipm': TextEditingController(text: '${data['ipm'] ?? 0.0}'),
+      'uhh': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(data['uhh']?.toDouble() ?? 0.0,
+              decimalPlaces: 2)),
+      'rls': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(data['rls']?.toDouble() ?? 0.0,
+              decimalPlaces: 2)),
+      'hls': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(data['hls']?.toDouble() ?? 0.0,
+              decimalPlaces: 2)),
+      'pengeluaran': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              data['pengeluaran']?.toDouble() ?? 0.0,
+              decimalPlaces: 2)),
+      'ipm': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(data['ipm']?.toDouble() ?? 0.0,
+              decimalPlaces: 2)),
     };
 
     showDialog(
@@ -160,11 +201,19 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildTextField('UHH (Tahun)', controllers['uhh']!, Icons.favorite, isDecimal: true),
-              _buildTextField('RLS (Tahun)', controllers['rls']!, Icons.auto_stories, isDecimal: true),
-              _buildTextField('HLS (Tahun)', controllers['hls']!, Icons.school, isDecimal: true),
-              _buildTextField('Pengeluaran (Ribu Rupiah)', controllers['pengeluaran']!, Icons.monetization_on, isDecimal: true),
-              _buildTextField('IPM', controllers['ipm']!, Icons.assessment, isDecimal: true),
+              _buildTextField(
+                  'UHH (Tahun)', controllers['uhh']!, Icons.favorite,
+                  isDecimal: true),
+              _buildTextField(
+                  'RLS (Tahun)', controllers['rls']!, Icons.auto_stories,
+                  isDecimal: true),
+              _buildTextField('HLS (Tahun)', controllers['hls']!, Icons.school,
+                  isDecimal: true),
+              _buildTextField('Pengeluaran (Ribu Rupiah)',
+                  controllers['pengeluaran']!, Icons.monetization_on,
+                  isDecimal: true),
+              _buildTextField('IPM', controllers['ipm']!, Icons.assessment,
+                  isDecimal: true),
             ],
           ),
         ),
@@ -178,18 +227,29 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
               try {
                 setState(() {
                   ipmData[year] = {
-                    'uhh': double.parse(controllers['uhh']!.text),
-                    'rls': double.parse(controllers['rls']!.text),
-                    'hls': double.parse(controllers['hls']!.text),
-                    'pengeluaran': double.parse(controllers['pengeluaran']!.text),
-                    'ipm': double.parse(controllers['ipm']!.text),
+                    'uhh': NumberFormatUtils.parseIndonesianNumber(
+                            controllers['uhh']!.text) ??
+                        0.0,
+                    'rls': NumberFormatUtils.parseIndonesianNumber(
+                            controllers['rls']!.text) ??
+                        0.0,
+                    'hls': NumberFormatUtils.parseIndonesianNumber(
+                            controllers['hls']!.text) ??
+                        0.0,
+                    'pengeluaran': NumberFormatUtils.parseIndonesianNumber(
+                            controllers['pengeluaran']!.text) ??
+                        0.0,
+                    'ipm': NumberFormatUtils.parseIndonesianNumber(
+                            controllers['ipm']!.text) ??
+                        0.0,
                   };
                 });
                 _saveData();
                 Navigator.pop(context);
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                  SnackBar(
+                      content: Text('Error: $e'), backgroundColor: Colors.red),
                 );
               }
             },
@@ -207,9 +267,18 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
   void _showEditKomponenDialog(int year) {
     final data = komponenData[year] ?? {};
     final controllers = {
-      'ipmNasional': TextEditingController(text: '${data['ipmNasional'] ?? 0.0}'),
-      'ipmJateng': TextEditingController(text: '${data['ipmJateng'] ?? 0.0}'),
-      'ipmSemarang': TextEditingController(text: '${data['ipmSemarang'] ?? 0.0}'),
+      'ipmNasional': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              data['ipmNasional']?.toDouble() ?? 0.0,
+              decimalPlaces: 2)),
+      'ipmJateng': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              data['ipmJateng']?.toDouble() ?? 0.0,
+              decimalPlaces: 2)),
+      'ipmSemarang': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              data['ipmSemarang']?.toDouble() ?? 0.0,
+              decimalPlaces: 2)),
     };
 
     showDialog(
@@ -219,11 +288,17 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildTextField('IPM Nasional', controllers['ipmNasional']!, Icons.flag, isDecimal: true),
+            _buildTextField(
+                'IPM Nasional', controllers['ipmNasional']!, Icons.flag,
+                isDecimal: true),
             const SizedBox(height: 12),
-            _buildTextField('IPM Jawa Tengah', controllers['ipmJateng']!, Icons.location_city, isDecimal: true),
+            _buildTextField('IPM Jawa Tengah', controllers['ipmJateng']!,
+                Icons.location_city,
+                isDecimal: true),
             const SizedBox(height: 12),
-            _buildTextField('IPM Semarang', controllers['ipmSemarang']!, Icons.home, isDecimal: true),
+            _buildTextField(
+                'IPM Semarang', controllers['ipmSemarang']!, Icons.home,
+                isDecimal: true),
           ],
         ),
         actions: [
@@ -236,16 +311,23 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
               try {
                 setState(() {
                   komponenData[year] = {
-                    'ipmNasional': double.parse(controllers['ipmNasional']!.text),
-                    'ipmJateng': double.parse(controllers['ipmJateng']!.text),
-                    'ipmSemarang': double.parse(controllers['ipmSemarang']!.text),
+                    'ipmNasional': NumberFormatUtils.parseIndonesianNumber(
+                            controllers['ipmNasional']!.text) ??
+                        0.0,
+                    'ipmJateng': NumberFormatUtils.parseIndonesianNumber(
+                            controllers['ipmJateng']!.text) ??
+                        0.0,
+                    'ipmSemarang': NumberFormatUtils.parseIndonesianNumber(
+                            controllers['ipmSemarang']!.text) ??
+                        0.0,
                   };
                 });
                 _saveData();
                 Navigator.pop(context);
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                  SnackBar(
+                      content: Text('Error: $e'), backgroundColor: Colors.red),
                 );
               }
             },
@@ -267,34 +349,58 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
       );
       return;
     }
-    
+
     final lastYear = availableYears.last;
     final nextYear = lastYear + 1;
     final lastData = ipmData[lastYear];
-    
+
     if (lastData == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Data tahun terakhir tidak valid')),
       );
       return;
     }
-    
+
     final lastKomponen = komponenData[lastYear] ?? {};
-    
+
     final growth = 1.01;
-    
+
     final mainControllers = {
-      'uhh': TextEditingController(text: '${(lastData['uhh'] * growth).toStringAsFixed(2)}'),
-      'rls': TextEditingController(text: '${(lastData['rls'] * growth).toStringAsFixed(2)}'),
-      'hls': TextEditingController(text: '${(lastData['hls'] * growth).toStringAsFixed(2)}'),
-      'pengeluaran': TextEditingController(text: '${(lastData['pengeluaran'] * growth).toStringAsFixed(2)}'),
-      'ipm': TextEditingController(text: '${(lastData['ipm'] * growth).toStringAsFixed(2)}'),
+      'uhh': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastData['uhh'] * growth).toDouble(),
+              decimalPlaces: 2)),
+      'rls': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastData['rls'] * growth).toDouble(),
+              decimalPlaces: 2)),
+      'hls': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastData['hls'] * growth).toDouble(),
+              decimalPlaces: 2)),
+      'pengeluaran': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastData['pengeluaran'] * growth).toDouble(),
+              decimalPlaces: 2)),
+      'ipm': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastData['ipm'] * growth).toDouble(),
+              decimalPlaces: 2)),
     };
-    
+
     final komponenControllers = {
-      'ipmNasional': TextEditingController(text: '${(lastKomponen['ipmNasional'] ?? 75.0)}'),
-      'ipmJateng': TextEditingController(text: '${(lastKomponen['ipmJateng'] ?? 74.0)}'),
-      'ipmSemarang': TextEditingController(text: '${(lastKomponen['ipmSemarang'] ?? 85.0)}'),
+      'ipmNasional': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastKomponen['ipmNasional'] ?? 75.0).toDouble(),
+              decimalPlaces: 2)),
+      'ipmJateng': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastKomponen['ipmJateng'] ?? 74.0).toDouble(),
+              decimalPlaces: 2)),
+      'ipmSemarang': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastKomponen['ipmSemarang'] ?? 85.0).toDouble(),
+              decimalPlaces: 2)),
     };
 
     showDialog(
@@ -320,19 +426,39 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text('DATA KOMPONEN IPM', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const Text('DATA KOMPONEN IPM',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                 const SizedBox(height: 8),
-                _buildTextField('UHH (Tahun)', mainControllers['uhh']!, Icons.favorite, isDecimal: true),
-                _buildTextField('RLS (Tahun)', mainControllers['rls']!, Icons.auto_stories, isDecimal: true),
-                _buildTextField('HLS (Tahun)', mainControllers['hls']!, Icons.school, isDecimal: true),
-                _buildTextField('Pengeluaran (Ribu)', mainControllers['pengeluaran']!, Icons.monetization_on, isDecimal: true),
-                _buildTextField('IPM', mainControllers['ipm']!, Icons.assessment, isDecimal: true),
+                _buildTextField(
+                    'UHH (Tahun)', mainControllers['uhh']!, Icons.favorite,
+                    isDecimal: true),
+                _buildTextField(
+                    'RLS (Tahun)', mainControllers['rls']!, Icons.auto_stories,
+                    isDecimal: true),
+                _buildTextField(
+                    'HLS (Tahun)', mainControllers['hls']!, Icons.school,
+                    isDecimal: true),
+                _buildTextField('Pengeluaran (Ribu)',
+                    mainControllers['pengeluaran']!, Icons.monetization_on,
+                    isDecimal: true),
+                _buildTextField(
+                    'IPM', mainControllers['ipm']!, Icons.assessment,
+                    isDecimal: true),
                 const SizedBox(height: 16),
-                const Text('PERBANDINGAN WILAYAH', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const Text('PERBANDINGAN WILAYAH',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                 const SizedBox(height: 8),
-                _buildTextField('IPM Nasional', komponenControllers['ipmNasional']!, Icons.flag, isDecimal: true),
-                _buildTextField('IPM Jawa Tengah', komponenControllers['ipmJateng']!, Icons.location_city, isDecimal: true),
-                _buildTextField('IPM Semarang', komponenControllers['ipmSemarang']!, Icons.home, isDecimal: true),
+                _buildTextField('IPM Nasional',
+                    komponenControllers['ipmNasional']!, Icons.flag,
+                    isDecimal: true),
+                _buildTextField('IPM Jawa Tengah',
+                    komponenControllers['ipmJateng']!, Icons.location_city,
+                    isDecimal: true),
+                _buildTextField('IPM Semarang',
+                    komponenControllers['ipmSemarang']!, Icons.home,
+                    isDecimal: true),
               ],
             ),
           ),
@@ -354,26 +480,42 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
 
                 setState(() {
                   ipmData[nextYear] = {
-                    'uhh': double.parse(mainControllers['uhh']!.text),
-                    'rls': double.parse(mainControllers['rls']!.text),
-                    'hls': double.parse(mainControllers['hls']!.text),
-                    'pengeluaran': double.parse(mainControllers['pengeluaran']!.text),
-                    'ipm': double.parse(mainControllers['ipm']!.text),
+                    'uhh': NumberFormatUtils.parseIndonesianNumber(
+                            mainControllers['uhh']!.text) ??
+                        0.0,
+                    'rls': NumberFormatUtils.parseIndonesianNumber(
+                            mainControllers['rls']!.text) ??
+                        0.0,
+                    'hls': NumberFormatUtils.parseIndonesianNumber(
+                            mainControllers['hls']!.text) ??
+                        0.0,
+                    'pengeluaran': NumberFormatUtils.parseIndonesianNumber(
+                            mainControllers['pengeluaran']!.text) ??
+                        0.0,
+                    'ipm': NumberFormatUtils.parseIndonesianNumber(
+                            mainControllers['ipm']!.text) ??
+                        0.0,
                   };
 
                   komponenData[nextYear] = {
-                    'ipmNasional': double.parse(komponenControllers['ipmNasional']!.text),
-                    'ipmJateng': double.parse(komponenControllers['ipmJateng']!.text),
-                    'ipmSemarang': double.parse(komponenControllers['ipmSemarang']!.text),
+                    'ipmNasional': NumberFormatUtils.parseIndonesianNumber(
+                            komponenControllers['ipmNasional']!.text) ??
+                        0.0,
+                    'ipmJateng': NumberFormatUtils.parseIndonesianNumber(
+                            komponenControllers['ipmJateng']!.text) ??
+                        0.0,
+                    'ipmSemarang': NumberFormatUtils.parseIndonesianNumber(
+                            komponenControllers['ipmSemarang']!.text) ??
+                        0.0,
                   };
 
                   availableYears = ipmData.keys.toList()..sort();
                   selectedYear = nextYear;
                 });
-                
+
                 _saveData();
                 Navigator.pop(context);
-                
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('✓ Tahun $nextYear berhasil ditambahkan!'),
@@ -382,7 +524,8 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
                 );
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+                  SnackBar(
+                      content: Text('Error: $e'), backgroundColor: Colors.red),
                 );
               }
             },
@@ -433,21 +576,26 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
   }
 
   // ============= HELPER WIDGETS =============
-  
-  Widget _buildTextField(String label, TextEditingController controller, IconData icon, {bool isNumber = false, bool isDecimal = false}) {
+
+  Widget _buildTextField(
+      String label, TextEditingController controller, IconData icon,
+      {bool isNumber = false, bool isDecimal = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextField(
         controller: controller,
-        keyboardType: isDecimal ? const TextInputType.numberWithOptions(decimal: true) : (isNumber ? TextInputType.number : TextInputType.text),
-        inputFormatters: isDecimal 
-            ? [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))]
-            : (isNumber ? [FilteringTextInputFormatter.digitsOnly] : []),
+        keyboardType: isDecimal
+            ? const TextInputType.numberWithOptions(decimal: true)
+            : (isNumber ? TextInputType.number : TextInputType.text),
+        inputFormatters: isDecimal
+            ? [IndonesianNumberInputFormatter(allowDecimal: true)]
+            : (isNumber ? [IndonesianNumberInputFormatter()] : []),
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon, size: 20),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           isDense: true,
         ),
       ),
@@ -456,14 +604,14 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
 
   String _formatNumber(dynamic number) {
     if (number == null) return 'N/A';
-    return number.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]},',
-    );
+    if (number is int) {
+      return NumberFormatUtils.formatInteger(number);
+    }
+    return NumberFormatUtils.formatCompact(number);
   }
 
   // ============= BUILD UI =============
-  
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -474,7 +622,8 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
           backgroundColor: const Color(0xFF4CAF50),
           foregroundColor: Colors.white,
         ),
-        body: const Center(child: CircularProgressIndicator(color: Color(0xFF4CAF50))),
+        body: const Center(
+            child: CircularProgressIndicator(color: Color(0xFF4CAF50))),
       );
     }
 
@@ -493,7 +642,9 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
           isScrollable: true,
           tabs: const [
             Tab(icon: Icon(Icons.dashboard, size: 18), text: 'Data IPM'),
-            Tab(icon: Icon(Icons.calendar_today, size: 18), text: 'Kelola Tahun'),
+            Tab(
+                icon: Icon(Icons.calendar_today, size: 18),
+                text: 'Kelola Tahun'),
             Tab(icon: Icon(Icons.settings, size: 18), text: 'Pengaturan'),
           ],
         ),
@@ -510,7 +661,7 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
   }
 
   // ============= TAB VIEWS =============
-  
+
   Widget _buildDataIpmTab() {
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -526,7 +677,9 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
                   children: [
                     Icon(Icons.calendar_today, color: Color(0xFF4CAF50)),
                     SizedBox(width: 8),
-                    Text('Pilih Tahun', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text('Pilih Tahun',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -538,16 +691,21 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
                     return GestureDetector(
                       onTap: () => setState(() => selectedYear = year),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
                         decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFF4CAF50) : Colors.grey[200],
+                          color: isSelected
+                              ? const Color(0xFF4CAF50)
+                              : Colors.grey[200],
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           '$year',
                           style: TextStyle(
                             color: isSelected ? Colors.white : Colors.black87,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                       ),
@@ -569,7 +727,9 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Data IPM Kota Semarang $selectedYear', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text('Data IPM Kota Semarang $selectedYear',
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
                     IconButton(
                       icon: const Icon(Icons.edit, color: Color(0xFF4CAF50)),
                       onPressed: () => _showEditMainDataDialog(selectedYear),
@@ -577,11 +737,18 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
                   ],
                 ),
                 const Divider(),
-                _buildDataRow('UHH', '${ipmData[selectedYear]!['uhh']} Tahun', Icons.favorite),
-                _buildDataRow('RLS', '${ipmData[selectedYear]!['rls']} Tahun', Icons.auto_stories),
-                _buildDataRow('HLS', '${ipmData[selectedYear]!['hls']} Tahun', Icons.school),
-                _buildDataRow('Pengeluaran', '${_formatNumber(ipmData[selectedYear]!['pengeluaran'])} Ribu', Icons.monetization_on),
-                _buildDataRow('IPM', '${ipmData[selectedYear]!['ipm']}', Icons.assessment),
+                _buildDataRow('UHH', '${ipmData[selectedYear]!['uhh']} Tahun',
+                    Icons.favorite),
+                _buildDataRow('RLS', '${ipmData[selectedYear]!['rls']} Tahun',
+                    Icons.auto_stories),
+                _buildDataRow('HLS', '${ipmData[selectedYear]!['hls']} Tahun',
+                    Icons.school),
+                _buildDataRow(
+                    'Pengeluaran',
+                    '${_formatNumber(ipmData[selectedYear]!['pengeluaran'])} Ribu',
+                    Icons.monetization_on),
+                _buildDataRow('IPM', '${ipmData[selectedYear]!['ipm']}',
+                    Icons.assessment),
               ],
             ),
           ),
@@ -597,7 +764,9 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Perbandingan Wilayah $selectedYear', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text('Perbandingan Wilayah $selectedYear',
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
                     IconButton(
                       icon: const Icon(Icons.edit, color: Color(0xFF4CAF50)),
                       onPressed: () => _showEditKomponenDialog(selectedYear),
@@ -605,9 +774,18 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
                   ],
                 ),
                 const Divider(),
-                _buildDataRow('IPM Nasional', '${komponenData[selectedYear]!['ipmNasional']}', Icons.flag),
-                _buildDataRow('IPM Jawa Tengah', '${komponenData[selectedYear]!['ipmJateng']}', Icons.location_city),
-                _buildDataRow('IPM Semarang', '${komponenData[selectedYear]!['ipmSemarang']}', Icons.home),
+                _buildDataRow(
+                    'IPM Nasional',
+                    '${komponenData[selectedYear]!['ipmNasional']}',
+                    Icons.flag),
+                _buildDataRow(
+                    'IPM Jawa Tengah',
+                    '${komponenData[selectedYear]!['ipmJateng']}',
+                    Icons.location_city),
+                _buildDataRow(
+                    'IPM Semarang',
+                    '${komponenData[selectedYear]!['ipmSemarang']}',
+                    Icons.home),
               ],
             ),
           ),
@@ -670,7 +848,8 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
                       ],
                     ),
                   ),
-                  const Icon(Icons.arrow_forward_ios, color: Colors.white70, size: 20),
+                  const Icon(Icons.arrow_forward_ios,
+                      color: Colors.white70, size: 20),
                 ],
               ),
             ),
@@ -688,41 +867,53 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
                   children: [
                     Icon(Icons.calendar_today, color: Color(0xFF4CAF50)),
                     SizedBox(width: 8),
-                    Text('Data Tahun Tersedia', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text('Data Tahun Tersedia',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 SizedBox(height: 4),
-                Text('Kelola data tahun yang sudah ada', style: TextStyle(fontSize: 13, color: Colors.grey)),
+                Text('Kelola data tahun yang sudah ada',
+                    style: TextStyle(fontSize: 13, color: Colors.grey)),
               ],
             ),
           ),
         ),
         const SizedBox(height: 16),
         ...availableYears.map((year) => Card(
-          elevation: 2,
-          margin: const EdgeInsets.only(bottom: 12),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: const Color(0xFF4CAF50),
-              child: Text('${year.toString().substring(2)}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-            ),
-            title: Text('Tahun $year', style: TextStyle(fontWeight: FontWeight.w600)),
-            subtitle: Text('IPM: ${ipmData[year]!['ipm']} | UHH: ${ipmData[year]!['uhh']} Tahun', style: TextStyle(fontSize: 12)),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
-                  onPressed: () => _showEditMainDataDialog(year),
+              elevation: 2,
+              margin: const EdgeInsets.only(bottom: 12),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: const Color(0xFF4CAF50),
+                  child: Text('${year.toString().substring(2)}',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12)),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red, size: 20),
-                  onPressed: () => _showDeleteDialog(year),
+                title: Text('Tahun $year',
+                    style: TextStyle(fontWeight: FontWeight.w600)),
+                subtitle: Text(
+                    'IPM: ${ipmData[year]!['ipm']} | UHH: ${ipmData[year]!['uhh']} Tahun',
+                    style: TextStyle(fontSize: 12)),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon:
+                          const Icon(Icons.edit, color: Colors.blue, size: 20),
+                      onPressed: () => _showEditMainDataDialog(year),
+                    ),
+                    IconButton(
+                      icon:
+                          const Icon(Icons.delete, color: Colors.red, size: 20),
+                      onPressed: () => _showDeleteDialog(year),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        )),
+              ),
+            )),
       ],
     );
   }
@@ -738,13 +929,15 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
               ListTile(
                 leading: const Icon(Icons.refresh, color: Colors.red),
                 title: const Text('Reset ke Data Default'),
-                subtitle: const Text('Kembalikan semua data ke pengaturan awal'),
+                subtitle:
+                    const Text('Kembalikan semua data ke pengaturan awal'),
                 onTap: () {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
                       title: const Text('Konfirmasi Reset'),
-                      content: const Text('Semua perubahan akan hilang. Lanjutkan?'),
+                      content:
+                          const Text('Semua perubahan akan hilang. Lanjutkan?'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
@@ -774,7 +967,8 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
               ),
               const Divider(height: 1),
               ListTile(
-                leading: const Icon(Icons.info_outline, color: Color(0xFF4CAF50)),
+                leading:
+                    const Icon(Icons.info_outline, color: Color(0xFF4CAF50)),
                 title: const Text('Tentang'),
                 subtitle: const Text('Admin Panel IPM v1.0'),
                 onTap: () {
@@ -787,12 +981,18 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Admin Panel untuk mengelola data Indeks Pembangunan Manusia (IPM) Kota Semarang.', style: TextStyle(fontSize: 14)),
+                            Text(
+                                'Admin Panel untuk mengelola data Indeks Pembangunan Manusia (IPM) Kota Semarang.',
+                                style: TextStyle(fontSize: 14)),
                             SizedBox(height: 16),
-                            Text('Fitur:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                            Text('Fitur:',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15)),
                             SizedBox(height: 8),
-                            Text('✓ Edit data komponen IPM (UHH, RLS, HLS, Pengeluaran)'),
-                            Text('✓ Edit perbandingan wilayah (Nasional, Jateng, Semarang)'),
+                            Text(
+                                '✓ Edit data komponen IPM (UHH, RLS, HLS, Pengeluaran)'),
+                            Text(
+                                '✓ Edit perbandingan wilayah (Nasional, Jateng, Semarang)'),
                             Text('✓ Tambah tahun baru (2025+)'),
                             Text('✓ Hapus data tahun'),
                             Text('✓ Validasi otomatis'),
@@ -803,16 +1003,22 @@ class _AdminIpmScreenState extends State<AdminIpmScreen> with SingleTickerProvid
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Versi:', style: TextStyle(fontWeight: FontWeight.bold)),
-                                Text('1.0', style: TextStyle(color: Color(0xFF4CAF50))),
+                                Text('Versi:',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Text('1.0',
+                                    style: TextStyle(color: Color(0xFF4CAF50))),
                               ],
                             ),
                             SizedBox(height: 8),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Tema:', style: TextStyle(fontWeight: FontWeight.bold)),
-                                Text('IPM', style: TextStyle(color: Color(0xFF4CAF50))),
+                                Text('Tema:',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Text('IPM',
+                                    style: TextStyle(color: Color(0xFF4CAF50))),
                               ],
                             ),
                           ],

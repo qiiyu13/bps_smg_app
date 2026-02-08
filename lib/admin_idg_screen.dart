@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:convert';
+import 'number_format_utils.dart';
 
 class AdminIDGScreen extends StatefulWidget {
   const AdminIDGScreen({Key? key}) : super(key: key);
@@ -11,7 +12,8 @@ class AdminIDGScreen extends StatefulWidget {
   State<AdminIDGScreen> createState() => _AdminIDGScreenState();
 }
 
-class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProviderStateMixin {
+class _AdminIDGScreenState extends State<AdminIDGScreen>
+    with SingleTickerProviderStateMixin {
   Map<int, Map<String, dynamic>> idgData = {};
   List<int> availableYears = [];
   int selectedYear = 2024;
@@ -32,22 +34,21 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
   }
 
   // ============= DATA LOADING & SAVING =============
-  
+
   Future<void> _loadData() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      
+
       String? savedData = prefs.getString('idg_data');
       if (savedData != null) {
         Map<String, dynamic> decoded = json.decode(savedData);
-        idgData = decoded.map((key, value) => 
-          MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map))
-        );
+        idgData = decoded.map((key, value) =>
+            MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
       } else {
         _initializeDefaultData();
         await _saveDataSilently();
       }
-      
+
       setState(() {
         availableYears = idgData.keys.toList()..sort();
         if (availableYears.isNotEmpty) {
@@ -71,11 +72,10 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
   Future<void> _saveData() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      
-      await prefs.setString('idg_data', 
-        json.encode(idgData.map((k, v) => MapEntry(k.toString(), v)))
-      );
-      
+
+      await prefs.setString('idg_data',
+          json.encode(idgData.map((k, v) => MapEntry(k.toString(), v))));
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -106,16 +106,15 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
   Future<void> _saveDataSilently() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('idg_data', 
-        json.encode(idgData.map((k, v) => MapEntry(k.toString(), v)))
-      );
+      await prefs.setString('idg_data',
+          json.encode(idgData.map((k, v) => MapEntry(k.toString(), v))));
     } catch (e) {
       debugPrint('Error saving data silently: $e');
     }
   }
 
   // ============= DEFAULT DATA INITIALIZATION =============
-  
+
   void _initializeDefaultData() {
     idgData = {
       2020: {
@@ -157,15 +156,28 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
   }
 
   // ============= EDIT DIALOGS =============
-  
+
   void _showEditIDGDialog(int year) {
     final data = idgData[year] ?? {};
     final controllers = {
-      'sumbangan': TextEditingController(text: '${data['sumbangan'] ?? 0.0}'),
-      'tenaga': TextEditingController(text: '${data['tenaga'] ?? 0.0}'),
-      'parlemen': TextEditingController(text: '${data['parlemen'] ?? 0.0}'),
-      'idg': TextEditingController(text: '${data['idg'] ?? 0.0}'),
-      'ikg': TextEditingController(text: '${data['ikg'] ?? 0.0}'),
+      'sumbangan': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              data['sumbangan']?.toDouble() ?? 0.0,
+              decimalPlaces: 2)),
+      'tenaga': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              data['tenaga']?.toDouble() ?? 0.0,
+              decimalPlaces: 2)),
+      'parlemen': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              data['parlemen']?.toDouble() ?? 0.0,
+              decimalPlaces: 2)),
+      'idg': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(data['idg']?.toDouble() ?? 0.0,
+              decimalPlaces: 2)),
+      'ikg': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(data['ikg']?.toDouble() ?? 0.0,
+              decimalPlaces: 3)),
     };
 
     showDialog(
@@ -198,45 +210,35 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
               SizedBox(height: 16),
               Text(
                 'KOMPONEN IDG',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey[800]),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.grey[800]),
               ),
               SizedBox(height: 8),
-              _buildTextField(
-                'Sumbangan Pendapatan Perempuan (%)', 
-                controllers['sumbangan']!, 
-                Icons.attach_money, 
-                isDecimal: true
-              ),
-              _buildTextField(
-                'Perempuan sebagai Tenaga Profesional (%)', 
-                controllers['tenaga']!, 
-                Icons.business_center, 
-                isDecimal: true
-              ),
-              _buildTextField(
-                'Keterlibatan Perempuan di Parlemen (%)', 
-                controllers['parlemen']!, 
-                Icons.account_balance, 
-                isDecimal: true
-              ),
+              _buildTextField('Sumbangan Pendapatan Perempuan (%)',
+                  controllers['sumbangan']!, Icons.attach_money,
+                  isDecimal: true),
+              _buildTextField('Perempuan sebagai Tenaga Profesional (%)',
+                  controllers['tenaga']!, Icons.business_center,
+                  isDecimal: true),
+              _buildTextField('Keterlibatan Perempuan di Parlemen (%)',
+                  controllers['parlemen']!, Icons.account_balance,
+                  isDecimal: true),
               const Divider(height: 24),
               Text(
                 'INDEKS',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey[800]),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.grey[800]),
               ),
               SizedBox(height: 8),
               _buildTextField(
-                'Nilai IDG', 
-                controllers['idg']!, 
-                Icons.trending_up, 
-                isDecimal: true
-              ),
-              _buildTextField(
-                'Nilai IKG', 
-                controllers['ikg']!, 
-                Icons.balance, 
-                isDecimal: true
-              ),
+                  'Nilai IDG', controllers['idg']!, Icons.trending_up,
+                  isDecimal: true),
+              _buildTextField('Nilai IKG', controllers['ikg']!, Icons.balance,
+                  isDecimal: true),
             ],
           ),
         ),
@@ -248,15 +250,28 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
           ElevatedButton(
             onPressed: () {
               try {
-                final sumbangan = double.parse(controllers['sumbangan']!.text);
-                final tenaga = double.parse(controllers['tenaga']!.text);
-                final parlemen = double.parse(controllers['parlemen']!.text);
-                final idg = double.parse(controllers['idg']!.text);
-                final ikg = double.parse(controllers['ikg']!.text);
+                final sumbangan = NumberFormatUtils.parseIndonesianNumber(
+                        controllers['sumbangan']!.text) ??
+                    0.0;
+                final tenaga = NumberFormatUtils.parseIndonesianNumber(
+                        controllers['tenaga']!.text) ??
+                    0.0;
+                final parlemen = NumberFormatUtils.parseIndonesianNumber(
+                        controllers['parlemen']!.text) ??
+                    0.0;
+                final idg = NumberFormatUtils.parseIndonesianNumber(
+                        controllers['idg']!.text) ??
+                    0.0;
+                final ikg = NumberFormatUtils.parseIndonesianNumber(
+                        controllers['ikg']!.text) ??
+                    0.0;
 
-                if (sumbangan < 0 || sumbangan > 100 ||
-                    tenaga < 0 || tenaga > 100 ||
-                    parlemen < 0 || parlemen > 100) {
+                if (sumbangan < 0 ||
+                    sumbangan > 100 ||
+                    tenaga < 0 ||
+                    tenaga > 100 ||
+                    parlemen < 0 ||
+                    parlemen > 100) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Persentase harus antara 0-100!'),
@@ -324,24 +339,39 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
       );
       return;
     }
-    
+
     final lastYear = availableYears.last;
     final nextYear = lastYear + 1;
     final lastData = idgData[lastYear];
-    
+
     if (lastData == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Data tahun terakhir tidak valid')),
       );
       return;
     }
-    
+
     final controllers = {
-      'sumbangan': TextEditingController(text: '${lastData['sumbangan'] ?? 38.0}'),
-      'tenaga': TextEditingController(text: '${lastData['tenaga'] ?? 50.0}'),
-      'parlemen': TextEditingController(text: '${lastData['parlemen'] ?? 20.0}'),
-      'idg': TextEditingController(text: '${lastData['idg'] ?? 75.0}'),
-      'ikg': TextEditingController(text: '${lastData['ikg'] ?? 0.15}'),
+      'sumbangan': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastData['sumbangan'] ?? 38.0).toDouble(),
+              decimalPlaces: 2)),
+      'tenaga': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastData['tenaga'] ?? 50.0).toDouble(),
+              decimalPlaces: 2)),
+      'parlemen': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastData['parlemen'] ?? 20.0).toDouble(),
+              decimalPlaces: 2)),
+      'idg': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastData['idg'] ?? 75.0).toDouble(),
+              decimalPlaces: 2)),
+      'ikg': TextEditingController(
+          text: NumberFormatUtils.formatDecimal(
+              (lastData['ikg'] ?? 0.15).toDouble(),
+              decimalPlaces: 3)),
     };
 
     showDialog(
@@ -424,15 +454,28 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                   return;
                 }
 
-                final sumbangan = double.parse(controllers['sumbangan']!.text);
-                final tenaga = double.parse(controllers['tenaga']!.text);
-                final parlemen = double.parse(controllers['parlemen']!.text);
-                final idg = double.parse(controllers['idg']!.text);
-                final ikg = double.parse(controllers['ikg']!.text);
+                final sumbangan = NumberFormatUtils.parseIndonesianNumber(
+                        controllers['sumbangan']!.text) ??
+                    0.0;
+                final tenaga = NumberFormatUtils.parseIndonesianNumber(
+                        controllers['tenaga']!.text) ??
+                    0.0;
+                final parlemen = NumberFormatUtils.parseIndonesianNumber(
+                        controllers['parlemen']!.text) ??
+                    0.0;
+                final idg = NumberFormatUtils.parseIndonesianNumber(
+                        controllers['idg']!.text) ??
+                    0.0;
+                final ikg = NumberFormatUtils.parseIndonesianNumber(
+                        controllers['ikg']!.text) ??
+                    0.0;
 
-                if (sumbangan < 0 || sumbangan > 100 ||
-                    tenaga < 0 || tenaga > 100 ||
-                    parlemen < 0 || parlemen > 100) {
+                if (sumbangan < 0 ||
+                    sumbangan > 100 ||
+                    tenaga < 0 ||
+                    tenaga > 100 ||
+                    parlemen < 0 ||
+                    parlemen > 100) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Persentase harus antara 0-100!'),
@@ -474,10 +517,10 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                   availableYears = idgData.keys.toList()..sort();
                   selectedYear = nextYear;
                 });
-                
+
                 _saveData();
                 Navigator.pop(context);
-                
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('✓ Tahun $nextYear berhasil ditambahkan!'),
@@ -509,7 +552,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Konfirmasi Hapus'),
-        content: Text('Hapus semua data IDG tahun $year?\n\nData ini akan dihapus dari aplikasi user.'),
+        content: Text(
+            'Hapus semua data IDG tahun $year?\n\nData ini akan dihapus dari aplikasi user.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -539,7 +583,7 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
   }
 
   // ============= HELPER WIDGETS =============
-  
+
   Widget _buildTextField(
     String label,
     TextEditingController controller,
@@ -555,13 +599,14 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
             ? const TextInputType.numberWithOptions(decimal: true)
             : (isNumber ? TextInputType.number : TextInputType.text),
         inputFormatters: isDecimal
-            ? [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))]
-            : (isNumber ? [FilteringTextInputFormatter.digitsOnly] : []),
+            ? [IndonesianNumberInputFormatter(allowDecimal: true)]
+            : (isNumber ? [IndonesianNumberInputFormatter()] : []),
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon, size: 20),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           isDense: true,
         ),
       ),
@@ -569,7 +614,7 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
   }
 
   // ============= BUILD UI =============
-  
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -602,7 +647,9 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
           tabs: const [
             Tab(icon: Icon(Icons.dashboard, size: 18), text: 'Data IDG'),
             Tab(icon: Icon(Icons.show_chart, size: 18), text: 'Preview Grafik'),
-            Tab(icon: Icon(Icons.calendar_today, size: 18), text: 'Kelola Tahun'),
+            Tab(
+                icon: Icon(Icons.calendar_today, size: 18),
+                text: 'Kelola Tahun'),
             Tab(icon: Icon(Icons.settings, size: 18), text: 'Pengaturan'),
           ],
         ),
@@ -620,7 +667,7 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
   }
 
   // ============= TAB VIEWS =============
-  
+
   Widget _buildDataIDGTab() {
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -638,7 +685,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                     SizedBox(width: 8),
                     Text(
                       'Pilih Tahun',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -651,16 +699,21 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                     return GestureDetector(
                       onTap: () => setState(() => selectedYear = year),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
                         decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFFFF6F00) : Colors.grey[200],
+                          color: isSelected
+                              ? const Color(0xFFFF6F00)
+                              : Colors.grey[200],
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           '$year',
                           style: TextStyle(
                             color: isSelected ? Colors.white : Colors.black87,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                       ),
@@ -684,7 +737,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                   children: [
                     Text(
                       'Data IDG Tahun $selectedYear',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
                       icon: const Icon(Icons.edit, color: Color(0xFFFF6F00)),
@@ -725,10 +779,15 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                 ),
                 child: Column(
                   children: [
-                    const Icon(Icons.trending_up, color: Colors.white, size: 32),
+                    const Icon(Icons.trending_up,
+                        color: Colors.white, size: 32),
                     const SizedBox(height: 8),
                     Text(
-                      '${data['idg']?.toStringAsFixed(2) ?? 'N/A'}',
+                      data['idg'] != null
+                          ? NumberFormatUtils.formatDecimal(
+                              data['idg']!.toDouble(),
+                              decimalPlaces: 2)
+                          : 'N/A',
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -790,17 +849,24 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
         const SizedBox(height: 8),
         _buildDataRow(
           'Sumbangan Pendapatan Perempuan',
-          '${data['sumbangan']?.toStringAsFixed(2) ?? 'N/A'}%',
+          data['sumbangan'] != null
+              ? NumberFormatUtils.formatPercentage(
+                  data['sumbangan']!.toDouble())
+              : 'N/A',
           Icons.attach_money,
         ),
         _buildDataRow(
           'Perempuan sebagai Tenaga Profesional',
-          '${data['tenaga']?.toStringAsFixed(2) ?? 'N/A'}%',
+          data['tenaga'] != null
+              ? NumberFormatUtils.formatPercentage(data['tenaga']!.toDouble())
+              : 'N/A',
           Icons.business_center,
         ),
         _buildDataRow(
           'Keterlibatan Perempuan di Parlemen',
-          '${data['parlemen']?.toStringAsFixed(2) ?? 'N/A'}%',
+          data['parlemen'] != null
+              ? NumberFormatUtils.formatPercentage(data['parlemen']!.toDouble())
+              : 'N/A',
           Icons.account_balance,
         ),
       ],
@@ -862,7 +928,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                     SizedBox(width: 8),
                     Text(
                       'Preview Grafik IDG & IKG',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -916,7 +983,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                                   getTitlesWidget: (value, meta) {
                                     double ikgValue = (value - 64) / 53.33;
                                     return Text(
-                                      ikgValue.toStringAsFixed(2),
+                                      NumberFormatUtils.formatDecimal(ikgValue,
+                                          decimalPlaces: 2),
                                       style: const TextStyle(
                                         fontSize: 10,
                                         color: Color(0xFFED7D31),
@@ -933,7 +1001,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                                   interval: 1,
                                   getTitlesWidget: (value, meta) {
                                     final index = value.toInt();
-                                    if (index >= 0 && index < yearLabels.length) {
+                                    if (index >= 0 &&
+                                        index < yearLabels.length) {
                                       return Padding(
                                         padding: const EdgeInsets.only(top: 8),
                                         child: Text(
@@ -950,14 +1019,21 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                                   },
                                 ),
                               ),
-                              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                              topTitles: const AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false)),
                             ),
                             borderData: FlBorderData(
                               show: true,
                               border: Border(
-                                left: BorderSide(color: Colors.grey.withOpacity(0.3), width: 1),
-                                right: BorderSide(color: Colors.grey.withOpacity(0.3), width: 1),
-                                bottom: BorderSide(color: Colors.grey.withOpacity(0.3), width: 1),
+                                left: BorderSide(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    width: 1),
+                                right: BorderSide(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    width: 1),
+                                bottom: BorderSide(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    width: 1),
                               ),
                             ),
                             lineBarsData: [
@@ -968,7 +1044,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                                 barWidth: 3,
                                 dotData: FlDotData(
                                   show: true,
-                                  getDotPainter: (spot, percent, barData, index) {
+                                  getDotPainter:
+                                      (spot, percent, barData, index) {
                                     return FlDotCirclePainter(
                                       radius: 4,
                                       color: const Color(0xFF4472C4),
@@ -986,7 +1063,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                                 barWidth: 3,
                                 dotData: FlDotData(
                                   show: true,
-                                  getDotPainter: (spot, percent, barData, index) {
+                                  getDotPainter:
+                                      (spot, percent, barData, index) {
                                     return FlDotCirclePainter(
                                       radius: 4,
                                       color: const Color(0xFFED7D31),
@@ -1004,11 +1082,13 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.bar_chart, size: 48, color: Colors.grey[400]),
+                              Icon(Icons.bar_chart,
+                                  size: 48, color: Colors.grey[400]),
                               const SizedBox(height: 8),
                               Text(
                                 'Data tidak tersedia',
-                                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                                style: TextStyle(
+                                    color: Colors.grey[600], fontSize: 14),
                               ),
                             ],
                           ),
@@ -1031,7 +1111,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                         const SizedBox(height: 4),
                         const Text(
                           'IDG',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -1049,7 +1130,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                         const SizedBox(height: 4),
                         const Text(
                           'IKG',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -1080,7 +1162,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                     SizedBox(width: 8),
                     Text(
                       'Kelola Data Tahun',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -1112,7 +1195,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: data != null
-                          ? Text('IDG: ${data['idg']?.toStringAsFixed(2)} | IKG: ${data['ikg']?.toStringAsFixed(3)}')
+                          ? Text(
+                              'IDG: ${data['idg'] != null ? NumberFormatUtils.formatDecimal(data['idg']!.toDouble(), decimalPlaces: 2) : 'N/A'} | IKG: ${data['ikg'] != null ? NumberFormatUtils.formatDecimal(data['ikg']!.toDouble(), decimalPlaces: 3) : 'N/A'}')
                           : Text('Data tidak lengkap'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -1175,7 +1259,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                     SizedBox(width: 8),
                     Text(
                       'Pengaturan Admin',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -1224,7 +1309,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('✓ Data berhasil direset ke default!'),
+                                  content: Text(
+                                      '✓ Data berhasil direset ke default!'),
                                   backgroundColor: Colors.green,
                                 ),
                               );
@@ -1254,7 +1340,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                       Expanded(
                         child: Text(
                           'Semua perubahan akan otomatis tersinkronisasi dengan aplikasi user',
-                          style: TextStyle(fontSize: 12, color: Colors.blue[900]),
+                          style:
+                              TextStyle(fontSize: 12, color: Colors.blue[900]),
                         ),
                       ),
                     ],
@@ -1278,7 +1365,8 @@ class _AdminIDGScreenState extends State<AdminIDGScreen> with SingleTickerProvid
                     SizedBox(width: 8),
                     Text(
                       'Panduan Penggunaan',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

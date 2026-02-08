@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
+import 'number_format_utils.dart';
 
 // BPS Color Palette (matching kemiskinana_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -25,7 +26,8 @@ class TenagaKerjaScreen extends StatefulWidget {
   _TenagaKerjaScreenState createState() => _TenagaKerjaScreenState();
 }
 
-class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKeepAliveClientMixin {
+class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
+    with AutomaticKeepAliveClientMixin {
   int selectedYear = 2024;
   List<int> availableYears = [2020, 2021, 2022, 2023, 2024];
   int touchedIndex = -1;
@@ -35,7 +37,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
   Map<int, Map<String, dynamic>> indikatorData = {};
   Map<int, Map<String, double>> distribusiData = {};
   Map<int, Map<String, dynamic>> jatengData = {};
-  
+
   int? touchedPieIndex;
   bool showRealValues = false;
   String? selectedSector;
@@ -58,28 +60,27 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
       if (savedYearData != null) {
         Map<String, dynamic> decoded = json.decode(savedYearData);
         yearData = decoded.map((key, value) =>
-          MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map))
-        );
+            MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
       } else {
         _initializeDefaultYearData();
       }
 
-      String? savedIndikatorData = prefs.getString('tenaga_kerja_indikator_data');
+      String? savedIndikatorData =
+          prefs.getString('tenaga_kerja_indikator_data');
       if (savedIndikatorData != null) {
         Map<String, dynamic> decoded = json.decode(savedIndikatorData);
         indikatorData = decoded.map((key, value) =>
-          MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map))
-        );
+            MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
       } else {
         _initializeDefaultIndikatorData();
       }
 
-      String? savedDistribusiData = prefs.getString('tenaga_kerja_distribusi_data');
+      String? savedDistribusiData =
+          prefs.getString('tenaga_kerja_distribusi_data');
       if (savedDistribusiData != null) {
         Map<String, dynamic> decoded = json.decode(savedDistribusiData);
         distribusiData = decoded.map((key, value) =>
-          MapEntry(int.parse(key), Map<String, double>.from(value as Map))
-        );
+            MapEntry(int.parse(key), Map<String, double>.from(value as Map)));
       } else {
         _initializeDefaultDistribusiData();
       }
@@ -88,15 +89,15 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
       if (savedJatengData != null) {
         Map<String, dynamic> decoded = json.decode(savedJatengData);
         jatengData = decoded.map((key, value) =>
-          MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map))
-        );
+            MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
       } else {
         _initializeDefaultJatengData();
       }
 
       setState(() {
         availableYears = yearData.keys.toList()..sort();
-        if (availableYears.isNotEmpty && !availableYears.contains(selectedYear)) {
+        if (availableYears.isNotEmpty &&
+            !availableYears.contains(selectedYear)) {
           selectedYear = availableYears.last;
         }
         isLoading = false;
@@ -115,31 +116,76 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
 
   void _initializeDefaultYearData() {
     yearData = {
-      2020: {'tpt': 8.45, 'tingkatPartisipasi': 67.8, 'bekerja': 856123, 'pengangguran': 78956},
-      2021: {'tpt': 7.92, 'tingkatPartisipasi': 68.2, 'bekerja': 871245, 'pengangguran': 75234},
-      2022: {'tpt': 7.15, 'tingkatPartisipasi': 69.1, 'bekerja': 889567, 'pengangguran': 68432},
-      2023: {'tpt': 6.48, 'tingkatPartisipasi': 69.8, 'bekerja': 905678, 'pengangguran': 62789},
-      2024: {'tpt': 5.82, 'tingkatPartisipasi': 70.5, 'bekerja': 922345, 'pengangguran': 57123},
+      2020: {
+        'tpt': 8.45,
+        'tingkatPartisipasi': 67.8,
+        'bekerja': 856123,
+        'pengangguran': 78956
+      },
+      2021: {
+        'tpt': 7.92,
+        'tingkatPartisipasi': 68.2,
+        'bekerja': 871245,
+        'pengangguran': 75234
+      },
+      2022: {
+        'tpt': 7.15,
+        'tingkatPartisipasi': 69.1,
+        'bekerja': 889567,
+        'pengangguran': 68432
+      },
+      2023: {
+        'tpt': 6.48,
+        'tingkatPartisipasi': 69.8,
+        'bekerja': 905678,
+        'pengangguran': 62789
+      },
+      2024: {
+        'tpt': 5.82,
+        'tingkatPartisipasi': 70.5,
+        'bekerja': 922345,
+        'pengangguran': 57123
+      },
     };
   }
 
   void _initializeDefaultIndikatorData() {
     indikatorData = {
-      2020: {'angkatanKerja': 935079, 'bkbk': 421567, 'tingkatKesempatan': 91.55},
-      2021: {'angkatanKerja': 946479, 'bkbk': 418234, 'tingkatKesempatan': 92.08},
-      2022: {'angkatanKerja': 957999, 'bkbk': 415678, 'tingkatKesempatan': 92.85},
-      2023: {'angkatanKerja': 968467, 'bkbk': 412345, 'tingkatKesempatan': 93.52},
-      2024: {'angkatanKerja': 979468, 'bkbk': 408912, 'tingkatKesempatan': 94.18},
+      2020: {
+        'angkatanKerja': 935079,
+        'bkbk': 421567,
+        'tingkatKesempatan': 91.55
+      },
+      2021: {
+        'angkatanKerja': 946479,
+        'bkbk': 418234,
+        'tingkatKesempatan': 92.08
+      },
+      2022: {
+        'angkatanKerja': 957999,
+        'bkbk': 415678,
+        'tingkatKesempatan': 92.85
+      },
+      2023: {
+        'angkatanKerja': 968467,
+        'bkbk': 412345,
+        'tingkatKesempatan': 93.52
+      },
+      2024: {
+        'angkatanKerja': 979468,
+        'bkbk': 408912,
+        'tingkatKesempatan': 94.18
+      },
     };
   }
 
   void _initializeDefaultDistribusiData() {
     distribusiData = {
-      2020: {'Pertanian': 12.5, 'Industri': 18.3, 'Perdagangan': 28.7, 'Jasa': 35.2, 'Lainnya': 5.3},
-      2021: {'Pertanian': 11.8, 'Industri': 19.1, 'Perdagangan': 29.2, 'Jasa': 34.8, 'Lainnya': 5.1},
-      2022: {'Pertanian': 11.2, 'Industri': 19.8, 'Perdagangan': 29.8, 'Jasa': 34.5, 'Lainnya': 4.7},
-      2023: {'Pertanian': 10.5, 'Industri': 20.5, 'Perdagangan': 30.1, 'Jasa': 34.2, 'Lainnya': 4.7},
-      2024: {'Pertanian': 9.8, 'Industri': 21.2, 'Perdagangan': 30.5, 'Jasa': 33.9, 'Lainnya': 4.6},
+      2020: {'Pertanian': 2.00, 'Manufaktur': 26.00, 'Jasa': 73.00},
+      2021: {'Pertanian': 2.00, 'Manufaktur': 26.00, 'Jasa': 72.00},
+      2022: {'Pertanian': 1.00, 'Manufaktur': 28.00, 'Jasa': 70.00},
+      2023: {'Pertanian': 2.00, 'Manufaktur': 26.00, 'Jasa': 72.00},
+      2024: {'Pertanian': 2.00, 'Manufaktur': 28.00, 'Jasa': 70.00},
     };
   }
 
@@ -220,7 +266,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
           _buildHeader(context, sizing, isSmallScreen),
           Expanded(
             child: CustomScrollView(
-              physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              physics: const ClampingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
               slivers: [
                 SliverPadding(
                   padding: EdgeInsets.all(sizing.horizontalPadding),
@@ -247,7 +294,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
     );
   }
 
-  Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildHeader(
+      BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
         color: _bpsBlue,
@@ -405,19 +453,22 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                         color: isSelected ? _bpsBlue : _bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
-                      boxShadow: isSelected ? [
-                        BoxShadow(
-                          color: _bpsBlue.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ] : null,
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: _bpsBlue.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Text(
                       year.toString(),
                       style: TextStyle(
                         fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w600,
                         color: isSelected ? Colors.white : _bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
@@ -525,21 +576,23 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
             children: [
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${tpt.toStringAsFixed(2)}%',
+                value: NumberFormatUtils.formatPercentage(tpt),
                 label: 'Tingkat Pengangguran Terbuka',
                 color: _bpsBlue,
                 icon: Icons.trending_down_rounded,
-                description: 'TPT menunjukkan persentase angkatan kerja yang sedang mencari pekerjaan terhadap total angkatan kerja. Semakin rendah TPT, semakin baik kondisi ketenagakerjaan.',
+                description:
+                    'TPT menunjukkan persentase angkatan kerja yang sedang mencari pekerjaan terhadap total angkatan kerja. Semakin rendah TPT, semakin baik kondisi ketenagakerjaan.',
                 isFirst: true,
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${tingkatPartisipasi.toStringAsFixed(2)}%',
+                value: NumberFormatUtils.formatPercentage(tingkatPartisipasi),
                 label: 'Tingkat Partisipasi Angkatan Kerja',
                 color: _bpsGreen,
                 icon: Icons.people_rounded,
-                description: 'TPAK menggambarkan persentase penduduk usia kerja yang aktif secara ekonomi (bekerja atau mencari pekerjaan) terhadap total penduduk usia kerja.',
+                description:
+                    'TPAK menggambarkan persentase penduduk usia kerja yang aktif secara ekonomi (bekerja atau mencari pekerjaan) terhadap total penduduk usia kerja.',
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
@@ -548,7 +601,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                 label: 'Jumlah Penduduk Bekerja',
                 color: _bpsOrange,
                 icon: Icons.work_rounded,
-                description: 'Total penduduk yang bekerja, yaitu yang melakukan kegiatan ekonomi dengan maksud memperoleh atau membantu memperoleh pendapatan atau keuntungan.',
+                description:
+                    'Total penduduk yang bekerja, yaitu yang melakukan kegiatan ekonomi dengan maksud memperoleh atau membantu memperoleh pendapatan atau keuntungan.',
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
@@ -557,7 +611,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                 label: 'Jumlah Pengangguran',
                 color: _bpsRed,
                 icon: Icons.group_off_rounded,
-                description: 'Total penduduk yang sedang mencari pekerjaan, mempersiapkan usaha, tidak mencari pekerjaan karena merasa tidak mungkin mendapatkan pekerjaan, atau sudah punya pekerjaan tetapi belum mulai bekerja.',
+                description:
+                    'Total penduduk yang sedang mencari pekerjaan, mempersiapkan usaha, tidak mencari pekerjaan karena merasa tidak mungkin mendapatkan pekerjaan, atau sudah punya pekerjaan tetapi belum mulai bekerja.',
                 isLast: true,
               ),
             ],
@@ -663,7 +718,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                 label: 'Angkatan Kerja',
                 color: _bpsBlue,
                 icon: Icons.groups_rounded,
-                description: 'Total penduduk usia kerja (15 tahun ke atas) yang bekerja atau sedang mencari pekerjaan. Angkatan kerja adalah penjumlahan dari penduduk yang bekerja dan pengangguran.',
+                description:
+                    'Total penduduk usia kerja (15 tahun ke atas) yang bekerja atau sedang mencari pekerjaan. Angkatan kerja adalah penjumlahan dari penduduk yang bekerja dan pengangguran.',
                 isFirst: true,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -673,16 +729,18 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                 label: 'Bukan Angkatan Kerja',
                 color: _bpsBlue,
                 icon: Icons.people_outline_rounded,
-                description: 'Penduduk usia kerja yang tidak bekerja dan tidak mencari pekerjaan. Termasuk di dalamnya adalah yang bersekolah, mengurus rumah tangga, pensiunan, dan lain-lain.',
+                description:
+                    'Penduduk usia kerja yang tidak bekerja dan tidak mencari pekerjaan. Termasuk di dalamnya adalah yang bersekolah, mengurus rumah tangga, pensiunan, dan lain-lain.',
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${tingkatKesempatan.toStringAsFixed(2)}%',
+                value: NumberFormatUtils.formatPercentage(tingkatKesempatan),
                 label: 'Tingkat Kesempatan Kerja',
                 color: _bpsBlue,
                 icon: Icons.work_history_rounded,
-                description: 'Persentase penduduk yang bekerja terhadap angkatan kerja. Indikator ini menunjukkan seberapa besar kesempatan kerja yang tersedia bagi angkatan kerja.',
+                description:
+                    'Persentase penduduk yang bekerja terhadap angkatan kerja. Indikator ini menunjukkan seberapa besar kesempatan kerja yang tersedia bagi angkatan kerja.',
                 isLast: true,
               ),
             ],
@@ -991,7 +1049,9 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
       return data?['tpt'] ?? 0.0;
     }).toList();
 
-    final maxY = ([...tptData, ...jatengTPTData].reduce((a, b) => a > b ? a : b) + 1).ceilToDouble();
+    final maxY =
+        ([...tptData, ...jatengTPTData].reduce((a, b) => a > b ? a : b) + 1)
+            .ceilToDouble();
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -1088,7 +1148,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                       interval: 1,
                       getTitlesWidget: (value, meta) {
                         return Text(
-                          '${value.toStringAsFixed(1)}%',
+                          NumberFormatUtils.formatPercentage(value),
                           style: TextStyle(
                             fontSize: isSmallScreen ? 10 : 12,
                             color: _bpsTextSecondary,
@@ -1106,7 +1166,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                         final index = value.toInt();
                         if (index >= 0 && index < availableYears.length) {
                           return Padding(
-                            padding: EdgeInsets.only(top: isSmallScreen ? 6 : 8),
+                            padding:
+                                EdgeInsets.only(top: isSmallScreen ? 6 : 8),
                             child: Text(
                               availableYears[index].toString(),
                               style: TextStyle(
@@ -1213,31 +1274,6 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
     final yearInfo = yearData[selectedYear];
     final totalWorkers = yearInfo?['bekerja'] ?? 0;
 
-    final sections = data.entries.map((entry) {
-      final index = data.keys.toList().indexOf(entry.key);
-      final isTouched = index == touchedPieIndex;
-      final fontSize = isTouched ? (isSmallScreen ? 12.0 : 14.0) : (isSmallScreen ? 11.0 : 12.0);
-      final radius = isTouched ? (isSmallScreen ? 65.0 : 75.0) : (isSmallScreen ? 55.0 : 65.0);
-      
-      // Calculate real value (number of workers) based on percentage
-      final realValue = (totalWorkers * entry.value / 100).round();
-      final displayTitle = (showRealValues && isTouched) 
-          ? _formatCompactNumber(realValue)
-          : '${entry.value.toStringAsFixed(1)}%';
-
-      return PieChartSectionData(
-        color: _getSectorColor(entry.key),
-        value: entry.value,
-        title: displayTitle,
-        radius: radius,
-        titleStyle: TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
-        ),
-      );
-    }).toList();
-
     return Container(
       padding: EdgeInsets.all(isSmallScreen
           ? sizing.statsCardPadding - 4
@@ -1267,7 +1303,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
-                  Icons.pie_chart_rounded,
+                  Icons.bar_chart_rounded,
                   color: _bpsBlue,
                   size: isSmallScreen ? 16 : 20,
                 ),
@@ -1315,7 +1351,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            selectedSector != null 
+                            selectedSector != null
                                 ? '$selectedSector - $selectedSectorValue'
                                 : '',
                             style: TextStyle(
@@ -1323,7 +1359,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                                   ? sizing.groupTitleSize - 2
                                   : sizing.groupTitleSize,
                               fontWeight: FontWeight.w700,
-                              color: selectedSector != null 
+                              color: selectedSector != null
                                   ? _getSectorColor(selectedSector!)
                                   : _bpsTextPrimary,
                             ),
@@ -1345,30 +1381,36 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
+          // Horizontal Bar Chart
           SizedBox(
-            height: isSmallScreen ? 180 : 220,
-            child: PieChart(
-              PieChartData(
-                pieTouchData: PieTouchData(
-                  touchCallback: (FlTouchEvent event, pieTouchResponse) {
+            height: isSmallScreen ? 140 : 180,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: 100,
+                barTouchData: BarTouchData(
+                  enabled: true,
+                  touchCallback: (FlTouchEvent event, barTouchResponse) {
                     setState(() {
                       if (!event.isInterestedForInteractions ||
-                          pieTouchResponse == null ||
-                          pieTouchResponse.touchedSection == null) {
+                          barTouchResponse == null ||
+                          barTouchResponse.spot == null) {
                         touchedPieIndex = null;
                         showRealValues = false;
                         selectedSector = null;
                         selectedSectorValue = null;
                         return;
                       }
-                      touchedPieIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                      touchedPieIndex =
+                          barTouchResponse.spot!.touchedBarGroupIndex;
                       showRealValues = true;
-                      // Update header with selected sector info
-                      final sectorIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                      final sectorIndex =
+                          barTouchResponse.spot!.touchedBarGroupIndex;
                       if (sectorIndex >= 0 && sectorIndex < data.length) {
                         final sectorName = data.keys.toList()[sectorIndex];
                         final percentage = data.values.toList()[sectorIndex];
-                        final realValue = (totalWorkers * percentage / 100).round();
+                        final realValue =
+                            (totalWorkers * percentage / 100).round();
                         selectedSector = sectorName;
                         selectedSectorValue = _formatCompactNumber(realValue);
                       } else {
@@ -1377,12 +1419,129 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
                       }
                     });
                   },
-                  enabled: true,
+                  touchTooltipData: BarTouchTooltipData(
+                    tooltipRoundedRadius: 8,
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      final sectorName = data.keys.toList()[groupIndex];
+                      final percentage = data.values.toList()[groupIndex];
+                      final realValue =
+                          (totalWorkers * percentage / 100).round();
+                      return BarTooltipItem(
+                        '$sectorName\n',
+                        TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: isSmallScreen ? 12 : 14,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: '${percentage.toStringAsFixed(1)}%\n',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: isSmallScreen ? 14 : 16,
+                            ),
+                          ),
+                          TextSpan(
+                            text: _formatCompactNumber(realValue),
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontWeight: FontWeight.w600,
+                              fontSize: isSmallScreen ? 10 : 12,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+                        if (index >= 0 && index < data.length) {
+                          final sectorName = data.keys.toList()[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Text(
+                              sectorName,
+                              style: TextStyle(
+                                color: _bpsTextSecondary,
+                                fontWeight: FontWeight.w600,
+                                fontSize: isSmallScreen ? 11 : 12,
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox();
+                      },
+                      reservedSize: isSmallScreen ? 30 : 35,
+                    ),
+                  ),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: isSmallScreen ? 35 : 40,
+                      interval: 25,
+                      getTitlesWidget: (value, meta) {
+                        return Text(
+                          '${value.toInt()}%',
+                          style: TextStyle(
+                            color: _bpsTextLabel,
+                            fontWeight: FontWeight.w500,
+                            fontSize: isSmallScreen ? 10 : 11,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                ),
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  horizontalInterval: 25,
+                  getDrawingHorizontalLine: (value) {
+                    return FlLine(
+                      color: _bpsBorder,
+                      strokeWidth: 1,
+                    );
+                  },
                 ),
                 borderData: FlBorderData(show: false),
-                sectionsSpace: 2,
-                centerSpaceRadius: isSmallScreen ? 20 : 30,
-                sections: sections,
+                barGroups: data.entries.map((entry) {
+                  final index = data.keys.toList().indexOf(entry.key);
+                  final isTouched = index == touchedPieIndex;
+                  final color = _getSectorColor(entry.key);
+                  return BarChartGroupData(
+                    x: index,
+                    barRods: [
+                      BarChartRodData(
+                        toY: entry.value,
+                        color: isTouched ? color.withOpacity(0.8) : color,
+                        width: isSmallScreen ? 35 : 50,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(6),
+                          topRight: Radius.circular(6),
+                        ),
+                        backDrawRodData: BackgroundBarChartRodData(
+                          show: true,
+                          toY: 100,
+                          color: _bpsBorder.withOpacity(0.3),
+                        ),
+                      ),
+                    ],
+                    showingTooltipIndicators: isTouched ? [0] : [],
+                  );
+                }).toList(),
               ),
             ),
           ),
@@ -1447,34 +1606,20 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen> with AutomaticKee
     switch (sector) {
       case 'Pertanian':
         return _bpsGreen;
-      case 'Industri':
+      case 'Manufaktur':
         return _bpsBlue;
-      case 'Perdagangan':
-        return _bpsOrange;
       case 'Jasa':
         return _bpsPurple;
-      case 'Lainnya':
-        return _bpsTeal;
       default:
         return _bpsTextSecondary;
     }
   }
 
   String _formatNumber(int number) {
-    if (number >= 1000000) {
-      return '${(number / 1000000).toStringAsFixed(2)}M';
-    } else if (number >= 1000) {
-      return '${(number / 1000).toStringAsFixed(1)}K';
-    }
-    return number.toString();
+    return NumberFormatUtils.formatCompact(number);
   }
 
   String _formatCompactNumber(int number) {
-    if (number >= 1000000) {
-      return '${(number / 1000000).toStringAsFixed(1)}M';
-    } else if (number >= 1000) {
-      return '${(number / 1000).toStringAsFixed(1)}K';
-    }
-    return number.toString();
+    return NumberFormatUtils.formatCompact(number);
   }
 }

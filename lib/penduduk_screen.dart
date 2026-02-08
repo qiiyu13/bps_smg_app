@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
+import 'number_format_utils.dart';
 
 // BPS Color Palette
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -48,17 +49,37 @@ class SemarangData {
     this.femalePopulation,
     this.growthRate,
   }) {
-    populationFormatted = population?.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (match) => '${match[1]},') ?? 'N/A';
-    malePopulationFormatted = malePopulation?.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (match) => '${match[1]},') ?? 'N/A';
-    femalePopulationFormatted = femalePopulation?.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (match) => '${match[1]},') ?? 'N/A';
-    densityFormatted = density?.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (match) => '${match[1]}.') ?? 'N/A';
-    populationInMillions = population != null ? (population! / 1000000.0).toStringAsFixed(3) : 'N/A';
-    malePopulationInMillions = malePopulation != null ? (malePopulation! / 1000000.0).toStringAsFixed(3) : 'N/A';
-    femalePopulationInMillions = femalePopulation != null ? (femalePopulation! / 1000000.0).toStringAsFixed(3) : 'N/A';
-    malePercentage = (population != null && malePopulation != null && population! > 0) 
-        ? (malePopulation! / population! * 100) : 0.0;
-    femalePercentage = (population != null && femalePopulation != null && population! > 0) 
-        ? (femalePopulation! / population! * 100) : 0.0;
+    populationFormatted = population != null
+        ? NumberFormatUtils.formatInteger(population!)
+        : 'N/A';
+    malePopulationFormatted = malePopulation != null
+        ? NumberFormatUtils.formatInteger(malePopulation!)
+        : 'N/A';
+    femalePopulationFormatted = femalePopulation != null
+        ? NumberFormatUtils.formatInteger(femalePopulation!)
+        : 'N/A';
+    densityFormatted =
+        density != null ? NumberFormatUtils.formatInteger(density!) : 'N/A';
+    populationInMillions = population != null
+        ? NumberFormatUtils.formatDecimal(population! / 1000000.0,
+            decimalPlaces: 3)
+        : 'N/A';
+    malePopulationInMillions = malePopulation != null
+        ? NumberFormatUtils.formatDecimal(malePopulation! / 1000000.0,
+            decimalPlaces: 3)
+        : 'N/A';
+    femalePopulationInMillions = femalePopulation != null
+        ? NumberFormatUtils.formatDecimal(femalePopulation! / 1000000.0,
+            decimalPlaces: 3)
+        : 'N/A';
+    malePercentage =
+        (population != null && malePopulation != null && population! > 0)
+            ? (malePopulation! / population! * 100)
+            : 0.0;
+    femalePercentage =
+        (population != null && femalePopulation != null && population! > 0)
+            ? (femalePopulation! / population! * 100)
+            : 0.0;
   }
 }
 
@@ -70,9 +91,11 @@ class DistrictDensity {
   late final String densityFormatted;
   late final String populationFormatted;
 
-  DistrictDensity({required this.name, required this.density, required this.population}) {
-    densityFormatted = density.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (match) => '${match[1]},');
-    populationFormatted = population.toStringAsFixed(2);
+  DistrictDensity(
+      {required this.name, required this.density, required this.population}) {
+    densityFormatted = NumberFormatUtils.formatInteger(density);
+    populationFormatted =
+        NumberFormatUtils.formatDecimal(population, decimalPlaces: 2);
   }
 }
 
@@ -83,7 +106,8 @@ class PendudukScreen extends StatefulWidget {
   State<PendudukScreen> createState() => _PendudukScreenState();
 }
 
-class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+class _PendudukScreenState extends State<PendudukScreen>
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   Map<int, SemarangData> semarangDataByYear = {};
   Map<int, List<DistrictDensity>> districtDensityByYear = {};
   List<int> availableYears = [];
@@ -94,12 +118,12 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
   Map<int, List<PieChartSectionData>> _cachedPieDataByYear = {};
   Map<int, Map<String, dynamic>> _ageDataByYear = {};
   List<Color> _districtColors = [];
-  
+
   int? touchedPieIndex;
   bool showRealValues = false;
   String? selectedAgeGroup;
   String? selectedAgeValue;
-  
+
   late AnimationController _pieChartAnimationController;
   late Animation<double> _pieChartAnimation;
 
@@ -109,17 +133,17 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
   @override
   void initState() {
     super.initState();
-    
+
     _pieChartAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
     )..repeat(reverse: true);
-    
+
     _pieChartAnimation = CurvedAnimation(
       parent: _pieChartAnimationController,
       curve: Curves.easeInOut,
     );
-    
+
     _initializeColors();
     _loadData();
   }
@@ -146,13 +170,13 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
       String? savedData = prefs.getString('penduduk_data');
       String? savedAgeData = prefs.getString('age_distribution_data');
       String? savedDistrictData = prefs.getString('district_density_data');
-      
+
       Map<int, SemarangData> processedData;
-      
+
       if (savedData != null) {
         Map<String, dynamic> decoded = json.decode(savedData);
         processedData = {};
-        
+
         decoded.forEach((key, value) {
           int year = int.parse(key);
           Map<String, dynamic> data = value as Map<String, dynamic>;
@@ -184,7 +208,8 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
         Map<String, dynamic> decoded = json.decode(savedAgeData);
         loadedAgeData = {};
         decoded.forEach((key, value) {
-          loadedAgeData[int.parse(key)] = Map<String, dynamic>.from(value as Map);
+          loadedAgeData[int.parse(key)] =
+              Map<String, dynamic>.from(value as Map);
         });
       } else {
         loadedAgeData = _getDefaultAgeData();
@@ -192,10 +217,21 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
 
       _ageDataByYear = loadedAgeData.map((year, ageData) {
         return MapEntry(year, {
-          'usiaMuda': {'total': ageData['usiaMuda'], 'percentage': ageData['usiaMudaPercentage']},
-          'usiaProduktif': {'total': ageData['usiaProduktif'], 'percentage': ageData['usiaProduktifPercentage']},
-          'usiaTua': {'total': ageData['usiaTua'], 'percentage': ageData['usiaTuaPercentage']},
-          'totalPopulation': ageData['usiaMuda'] + ageData['usiaProduktif'] + ageData['usiaTua'],
+          'usiaMuda': {
+            'total': ageData['usiaMuda'],
+            'percentage': ageData['usiaMudaPercentage']
+          },
+          'usiaProduktif': {
+            'total': ageData['usiaProduktif'],
+            'percentage': ageData['usiaProduktifPercentage']
+          },
+          'usiaTua': {
+            'total': ageData['usiaTua'],
+            'percentage': ageData['usiaTuaPercentage']
+          },
+          'totalPopulation': ageData['usiaMuda'] +
+              ageData['usiaProduktif'] +
+              ageData['usiaTua'],
         });
       });
 
@@ -208,21 +244,24 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
             value: ageData['usiaMuda']['percentage'].toDouble(),
             title: '${ageData['usiaMuda']['percentage']}%',
             radius: 60,
-            titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+            titleStyle: const TextStyle(
+                fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           PieChartSectionData(
             color: _bpsGreen,
             value: ageData['usiaProduktif']['percentage'].toDouble(),
             title: '${ageData['usiaProduktif']['percentage']}%',
             radius: 60,
-            titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+            titleStyle: const TextStyle(
+                fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           PieChartSectionData(
             color: _bpsOrange,
             value: ageData['usiaTua']['percentage'].toDouble(),
             title: '${ageData['usiaTua']['percentage']}%',
             radius: 60,
-            titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+            titleStyle: const TextStyle(
+                fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ];
       }
@@ -264,53 +303,222 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
 
   Map<int, SemarangData> _getDefaultData() {
     return {
-      2020: SemarangData(year: 2020, population: 1653524, malePopulation: 818441, femalePopulation: 835083, area: 373.7, density: 4425, districts: 16, villages: 177),
-      2021: SemarangData(year: 2021, population: 1656564, malePopulation: 819785, femalePopulation: 836779, area: 374.0, density: 4433, districts: 16, villages: 177, growthRate: 0.18),
-      2022: SemarangData(year: 2022, population: 1659975, malePopulation: 821305, femalePopulation: 838670, area: 374.0, density: 4442, districts: 16, villages: 177, growthRate: 0.21),
-      2023: SemarangData(year: 2023, population: 1694743, malePopulation: 838437, femalePopulation: 856306, area: 374.0, density: 4535, districts: 16, villages: 177, growthRate: 2.09),
-      2024: SemarangData(year: 2024, population: 1708833, malePopulation: 845177, femalePopulation: 863656, area: 374.0, density: 4573, districts: 16, villages: 177, growthRate: 0.83),
+      2020: SemarangData(
+          year: 2020,
+          population: 1653524,
+          malePopulation: 818441,
+          femalePopulation: 835083,
+          area: 373.7,
+          density: 4425,
+          districts: 16,
+          villages: 177),
+      2021: SemarangData(
+          year: 2021,
+          population: 1656564,
+          malePopulation: 819785,
+          femalePopulation: 836779,
+          area: 374.0,
+          density: 4433,
+          districts: 16,
+          villages: 177,
+          growthRate: 0.18),
+      2022: SemarangData(
+          year: 2022,
+          population: 1659975,
+          malePopulation: 821305,
+          femalePopulation: 838670,
+          area: 374.0,
+          density: 4442,
+          districts: 16,
+          villages: 177,
+          growthRate: 0.21),
+      2023: SemarangData(
+          year: 2023,
+          population: 1694743,
+          malePopulation: 838437,
+          femalePopulation: 856306,
+          area: 374.0,
+          density: 4535,
+          districts: 16,
+          villages: 177,
+          growthRate: 2.09),
+      2024: SemarangData(
+          year: 2024,
+          population: 1708833,
+          malePopulation: 845177,
+          femalePopulation: 863656,
+          area: 374.0,
+          density: 4573,
+          districts: 16,
+          villages: 177,
+          growthRate: 0.83),
     };
   }
 
   Map<int, Map<String, dynamic>> _getDefaultAgeData() {
     return {
-      2020: {'usiaMuda': 367018, 'usiaMudaPercentage': 22.20, 'usiaProduktif': 1182010, 'usiaProduktifPercentage': 71.48, 'usiaTua': 104496, 'usiaTuaPercentage': 6.32},
-      2021: {'usiaMuda': 363757, 'usiaMudaPercentage': 21.96, 'usiaProduktif': 1182986, 'usiaProduktifPercentage': 71.41, 'usiaTua': 109821, 'usiaTuaPercentage': 6.63},
-      2022: {'usiaMuda': 360777, 'usiaMudaPercentage': 21.73, 'usiaProduktif': 1183941, 'usiaProduktifPercentage': 71.32, 'usiaTua': 115257, 'usiaTuaPercentage': 6.94},
-      2023: {'usiaMuda': 359130, 'usiaMudaPercentage': 21.19, 'usiaProduktif': 1207250, 'usiaProduktifPercentage': 71.23, 'usiaTua': 128400, 'usiaTuaPercentage': 7.58},
-      2024: {'usiaMuda': 356758, 'usiaMudaPercentage': 20.88, 'usiaProduktif': 1214892, 'usiaProduktifPercentage': 71.09, 'usiaTua': 137183, 'usiaTuaPercentage': 8.03},
+      2020: {
+        'usiaMuda': 367018,
+        'usiaMudaPercentage': 22.20,
+        'usiaProduktif': 1182010,
+        'usiaProduktifPercentage': 71.48,
+        'usiaTua': 104496,
+        'usiaTuaPercentage': 6.32
+      },
+      2021: {
+        'usiaMuda': 363757,
+        'usiaMudaPercentage': 21.96,
+        'usiaProduktif': 1182986,
+        'usiaProduktifPercentage': 71.41,
+        'usiaTua': 109821,
+        'usiaTuaPercentage': 6.63
+      },
+      2022: {
+        'usiaMuda': 360777,
+        'usiaMudaPercentage': 21.73,
+        'usiaProduktif': 1183941,
+        'usiaProduktifPercentage': 71.32,
+        'usiaTua': 115257,
+        'usiaTuaPercentage': 6.94
+      },
+      2023: {
+        'usiaMuda': 359130,
+        'usiaMudaPercentage': 21.19,
+        'usiaProduktif': 1207250,
+        'usiaProduktifPercentage': 71.23,
+        'usiaTua': 128400,
+        'usiaTuaPercentage': 7.58
+      },
+      2024: {
+        'usiaMuda': 356758,
+        'usiaMudaPercentage': 20.88,
+        'usiaProduktif': 1214892,
+        'usiaProduktifPercentage': 71.09,
+        'usiaTua': 137183,
+        'usiaTuaPercentage': 8.03
+      },
     };
   }
 
   Map<int, List<DistrictDensity>> _getDefaultDistrictData() {
     return {
-      2020: [DistrictDensity(name: "Pedurungan", density: 9322, population: 193.151), DistrictDensity(name: "Tembalang", density: 4291, population: 189.680), DistrictDensity(name: "Semarang Barat", density: 6848, population: 148.879), DistrictDensity(name: "Banyumanik", density: 5530, population: 142.076), DistrictDensity(name: "Ngaliyan", density: 3731, population: 141.727)],
-      2021: [DistrictDensity(name: "Pedurungan", density: 9321, population: 193.128), DistrictDensity(name: "Tembalang", density: 4334, population: 191.560), DistrictDensity(name: "Semarang Barat", density: 6802, population: 147.885), DistrictDensity(name: "Ngaliyan", density: 3741, population: 142.131), DistrictDensity(name: "Banyumanik", density: 5515, population: 141.689)],
-      2022: [DistrictDensity(name: "Tembalang", density: 4377, population: 193.480), DistrictDensity(name: "Pedurungan", density: 9321, population: 193.125), DistrictDensity(name: "Semarang Barat", density: 6758, population: 146.915), DistrictDensity(name: "Ngaliyan", density: 3752, population: 142.553), DistrictDensity(name: "Banyumanik", density: 5501, population: 141.319)],
-      2023: [DistrictDensity(name: "Tembalang", density: 4499, population: 198.862), DistrictDensity(name: "Pedurungan", density: 9485, population: 196.526), DistrictDensity(name: "Semarang Barat", density: 6869, population: 149.326), DistrictDensity(name: "Ngaliyan", density: 3830, population: 145.495), DistrictDensity(name: "Banyumanik", density: 5583, population: 143.433)],
-      2024: [DistrictDensity(name: "Tembalang", density: 4566, population: 201.821), DistrictDensity(name: "Pedurungan", density: 9530, population: 197.468), DistrictDensity(name: "Semarang Barat", density: 6869, population: 149.327), DistrictDensity(name: "Ngaliyan", density: 3860, population: 146.628), DistrictDensity(name: "Banyumanik", density: 5595, population: 143.746)],
+      2020: [
+        DistrictDensity(name: "Pedurungan", density: 9322, population: 193.151),
+        DistrictDensity(name: "Tembalang", density: 4291, population: 189.680),
+        DistrictDensity(
+            name: "Semarang Barat", density: 6848, population: 148.879),
+        DistrictDensity(name: "Banyumanik", density: 5530, population: 142.076),
+        DistrictDensity(name: "Ngaliyan", density: 3731, population: 141.727)
+      ],
+      2021: [
+        DistrictDensity(name: "Pedurungan", density: 9321, population: 193.128),
+        DistrictDensity(name: "Tembalang", density: 4334, population: 191.560),
+        DistrictDensity(
+            name: "Semarang Barat", density: 6802, population: 147.885),
+        DistrictDensity(name: "Ngaliyan", density: 3741, population: 142.131),
+        DistrictDensity(name: "Banyumanik", density: 5515, population: 141.689)
+      ],
+      2022: [
+        DistrictDensity(name: "Tembalang", density: 4377, population: 193.480),
+        DistrictDensity(name: "Pedurungan", density: 9321, population: 193.125),
+        DistrictDensity(
+            name: "Semarang Barat", density: 6758, population: 146.915),
+        DistrictDensity(name: "Ngaliyan", density: 3752, population: 142.553),
+        DistrictDensity(name: "Banyumanik", density: 5501, population: 141.319)
+      ],
+      2023: [
+        DistrictDensity(name: "Tembalang", density: 4499, population: 198.862),
+        DistrictDensity(name: "Pedurungan", density: 9485, population: 196.526),
+        DistrictDensity(
+            name: "Semarang Barat", density: 6869, population: 149.326),
+        DistrictDensity(name: "Ngaliyan", density: 3830, population: 145.495),
+        DistrictDensity(name: "Banyumanik", density: 5583, population: 143.433)
+      ],
+      2024: [
+        DistrictDensity(name: "Tembalang", density: 4566, population: 201.821),
+        DistrictDensity(name: "Pedurungan", density: 9530, population: 197.468),
+        DistrictDensity(
+            name: "Semarang Barat", density: 6869, population: 149.327),
+        DistrictDensity(name: "Ngaliyan", density: 3860, population: 146.628),
+        DistrictDensity(name: "Banyumanik", density: 5595, population: 143.746)
+      ],
     };
   }
 
   void _loadDefaultData() {
     final processedData = _getDefaultData();
-    _cachedSpots = [const FlSpot(0, 0), const FlSpot(1, 0.0018), const FlSpot(2, 0.0021), const FlSpot(3, 0.0209), const FlSpot(4, 0.0083)];
-    
+    _cachedSpots = [
+      const FlSpot(0, 0),
+      const FlSpot(1, 0.0018),
+      const FlSpot(2, 0.0021),
+      const FlSpot(3, 0.0209),
+      const FlSpot(4, 0.0083)
+    ];
+
     _ageDataByYear = {
-      2020: {'usiaMuda': {'total': 367018, 'percentage': 22.20}, 'usiaProduktif': {'total': 1182010, 'percentage': 71.48}, 'usiaTua': {'total': 104496, 'percentage': 6.32}, 'totalPopulation': 1653524},
-      2021: {'usiaMuda': {'total': 363757, 'percentage': 21.96}, 'usiaProduktif': {'total': 1182986, 'percentage': 71.41}, 'usiaTua': {'total': 109821, 'percentage': 6.63}, 'totalPopulation': 1656564},
-      2022: {'usiaMuda': {'total': 360777, 'percentage': 21.73}, 'usiaProduktif': {'total': 1183941, 'percentage': 71.32}, 'usiaTua': {'total': 115257, 'percentage': 6.94}, 'totalPopulation': 1659975},
-      2023: {'usiaMuda': {'total': 359130, 'percentage': 21.19}, 'usiaProduktif': {'total': 1207250, 'percentage': 71.23}, 'usiaTua': {'total': 128400, 'percentage': 7.58}, 'totalPopulation': 1694780},
-      2024: {'usiaMuda': {'total': 356758, 'percentage': 20.88}, 'usiaProduktif': {'total': 1214892, 'percentage': 71.09}, 'usiaTua': {'total': 137183, 'percentage': 8.03}, 'totalPopulation': 1708833},
+      2020: {
+        'usiaMuda': {'total': 367018, 'percentage': 22.20},
+        'usiaProduktif': {'total': 1182010, 'percentage': 71.48},
+        'usiaTua': {'total': 104496, 'percentage': 6.32},
+        'totalPopulation': 1653524
+      },
+      2021: {
+        'usiaMuda': {'total': 363757, 'percentage': 21.96},
+        'usiaProduktif': {'total': 1182986, 'percentage': 71.41},
+        'usiaTua': {'total': 109821, 'percentage': 6.63},
+        'totalPopulation': 1656564
+      },
+      2022: {
+        'usiaMuda': {'total': 360777, 'percentage': 21.73},
+        'usiaProduktif': {'total': 1183941, 'percentage': 71.32},
+        'usiaTua': {'total': 115257, 'percentage': 6.94},
+        'totalPopulation': 1659975
+      },
+      2023: {
+        'usiaMuda': {'total': 359130, 'percentage': 21.19},
+        'usiaProduktif': {'total': 1207250, 'percentage': 71.23},
+        'usiaTua': {'total': 128400, 'percentage': 7.58},
+        'totalPopulation': 1694780
+      },
+      2024: {
+        'usiaMuda': {'total': 356758, 'percentage': 20.88},
+        'usiaProduktif': {'total': 1214892, 'percentage': 71.09},
+        'usiaTua': {'total': 137183, 'percentage': 8.03},
+        'totalPopulation': 1708833
+      },
     };
 
     _cachedPieDataByYear = {};
     for (int year in _ageDataByYear.keys) {
       final ageData = _ageDataByYear[year]!;
       _cachedPieDataByYear[year] = [
-        PieChartSectionData(color: _bpsBlue, value: ageData['usiaMuda']['percentage'].toDouble(), title: '${ageData['usiaMuda']['percentage']}%', radius: 60, titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white)),
-        PieChartSectionData(color: _bpsGreen, value: ageData['usiaProduktif']['percentage'].toDouble(), title: '${ageData['usiaProduktif']['percentage']}%', radius: 60, titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white)),
-        PieChartSectionData(color: _bpsOrange, value: ageData['usiaTua']['percentage'].toDouble(), title: '${ageData['usiaTua']['percentage']}%', radius: 60, titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white)),
+        PieChartSectionData(
+            color: _bpsBlue,
+            value: ageData['usiaMuda']['percentage'].toDouble(),
+            title: '${ageData['usiaMuda']['percentage']}%',
+            radius: 60,
+            titleStyle: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: Colors.white)),
+        PieChartSectionData(
+            color: _bpsGreen,
+            value: ageData['usiaProduktif']['percentage'].toDouble(),
+            title: '${ageData['usiaProduktif']['percentage']}%',
+            radius: 60,
+            titleStyle: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: Colors.white)),
+        PieChartSectionData(
+            color: _bpsOrange,
+            value: ageData['usiaTua']['percentage'].toDouble(),
+            title: '${ageData['usiaTua']['percentage']}%',
+            radius: 60,
+            titleStyle: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: Colors.white)),
       ];
     }
 
@@ -326,7 +534,8 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
   }
 
   SemarangData get currentSemarangData {
-    return semarangDataByYear[selectedYear] ?? semarangDataByYear[availableYears.last]!;
+    return semarangDataByYear[selectedYear] ??
+        semarangDataByYear[availableYears.last]!;
   }
 
   List<DistrictDensity> get currentDistrictDensity {
@@ -338,7 +547,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
     super.build(context);
     final sizing = ResponsiveSizing(context);
     final isSmallScreen = sizing.isVerySmall || sizing.isSmall;
-    
+
     if (isLoading) {
       return Scaffold(
         backgroundColor: _bpsBackground,
@@ -352,7 +561,8 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                   children: [
                     CircularProgressIndicator(color: _bpsGreen),
                     SizedBox(height: 16),
-                    Text('Memuat data...', style: TextStyle(color: _bpsTextSecondary)),
+                    Text('Memuat data...',
+                        style: TextStyle(color: _bpsTextSecondary)),
                   ],
                 ),
               ),
@@ -369,7 +579,8 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
           _buildHeader(context, sizing, isSmallScreen),
           Expanded(
             child: CustomScrollView(
-              physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              physics: const ClampingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
               slivers: [
                 SliverPadding(
                   padding: EdgeInsets.all(sizing.horizontalPadding),
@@ -398,11 +609,17 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
     );
   }
 
-  Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildHeader(
+      BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
         color: _bpsGreen,
-        boxShadow: [BoxShadow(color: _bpsGreen.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+              color: _bpsGreen.withOpacity(0.2),
+              blurRadius: 20,
+              offset: const Offset(0, 4))
+        ],
       ),
       child: SafeArea(
         bottom: false,
@@ -418,7 +635,8 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                   borderRadius: BorderRadius.circular(12),
                   child: Padding(
                     padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                    child: Icon(Icons.arrow_back_rounded, color: Colors.white, size: isSmallScreen ? 20 : 24),
+                    child: Icon(Icons.arrow_back_rounded,
+                        color: Colors.white, size: isSmallScreen ? 20 : 24),
                   ),
                 ),
               ),
@@ -427,16 +645,34 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Data Penduduk', style: TextStyle(color: Colors.white, fontSize: isSmallScreen ? sizing.headerTitleSize - 2 : sizing.headerTitleSize, fontWeight: FontWeight.w700, height: 1.1), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text('Data Penduduk',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: isSmallScreen
+                                ? sizing.headerTitleSize - 2
+                                : sizing.headerTitleSize,
+                            fontWeight: FontWeight.w700,
+                            height: 1.1),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis),
                     SizedBox(height: isSmallScreen ? 2 : 4),
-                    Text('Data Tahun $selectedYear', style: TextStyle(color: Colors.white70, fontSize: isSmallScreen ? sizing.headerSubtitleSize - 2 : sizing.headerSubtitleSize, fontWeight: FontWeight.w400)),
+                    Text('Data Tahun $selectedYear',
+                        style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: isSmallScreen
+                                ? sizing.headerSubtitleSize - 2
+                                : sizing.headerSubtitleSize,
+                            fontWeight: FontWeight.w400)),
                   ],
                 ),
               ),
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(12)),
-                child: Icon(Icons.groups_rounded, color: Colors.white, size: isSmallScreen ? 20 : 24),
+                decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12)),
+                child: Icon(Icons.groups_rounded,
+                    color: Colors.white, size: isSmallScreen ? 20 : 24),
               ),
             ],
           ),
@@ -532,7 +768,8 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                       year.toString(),
                       style: TextStyle(
                         fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w600,
                         color: isSelected ? Colors.white : _bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
@@ -550,7 +787,9 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
   Widget _buildPopulationStats(ResponsiveSizing sizing, bool isSmallScreen) {
     final data = currentSemarangData;
     return Container(
-      padding: EdgeInsets.all(isSmallScreen ? sizing.statsCardPadding - 4 : sizing.statsCardPadding),
+      padding: EdgeInsets.all(isSmallScreen
+          ? sizing.statsCardPadding - 4
+          : sizing.statsCardPadding),
       decoration: BoxDecoration(
         color: _bpsCardBg,
         borderRadius: BorderRadius.circular(16),
@@ -635,7 +874,8 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                 label: 'Total Penduduk',
                 color: _bpsGreen,
                 icon: Icons.groups,
-                description: 'Total jumlah penduduk Kota Semarang berdasarkan data BPS tahun $selectedYear.',
+                description:
+                    'Total jumlah penduduk Kota Semarang berdasarkan data BPS tahun $selectedYear.',
                 isFirst: true,
                 isSmallScreen: isSmallScreen,
               ),
@@ -646,7 +886,8 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                 label: 'Kepadatan',
                 color: _bpsOrange,
                 icon: Icons.location_city,
-                description: 'Kepadatan penduduk per kilometer persegi menunjukkan tingkat konsentrasi penduduk di wilayah Kota Semarang.',
+                description:
+                    'Kepadatan penduduk per kilometer persegi menunjukkan tingkat konsentrasi penduduk di wilayah Kota Semarang.',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -656,7 +897,8 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                 label: 'Laki-laki',
                 color: Colors.indigo,
                 icon: Icons.male,
-                description: 'Jumlah penduduk laki-laki Kota Semarang (${data.malePercentage.toStringAsFixed(2)}% dari total penduduk).',
+                description:
+                    'Jumlah penduduk laki-laki Kota Semarang (${NumberFormatUtils.formatPercentage(data.malePercentage)} dari total penduduk).',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -666,17 +908,21 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                 label: 'Perempuan',
                 color: Colors.pink,
                 icon: Icons.female,
-                description: 'Jumlah penduduk perempuan Kota Semarang (${data.femalePercentage.toStringAsFixed(2)}% dari total penduduk).',
+                description:
+                    'Jumlah penduduk perempuan Kota Semarang (${NumberFormatUtils.formatPercentage(data.femalePercentage)} dari total penduduk).',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${data.growthRate?.toStringAsFixed(2) ?? 'N/A'}%',
+                value: data.growthRate != null
+                    ? NumberFormatUtils.formatPercentage(data.growthRate!)
+                    : 'N/A',
                 label: 'Laju Pertumbuhan',
                 color: _bpsGreen,
                 icon: Icons.trending_up,
-                description: 'Laju pertumbuhan penduduk Kota Semarang per tahun.',
+                description:
+                    'Laju pertumbuhan penduduk Kota Semarang per tahun.',
                 isLast: true,
                 isSmallScreen: isSmallScreen,
               ),
@@ -701,7 +947,8 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => _showDetailDialog(context, label, value, icon, color, description),
+        onTap: () =>
+            _showDetailDialog(context, label, value, icon, color, description),
         splashColor: color.withOpacity(0.1),
         highlightColor: color.withOpacity(0.05),
         child: Padding(
@@ -968,16 +1215,45 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
 
   Widget _buildPopulationChart(ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
-      padding: EdgeInsets.all(isSmallScreen ? sizing.statsCardPadding - 4 : sizing.statsCardPadding),
-      decoration: BoxDecoration(color: _bpsCardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))]),
+      padding: EdgeInsets.all(isSmallScreen
+          ? sizing.statsCardPadding - 4
+          : sizing.statsCardPadding),
+      decoration: BoxDecoration(
+          color: _bpsCardBg,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2))
+          ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsGreen.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.show_chart, color: _bpsGreen, size: isSmallScreen ? 16 : 18)),
+              Container(
+                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                  decoration: BoxDecoration(
+                      color: _bpsGreen.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Icon(Icons.show_chart,
+                      color: _bpsGreen, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Laju Pertumbuhan Penduduk (%)', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary)), Text('Kota Semarang', style: TextStyle(fontSize: isSmallScreen ? 11 : 12, color: _bpsTextSecondary))])),
+              Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    Text('Laju Pertumbuhan Penduduk (%)',
+                        style: TextStyle(
+                            fontSize: isSmallScreen ? 14 : 16,
+                            fontWeight: FontWeight.w700,
+                            color: _bpsTextPrimary)),
+                    Text('Kota Semarang',
+                        style: TextStyle(
+                            fontSize: isSmallScreen ? 11 : 12,
+                            color: _bpsTextSecondary))
+                  ])),
             ],
           ),
           SizedBox(height: isSmallScreen ? 16 : 20),
@@ -985,13 +1261,48 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
             height: 200,
             child: LineChart(
               LineChartData(
-                minY: 0, maxY: 0.03, minX: 0, maxX: (_cachedSpots.length - 1).toDouble(),
-                gridData: FlGridData(show: true, drawVerticalLine: false, horizontalInterval: 0.005, getDrawingHorizontalLine: (value) => FlLine(color: _bpsBorder, strokeWidth: 0.5)),
+                minY: 0,
+                maxY: 0.03,
+                minX: 0,
+                maxX: (_cachedSpots.length - 1).toDouble(),
+                gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: 0.005,
+                    getDrawingHorizontalLine: (value) =>
+                        FlLine(color: _bpsBorder, strokeWidth: 0.5)),
                 titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 45, interval: 0.005, getTitlesWidget: (value, meta) => Text('${(value * 100).toStringAsFixed(1)}%', style: TextStyle(fontSize: isSmallScreen ? 8 : 9, color: _bpsTextSecondary)))),
-                  bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 30, interval: 1, getTitlesWidget: (value, meta) { int index = value.toInt(); if (index >= 0 && index < availableYears.length) { return Padding(padding: const EdgeInsets.only(top: 8.0), child: Text(availableYears[index].toString(), style: TextStyle(fontSize: isSmallScreen ? 9 : 10, color: _bpsTextSecondary))); } return const Text(''); })),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 45,
+                          interval: 0.005,
+                          getTitlesWidget: (value, meta) => Text(
+                              NumberFormatUtils.formatPercentage(value * 100),
+                              style: TextStyle(
+                                  fontSize: isSmallScreen ? 8 : 9,
+                                  color: _bpsTextSecondary)))),
+                  bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 30,
+                          interval: 1,
+                          getTitlesWidget: (value, meta) {
+                            int index = value.toInt();
+                            if (index >= 0 && index < availableYears.length) {
+                              return Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(availableYears[index].toString(),
+                                      style: TextStyle(
+                                          fontSize: isSmallScreen ? 9 : 10,
+                                          color: _bpsTextSecondary)));
+                            }
+                            return const Text('');
+                          })),
+                  rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
                 ),
                 borderData: FlBorderData(show: false),
                 lineBarsData: [
@@ -1012,20 +1323,33 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                         );
                       },
                     ),
-                    belowBarData: BarAreaData(show: true, color: _bpsGreen.withOpacity(0.15)),
+                    belowBarData: BarAreaData(
+                        show: true, color: _bpsGreen.withOpacity(0.15)),
                   ),
                 ],
                 lineTouchData: LineTouchData(
                   enabled: true,
                   touchTooltipData: LineTouchTooltipData(
                     getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
-                      return touchedBarSpots.map((barSpot) {
-                        final int index = barSpot.x.toInt();
-                        if (index < 0 || index >= availableYears.length) return null;
-                        final year = availableYears[index];
-                        final growthPercent = (barSpot.y * 100).toStringAsFixed(2);
-                        return LineTooltipItem('$year\n$growthPercent %', const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11));
-                      }).where((item) => item != null).map((item) => item!).toList();
+                      return touchedBarSpots
+                          .map((barSpot) {
+                            final int index = barSpot.x.toInt();
+                            if (index < 0 || index >= availableYears.length)
+                              return null;
+                            final year = availableYears[index];
+                            final growthPercent =
+                                NumberFormatUtils.formatPercentage(
+                                    barSpot.y * 100);
+                            return LineTooltipItem(
+                                '$year\n$growthPercent',
+                                const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11));
+                          })
+                          .where((item) => item != null)
+                          .map((item) => item!)
+                          .toList();
                     },
                   ),
                 ),
@@ -1037,8 +1361,10 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
     );
   }
 
-  Widget _buildAgeDistributionChart(ResponsiveSizing sizing, bool isSmallScreen) {
-    if (!_ageDataByYear.containsKey(selectedYear)) return const SizedBox.shrink();
+  Widget _buildAgeDistributionChart(
+      ResponsiveSizing sizing, bool isSmallScreen) {
+    if (!_ageDataByYear.containsKey(selectedYear))
+      return const SizedBox.shrink();
 
     final ageData = _ageDataByYear[selectedYear]!;
     final sections = [
@@ -1048,15 +1374,31 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
     ];
 
     return Container(
-      padding: EdgeInsets.all(isSmallScreen ? sizing.statsCardPadding - 4 : sizing.statsCardPadding),
-      decoration: BoxDecoration(color: _bpsCardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))]),
+      padding: EdgeInsets.all(isSmallScreen
+          ? sizing.statsCardPadding - 4
+          : sizing.statsCardPadding),
+      decoration: BoxDecoration(
+          color: _bpsCardBg,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2))
+          ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.pie_chart, color: _bpsOrange, size: isSmallScreen ? 16 : 18)),
+              Container(
+                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                  decoration: BoxDecoration(
+                      color: _bpsOrange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Icon(Icons.pie_chart,
+                      color: _bpsOrange, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
                 child: Stack(
@@ -1104,7 +1446,7 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                             style: TextStyle(
                               fontSize: isSmallScreen ? 14 : 16,
                               fontWeight: FontWeight.w700,
-                              color: selectedAgeGroup != null 
+                              color: selectedAgeGroup != null
                                   ? _getAgeGroupColor(selectedAgeGroup!)
                                   : _bpsTextPrimary,
                             ),
@@ -1130,7 +1472,8 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
             height: 180,
             child: Center(
               child: SizedBox(
-                height: 160, width: 160,
+                height: 160,
+                width: 160,
                 child: PieChart(
                   PieChartData(
                     sectionsSpace: 2,
@@ -1148,12 +1491,22 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
                             selectedAgeValue = null;
                             return;
                           }
-                          touchedPieIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                          touchedPieIndex = pieTouchResponse
+                              .touchedSection!.touchedSectionIndex;
                           showRealValues = true;
                           // Update header with selected age group info
-                          final ageIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
-                          final ageKeys = ['usiaMuda', 'usiaProduktif', 'usiaTua'];
-                          final ageLabels = ['Usia Muda (0-14)', 'Usia Produktif (15-64)', 'Usia Tua (65+)'];
+                          final ageIndex = pieTouchResponse
+                              .touchedSection!.touchedSectionIndex;
+                          final ageKeys = [
+                            'usiaMuda',
+                            'usiaProduktif',
+                            'usiaTua'
+                          ];
+                          final ageLabels = [
+                            'Usia Muda (0-14)',
+                            'Usia Produktif (15-64)',
+                            'Usia Tua (65+)'
+                          ];
                           if (ageIndex >= 0 && ageIndex < ageKeys.length) {
                             final ageKey = ageKeys[ageIndex];
                             final ageLabel = ageLabels[ageIndex];
@@ -1176,11 +1529,14 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
           const SizedBox(height: 16),
           Column(
             children: [
-              _buildAgeLegendItem('Usia Muda (0-14)', _bpsBlue, ageData['usiaMuda']['total'], isSmallScreen),
+              _buildAgeLegendItem('Usia Muda (0-14)', _bpsBlue,
+                  ageData['usiaMuda']['total'], isSmallScreen),
               const SizedBox(height: 8),
-              _buildAgeLegendItem('Usia Produktif (15-64)', _bpsGreen, ageData['usiaProduktif']['total'], isSmallScreen),
+              _buildAgeLegendItem('Usia Produktif (15-64)', _bpsGreen,
+                  ageData['usiaProduktif']['total'], isSmallScreen),
               const SizedBox(height: 8),
-              _buildAgeLegendItem('Usia Tua (65+)', _bpsOrange, ageData['usiaTua']['total'], isSmallScreen),
+              _buildAgeLegendItem('Usia Tua (65+)', _bpsOrange,
+                  ageData['usiaTua']['total'], isSmallScreen),
             ],
           ),
         ],
@@ -1188,17 +1544,20 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
     );
   }
 
-  PieChartSectionData _buildAgePieSection(String ageKey, Color color, int index, bool isSmallScreen) {
+  PieChartSectionData _buildAgePieSection(
+      String ageKey, Color color, int index, bool isSmallScreen) {
     final ageData = _ageDataByYear[selectedYear]!;
     final percentage = ageData[ageKey]['percentage'].toDouble();
     final total = ageData[ageKey]['total'] as int;
     final isTouched = index == touchedPieIndex;
     final radius = isTouched ? (isSmallScreen ? 70.0 : 75.0) : 60.0;
-    final fontSize = isTouched ? (isSmallScreen ? 11.0 : 12.0) : (isSmallScreen ? 10.0 : 11.0);
-    
+    final fontSize = isTouched
+        ? (isSmallScreen ? 11.0 : 12.0)
+        : (isSmallScreen ? 10.0 : 11.0);
+
     final displayTitle = (showRealValues && isTouched)
         ? _formatCompactNumber(total)
-        : '${percentage.toStringAsFixed(1)}%';
+        : NumberFormatUtils.formatPercentage(percentage);
 
     return PieChartSectionData(
       color: color,
@@ -1214,21 +1573,22 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
   }
 
   String _formatCompactNumber(int number) {
-    if (number >= 1000000) {
-      return '${(number / 1000000).toStringAsFixed(2)}M';
-    } else if (number >= 1000) {
-      return '${(number / 1000).toStringAsFixed(1)}K';
-    }
-    return number.toString();
+    return NumberFormatUtils.formatCompact(number);
   }
 
-  Widget _buildAgeLegendItem(String title, Color color, int value, bool isSmallScreen) {
+  Widget _buildAgeLegendItem(
+      String title, Color color, int value, bool isSmallScreen) {
     return Row(
       children: [
-        Container(width: 14, height: 14, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+            width: 14,
+            height: 14,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(title, style: TextStyle(fontSize: isSmallScreen ? 12 : 14, color: _bpsTextPrimary)),
+          child: Text(title,
+              style: TextStyle(
+                  fontSize: isSmallScreen ? 12 : 14, color: _bpsTextPrimary)),
         ),
         Text(
           _formatCompactNumber(value),
@@ -1245,9 +1605,14 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
   Widget _buildLegendItem(String title, Color color, bool isSmallScreen) {
     return Row(
       children: [
-        Container(width: 14, height: 14, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+            width: 14,
+            height: 14,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
         const SizedBox(width: 8),
-        Text(title, style: TextStyle(fontSize: isSmallScreen ? 12 : 14, color: _bpsTextPrimary)),
+        Text(title,
+            style: TextStyle(
+                fontSize: isSmallScreen ? 12 : 14, color: _bpsTextPrimary)),
       ],
     );
   }
@@ -1266,26 +1631,59 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
   Widget _buildAdministrativeData(ResponsiveSizing sizing, bool isSmallScreen) {
     final data = currentSemarangData;
     return Container(
-      padding: EdgeInsets.all(isSmallScreen ? sizing.statsCardPadding - 4 : sizing.statsCardPadding),
-      decoration: BoxDecoration(color: _bpsCardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))]),
+      padding: EdgeInsets.all(isSmallScreen
+          ? sizing.statsCardPadding - 4
+          : sizing.statsCardPadding),
+      decoration: BoxDecoration(
+          color: _bpsCardBg,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2))
+          ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsGreen.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.account_balance, color: _bpsGreen, size: isSmallScreen ? 16 : 18)),
+              Container(
+                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                  decoration: BoxDecoration(
+                      color: _bpsGreen.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Icon(Icons.account_balance,
+                      color: _bpsGreen, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
-              Text('Data Administrasi', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary)),
+              Text('Data Administrasi',
+                  style: TextStyle(
+                      fontSize: isSmallScreen ? 14 : 16,
+                      fontWeight: FontWeight.w700,
+                      color: _bpsTextPrimary)),
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
           Row(
             children: [
-              Expanded(child: _buildAdminCard('${data.districts}', 'Kecamatan', Icons.account_balance, _bpsGreen, isSmallScreen)),
+              Expanded(
+                  child: _buildAdminCard('${data.districts}', 'Kecamatan',
+                      Icons.account_balance, _bpsGreen, isSmallScreen)),
               const SizedBox(width: 12),
-              Expanded(child: _buildAdminCard('${data.villages}', 'Kelurahan', Icons.location_on, _bpsGreen, isSmallScreen)),
+              Expanded(
+                  child: _buildAdminCard('${data.villages}', 'Kelurahan',
+                      Icons.location_on, _bpsGreen, isSmallScreen)),
               const SizedBox(width: 12),
-              Expanded(child: _buildAdminCard('${data.area?.toStringAsFixed(1) ?? 'N/A'}', 'km² Luas', Icons.square_foot, _bpsOrange, isSmallScreen)),
+              Expanded(
+                  child: _buildAdminCard(
+                      data.area != null
+                          ? NumberFormatUtils.formatDecimal(data.area!,
+                              decimalPlaces: 1)
+                          : 'N/A',
+                      'km² Luas',
+                      Icons.square_foot,
+                      _bpsOrange,
+                      isSmallScreen)),
             ],
           ),
         ],
@@ -1293,34 +1691,64 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
     );
   }
 
-  Widget _buildAdminCard(String value, String label, IconData icon, Color color, bool isSmallScreen) {
+  Widget _buildAdminCard(String value, String label, IconData icon, Color color,
+      bool isSmallScreen) {
     return Container(
       padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-      decoration: BoxDecoration(color: color.withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+          color: color.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
           Icon(icon, color: color, size: isSmallScreen ? 20 : 24),
           const SizedBox(height: 8),
-          Text(value, style: TextStyle(fontSize: isSmallScreen ? 16 : 18, fontWeight: FontWeight.bold, color: color)),
-          Text(label, style: TextStyle(fontSize: isSmallScreen ? 10 : 11, color: _bpsTextSecondary)),
+          Text(value,
+              style: TextStyle(
+                  fontSize: isSmallScreen ? 16 : 18,
+                  fontWeight: FontWeight.bold,
+                  color: color)),
+          Text(label,
+              style: TextStyle(
+                  fontSize: isSmallScreen ? 10 : 11, color: _bpsTextSecondary)),
         ],
       ),
     );
   }
 
-  Widget _buildDistrictDensitySection(ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildDistrictDensitySection(
+      ResponsiveSizing sizing, bool isSmallScreen) {
     final districts = currentDistrictDensity;
     return Container(
-      padding: EdgeInsets.all(isSmallScreen ? sizing.statsCardPadding - 4 : sizing.statsCardPadding),
-      decoration: BoxDecoration(color: _bpsCardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))]),
+      padding: EdgeInsets.all(isSmallScreen
+          ? sizing.statsCardPadding - 4
+          : sizing.statsCardPadding),
+      decoration: BoxDecoration(
+          color: _bpsCardBg,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2))
+          ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(padding: EdgeInsets.all(isSmallScreen ? 8 : 10), decoration: BoxDecoration(color: _bpsRed.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.leaderboard, color: _bpsRed, size: isSmallScreen ? 16 : 18)),
+              Container(
+                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                  decoration: BoxDecoration(
+                      color: _bpsRed.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Icon(Icons.leaderboard,
+                      color: _bpsRed, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
-              Text('5 Kecamatan Terpadat', style: TextStyle(fontSize: isSmallScreen ? 14 : 16, fontWeight: FontWeight.w700, color: _bpsTextPrimary)),
+              Text('5 Kecamatan Terpadat',
+                  style: TextStyle(
+                      fontSize: isSmallScreen ? 14 : 16,
+                      fontWeight: FontWeight.w700,
+                      color: _bpsTextPrimary)),
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
@@ -1330,36 +1758,61 @@ class _PendudukScreenState extends State<PendudukScreen> with AutomaticKeepAlive
               final district = entry.value;
               final ranking = index + 1;
               final circleColor = _districtColors[index];
-              final totalCityPopulation = currentSemarangData.population ?? 1708833;
-              final districtPopulationCount = (district.population * 1000).toInt();
-              final percentage = (districtPopulationCount / totalCityPopulation * 100);
-              
+              final totalCityPopulation =
+                  currentSemarangData.population ?? 1708833;
+              final districtPopulationCount =
+                  (district.population * 1000).toInt();
+              final percentage =
+                  (districtPopulationCount / totalCityPopulation * 100);
+
               return Container(
                 margin: const EdgeInsets.only(bottom: 12),
                 child: Row(
                   children: [
                     Container(
-                      width: 32, height: 32,
-                      decoration: BoxDecoration(color: circleColor, shape: BoxShape.circle),
-                      child: Center(child: Text('$ranking', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14))),
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                          color: circleColor, shape: BoxShape.circle),
+                      child: Center(
+                          child: Text('$ranking',
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14))),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(district.name, style: TextStyle(fontSize: isSmallScreen ? 13 : 14, fontWeight: FontWeight.w600, color: _bpsTextPrimary)),
-                          Text('${district.populationFormatted} Ribu', style: TextStyle(fontSize: isSmallScreen ? 10 : 11, color: _bpsTextSecondary)),
+                          Text(district.name,
+                              style: TextStyle(
+                                  fontSize: isSmallScreen ? 13 : 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: _bpsTextPrimary)),
+                          Text('${district.populationFormatted} Ribu',
+                              style: TextStyle(
+                                  fontSize: isSmallScreen ? 10 : 11,
+                                  color: _bpsTextSecondary)),
                         ],
                       ),
                     ),
-                    Text('${percentage.toStringAsFixed(1)}%', style: TextStyle(fontSize: isSmallScreen ? 13 : 14, fontWeight: FontWeight.w600, color: circleColor)),
+                    Text(NumberFormatUtils.formatPercentage(percentage),
+                        style: TextStyle(
+                            fontSize: isSmallScreen ? 13 : 14,
+                            fontWeight: FontWeight.w600,
+                            color: circleColor)),
                   ],
                 ),
               );
             }),
           ] else ...[
-            Center(child: Text('Data tidak tersedia', style: TextStyle(color: _bpsTextSecondary, fontSize: isSmallScreen ? 12 : 14))),
+            Center(
+                child: Text('Data tidak tersedia',
+                    style: TextStyle(
+                        color: _bpsTextSecondary,
+                        fontSize: isSmallScreen ? 12 : 14))),
           ],
         ],
       ),

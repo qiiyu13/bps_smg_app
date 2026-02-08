@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
+import 'number_format_utils.dart';
 
 // BPS Color Palette (matching kemiskinana_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -21,20 +22,66 @@ const Color _bpsTeal = Color(0xFF1ABC9C);
 class IPGData {
   final int year;
   final double? uhh, hls, rls, ppp, ikg, ipg;
-  final double? uhhMale, uhhFemale, hlsMale, hlsFemale, rlsMale, rlsFemale, pppMale, pppFemale, ipmMale, ipmFemale;
+  final double? uhhMale,
+      uhhFemale,
+      hlsMale,
+      hlsFemale,
+      rlsMale,
+      rlsFemale,
+      pppMale,
+      pppFemale,
+      ipmMale,
+      ipmFemale;
 
-  IPGData({required this.year, this.uhh, this.hls, this.rls, this.ppp, this.ikg, this.ipg, this.uhhMale, this.uhhFemale, this.hlsMale, this.hlsFemale, this.rlsMale, this.rlsFemale, this.pppMale, this.pppFemale, this.ipmMale, this.ipmFemale});
+  IPGData(
+      {required this.year,
+      this.uhh,
+      this.hls,
+      this.rls,
+      this.ppp,
+      this.ikg,
+      this.ipg,
+      this.uhhMale,
+      this.uhhFemale,
+      this.hlsMale,
+      this.hlsFemale,
+      this.rlsMale,
+      this.rlsFemale,
+      this.pppMale,
+      this.pppFemale,
+      this.ipmMale,
+      this.ipmFemale});
 
-  String get ipgFormatted => ipg != null ? ipg!.toStringAsFixed(1) : 'N/A';
-  String get ikgFormatted => ikg != null ? (ikg! * 100).toStringAsFixed(1) : 'N/A';
-  String get uhhMaleFormatted => uhhMale != null ? uhhMale!.toStringAsFixed(1) : 'N/A';
-  String get uhhFemaleFormatted => uhhFemale != null ? uhhFemale!.toStringAsFixed(1) : 'N/A';
-  String get hlsMaleFormatted => hlsMale != null ? hlsMale!.toStringAsFixed(1) : 'N/A';
-  String get hlsFemaleFormatted => hlsFemale != null ? hlsFemale!.toStringAsFixed(1) : 'N/A';
-  String get rlsMaleFormatted => rlsMale != null ? rlsMale!.toStringAsFixed(1) : 'N/A';
-  String get rlsFemaleFormatted => rlsFemale != null ? rlsFemale!.toStringAsFixed(1) : 'N/A';
-  String get pppMaleFormatted => pppMale != null ? (pppMale! / 1000).toStringAsFixed(0) : 'N/A';
-  String get pppFemaleFormatted => pppFemale != null ? (pppFemale! / 1000).toStringAsFixed(0) : 'N/A';
+  String get ipgFormatted => ipg != null
+      ? NumberFormatUtils.formatDecimal(ipg!, decimalPlaces: 1)
+      : 'N/A';
+  String get ikgFormatted => ikg != null
+      ? NumberFormatUtils.formatDecimal(ikg! * 100, decimalPlaces: 1)
+      : 'N/A';
+  String get uhhMaleFormatted => uhhMale != null
+      ? NumberFormatUtils.formatDecimal(uhhMale!, decimalPlaces: 1)
+      : 'N/A';
+  String get uhhFemaleFormatted => uhhFemale != null
+      ? NumberFormatUtils.formatDecimal(uhhFemale!, decimalPlaces: 1)
+      : 'N/A';
+  String get hlsMaleFormatted => hlsMale != null
+      ? NumberFormatUtils.formatDecimal(hlsMale!, decimalPlaces: 1)
+      : 'N/A';
+  String get hlsFemaleFormatted => hlsFemale != null
+      ? NumberFormatUtils.formatDecimal(hlsFemale!, decimalPlaces: 1)
+      : 'N/A';
+  String get rlsMaleFormatted => rlsMale != null
+      ? NumberFormatUtils.formatDecimal(rlsMale!, decimalPlaces: 1)
+      : 'N/A';
+  String get rlsFemaleFormatted => rlsFemale != null
+      ? NumberFormatUtils.formatDecimal(rlsFemale!, decimalPlaces: 1)
+      : 'N/A';
+  String get pppMaleFormatted => pppMale != null
+      ? NumberFormatUtils.formatInteger((pppMale! / 1000).round())
+      : 'N/A';
+  String get pppFemaleFormatted => pppFemale != null
+      ? NumberFormatUtils.formatInteger((pppFemale! / 1000).round())
+      : 'N/A';
 
   factory IPGData.fromMap(int year, Map<String, dynamic> map) {
     return IPGData(
@@ -64,19 +111,19 @@ class IPGData {
   }
 
   Map<String, dynamic> toMap() => {
-    'UHH_Laki': uhhMale,
-    'UHH_Perempuan': uhhFemale,
-    'HLS_Laki': hlsMale,
-    'HLS_Perempuan': hlsFemale,
-    'RLS_Laki': rlsMale,
-    'RLS_Perempuan': rlsFemale,
-    'PPP_Laki': pppMale,
-    'PPP_Perempuan': pppFemale,
-    'IPM_Laki': ipmMale,
-    'IPM_Perempuan': ipmFemale,
-    'IPG': ipg,
-    'IKG': ikg,
-  };
+        'UHH_Laki': uhhMale,
+        'UHH_Perempuan': uhhFemale,
+        'HLS_Laki': hlsMale,
+        'HLS_Perempuan': hlsFemale,
+        'RLS_Laki': rlsMale,
+        'RLS_Perempuan': rlsFemale,
+        'PPP_Laki': pppMale,
+        'PPP_Perempuan': pppFemale,
+        'IPM_Laki': ipmMale,
+        'IPM_Perempuan': ipmFemale,
+        'IPG': ipg,
+        'IKG': ikg,
+      };
 }
 
 class IPGScreen extends StatefulWidget {
@@ -86,7 +133,8 @@ class IPGScreen extends StatefulWidget {
   State<IPGScreen> createState() => _IPGScreenState();
 }
 
-class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixin {
+class _IPGScreenState extends State<IPGScreen>
+    with AutomaticKeepAliveClientMixin {
   Map<int, IPGData> ipgDataByYear = {};
   List<int> availableYears = [];
   int selectedYear = 2024;
@@ -110,19 +158,90 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
         setState(() {
           if (savedData != null) {
             final decoded = json.decode(savedData) as Map<String, dynamic>;
-            ipgDataByYear = decoded.map((key, value) =>
-              MapEntry(
+            ipgDataByYear = decoded.map(
+              (key, value) => MapEntry(
                 int.parse(key),
-                IPGData.fromMap(int.parse(key), Map<String, dynamic>.from(value as Map)),
+                IPGData.fromMap(
+                    int.parse(key), Map<String, dynamic>.from(value as Map)),
               ),
             );
           } else {
             final List<Map<String, dynamic>> rawData = [
-              {"Tahun": 2020, "UHH_Laki": 71.5, "UHH_Perempuan": 75.2, "HLS_Laki": 12.8, "HLS_Perempuan": 13.1, "RLS_Laki": 11.42, "RLS_Perempuan": 10.16, "PPP_Laki": 16128.0, "PPP_Perempuan": 14287.0, "IPM_Laki": 85.22, "IPM_Perempuan": 81.38, "IPG": 95.49, "IKG": 0.045},
-              {"Tahun": 2021, "UHH_Laki": 71.6, "UHH_Perempuan": 75.3, "HLS_Laki": 12.9, "HLS_Perempuan": 13.2, "RLS_Laki": 11.50, "RLS_Perempuan": 10.25, "PPP_Laki": 16450.0, "PPP_Perempuan": 14520.0, "IPM_Laki": 85.65, "IPM_Perempuan": 81.82, "IPG": 95.67, "IKG": 0.044},
-              {"Tahun": 2022, "UHH_Laki": 71.7, "UHH_Perempuan": 75.4, "HLS_Laki": 13.0, "HLS_Perempuan": 13.3, "RLS_Laki": 11.58, "RLS_Perempuan": 10.34, "PPP_Laki": 16780.0, "PPP_Perempuan": 14760.0, "IPM_Laki": 86.08, "IPM_Perempuan": 82.26, "IPG": 95.93, "IKG": 0.043},
-              {"Tahun": 2023, "UHH_Laki": 71.8, "UHH_Perempuan": 75.5, "HLS_Laki": 13.1, "HLS_Perempuan": 13.4, "RLS_Laki": 11.66, "RLS_Perempuan": 10.43, "PPP_Laki": 17120.0, "PPP_Perempuan": 15010.0, "IPM_Laki": 86.51, "IPM_Perempuan": 82.70, "IPG": 95.96, "IKG": 0.042},
-              {"Tahun": 2024, "UHH_Laki": 71.9, "UHH_Perempuan": 75.6, "HLS_Laki": 13.2, "HLS_Perempuan": 13.5, "RLS_Laki": 11.74, "RLS_Perempuan": 10.52, "PPP_Laki": 17470.0, "PPP_Perempuan": 15270.0, "IPM_Laki": 86.94, "IPM_Perempuan": 83.14, "IPG": 95.37, "IKG": 0.041},
+              {
+                "Tahun": 2020,
+                "UHH_Laki": 71.5,
+                "UHH_Perempuan": 75.2,
+                "HLS_Laki": 12.8,
+                "HLS_Perempuan": 13.1,
+                "RLS_Laki": 11.42,
+                "RLS_Perempuan": 10.16,
+                "PPP_Laki": 16128.0,
+                "PPP_Perempuan": 14287.0,
+                "IPM_Laki": 85.22,
+                "IPM_Perempuan": 81.38,
+                "IPG": 95.49,
+                "IKG": 0.045
+              },
+              {
+                "Tahun": 2021,
+                "UHH_Laki": 71.6,
+                "UHH_Perempuan": 75.3,
+                "HLS_Laki": 12.9,
+                "HLS_Perempuan": 13.2,
+                "RLS_Laki": 11.50,
+                "RLS_Perempuan": 10.25,
+                "PPP_Laki": 16450.0,
+                "PPP_Perempuan": 14520.0,
+                "IPM_Laki": 85.65,
+                "IPM_Perempuan": 81.82,
+                "IPG": 95.67,
+                "IKG": 0.044
+              },
+              {
+                "Tahun": 2022,
+                "UHH_Laki": 71.7,
+                "UHH_Perempuan": 75.4,
+                "HLS_Laki": 13.0,
+                "HLS_Perempuan": 13.3,
+                "RLS_Laki": 11.58,
+                "RLS_Perempuan": 10.34,
+                "PPP_Laki": 16780.0,
+                "PPP_Perempuan": 14760.0,
+                "IPM_Laki": 86.08,
+                "IPM_Perempuan": 82.26,
+                "IPG": 95.93,
+                "IKG": 0.043
+              },
+              {
+                "Tahun": 2023,
+                "UHH_Laki": 71.8,
+                "UHH_Perempuan": 75.5,
+                "HLS_Laki": 13.1,
+                "HLS_Perempuan": 13.4,
+                "RLS_Laki": 11.66,
+                "RLS_Perempuan": 10.43,
+                "PPP_Laki": 17120.0,
+                "PPP_Perempuan": 15010.0,
+                "IPM_Laki": 86.51,
+                "IPM_Perempuan": 82.70,
+                "IPG": 95.96,
+                "IKG": 0.042
+              },
+              {
+                "Tahun": 2024,
+                "UHH_Laki": 71.9,
+                "UHH_Perempuan": 75.6,
+                "HLS_Laki": 13.2,
+                "HLS_Perempuan": 13.5,
+                "RLS_Laki": 11.74,
+                "RLS_Perempuan": 10.52,
+                "PPP_Laki": 17470.0,
+                "PPP_Perempuan": 15270.0,
+                "IPM_Laki": 86.94,
+                "IPM_Perempuan": 83.14,
+                "IPG": 95.37,
+                "IKG": 0.041
+              },
             ];
 
             Map<int, IPGData> processedData = {};
@@ -234,7 +353,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                         ),
                       )
                     : CustomScrollView(
-                        physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                        physics: const ClampingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics()),
                         slivers: [
                           SliverPadding(
                             padding: EdgeInsets.all(sizing.horizontalPadding),
@@ -263,7 +383,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
     );
   }
 
-  Widget _buildHeader(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+  Widget _buildHeader(
+      BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
         color: _bpsOrange,
@@ -435,7 +556,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                       year.toString(),
                       style: TextStyle(
                         fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w600,
                         color: isSelected ? Colors.white : _bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
@@ -541,7 +663,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                 label: 'IPG',
                 color: _bpsPurple,
                 icon: Icons.balance,
-                description: 'Indeks Pembangunan Gender (IPG) mengukur pencapaian dalam dimensi dan variabel yang sama dengan IPM, dengan memperhatikan disparitas antara laki-laki dan perempuan.',
+                description:
+                    'Indeks Pembangunan Gender (IPG) mengukur pencapaian dalam dimensi dan variabel yang sama dengan IPM, dengan memperhatikan disparitas antara laki-laki dan perempuan.',
                 isFirst: true,
                 isSmallScreen: isSmallScreen,
               ),
@@ -552,27 +675,36 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                 label: 'IKG',
                 color: _bpsBlue,
                 icon: Icons.equalizer,
-                description: 'Indeks Ketimpangan Gender (IKG) mengukur kerugian akibat ketidaksetaraan gender dari 3 dimensi: kesehatan reproduksi, pemberdayaan, dan pasar tenaga kerja.',
+                description:
+                    'Indeks Ketimpangan Gender (IKG) mengukur kerugian akibat ketidaksetaraan gender dari 3 dimensi: kesehatan reproduksi, pemberdayaan, dan pasar tenaga kerja.',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${data.ipmMale?.toStringAsFixed(2) ?? 'N/A'}',
+                value: data.ipmMale != null
+                    ? NumberFormatUtils.formatDecimal(data.ipmMale!,
+                        decimalPlaces: 2)
+                    : 'N/A',
                 label: 'IPM Laki-laki',
                 color: Colors.indigo,
                 icon: Icons.male,
-                description: 'Indeks Pembangunan Manusia (IPM) untuk penduduk laki-laki mengukur capaian pembangunan manusia berbasis sejumlah komponen dasar kualitas hidup.',
+                description:
+                    'Indeks Pembangunan Manusia (IPM) untuk penduduk laki-laki mengukur capaian pembangunan manusia berbasis sejumlah komponen dasar kualitas hidup.',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
                 context: context,
-                value: '${data.ipmFemale?.toStringAsFixed(2) ?? 'N/A'}',
+                value: data.ipmFemale != null
+                    ? NumberFormatUtils.formatDecimal(data.ipmFemale!,
+                        decimalPlaces: 2)
+                    : 'N/A',
                 label: 'IPM Perempuan',
                 color: Colors.pink,
                 icon: Icons.female,
-                description: 'Indeks Pembangunan Manusia (IPM) untuk penduduk perempuan mengukur capaian pembangunan manusia berbasis sejumlah komponen dasar kualitas hidup.',
+                description:
+                    'Indeks Pembangunan Manusia (IPM) untuk penduduk perempuan mengukur capaian pembangunan manusia berbasis sejumlah komponen dasar kualitas hidup.',
                 isLast: true,
                 isSmallScreen: isSmallScreen,
               ),
@@ -674,7 +806,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                 label: 'UHH Laki-laki',
                 color: Colors.indigo,
                 icon: Icons.male,
-                description: 'Umur Harapan Hidup (UHH) laki-laki menunjukkan rata-rata perkiraan banyak tahun yang dapat ditempuh oleh penduduk laki-laki sejak lahir.',
+                description:
+                    'Umur Harapan Hidup (UHH) laki-laki menunjukkan rata-rata perkiraan banyak tahun yang dapat ditempuh oleh penduduk laki-laki sejak lahir.',
                 isFirst: true,
                 isSmallScreen: isSmallScreen,
               ),
@@ -685,7 +818,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                 label: 'UHH Perempuan',
                 color: Colors.pink,
                 icon: Icons.female,
-                description: 'Umur Harapan Hidup (UHH) perempuan menunjukkan rata-rata perkiraan banyak tahun yang dapat ditempuh oleh penduduk perempuan sejak lahir.',
+                description:
+                    'Umur Harapan Hidup (UHH) perempuan menunjukkan rata-rata perkiraan banyak tahun yang dapat ditempuh oleh penduduk perempuan sejak lahir.',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -695,7 +829,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                 label: 'HLS Laki-laki',
                 color: Colors.indigo,
                 icon: Icons.male,
-                description: 'Harapan Lama Sekolah (HLS) laki-laki menunjukkan lamanya sekolah (dalam tahun) yang diharapkan akan dirasakan oleh anak laki-laki pada umur tertentu di masa mendatang.',
+                description:
+                    'Harapan Lama Sekolah (HLS) laki-laki menunjukkan lamanya sekolah (dalam tahun) yang diharapkan akan dirasakan oleh anak laki-laki pada umur tertentu di masa mendatang.',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -705,7 +840,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                 label: 'HLS Perempuan',
                 color: Colors.pink,
                 icon: Icons.female,
-                description: 'Harapan Lama Sekolah (HLS) perempuan menunjukkan lamanya sekolah (dalam tahun) yang diharapkan akan dirasakan oleh anak perempuan pada umur tertentu di masa mendatang.',
+                description:
+                    'Harapan Lama Sekolah (HLS) perempuan menunjukkan lamanya sekolah (dalam tahun) yang diharapkan akan dirasakan oleh anak perempuan pada umur tertentu di masa mendatang.',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -715,7 +851,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                 label: 'RLS Laki-laki',
                 color: Colors.indigo,
                 icon: Icons.male,
-                description: 'Rata-rata Lama Sekolah (RLS) laki-laki menunjukkan jumlah tahun yang digunakan oleh penduduk laki-laki dalam menjalani pendidikan formal.',
+                description:
+                    'Rata-rata Lama Sekolah (RLS) laki-laki menunjukkan jumlah tahun yang digunakan oleh penduduk laki-laki dalam menjalani pendidikan formal.',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -725,7 +862,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                 label: 'RLS Perempuan',
                 color: Colors.pink,
                 icon: Icons.female,
-                description: 'Rata-rata Lama Sekolah (RLS) perempuan menunjukkan jumlah tahun yang digunakan oleh penduduk perempuan dalam menjalani pendidikan formal.',
+                description:
+                    'Rata-rata Lama Sekolah (RLS) perempuan menunjukkan jumlah tahun yang digunakan oleh penduduk perempuan dalam menjalani pendidikan formal.',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -735,7 +873,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                 label: 'PPP Laki-laki',
                 color: Colors.indigo,
                 icon: Icons.male,
-                description: 'Pengeluaran per Kapita Disesuaikan (PPP) laki-laki menunjukkan daya beli penduduk laki-laki terhadap sejumlah kebutuhan pokok yang dilihat dari rata-rata besarnya pengeluaran per kapita.',
+                description:
+                    'Pengeluaran per Kapita Disesuaikan (PPP) laki-laki menunjukkan daya beli penduduk laki-laki terhadap sejumlah kebutuhan pokok yang dilihat dari rata-rata besarnya pengeluaran per kapita.',
                 isSmallScreen: isSmallScreen,
               ),
               _buildIndicatorDivider(isSmallScreen),
@@ -745,7 +884,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                 label: 'PPP Perempuan',
                 color: Colors.pink,
                 icon: Icons.female,
-                description: 'Pengeluaran per Kapita Disesuaikan (PPP) perempuan menunjukkan daya beli penduduk perempuan terhadap sejumlah kebutuhan pokok yang dilihat dari rata-rata besarnya pengeluaran per kapita.',
+                description:
+                    'Pengeluaran per Kapita Disesuaikan (PPP) perempuan menunjukkan daya beli penduduk perempuan terhadap sejumlah kebutuhan pokok yang dilihat dari rata-rata besarnya pengeluaran per kapita.',
                 isLast: true,
                 isSmallScreen: isSmallScreen,
               ),
@@ -868,7 +1008,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                               reservedSize: isSmallScreen ? 38 : 45,
                               interval: 1,
                               getTitlesWidget: (value, meta) => Text(
-                                value.toStringAsFixed(1),
+                                NumberFormatUtils.formatDecimal(value,
+                                    decimalPlaces: 1),
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 10 : 12,
                                   color: _bpsTextSecondary,
@@ -886,7 +1027,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                                 final index = value.toInt();
                                 if (index >= 0 && index < yearLabels.length) {
                                   return Padding(
-                                    padding: EdgeInsets.only(top: isSmallScreen ? 6 : 8),
+                                    padding: EdgeInsets.only(
+                                        top: isSmallScreen ? 6 : 8),
                                     child: Text(
                                       yearLabels[index],
                                       style: TextStyle(
@@ -901,8 +1043,10 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                               },
                             ),
                           ),
-                          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          topTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
                         ),
                         borderData: FlBorderData(show: false),
                         lineBarsData: [
@@ -941,23 +1085,29 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                           touchTooltipData: LineTouchTooltipData(
                             getTooltipColor: (spot) => _bpsCardBg,
                             tooltipRoundedRadius: 8,
-                            tooltipBorder: BorderSide(color: Colors.grey[300]!, width: 1),
-                            tooltipPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            tooltipBorder:
+                                BorderSide(color: Colors.grey[300]!, width: 1),
+                            tooltipPadding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
                             getTooltipItems: (touchedSpots) {
-                              return touchedSpots.map((barSpot) {
-                                final index = barSpot.x.toInt();
-                                if (index >= 0 && index < yearLabels.length) {
-                                  return LineTooltipItem(
-                                    '${yearLabels[index]}\nIPG: ${barSpot.y.toStringAsFixed(2)}',
-                                    TextStyle(
-                                      color: _bpsPurple,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 11,
-                                    ),
-                                  );
-                                }
-                                return null;
-                              }).whereType<LineTooltipItem>().toList();
+                              return touchedSpots
+                                  .map((barSpot) {
+                                    final index = barSpot.x.toInt();
+                                    if (index >= 0 &&
+                                        index < yearLabels.length) {
+                                      return LineTooltipItem(
+                                        '${yearLabels[index]}\nIPG: ${NumberFormatUtils.formatDecimal(barSpot.y, decimalPlaces: 2)}',
+                                        TextStyle(
+                                          color: _bpsPurple,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 11,
+                                        ),
+                                      );
+                                    }
+                                    return null;
+                                  })
+                                  .whereType<LineTooltipItem>()
+                                  .toList();
                             },
                           ),
                         ),
@@ -1108,7 +1258,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                               reservedSize: isSmallScreen ? 42 : 48,
                               interval: 0.01,
                               getTitlesWidget: (value, meta) => Text(
-                                value.toStringAsFixed(3),
+                                NumberFormatUtils.formatDecimal(value,
+                                    decimalPlaces: 3),
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 10 : 12,
                                   color: _bpsTextSecondary,
@@ -1125,7 +1276,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                                 final index = value.toInt();
                                 if (index >= 0 && index < yearLabels.length) {
                                   return Padding(
-                                    padding: EdgeInsets.only(top: isSmallScreen ? 6 : 8),
+                                    padding: EdgeInsets.only(
+                                        top: isSmallScreen ? 6 : 8),
                                     child: Text(
                                       yearLabels[index],
                                       style: TextStyle(
@@ -1140,8 +1292,10 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                               },
                             ),
                           ),
-                          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          topTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
                         ),
                         borderData: FlBorderData(show: false),
                         barGroups: barGroups,
@@ -1149,14 +1303,16 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
                           enabled: true,
                           touchTooltipData: BarTouchTooltipData(
                             tooltipRoundedRadius: 8,
-                            tooltipBorder: BorderSide(color: Colors.grey[300]!, width: 1),
-                            tooltipPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            tooltipBorder:
+                                BorderSide(color: Colors.grey[300]!, width: 1),
+                            tooltipPadding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
                             getTooltipColor: (group) => _bpsCardBg,
                             getTooltipItem: (group, groupIndex, rod, rodIndex) {
                               final index = group.x;
                               if (index >= 0 && index < yearLabels.length) {
                                 return BarTooltipItem(
-                                  '${yearLabels[index]}\nIKG: ${rod.toY.toStringAsFixed(3)}',
+                                  '${yearLabels[index]}\nIKG: ${NumberFormatUtils.formatDecimal(rod.toY, decimalPlaces: 3)}',
                                   TextStyle(
                                     color: _bpsBlue,
                                     fontWeight: FontWeight.bold,
@@ -1378,7 +1534,8 @@ class _IPGScreenState extends State<IPGScreen> with AutomaticKeepAliveClientMixi
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => _showDetailDialog(context, label, value, icon, color, description),
+        onTap: () =>
+            _showDetailDialog(context, label, value, icon, color, description),
         splashColor: color.withOpacity(0.1),
         highlightColor: color.withOpacity(0.05),
         child: Padding(
