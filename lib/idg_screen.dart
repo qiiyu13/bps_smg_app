@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
+import 'kesimpulan_widget.dart';
 
 // BPS Color Palette
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -84,7 +85,8 @@ class _IDGScreenState extends State<IDGScreen>
       Map<int, IDGData> processedData = {};
 
       if (savedData != null) {
-        Map<String, dynamic> decoded = json.decode(savedData);
+        Map<String, dynamic> decoded =
+            json.decode(savedData) as Map<String, dynamic>;
         decoded.forEach((key, value) {
           final int year = int.parse(key);
           final Map<String, dynamic> data = value as Map<String, dynamic>;
@@ -222,6 +224,8 @@ class _IDGScreenState extends State<IDGScreen>
                       SizedBox(height: sizing.sectionSpacing),
                       _buildIDGDescription(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
+                      _buildKesimpulanCard(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
                     ]),
                   ),
                 ),
@@ -230,6 +234,41 @@ class _IDGScreenState extends State<IDGScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildKesimpulanCard(ResponsiveSizing sizing, bool isSmallScreen) {
+    if (idgDataByYear.isEmpty || availableYears.length < 2) {
+      return const SizedBox.shrink();
+    }
+
+    final sortedYears = availableYears..sort();
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
+    final latestData = idgDataByYear[latestYear];
+    final firstData = idgDataByYear[firstYear];
+
+    if (latestData == null ||
+        firstData == null ||
+        latestData.idg == null ||
+        firstData.idg == null) {
+      return const SizedBox.shrink();
+    }
+
+    final conclusionData = KesimpulanGenerator.generateIDGConclusion(
+      latestYear: latestYear,
+      firstYear: firstYear,
+      latestIDG: latestData.idg!,
+      firstIDG: firstData.idg!,
+    );
+
+    return KesimpulanWidget(
+      title: 'Indeks Pembangunan Gender',
+      conclusion: conclusionData['conclusion'] as String,
+      status: conclusionData['status'] as KesimpulanStatus,
+      sizing: sizing,
+      isSmallScreen: isSmallScreen,
+      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
     );
   }
 
@@ -847,6 +886,32 @@ class _IDGScreenState extends State<IDGScreen>
       }
     }
 
+    // Calculate dynamic Y-axis range
+    double minY = 70.0;
+    double maxY = 80.0;
+    double yInterval = 2.0;
+
+    if (idgSpots.isNotEmpty) {
+      double minIDG = idgSpots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
+      double maxIDG = idgSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
+
+      // Add padding and round to nice numbers
+      minY = (minIDG - 2.0).floorToDouble();
+      maxY = (maxIDG + 2.0).ceilToDouble();
+
+      // Ensure minimum range for better visualization
+      if (maxY - minY < 4.0) {
+        double mid = (minY + maxY) / 2;
+        minY = mid - 2.0;
+        maxY = mid + 2.0;
+      }
+
+      // Calculate interval for ~5-6 grid lines
+      double range = maxY - minY;
+      yInterval = (range / 5).roundToDouble();
+      if (yInterval < 1.0) yInterval = 1.0;
+    }
+
     return Container(
       padding: EdgeInsets.all(isSmallScreen
           ? sizing.statsCardPadding - 4
@@ -890,91 +955,134 @@ class _IDGScreenState extends State<IDGScreen>
             ],
           ),
           SizedBox(height: isSmallScreen ? 16 : 20),
-          SizedBox(
-            height: 220,
-            child: idgSpots.isNotEmpty
-                ? LineChart(
+          idgSpots.isNotEmpty
+              ? SizedBox(
+                  height: isSmallScreen ? 200 : 240,
+                  child: LineChart(
                     LineChartData(
-                      minY: 64,
-                      maxY: 80,
+                      minY: minY,
+                      maxY: maxY,
                       gridData: FlGridData(
-                          show: true,
-                          drawVerticalLine: false,
-                          horizontalInterval: 2,
-                          getDrawingHorizontalLine: (value) =>
-                              FlLine(color: _bpsBorder, strokeWidth: 0.5)),
+                        show: true,
+                        drawVerticalLine: false,
+                        horizontalInterval: yInterval,
+                        getDrawingHorizontalLine: (value) {
+                          return FlLine(
+                            color: Colors.grey.withOpacity(0.2),
+                            strokeWidth: 1,
+                          );
+                        },
+                      ),
                       titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                                showTitles: true,
-                                reservedSize: 35,
-                                interval: 4,
-                                getTitlesWidget: (value, meta) => Text(
-                                    value.toInt().toString(),
-                                    style: TextStyle(
-                                        fontSize: isSmallScreen ? 9 : 10,
-                                        color: _bpsTextSecondary)))),
+                        show: true,
+                        rightTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        topTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
                         bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                                showTitles: true,
-                                reservedSize: 30,
-                                interval: 1,
-                                getTitlesWidget: (value, meta) {
-                                  final index = value.toInt();
-                                  if (index >= 0 && index < yearLabels.length) {
-                                    return Padding(
-                                        padding: const EdgeInsets.only(top: 8),
-                                        child: Text(yearLabels[index],
-                                            style: TextStyle(
-                                                fontSize:
-                                                    isSmallScreen ? 9 : 10,
-                                                color: _bpsTextSecondary)));
-                                  }
-                                  return const Text('');
-                                })),
-                        rightTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
-                        topTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 30,
+                            interval: 1,
+                            getTitlesWidget: (value, meta) {
+                              final index = value.toInt();
+                              if (index >= 0 && index < availableYears.length) {
+                                return Text(
+                                  availableYears[index].toString(),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: _bpsPurple,
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
+                        ),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 40,
+                            interval: yInterval,
+                            getTitlesWidget: (value, meta) {
+                              return Text(
+                                value.toStringAsFixed(0),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey[600],
+                                ),
+                              );
+                            },
+                          ),
+                          axisNameWidget: const Padding(
+                            padding: EdgeInsets.only(bottom: 8),
+                            child: Text(
+                              'IDG',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                       borderData: FlBorderData(show: false),
                       lineBarsData: [
                         LineChartBarData(
-                            spots: idgSpots,
-                            isCurved: true,
-                            color: _bpsPurple,
-                            barWidth: 3,
-                            dotData: const FlDotData(show: true),
-                            belowBarData: BarAreaData(
-                                show: true,
-                                color: _bpsPurple.withOpacity(0.15))),
+                          spots: idgSpots,
+                          isCurved: true,
+                          color: _bpsPurple,
+                          barWidth: 3,
+                          dotData: FlDotData(
+                            show: true,
+                            getDotPainter: (spot, percent, bar, index) {
+                              return FlDotCirclePainter(
+                                radius: 6,
+                                color: _bpsPurple,
+                                strokeWidth: 2,
+                                strokeColor: Colors.white,
+                              );
+                            },
+                          ),
+                          belowBarData: BarAreaData(
+                            show: true,
+                            color: _bpsPurple.withOpacity(0.1),
+                          ),
+                        ),
                       ],
                       lineTouchData: LineTouchData(
                         enabled: true,
                         touchTooltipData: LineTouchTooltipData(
-                          getTooltipItems: (touchedSpots) => touchedSpots
-                              .map((barSpot) {
-                                final index = barSpot.x.toInt();
-                                if (index >= 0 && index < yearLabels.length) {
-                                  return LineTooltipItem(
-                                      '${yearLabels[index]}\nIDG: ${NumberFormatUtils.formatDecimal(barSpot.y, decimalPlaces: 2)}',
-                                      const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 11));
-                                }
-                                return null;
-                              })
-                              .whereType<LineTooltipItem>()
-                              .toList(),
+                          getTooltipColor: (spot) => Colors.white,
+                          tooltipRoundedRadius: 8,
+                          tooltipBorder: BorderSide(
+                            color: Colors.grey.shade300,
+                            width: 1,
+                          ),
+                          getTooltipItems: (touchedSpots) {
+                            return touchedSpots.map((spot) {
+                              final index = spot.x.toInt();
+                              final year = availableYears[index];
+                              return LineTooltipItem(
+                                '$year\n${spot.y.toStringAsFixed(3)}',
+                                const TextStyle(
+                                  color: _bpsPurple,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              );
+                            }).toList();
+                          },
                         ),
                       ),
                     ),
-                  )
-                : Center(
-                    child: Text('Data tidak tersedia',
-                        style: TextStyle(color: _bpsTextSecondary))),
-          ),
+                  ),
+                )
+              : const Center(
+                  child: Text('Data tidak tersedia',
+                      style: TextStyle(color: _bpsTextSecondary))),
         ],
       ),
     );

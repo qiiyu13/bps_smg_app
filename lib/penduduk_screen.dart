@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
+import 'kesimpulan_widget.dart';
 
 // BPS Color Palette
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -311,7 +312,8 @@ class _PendudukScreenState extends State<PendudukScreen>
           area: 373.7,
           density: 4425,
           districts: 16,
-          villages: 177),
+          villages: 177,
+          growthRate: 0.0),
       2021: SemarangData(
           year: 2021,
           population: 1656564,
@@ -468,6 +470,66 @@ class _PendudukScreenState extends State<PendudukScreen>
         'usiaTua': {'total': 109821, 'percentage': 6.63},
         'totalPopulation': 1656564
       },
+      2012: {
+        'usiaMuda': {'total': 357600, 'percentage': 22.70},
+        'usiaProduktif': {'total': 1136500, 'percentage': 72.17},
+        'usiaTua': {'total': 80930, 'percentage': 5.14},
+        'totalPopulation': 1575030
+      },
+      2013: {
+        'usiaMuda': {'total': 352700, 'percentage': 22.25},
+        'usiaProduktif': {'total': 1146200, 'percentage': 72.33},
+        'usiaTua': {'total': 85749, 'percentage': 5.41},
+        'totalPopulation': 1584649
+      },
+      2014: {
+        'usiaMuda': {'total': 347800, 'percentage': 21.80},
+        'usiaProduktif': {'total': 1155900, 'percentage': 72.50},
+        'usiaTua': {'total': 90632, 'percentage': 5.68},
+        'totalPopulation': 1594332
+      },
+      2015: {
+        'usiaMuda': {'total': 342900, 'percentage': 21.38},
+        'usiaProduktif': {'total': 1165600, 'percentage': 72.66},
+        'usiaTua': {'total': 95581, 'percentage': 5.95},
+        'totalPopulation': 1604081
+      },
+      2016: {
+        'usiaMuda': {'total': 338000, 'percentage': 20.94},
+        'usiaProduktif': {'total': 1175300, 'percentage': 72.82},
+        'usiaTua': {'total': 100596, 'percentage': 6.23},
+        'totalPopulation': 1613896
+      },
+      2017: {
+        'usiaMuda': {'total': 333100, 'percentage': 20.51},
+        'usiaProduktif': {'total': 1185000, 'percentage': 72.98},
+        'usiaTua': {'total': 105677, 'percentage': 6.51},
+        'totalPopulation': 1623777
+      },
+      2018: {
+        'usiaMuda': {'total': 328200, 'percentage': 20.09},
+        'usiaProduktif': {'total': 1194700, 'percentage': 73.13},
+        'usiaTua': {'total': 110825, 'percentage': 6.78},
+        'totalPopulation': 1633725
+      },
+      2019: {
+        'usiaMuda': {'total': 323300, 'percentage': 19.67},
+        'usiaProduktif': {'total': 1204400, 'percentage': 73.27},
+        'usiaTua': {'total': 116041, 'percentage': 7.06},
+        'totalPopulation': 1643741
+      },
+      2020: {
+        'usiaMuda': {'total': 318400, 'percentage': 19.25},
+        'usiaProduktif': {'total': 1214100, 'percentage': 73.42},
+        'usiaTua': {'total': 121024, 'percentage': 7.32},
+        'totalPopulation': 1653524
+      },
+      2021: {
+        'usiaMuda': {'total': 363757, 'percentage': 21.96},
+        'usiaProduktif': {'total': 1182986, 'percentage': 71.41},
+        'usiaTua': {'total': 109821, 'percentage': 6.63},
+        'totalPopulation': 1656564
+      },
       2022: {
         'usiaMuda': {'total': 360777, 'percentage': 21.73},
         'usiaProduktif': {'total': 1183941, 'percentage': 71.32},
@@ -597,6 +659,8 @@ class _PendudukScreenState extends State<PendudukScreen>
                       _buildAdministrativeData(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
                       _buildDistrictDensitySection(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                      _buildKesimpulanCard(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
                     ]),
                   ),
@@ -1214,6 +1278,20 @@ class _PendudukScreenState extends State<PendudukScreen>
   }
 
   Widget _buildPopulationChart(ResponsiveSizing sizing, bool isSmallScreen) {
+    // Prepare data for LineChart - only 2020-2024
+    final chartYears = [2020, 2021, 2022, 2023, 2024];
+    final spots = <FlSpot>[];
+    final yearLabels = <String>[];
+
+    for (int i = 0; i < chartYears.length; i++) {
+      final year = chartYears[i];
+      final data = semarangDataByYear[year];
+      if (data != null && data.growthRate != null) {
+        spots.add(FlSpot(i.toDouble(), data.growthRate!));
+        yearLabels.add(year.toString());
+      }
+    }
+
     return Container(
       padding: EdgeInsets.all(isSmallScreen
           ? sizing.statsCardPadding - 4
@@ -1258,65 +1336,89 @@ class _PendudukScreenState extends State<PendudukScreen>
           ),
           SizedBox(height: isSmallScreen ? 16 : 20),
           SizedBox(
-            height: 200,
+            height: isSmallScreen ? 180 : 220,
             child: LineChart(
               LineChartData(
-                minY: 0,
-                maxY: 0.03,
-                minX: 0,
-                maxX: (_cachedSpots.length - 1).toDouble(),
                 gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: false,
-                    horizontalInterval: 0.005,
-                    getDrawingHorizontalLine: (value) =>
-                        FlLine(color: _bpsBorder, strokeWidth: 0.5)),
+                  show: true,
+                  drawVerticalLine: false,
+                  horizontalInterval: 0.5,
+                  getDrawingHorizontalLine: (value) {
+                    return FlLine(
+                      color: Colors.grey.withOpacity(0.2),
+                      strokeWidth: 1,
+                    );
+                  },
+                ),
                 titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 45,
-                          interval: 0.005,
-                          getTitlesWidget: (value, meta) => Text(
-                              NumberFormatUtils.formatPercentage(value * 100),
-                              style: TextStyle(
-                                  fontSize: isSmallScreen ? 8 : 9,
-                                  color: _bpsTextSecondary)))),
+                  show: true,
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 30,
-                          interval: 1,
-                          getTitlesWidget: (value, meta) {
-                            int index = value.toInt();
-                            if (index >= 0 && index < availableYears.length) {
-                              return Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: Text(availableYears[index].toString(),
-                                      style: TextStyle(
-                                          fontSize: isSmallScreen ? 9 : 10,
-                                          color: _bpsTextSecondary)));
-                            }
-                            return const Text('');
-                          })),
-                  rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                  topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 30,
+                      interval: 1,
+                      getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+                        if (index >= 0 && index < yearLabels.length) {
+                          return Text(
+                            yearLabels[index],
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: _bpsGreen,
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 40,
+                      interval: 0.5,
+                      getTitlesWidget: (value, meta) {
+                        return Text(
+                          '${value.toStringAsFixed(1)}%',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey[600],
+                          ),
+                        );
+                      },
+                    ),
+                    axisNameWidget: const Padding(
+                      padding: EdgeInsets.only(bottom: 8),
+                      child: Text(
+                        'Laju Pertumbuhan (%)',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
                 borderData: FlBorderData(show: false),
                 lineBarsData: [
                   LineChartBarData(
-                    spots: _cachedSpots,
+                    spots: spots,
                     isCurved: true,
                     color: _bpsGreen,
                     barWidth: 3,
-                    isStrokeCapRound: true,
                     dotData: FlDotData(
                       show: true,
-                      getDotPainter: (spot, percent, barData, index) {
+                      getDotPainter: (spot, percent, bar, index) {
                         return FlDotCirclePainter(
-                          radius: 4,
+                          radius: 6,
                           color: _bpsGreen,
                           strokeWidth: 2,
                           strokeColor: Colors.white,
@@ -1324,32 +1426,33 @@ class _PendudukScreenState extends State<PendudukScreen>
                       },
                     ),
                     belowBarData: BarAreaData(
-                        show: true, color: _bpsGreen.withOpacity(0.15)),
+                      show: true,
+                      color: _bpsGreen.withOpacity(0.1),
+                    ),
                   ),
                 ],
                 lineTouchData: LineTouchData(
                   enabled: true,
                   touchTooltipData: LineTouchTooltipData(
-                    getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
-                      return touchedBarSpots
-                          .map((barSpot) {
-                            final int index = barSpot.x.toInt();
-                            if (index < 0 || index >= availableYears.length)
-                              return null;
-                            final year = availableYears[index];
-                            final growthPercent =
-                                NumberFormatUtils.formatPercentage(
-                                    barSpot.y * 100);
-                            return LineTooltipItem(
-                                '$year\n$growthPercent',
-                                const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11));
-                          })
-                          .where((item) => item != null)
-                          .map((item) => item!)
-                          .toList();
+                    getTooltipColor: (spot) => Colors.white,
+                    tooltipRoundedRadius: 8,
+                    tooltipBorder: BorderSide(
+                      color: Colors.grey.shade300,
+                      width: 1,
+                    ),
+                    getTooltipItems: (touchedSpots) {
+                      return touchedSpots.map((spot) {
+                        final index = spot.x.toInt();
+                        final year = yearLabels[index];
+                        return LineTooltipItem(
+                          '$year\n${spot.y.toStringAsFixed(2)}%',
+                          const TextStyle(
+                            color: _bpsGreen,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        );
+                      }).toList();
                     },
                   ),
                 ),
@@ -1816,6 +1919,45 @@ class _PendudukScreenState extends State<PendudukScreen>
           ],
         ],
       ),
+    );
+  }
+
+  Widget _buildKesimpulanCard(ResponsiveSizing sizing, bool isSmallScreen) {
+    if (semarangDataByYear.isEmpty || availableYears.length < 2) {
+      return const SizedBox.shrink();
+    }
+
+    final sortedYears = availableYears..sort();
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
+    final latestData = semarangDataByYear[latestYear];
+    final firstData = semarangDataByYear[firstYear];
+
+    if (latestData == null || firstData == null) {
+      return const SizedBox.shrink();
+    }
+
+    final latestPopulation = latestData.population ?? 0;
+    final firstPopulation = firstData.population ?? 0;
+    final growthRate = latestData.growthRate ?? 0.0;
+    final density = (latestData.density ?? 0).toDouble();
+
+    final conclusionData = KesimpulanGenerator.generatePendudukConclusion(
+      latestYear: latestYear,
+      firstYear: firstYear,
+      latestPopulation: latestPopulation,
+      firstPopulation: firstPopulation,
+      growthRate: growthRate,
+      density: density,
+    );
+
+    return KesimpulanWidget(
+      title: 'Penduduk Kota Semarang',
+      conclusion: conclusionData['conclusion'] as String,
+      status: conclusionData['status'] as KesimpulanStatus,
+      sizing: sizing,
+      isSmallScreen: isSmallScreen,
+      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
     );
   }
 }

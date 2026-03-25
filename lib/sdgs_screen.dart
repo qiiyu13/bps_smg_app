@@ -4,6 +4,7 @@ import 'sdgs_data_service.dart';
 import 'dart:math';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
+import 'kesimpulan_widget.dart';
 
 // BPS Color Palette
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -66,6 +67,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
 
   Future<void> _loadData() async {
     try {
+      await SDGsDataService.initializeDefaultData();
       final data = await SDGsDataService.getAllKota();
       if (mounted) {
         setState(() {
@@ -238,6 +240,8 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                       _buildComparisonChart(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
                       _buildSDGsInfo(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                      _buildKesimpulanCard(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
                     ]),
                   ),
@@ -1087,6 +1091,87 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis))),
+    );
+  }
+
+  Widget _buildKesimpulanCard(ResponsiveSizing sizing, bool isSmallScreen) {
+    if (kotaDataList.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    // Find Semarang data
+    final semarangData = kotaDataList.firstWhere(
+      (kota) => kota.nama.toLowerCase().contains('semarang'),
+      orElse: () => kotaDataList.first,
+    );
+
+    final sortedYears = availableYears..sort();
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
+
+    // Calculate average score for a year
+    double calculateAverageScore(int year) {
+      final values = [
+        semarangData.samitasilayak[year],
+        semarangData.tikRemaja[year],
+        semarangData.tikDewasa[year],
+        semarangData.aktaLahir[year],
+        semarangData.apm[year],
+        semarangData.apk[year],
+      ].where((v) => v != null).toList();
+
+      if (values.isEmpty) return 0.0;
+      return values.reduce((a, b) => a! + b!)! / values.length;
+    }
+
+    final latestScore = calculateAverageScore(latestYear);
+    final firstScore = calculateAverageScore(firstYear);
+
+    // Count indicators on track (assuming target is improvement over time)
+    int onTrackCount = 0;
+    int totalIndicators = 0;
+
+    final indicators = [
+      semarangData.samitasilayak,
+      semarangData.tikRemaja,
+      semarangData.tikDewasa,
+      semarangData.aktaLahir,
+      semarangData.apm,
+      semarangData.apk,
+    ];
+
+    for (final indicator in indicators) {
+      if (indicator.containsKey(latestYear) &&
+          indicator.containsKey(firstYear)) {
+        totalIndicators++;
+        final latest = indicator[latestYear]!;
+        final first = indicator[firstYear]!;
+        // For most indicators, higher is better
+        if (latest >= first) {
+          onTrackCount++;
+        }
+      }
+    }
+
+    // Calculate progress rate
+    final progressRate =
+        firstScore > 0 ? ((latestScore - firstScore) / firstScore * 100) : 0.0;
+
+    final conclusionData = KesimpulanGenerator.generateSDGsConclusion(
+      latestYear: latestYear,
+      averageScore: latestScore,
+      onTrackCount: onTrackCount,
+      totalIndicators: totalIndicators,
+      progressRate: progressRate,
+    );
+
+    return KesimpulanWidget(
+      title: 'SDGs Kota Semarang',
+      conclusion: conclusionData['conclusion'] as String,
+      status: conclusionData['status'] as KesimpulanStatus,
+      sizing: sizing,
+      isSmallScreen: isSmallScreen,
+      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
     );
   }
 }

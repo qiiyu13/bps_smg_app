@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
+import 'kesimpulan_widget.dart';
 
 // BPS Color Palette (matching kemiskinana_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -239,7 +240,7 @@ class _IPGScreenState extends State<IPGScreen>
                 "PPP_Perempuan": 15270.0,
                 "IPM_Laki": 86.94,
                 "IPM_Perempuan": 83.14,
-                "IPG": 95.37,
+                "IPG": 96.37,
                 "IKG": 0.041
               },
             ];
@@ -249,10 +250,22 @@ class _IPGScreenState extends State<IPGScreen>
               final int year = row["Tahun"] as int;
               processedData[year] = IPGData(
                 year: year,
-                uhh: ((row["UHH_Laki"] + row["UHH_Perempuan"]) / 2).toDouble(),
-                hls: ((row["HLS_Laki"] + row["HLS_Perempuan"]) / 2).toDouble(),
-                rls: ((row["RLS_Laki"] + row["RLS_Perempuan"]) / 2).toDouble(),
-                ppp: ((row["PPP_Laki"] + row["PPP_Perempuan"]) / 2).toDouble(),
+                uhh: (((row["UHH_Laki"] as num) +
+                            (row["UHH_Perempuan"] as num)) /
+                        2)
+                    .toDouble(),
+                hls: (((row["HLS_Laki"] as num) +
+                            (row["HLS_Perempuan"] as num)) /
+                        2)
+                    .toDouble(),
+                rls: (((row["RLS_Laki"] as num) +
+                            (row["RLS_Perempuan"] as num)) /
+                        2)
+                    .toDouble(),
+                ppp: (((row["PPP_Laki"] as num) +
+                            (row["PPP_Perempuan"] as num)) /
+                        2)
+                    .toDouble(),
                 ipg: (row["IPG"] as num).toDouble(),
                 ikg: (row["IKG"] as num).toDouble(),
                 uhhMale: (row["UHH_Laki"] as num).toDouble(),
@@ -372,6 +385,8 @@ class _IPGScreenState extends State<IPGScreen>
                                 SizedBox(height: sizing.sectionSpacing),
                                 _buildInfoCard(sizing, isSmallScreen),
                                 SizedBox(height: sizing.sectionSpacing),
+                                _buildKesimpulanCard(sizing, isSmallScreen),
+                                SizedBox(height: sizing.sectionSpacing),
                               ]),
                             ),
                           ),
@@ -380,6 +395,41 @@ class _IPGScreenState extends State<IPGScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildKesimpulanCard(ResponsiveSizing sizing, bool isSmallScreen) {
+    if (ipgDataByYear.isEmpty || availableYears.length < 2) {
+      return const SizedBox.shrink();
+    }
+
+    final sortedYears = availableYears..sort();
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
+    final latestData = ipgDataByYear[latestYear];
+    final firstData = ipgDataByYear[firstYear];
+
+    if (latestData == null ||
+        firstData == null ||
+        latestData.ipg == null ||
+        firstData.ipg == null) {
+      return const SizedBox.shrink();
+    }
+
+    final conclusionData = KesimpulanGenerator.generateIPGConclusion(
+      latestYear: latestYear,
+      firstYear: firstYear,
+      latestIPG: latestData.ipg!,
+      firstIPG: firstData.ipg!,
+    );
+
+    return KesimpulanWidget(
+      title: 'Indeks Pemberdayaan Gender',
+      conclusion: conclusionData['conclusion'] as String,
+      status: conclusionData['status'] as KesimpulanStatus,
+      sizing: sizing,
+      isSmallScreen: isSmallScreen,
+      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
     );
   }
 
@@ -911,6 +961,32 @@ class _IPGScreenState extends State<IPGScreen>
 
     bool hasValidData = ipgSpots.isNotEmpty;
 
+    // Calculate dynamic Y-axis range
+    double minY = 94.0;
+    double maxY = 97.0;
+    double yInterval = 0.5;
+
+    if (hasValidData) {
+      double minIPG = ipgSpots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
+      double maxIPG = ipgSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
+
+      // Add padding and round to nice numbers
+      minY = (minIPG - 0.5).floorToDouble();
+      maxY = (maxIPG + 0.5).ceilToDouble();
+
+      // Ensure minimum range for better visualization
+      if (maxY - minY < 2.0) {
+        double mid = (minY + maxY) / 2;
+        minY = mid - 1.0;
+        maxY = mid + 1.0;
+      }
+
+      // Calculate interval for ~5-6 grid lines
+      double range = maxY - minY;
+      yInterval = (range / 5 * 10).round() / 10;
+      if (yInterval < 0.5) yInterval = 0.5;
+    }
+
     return Container(
       padding: EdgeInsets.all(isSmallScreen
           ? sizing.statsCardPadding - 4
@@ -984,143 +1060,143 @@ class _IPGScreenState extends State<IPGScreen>
               ],
             ),
           SizedBox(height: isSmallScreen ? 12 : 16),
-          RepaintBoundary(
-            child: SizedBox(
+          if (hasValidData)
+            SizedBox(
               height: isSmallScreen ? 220 : 240,
-              child: hasValidData
-                  ? LineChart(
-                      LineChartData(
-                        minY: 94,
-                        maxY: 97,
-                        gridData: FlGridData(
-                          show: true,
-                          drawVerticalLine: false,
-                          horizontalInterval: 0.5,
-                          getDrawingHorizontalLine: (value) => FlLine(
-                            color: _bpsBorder,
-                            strokeWidth: 0.5,
-                          ),
-                        ),
-                        titlesData: FlTitlesData(
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: isSmallScreen ? 38 : 45,
-                              interval: 1,
-                              getTitlesWidget: (value, meta) => Text(
-                                NumberFormatUtils.formatDecimal(value,
-                                    decimalPlaces: 1),
-                                style: TextStyle(
-                                  fontSize: isSmallScreen ? 10 : 12,
-                                  color: _bpsTextSecondary,
-                                  fontWeight: FontWeight.w500,
-                                ),
+              child: LineChart(
+                LineChartData(
+                  minY: minY,
+                  maxY: maxY,
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: yInterval,
+                    getDrawingHorizontalLine: (value) {
+                      return FlLine(
+                        color: Colors.grey.withOpacity(0.2),
+                        strokeWidth: 1,
+                      );
+                    },
+                  ),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    rightTitles:
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles:
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 30,
+                        interval: 1,
+                        getTitlesWidget: (value, meta) {
+                          final index = value.toInt();
+                          if (index >= 0 && index < availableYears.length) {
+                            return Text(
+                              availableYears[index].toString(),
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: _bpsPurple,
                               ),
-                            ),
-                          ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 30,
-                              interval: 1,
-                              getTitlesWidget: (value, meta) {
-                                final index = value.toInt();
-                                if (index >= 0 && index < yearLabels.length) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                        top: isSmallScreen ? 6 : 8),
-                                    child: Text(
-                                      yearLabels[index],
-                                      style: TextStyle(
-                                        fontSize: isSmallScreen ? 10 : 12,
-                                        color: _bpsTextPrimary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return const Text('');
-                              },
-                            ),
-                          ),
-                          rightTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
-                          topTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
-                        ),
-                        borderData: FlBorderData(show: false),
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: ipgSpots,
-                            isCurved: true,
-                            color: _bpsPurple,
-                            barWidth: isSmallScreen ? 2.5 : 3.5,
-                            isStrokeCapRound: true,
-                            dotData: FlDotData(
-                              show: true,
-                              getDotPainter: (spot, percent, barData, index) {
-                                return FlDotCirclePainter(
-                                  radius: isSmallScreen ? 3 : 5,
-                                  color: _bpsPurple,
-                                  strokeWidth: isSmallScreen ? 1.5 : 2.5,
-                                  strokeColor: _bpsCardBg,
-                                );
-                              },
-                            ),
-                            belowBarData: BarAreaData(
-                              show: true,
-                              gradient: LinearGradient(
-                                colors: [
-                                  _bpsPurple.withOpacity(0.2),
-                                  _bpsPurple.withOpacity(0.02),
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                            ),
-                          ),
-                        ],
-                        lineTouchData: LineTouchData(
-                          enabled: true,
-                          touchTooltipData: LineTouchTooltipData(
-                            getTooltipColor: (spot) => _bpsCardBg,
-                            tooltipRoundedRadius: 8,
-                            tooltipBorder:
-                                BorderSide(color: Colors.grey[300]!, width: 1),
-                            tooltipPadding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
-                            getTooltipItems: (touchedSpots) {
-                              return touchedSpots
-                                  .map((barSpot) {
-                                    final index = barSpot.x.toInt();
-                                    if (index >= 0 &&
-                                        index < yearLabels.length) {
-                                      return LineTooltipItem(
-                                        '${yearLabels[index]}\nIPG: ${NumberFormatUtils.formatDecimal(barSpot.y, decimalPlaces: 2)}',
-                                        TextStyle(
-                                          color: _bpsPurple,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 11,
-                                        ),
-                                      );
-                                    }
-                                    return null;
-                                  })
-                                  .whereType<LineTooltipItem>()
-                                  .toList();
-                            },
-                          ),
-                        ),
-                      ),
-                    )
-                  : Center(
-                      child: Text(
-                        'Data tidak tersedia',
-                        style: TextStyle(color: _bpsTextSecondary),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
                       ),
                     ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                        interval: yInterval,
+                        getTitlesWidget: (value, meta) {
+                          return Text(
+                            value.toStringAsFixed(1),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey[600],
+                            ),
+                          );
+                        },
+                      ),
+                      axisNameWidget: const Padding(
+                        padding: EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          'IPG',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  borderData: FlBorderData(show: false),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: availableYears.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final year = entry.value;
+                        final yearData = ipgDataByYear[year];
+                        return FlSpot(index.toDouble(), yearData?.ipg ?? 0);
+                      }).toList(),
+                      isCurved: true,
+                      color: _bpsPurple,
+                      barWidth: 3,
+                      dotData: FlDotData(
+                        show: true,
+                        getDotPainter: (spot, percent, bar, index) {
+                          return FlDotCirclePainter(
+                            radius: 6,
+                            color: _bpsPurple,
+                            strokeWidth: 2,
+                            strokeColor: Colors.white,
+                          );
+                        },
+                      ),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: _bpsPurple.withOpacity(0.1),
+                      ),
+                    ),
+                  ],
+                  lineTouchData: LineTouchData(
+                    enabled: true,
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipColor: (spot) => Colors.white,
+                      tooltipRoundedRadius: 8,
+                      tooltipBorder: BorderSide(
+                        color: Colors.grey.shade300,
+                        width: 1,
+                      ),
+                      getTooltipItems: (touchedSpots) {
+                        return touchedSpots.map((spot) {
+                          final index = spot.x.toInt();
+                          final year = availableYears[index];
+                          return LineTooltipItem(
+                            '$year\n${spot.y.toStringAsFixed(3)}',
+                            const TextStyle(
+                              color: _bpsPurple,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          );
+                        }).toList();
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            )
+          else
+            const Center(
+              child: Text(
+                'Data tidak tersedia',
+                style: TextStyle(color: _bpsTextSecondary),
+              ),
             ),
-          ),
         ],
       ),
     );

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
+import 'kesimpulan_widget.dart';
 
 // BPS Color Palette (matching kemiskinana_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -117,32 +118,32 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
   void _initializeDefaultYearData() {
     yearData = {
       2020: {
-        'tpt': 8.45,
-        'tingkatPartisipasi': 67.8,
+        'tpt': 9.57,
+        'tingkatPartisipasi': 69.89,
         'bekerja': 856123,
         'pengangguran': 78956
       },
       2021: {
-        'tpt': 7.92,
-        'tingkatPartisipasi': 68.2,
+        'tpt': 9.54,
+        'tingkatPartisipasi': 69.41,
         'bekerja': 871245,
         'pengangguran': 75234
       },
       2022: {
-        'tpt': 7.15,
-        'tingkatPartisipasi': 69.1,
+        'tpt': 7.60,
+        'tingkatPartisipasi': 70.96,
         'bekerja': 889567,
         'pengangguran': 68432
       },
       2023: {
-        'tpt': 6.48,
-        'tingkatPartisipasi': 69.8,
+        'tpt': 5.99,
+        'tingkatPartisipasi': 69.42,
         'bekerja': 905678,
         'pengangguran': 62789
       },
       2024: {
         'tpt': 5.82,
-        'tingkatPartisipasi': 70.5,
+        'tingkatPartisipasi': 69.88,
         'bekerja': 922345,
         'pengangguran': 57123
       },
@@ -282,6 +283,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                       _buildTPTChart(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
                       _buildDistribusiChart(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                      _buildKesimpulanCard(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
                     ]),
                   ),
@@ -1621,5 +1624,49 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
 
   String _formatCompactNumber(int number) {
     return NumberFormatUtils.formatCompact(number);
+  }
+
+  Widget _buildKesimpulanCard(ResponsiveSizing sizing, bool isSmallScreen) {
+    if (yearData.isEmpty ||
+        indikatorData.isEmpty ||
+        availableYears.length < 2) {
+      return const SizedBox.shrink();
+    }
+
+    final sortedYears = availableYears..sort();
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
+
+    final latestIndikator = indikatorData[latestYear];
+    final firstIndikator = indikatorData[firstYear];
+
+    if (latestIndikator == null || firstIndikator == null) {
+      return const SizedBox.shrink();
+    }
+
+    // Get TPT (Tingkat Pengangguran Terbuka) values
+    final latestTPT = (latestIndikator['tpt'] as num?)?.toDouble() ?? 0.0;
+    final firstTPT = (firstIndikator['tpt'] as num?)?.toDouble() ?? 0.0;
+
+    // Get participation rate
+    final latestParticipation =
+        (latestIndikator['partisipasi'] as num?)?.toDouble() ?? 0.0;
+
+    final conclusionData = KesimpulanGenerator.generateTenagaKerjaConclusion(
+      latestYear: latestYear,
+      firstYear: firstYear,
+      latestUnemployment: latestTPT,
+      firstUnemployment: firstTPT,
+      participationRate: latestParticipation,
+    );
+
+    return KesimpulanWidget(
+      title: 'Tenaga Kerja Kota Semarang',
+      conclusion: conclusionData['conclusion'] as String,
+      status: conclusionData['status'] as KesimpulanStatus,
+      sizing: sizing,
+      isSmallScreen: isSmallScreen,
+      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
+    );
   }
 }

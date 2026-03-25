@@ -1,0 +1,20 @@
+# BPS Data Uploader Tool - Dependencies
+# Install with: pip install -r requirements.txt
+
+# GUI Framework
+PyQt6==6.6.1
+
+# Excel Handling
+openpyxl==3.1.2
+pandas==2.1.4
+
+# GitHub Integration
+PyGithub==2.1.1
+
+# HTTP Requests (for lock system)
+requests==2.31.0
+
+# JSON Handling (built-in, no install needed)
+
+# Build Tools (for creating .exe)
+pyinstaller==6.3.0

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
+import 'kesimpulan_widget.dart';
 
 // BPS Color Palette (matching other screens)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -432,6 +433,8 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                                 _buildDropoutRateCard(sizing, isSmallScreen),
                                 SizedBox(height: sizing.sectionSpacing),
                                 _buildAdditionalStats(sizing, isSmallScreen),
+                                SizedBox(height: sizing.sectionSpacing),
+                                _buildKesimpulanCard(sizing, isSmallScreen),
                                 SizedBox(height: sizing.sectionSpacing),
                               ]),
                             ),
@@ -2028,6 +2031,49 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 color: color,
                 fontWeight: FontWeight.w600)),
       ]),
+    );
+  }
+
+  Widget _buildKesimpulanCard(ResponsiveSizing sizing, bool isSmallScreen) {
+    if (educationData.isEmpty || years.length < 2) {
+      return const SizedBox.shrink();
+    }
+
+    final sortedYears = years..sort();
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
+
+    final latestData = educationData[latestYear];
+    final firstData = educationData[firstYear];
+
+    if (latestData == null || firstData == null) {
+      return const SizedBox.shrink();
+    }
+
+    // Get enrollment rate (partisipasi)
+    final latestEnrollment =
+        (latestData['partisipasi'] as num?)?.toDouble() ?? 0.0;
+    final firstEnrollment =
+        (firstData['partisipasi'] as num?)?.toDouble() ?? 0.0;
+
+    // Get teacher ratio
+    final latestRasio = (latestData['rasioGuru'] as num?)?.toDouble() ?? 0.0;
+
+    final conclusionData = KesimpulanGenerator.generatePendidikanConclusion(
+      latestYear: latestYear,
+      firstYear: firstYear,
+      latestEnrollment: latestEnrollment,
+      firstEnrollment: firstEnrollment,
+      teacherRatio: latestRasio,
+    );
+
+    return KesimpulanWidget(
+      title: 'Pendidikan Kota Semarang',
+      conclusion: conclusionData['conclusion'] as String,
+      status: conclusionData['status'] as KesimpulanStatus,
+      sizing: sizing,
+      isSmallScreen: isSmallScreen,
+      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
     );
   }
 }

@@ -39,7 +39,7 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
                 'pendudukMiskinValue': 79.58,
                 'persentase': '4.34%',
                 'persentaseValue': 4.34,
-                'garisMiskin': 'Rp 533,691',
+                'garisMiskin': 'Rp 522,691',
                 'indeksKedalaman': '0.68',
                 'indeksKeparahan': '0.16',
               },
@@ -451,7 +451,7 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
                 TextField(
                   controller: garisMiskinController,
                   decoration: const InputDecoration(
-                    labelText: 'Garis Kemiskinan (ex: Rp 533,691)',
+                    labelText: 'Garis Kemiskinan (ex: Rp 522,691)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.attach_money),
                   ),

@@ -1082,7 +1082,7 @@ class _StatsCard1State extends State<_StatsCard1> {
   Widget build(BuildContext context) {
     return _GlassStatsCard(
       label: 'Penduduk',
-      value: '1,7',
+      value: '1,65',
       unit: 'Jt',
       change: '+1,2%',
       isPositive: true,
@@ -1103,7 +1103,7 @@ class _StatsCard2 extends StatefulWidget {
 }
 
 class _StatsCard2State extends State<_StatsCard2> {
-  static const List<double> _chartData = [80.5, 81.2, 81.8, 82.1, 82.4];
+  static const List<double> _chartData = [83.05, 83.55, 84.08, 84.43, 85.24];
   static final List<FlSpot> _spots = List.generate(
     _chartData.length,
     (index) => FlSpot(index.toDouble(), _chartData[index]),
@@ -1147,7 +1147,7 @@ class _StatsCard2State extends State<_StatsCard2> {
   Widget build(BuildContext context) {
     return _GlassStatsCard(
       label: 'IPM',
-      value: '82,39',
+      value: '85,24',
       unit: '',
       change: '+2,3%',
       isPositive: true,
@@ -1234,7 +1234,7 @@ class _StatsCard4 extends StatefulWidget {
 }
 
 class _StatsCard4State extends State<_StatsCard4> {
-  static const List<double> _chartData = [2.1, 2.5, 2.8, 2.9, 2.9];
+  static const List<double> _chartData = [1.68, 1.87, 4.21, 2.61, 2.89];
   static final List<FlSpot> _spots = List.generate(
     _chartData.length,
     (index) => FlSpot(index.toDouble(), _chartData[index]),
@@ -1372,7 +1372,9 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
   }
 
   IconData _getDeltaIcon() {
-    return widget.isPositive ? Icons.trending_up_rounded : Icons.trending_down_rounded;
+    return widget.isPositive
+        ? Icons.trending_up_rounded
+        : Icons.trending_down_rounded;
   }
 
   void _handleTapDown(TapDownDetails details) {
@@ -1435,7 +1437,8 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: widget.accentColor.withOpacity(_isPressed ? 0.18 : 0.12),
+                  color:
+                      widget.accentColor.withOpacity(_isPressed ? 0.18 : 0.12),
                   blurRadius: _isPressed ? 25 : 20,
                   offset: const Offset(0, 6),
                   spreadRadius: -4,
@@ -1508,7 +1511,8 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w600,
-                                    color: bpsTextSecondary, // Darker for better contrast
+                                    color:
+                                        bpsTextSecondary, // Darker for better contrast
                                     fontFamily: 'Poppins',
                                   ),
                                 ),
@@ -1538,7 +1542,9 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
                                       child: Text(
                                         widget.unit,
                                         style: TextStyle(
-                                          fontSize: (sizing.statsValueFontSize + 2) * 0.55,
+                                          fontSize:
+                                              (sizing.statsValueFontSize + 2) *
+                                                  0.55,
                                           fontWeight: FontWeight.w600,
                                           color: bpsTextSecondary,
                                           fontFamily: 'Poppins',
@@ -1692,7 +1698,7 @@ class _GlassMiniChart extends StatelessWidget {
     final minY = spots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
     final maxY = spots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
     final range = maxY - minY;
-    
+
     // Only add small padding if values are very close
     final yPadding = range < 0.5 ? 0.1 : range * 0.05;
 

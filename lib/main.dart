@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:device_preview/device_preview.dart';
 import 'splash_screen.dart';
 import 'onboarding_screen.dart';
 import 'home_screen.dart';
@@ -9,13 +10,13 @@ import 'admin_home_screen.dart' as admin_home_screen;
 void main() {
   // Performance optimizations for Flutter rendering
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Optimize for smooth animations
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]).then((_) {
-    runApp(const MyApp());
+    runApp(DevicePreview(enabled: true, builder: (context) => const MyApp()));
   });
 }
 

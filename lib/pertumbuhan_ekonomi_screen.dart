@@ -4,6 +4,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'ekonomi_data.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
+import 'models/pdrb_ranking.dart';
+import 'services/pdrb_ranking_service.dart';
+import 'kesimpulan_widget.dart';
 
 // BPS Color Palette (matching kemiskinana_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -31,6 +34,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
   late int selectedYear;
   late List<int> availableYears;
   late Timer _debounceTimer;
+  List<PDRBRanking> _rankings = [];
+  bool _isLoadingRankings = true;
 
   @override
   bool get wantKeepAlive => true;
@@ -41,6 +46,25 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
     availableYears = dataManager.getAvailableYears()..sort();
     selectedYear = availableYears.isNotEmpty ? availableYears.last : 2024;
     _debounceTimer = Timer(const Duration(milliseconds: 100), () {});
+    _loadRankings();
+  }
+
+  Future<void> _loadRankings() async {
+    try {
+      final rankings = await PDRBRankingService.getTopN(10);
+      if (mounted) {
+        setState(() {
+          _rankings = rankings;
+          _isLoadingRankings = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingRankings = false;
+        });
+      }
+    }
   }
 
   @override
@@ -135,6 +159,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       _buildPDRBSection(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
                       _buildChartSection(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                      _buildRankingSection(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                      _buildKesimpulanCard(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
                     ]),
                   ),
@@ -1003,7 +1031,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Tren Pertumbuhan Tahun 2023-2024 (%)',
+                      'Tren Pertumbuhan Tahun 2020-2024 (%)',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 14,
                         color: _bpsTextSecondary,
@@ -1021,6 +1049,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             alignment: WrapAlignment.center,
             children: [
               _buildLegendItem('Kota Semarang', _bpsBlue, isSmallScreen),
+              _buildLegendItem('Jawa Tengah', _bpsOrange, isSmallScreen),
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
@@ -1031,7 +1060,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
-                  horizontalInterval: 0.5,
+                  horizontalInterval: 1.0,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
                       color: _bpsBorder,
@@ -1044,7 +1073,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: isSmallScreen ? 35 : 40,
-                      interval: 0.5,
+                      interval: 1.0,
                       getTitlesWidget: (value, meta) {
                         return Padding(
                           padding: const EdgeInsets.only(right: 4),
@@ -1098,9 +1127,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                 borderData: FlBorderData(show: false),
                 minX: 0,
                 maxX: (data.semarangData.length - 1).toDouble(),
-                minY: 4.0,
-                maxY: 6.0,
+                minY: -3.0,
+                maxY: 7.0,
                 lineBarsData: [
+                  // Kota Semarang Line
                   LineChartBarData(
                     spots: data.semarangData.asMap().entries.map((e) {
                       return FlSpot(e.key.toDouble(), e.value.value);
@@ -1130,6 +1160,30 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                       ),
+                    ),
+                  ),
+                  // Jawa Tengah Line
+                  LineChartBarData(
+                    spots: data.jatengData.asMap().entries.map((e) {
+                      return FlSpot(e.key.toDouble(), e.value.value);
+                    }).toList(),
+                    isCurved: true,
+                    color: _bpsOrange,
+                    barWidth: isSmallScreen ? 2.5 : 3.5,
+                    isStrokeCapRound: true,
+                    dotData: FlDotData(
+                      show: true,
+                      getDotPainter: (spot, percent, barData, index) {
+                        return FlDotCirclePainter(
+                          radius: isSmallScreen ? 3 : 4,
+                          color: _bpsOrange,
+                          strokeWidth: isSmallScreen ? 1.5 : 2.5,
+                          strokeColor: Colors.white,
+                        );
+                      },
+                    ),
+                    belowBarData: BarAreaData(
+                      show: false,
                     ),
                   ),
                 ],
@@ -1177,6 +1231,442 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildRankingSection(ResponsiveSizing sizing, bool isSmallScreen) {
+    // Show loading indicator if data is still loading
+    if (_isLoadingRankings) {
+      return Container(
+        padding: EdgeInsets.all(isSmallScreen
+            ? sizing.statsCardPadding - 4
+            : sizing.statsCardPadding),
+        decoration: BoxDecoration(
+          color: _bpsCardBg,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: _bpsBorder, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                  decoration: BoxDecoration(
+                    color: _bpsOrange.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.emoji_events_rounded,
+                    color: _bpsOrange,
+                    size: isSmallScreen ? 16 : 20,
+                  ),
+                ),
+                SizedBox(width: sizing.itemSpacing),
+                Expanded(
+                  child: Text(
+                    'Peringkat PDRB Jawa Tengah',
+                    style: TextStyle(
+                      fontSize: isSmallScreen
+                          ? sizing.groupTitleSize - 2
+                          : sizing.groupTitleSize,
+                      fontWeight: FontWeight.w700,
+                      color: _bpsTextPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: isSmallScreen ? 20 : 30),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(_bpsBlue),
+            ),
+            SizedBox(height: isSmallScreen ? 12 : 16),
+            Text(
+              'Memuat data ranking...',
+              style: TextStyle(
+                fontSize: isSmallScreen ? 12 : 14,
+                color: _bpsTextSecondary,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Use loaded data from CSV
+    final rankingData = _rankings;
+
+    // Check if data is empty
+    if (rankingData.isEmpty) {
+      return Container(
+        padding: EdgeInsets.all(isSmallScreen
+            ? sizing.statsCardPadding - 4
+            : sizing.statsCardPadding),
+        decoration: BoxDecoration(
+          color: _bpsCardBg,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: _bpsBorder, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                  decoration: BoxDecoration(
+                    color: _bpsOrange.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.emoji_events_rounded,
+                    color: _bpsOrange,
+                    size: isSmallScreen ? 16 : 20,
+                  ),
+                ),
+                SizedBox(width: sizing.itemSpacing),
+                Expanded(
+                  child: Text(
+                    'Peringkat PDRB Jawa Tengah',
+                    style: TextStyle(
+                      fontSize: isSmallScreen
+                          ? sizing.groupTitleSize - 2
+                          : sizing.groupTitleSize,
+                      fontWeight: FontWeight.w700,
+                      color: _bpsTextPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: isSmallScreen ? 20 : 30),
+            Icon(
+              Icons.error_outline_rounded,
+              color: _bpsRed,
+              size: isSmallScreen ? 40 : 48,
+            ),
+            SizedBox(height: isSmallScreen ? 12 : 16),
+            Text(
+              'Data tidak tersedia',
+              style: TextStyle(
+                fontSize: isSmallScreen ? 14 : 16,
+                fontWeight: FontWeight.w600,
+                color: _bpsTextPrimary,
+              ),
+            ),
+            SizedBox(height: isSmallScreen ? 4 : 8),
+            Text(
+              'Gagal memuat data ranking dari CSV',
+              style: TextStyle(
+                fontSize: isSmallScreen ? 12 : 14,
+                color: _bpsTextSecondary,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      padding: EdgeInsets.all(isSmallScreen
+          ? sizing.statsCardPadding - 4
+          : sizing.statsCardPadding),
+      decoration: BoxDecoration(
+        color: _bpsCardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _bpsBorder, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                decoration: BoxDecoration(
+                  color: _bpsOrange.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.emoji_events_rounded,
+                  color: _bpsOrange,
+                  size: isSmallScreen ? 16 : 20,
+                ),
+              ),
+              SizedBox(width: sizing.itemSpacing),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Peringkat PDRB Jawa Tengah',
+                      style: TextStyle(
+                        fontSize: isSmallScreen
+                            ? sizing.groupTitleSize - 2
+                            : sizing.groupTitleSize,
+                        fontWeight: FontWeight.w700,
+                        color: _bpsTextPrimary,
+                      ),
+                    ),
+                    SizedBox(height: isSmallScreen ? 2 : 4),
+                    Text(
+                      'Top 10 Kota/Kabupaten 2024',
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 12 : 14,
+                        color: _bpsTextSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: isSmallScreen ? 12 : 16),
+
+          // Header Row
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: isSmallScreen ? 12 : 16,
+              vertical: isSmallScreen ? 8 : 10,
+            ),
+            decoration: BoxDecoration(
+              color: _bpsBlue.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: isSmallScreen ? 40 : 50,
+                  child: Text(
+                    'Rank',
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 12 : 14,
+                      fontWeight: FontWeight.w700,
+                      color: _bpsBlue,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    'Kota/Kabupaten',
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 12 : 14,
+                      fontWeight: FontWeight.w700,
+                      color: _bpsBlue,
+                    ),
+                  ),
+                ),
+                Text(
+                  'PDRB (Milyar)',
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 12 : 14,
+                    fontWeight: FontWeight.w700,
+                    color: _bpsBlue,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: isSmallScreen ? 8 : 10),
+
+          // Data Rows
+          ...rankingData.map((item) {
+            final isSemarang = item.isKotaSemarang;
+            return Container(
+              margin: EdgeInsets.only(bottom: isSmallScreen ? 6 : 8),
+              padding: EdgeInsets.symmetric(
+                horizontal: isSmallScreen ? 12 : 16,
+                vertical: isSmallScreen ? 10 : 12,
+              ),
+              decoration: BoxDecoration(
+                color:
+                    isSemarang ? _bpsOrange.withOpacity(0.08) : _bpsBackground,
+                borderRadius: BorderRadius.circular(10),
+                border: isSemarang
+                    ? Border.all(color: _bpsOrange.withOpacity(0.4), width: 1.5)
+                    : null,
+              ),
+              child: Row(
+                children: [
+                  // Rank
+                  Container(
+                    width: isSmallScreen ? 32 : 36,
+                    height: isSmallScreen ? 32 : 36,
+                    decoration: BoxDecoration(
+                      color: isSemarang
+                          ? _bpsOrange
+                          : item.rank <= 3
+                              ? _bpsBlue.withOpacity(0.15)
+                              : _bpsBackground,
+                      borderRadius: BorderRadius.circular(8),
+                      border: item.rank <= 3 && !isSemarang
+                          ? Border.all(color: _bpsBlue.withOpacity(0.3))
+                          : null,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '#${item.rank}',
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 11 : 13,
+                          fontWeight: FontWeight.w700,
+                          color: isSemarang
+                              ? Colors.white
+                              : item.rank <= 3
+                                  ? _bpsBlue
+                                  : _bpsTextSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: isSmallScreen ? 8 : 12),
+
+                  // City Name
+                  Expanded(
+                    child: Row(
+                      children: [
+                        if (isSemarang) ...[
+                          Icon(
+                            Icons.star_rounded,
+                            color: _bpsOrange,
+                            size: isSmallScreen ? 14 : 16,
+                          ),
+                          SizedBox(width: isSmallScreen ? 4 : 6),
+                        ],
+                        Flexible(
+                          child: Text(
+                            item.nama,
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 13 : 15,
+                              fontWeight: isSemarang
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
+                              color: isSemarang ? _bpsOrange : _bpsTextPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // PDRB Value
+                  Text(
+                    item.formattedPdrb,
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 12 : 14,
+                      fontWeight: FontWeight.w700,
+                      color: isSemarang ? _bpsOrange : _bpsTextPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+
+          SizedBox(height: isSmallScreen ? 8 : 10),
+
+          // Note
+          Container(
+            padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+            decoration: BoxDecoration(
+              color: _bpsBlue.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline_rounded,
+                  color: _bpsBlue,
+                  size: isSmallScreen ? 14 : 16,
+                ),
+                SizedBox(width: isSmallScreen ? 6 : 8),
+                Expanded(
+                  child: Text(
+                    'Semarang menempati peringkat #1 dari 35 kota/kabupaten di Jawa Tengah',
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 11 : 13,
+                      color: _bpsTextSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildKesimpulanCard(ResponsiveSizing sizing, bool isSmallScreen) {
+    if (availableYears.length < 2) {
+      return const SizedBox.shrink();
+    }
+
+    final sortedYears = availableYears..sort();
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
+
+    final latestData = dataManager.getDataByYear(latestYear.toString());
+    final firstData = dataManager.getDataByYear(firstYear.toString());
+
+    if (latestData == null || firstData == null) {
+      return const SizedBox.shrink();
+    }
+
+    // Parse growth values from string (e.g., "5.62%" -> 5.62)
+    double parseGrowth(String growthStr) {
+      final cleaned = growthStr.replaceAll('%', '').replaceAll(',', '.');
+      return double.tryParse(cleaned) ?? 0.0;
+    }
+
+    final latestGrowth = parseGrowth(latestData.pertumbuhanEkonomi);
+    final firstGrowth = parseGrowth(firstData.pertumbuhanEkonomi);
+
+    // Calculate average growth from chart data
+    double totalGrowth = 0;
+    int count = 0;
+    for (final dataPoint in latestData.semarangData) {
+      totalGrowth += dataPoint.value;
+      count++;
+    }
+    final averageGrowth = count > 0 ? (totalGrowth / count).toDouble() : 0.0;
+
+    final conclusionData = KesimpulanGenerator.generateEkonomiConclusion(
+      latestYear: latestYear,
+      firstYear: firstYear,
+      latestGrowth: latestGrowth,
+      firstGrowth: firstGrowth,
+      averageGrowth: averageGrowth,
+    );
+
+    return KesimpulanWidget(
+      title: 'Pertumbuhan Ekonomi Kota Semarang',
+      conclusion: conclusionData['conclusion'] as String,
+      status: conclusionData['status'] as KesimpulanStatus,
+      sizing: sizing,
+      isSmallScreen: isSmallScreen,
+      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
     );
   }
 }

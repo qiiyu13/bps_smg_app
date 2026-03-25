@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'sdgs_github_repository.dart';
 
 class KotaData {
   String id;
@@ -108,7 +109,7 @@ class SDGsDataService {
   static const String _storageKey = 'sdgs_kota_data_v2';
   static late SharedPreferences _prefs;
   static bool _initialized = false;
-  
+
   // In-memory cache for better performance
   static List<KotaData>? _cachedData;
   static DateTime? _cacheTimestamp;
@@ -119,24 +120,65 @@ class SDGsDataService {
     _prefs = await SharedPreferences.getInstance();
     _initialized = true;
   }
-  
+
   // Check if cache is valid
   static bool get _isCacheValid {
     if (_cachedData == null || _cacheTimestamp == null) return false;
     return DateTime.now().difference(_cacheTimestamp!) < _cacheValidity;
   }
 
-  // Inisialisasi dengan data default jika storage kosong
+  // Inisialisasi dengan data dari GitHub atau fallback ke data default
   static Future<void> initializeDefaultData() async {
     await init();
     final existingData = await getAllKota();
 
     if (existingData.isEmpty) {
-      if (kDebugMode) print('Initializing default data...');
-      for (var kota in _getDefaultData()) {
-        await createKota(kota);
+      if (kDebugMode) print('Initializing SDGs data...');
+
+      // Try to fetch from GitHub first
+      final githubData = await SDGsGitHubRepository.fetchLatestData();
+
+      if (githubData != null) {
+        // Parse GitHub JSON data
+        if (kDebugMode) print('Loading data from GitHub...');
+        final cities = githubData['cities'] as List<dynamic>;
+        for (var cityJson in cities) {
+          final kota = _parseKotaFromJson(cityJson as Map<String, dynamic>);
+          await createKota(kota);
+        }
+      } else {
+        // Fallback to hardcoded data
+        if (kDebugMode) print('GitHub unavailable, using hardcoded data...');
+        for (var kota in _getDefaultData()) {
+          await createKota(kota);
+        }
       }
     }
+  }
+
+  // Parse city data from JSON (for GitHub integration)
+  static KotaData _parseKotaFromJson(Map<String, dynamic> json) {
+    return KotaData(
+      id: json['id'] ?? '',
+      nama: json['nama'] ?? '',
+      samitasilayak: _parseJsonMap(json['samitasilayak']),
+      tikRemaja: _parseJsonMap(json['tikRemaja']),
+      tikDewasa: _parseJsonMap(json['tikDewasa']),
+      aktaLahir: _parseJsonMap(json['aktaLahir']),
+      apm: _parseJsonMap(json['apm']),
+      apk: _parseJsonMap(json['apk']),
+    );
+  }
+
+  // Parse map from JSON where keys are strings (years)
+  static Map<int, double> _parseJsonMap(dynamic data) {
+    if (data == null) return {};
+    if (data is Map) {
+      return data.cast<String, dynamic>().map((key, value) {
+        return MapEntry(int.parse(key), (value as num).toDouble());
+      });
+    }
+    return {};
   }
 
   // Data default lengkap
@@ -1232,10 +1274,11 @@ class SDGsDataService {
     try {
       // Return cached data if valid
       if (_isCacheValid && _cachedData != null) {
-        if (kDebugMode) print('Returning cached data: ${_cachedData!.length} kota');
+        if (kDebugMode)
+          print('Returning cached data: ${_cachedData!.length} kota');
         return _cachedData!;
       }
-      
+
       await init();
       final jsonList = _prefs.getStringList(_storageKey) ?? [];
 
@@ -1246,7 +1289,7 @@ class SDGsDataService {
 
       final data =
           jsonList.map((json) => KotaData.fromJson(jsonDecode(json))).toList();
-      
+
       // Update cache
       _cachedData = data;
       _cacheTimestamp = DateTime.now();
@@ -1395,11 +1438,11 @@ class SDGsDataService {
       await init();
       final jsonList = data.map((k) => jsonEncode(k.toJson())).toList();
       await _prefs.setStringList(_storageKey, jsonList);
-      
+
       // Update cache after save
       _cachedData = data;
       _cacheTimestamp = DateTime.now();
-      
+
       if (kDebugMode) print('Data saved successfully: ${data.length} items');
       return true;
     } catch (e) {
@@ -1409,7 +1452,7 @@ class SDGsDataService {
       return false;
     }
   }
-  
+
   // UTILITY - Clear cache (call this when data is modified externally)
   static void clearCache() {
     _cachedData = null;

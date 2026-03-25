@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
+import 'kesimpulan_widget.dart';
 
 // BPS Color Palette (matching home_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -417,10 +418,43 @@ class _IpmScreenContent extends StatelessWidget {
               _IpmInformationPanel(
                   sizing: sizing, isSmallScreen: isSmallScreen),
               SizedBox(height: sizing.sectionSpacing),
+              _buildKesimpulanCard(context, sizing, isSmallScreen),
+              SizedBox(height: sizing.sectionSpacing),
             ]),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildKesimpulanCard(
+      BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+    if (ipmData.isEmpty || cachedSortedYears.length < 2) {
+      return const SizedBox.shrink();
+    }
+
+    final latestYear = cachedSortedYears.last;
+    final firstYear = cachedSortedYears.first;
+    final latestData = ipmData[latestYear]!;
+    final firstData = ipmData[firstYear]!;
+    final latestKomponen = komponenData[latestYear];
+
+    final conclusionData = KesimpulanGenerator.generateIPMConclusion(
+      latestYear: latestYear,
+      firstYear: firstYear,
+      latestIPM: latestData['ipm'] as double,
+      firstIPM: firstData['ipm'] as double,
+      nationalAverage: latestKomponen?['ipmNasional'] as double?,
+      provincialAverage: latestKomponen?['ipmJateng'] as double?,
+    );
+
+    return KesimpulanWidget(
+      title: 'Indeks Pembangunan Manusia',
+      conclusion: conclusionData['conclusion'] as String,
+      status: conclusionData['status'] as KesimpulanStatus,
+      sizing: sizing,
+      isSmallScreen: isSmallScreen,
+      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
     );
   }
 

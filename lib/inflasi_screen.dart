@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
+import 'kesimpulan_widget.dart';
 
 // BPS Color Palette (matching kemiskinana_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -320,6 +321,8 @@ class _InflasiScreenState extends State<InflasiScreen>
                       _buildMonthlyInflationChart(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
                       _buildInflationComponents(sizing, isSmallScreen),
+                      SizedBox(height: sizing.sectionSpacing),
+                      _buildKesimpulanCard(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
                     ]),
                   ),
@@ -1656,5 +1659,62 @@ class _InflasiScreenState extends State<InflasiScreen>
       default:
         return Icons.category_rounded;
     }
+  }
+
+  Widget _buildKesimpulanCard(ResponsiveSizing sizing, bool isSmallScreen) {
+    final sortedYears = monthlyInflationData.keys.toList()..sort();
+    if (sortedYears.length < 2) {
+      return const SizedBox.shrink();
+    }
+
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
+    final latestData = monthlyInflationData[latestYear];
+    final firstData = monthlyInflationData[firstYear];
+
+    if (latestData == null ||
+        firstData == null ||
+        latestData.isEmpty ||
+        firstData.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    // Calculate average inflation for each year
+    double calculateAverage(List<double> values) {
+      if (values.isEmpty) return 0.0;
+      return values.reduce((a, b) => a + b) / values.length;
+    }
+
+    final latestInflasi = calculateAverage(latestData);
+    final firstInflasi = calculateAverage(firstData);
+
+    // Calculate overall average across all years
+    double totalInflasi = 0;
+    int count = 0;
+    for (final year in sortedYears) {
+      final data = monthlyInflationData[year];
+      if (data != null && data.isNotEmpty) {
+        totalInflasi += calculateAverage(data);
+        count++;
+      }
+    }
+    final averageInflasi = count > 0 ? totalInflasi / count : 0.0;
+
+    final conclusionData = KesimpulanGenerator.generateInflasiConclusion(
+      latestYear: latestYear,
+      firstYear: firstYear,
+      latestInflasi: latestInflasi,
+      firstInflasi: firstInflasi,
+      averageInflasi: averageInflasi,
+    );
+
+    return KesimpulanWidget(
+      title: 'Inflasi Kota Semarang',
+      conclusion: conclusionData['conclusion'] as String,
+      status: conclusionData['status'] as KesimpulanStatus,
+      sizing: sizing,
+      isSmallScreen: isSmallScreen,
+      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
+    );
   }
 }

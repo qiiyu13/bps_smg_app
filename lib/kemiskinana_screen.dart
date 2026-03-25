@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
+import 'kesimpulan_widget.dart';
 
 // BPS Color Palette (matching home_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -131,7 +132,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                 'pendudukMiskinValue': 79.58,
                 'persentase': '4.34%',
                 'persentaseValue': 4.34,
-                'garisMiskin': 'Rp 533,691',
+                'garisMiskin': 'Rp 522,691',
                 'indeksKedalaman': '0.68',
                 'indeksKeparahan': '0.16',
                 'kemiskinanKota': '4.34%',
@@ -524,10 +525,43 @@ class _KemiskinanScreenContent extends StatelessWidget {
               _PovertyInformationPanel(
                   sizing: sizing, isSmallScreen: isSmallScreen),
               SizedBox(height: sizing.sectionSpacing),
+              _buildKesimpulanCard(context, sizing, isSmallScreen),
+              SizedBox(height: sizing.sectionSpacing),
             ]),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildKesimpulanCard(
+      BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+    if (yearlyData.isEmpty || cachedSortedYears.length < 2) {
+      return const SizedBox.shrink();
+    }
+
+    final latestYear = cachedSortedYears.last;
+    final firstYear = cachedSortedYears.first;
+    final latestData = yearlyData[latestYear]!;
+    final firstData = yearlyData[firstYear]!;
+
+    final conclusionData = KesimpulanGenerator.generateKemiskinanConclusion(
+      latestYear: latestYear,
+      firstYear: firstYear,
+      latestPercentage: latestData.persentaseValue,
+      firstPercentage: firstData.persentaseValue,
+      latestPopulation: latestData.pendudukMiskinDisplay,
+      urbanPercentage: latestData.kemiskinanKota,
+      ruralPercentage: latestData.kemiskinanDesa,
+    );
+
+    return KesimpulanWidget(
+      title: 'Kemiskinan Kota Semarang',
+      conclusion: conclusionData['conclusion'] as String,
+      status: conclusionData['status'] as KesimpulanStatus,
+      sizing: sizing,
+      isSmallScreen: isSmallScreen,
+      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
     );
   }
 
@@ -1404,29 +1438,37 @@ class _PovertyTrendChart extends StatelessWidget {
                   SizedBox(width: 16),
                   Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: isSmallScreen ? 12 : 16,
-                      vertical: isSmallScreen ? 8 : 10,
+                      horizontal: isSmallScreen ? 10 : 12,
+                      vertical: isSmallScreen ? 6 : 8,
                     ),
                     decoration: BoxDecoration(
-                      color:
-                          (isPositive ? _bpsGreen : _bpsRed).withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(20),
+                      color: isPositive ? _bpsGreen : _bpsRed,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: (isPositive ? _bpsGreen : _bpsRed)
+                              .withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           isPositive ? Icons.trending_down : Icons.trending_up,
-                          size: isSmallScreen ? 16 : 18,
-                          color: isPositive ? _bpsGreen : _bpsRed,
+                          size: isSmallScreen ? 14 : 16,
+                          color: Colors.white,
                         ),
-                        SizedBox(width: 6),
+                        SizedBox(width: 4),
                         Text(
                           isPositive ? 'Menurun' : 'Meningkat',
                           style: TextStyle(
-                            fontSize: isSmallScreen ? 13 : 15,
-                            color: isPositive ? _bpsGreen : _bpsRed,
+                            fontSize: isSmallScreen ? 12 : 13,
+                            color: Colors.white,
                             fontWeight: FontWeight.w700,
+                            letterSpacing: 0.2,
                           ),
                         ),
                       ],
