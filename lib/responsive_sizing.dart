@@ -61,11 +61,11 @@ class ResponsiveSizing {
   double get statsMiniChartWidth => _select(50.0, 55.0, 60.0);
 
   // Category grid
-  double get categoryAspectRatio => _select(1.15, 1.3, 1.5);
+  double get categoryAspectRatio => _select(2.2, 2.5, 2.8);
   double get gridSpacing => _select(8.0, 10.0, 12.0);
 
   // Category cards
-  double get categoryCardPadding => _select(10.0, 12.0, 16.0);
+  double get categoryCardPadding => _select(8.0, 10.0, 12.0);
   double get categoryIconContainerPadding => _select(7.0, 8.0, 10.0);
   double get categoryIconSize => _select(20.0, 22.0, 24.0);
   double get categoryLabelFontSize => _select(13.0, 14.0, 15.0);

@@ -225,60 +225,15 @@ class _AdminPertumbuhanEkonomiScreenState
               Icons.trending_up),
           _buildInfoRow(
               'Kontribusi PDRB', data.kontribusiPDRB, Icons.pie_chart),
+          _buildInfoRow('Sektor Industri', data.sektorIndustri, Icons.factory),
           _buildInfoRow(
-              'Sektor Perdagangan', data.sektorPerdagangan, Icons.store),
+              'Sektor Konstruksi', data.sektorKonstruksi, Icons.construction),
+          _buildInfoRow('Sektor Perdagangan', data.sektorPerdag, Icons.store),
           _buildInfoRow('PDRB per Kapita', data.pdrbPerKapita,
               Icons.account_balance_wallet),
           _buildInfoRow(
               'vs Jawa Tengah', data.vsJawaTengah, Icons.compare_arrows),
-          _buildInfoRow('vs Nasional', data.vsNasional, Icons.public),
-          const SizedBox(height: 12),
-          const Text(
-            'Kecamatan Tertinggi:',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF2D3436),
-              fontSize: 13,
-            ),
-          ),
-          const SizedBox(height: 8),
-          ...data.distrikTertinggi.asMap().entries.map((entry) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                children: [
-                  Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF00BCD4).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${entry.key + 1}',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF00BCD4),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      entry.value.nama,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF6B7280),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
+          _buildInfoRow('TPT', data.tpt, Icons.work_off),
         ],
       ),
     );
@@ -328,25 +283,17 @@ class _AdminPertumbuhanEkonomiScreenState
         TextEditingController(text: data?.pertumbuhanEkonomi ?? '');
     final kontribusiController =
         TextEditingController(text: data?.kontribusiPDRB ?? '');
-    final sektorController =
-        TextEditingController(text: data?.sektorPerdagangan ?? '');
+    final sektorIndustriController =
+        TextEditingController(text: data?.sektorIndustri ?? '');
+    final sektorKonstruksiController =
+        TextEditingController(text: data?.sektorKonstruksi ?? '');
+    final sektorPerdagController =
+        TextEditingController(text: data?.sektorPerdag ?? '');
     final pdrbController =
         TextEditingController(text: data?.pdrbPerKapita ?? '');
     final vsJatengController =
         TextEditingController(text: data?.vsJawaTengah ?? '');
-    final vsNasionalController =
-        TextEditingController(text: data?.vsNasional ?? '');
-
-    List<TextEditingController> distrikControllers = [];
-    if (data != null) {
-      for (var distrik in data.distrikTertinggi) {
-        distrikControllers.add(TextEditingController(text: distrik.nama));
-      }
-    } else {
-      for (int i = 0; i < 5; i++) {
-        distrikControllers.add(TextEditingController());
-      }
-    }
+    final tptController = TextEditingController(text: data?.tpt ?? '');
 
     List<TextEditingController> semarangYearControllers = [];
     List<TextEditingController> semarangValueControllers = [];
@@ -400,7 +347,7 @@ class _AdminPertumbuhanEkonomiScreenState
                 TextField(
                   controller: pertumbuhanController,
                   decoration: const InputDecoration(
-                    labelText: 'Pertumbuhan Ekonomi (ex: 5.31%)',
+                    labelText: 'Pertumbuhan Ekonomi (ex: 5.62%)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.trending_up),
                   ),
@@ -409,16 +356,34 @@ class _AdminPertumbuhanEkonomiScreenState
                 TextField(
                   controller: kontribusiController,
                   decoration: const InputDecoration(
-                    labelText: 'Kontribusi PDRB (ex: 9.8%)',
+                    labelText: 'Kontribusi PDRB (ex: 14.2%)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.pie_chart),
                   ),
                 ),
                 const SizedBox(height: 12),
                 TextField(
-                  controller: sektorController,
+                  controller: sektorIndustriController,
                   decoration: const InputDecoration(
-                    labelText: 'Sektor Perdagangan (ex: 28.5%)',
+                    labelText: 'Sektor Industri (ex: 25.04%)',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.factory),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: sektorKonstruksiController,
+                  decoration: const InputDecoration(
+                    labelText: 'Sektor Konstruksi (ex: 24.43%)',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.construction),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: sektorPerdagController,
+                  decoration: const InputDecoration(
+                    labelText: 'Sektor Perdagangan (ex: 13.97%)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.store),
                   ),
@@ -427,7 +392,7 @@ class _AdminPertumbuhanEkonomiScreenState
                 TextField(
                   controller: pdrbController,
                   decoration: const InputDecoration(
-                    labelText: 'PDRB per Kapita (ex: Rp 85.2 Juta)',
+                    labelText: 'PDRB per Kapita (ex: Rp 100.04 Juta)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.account_balance_wallet),
                   ),
@@ -436,50 +401,29 @@ class _AdminPertumbuhanEkonomiScreenState
                 TextField(
                   controller: vsJatengController,
                   decoration: const InputDecoration(
-                    labelText: 'vs Jawa Tengah (ex: 142%)',
+                    labelText: 'vs Jawa Tengah (ex: Rank #1/35)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.compare_arrows),
                   ),
                 ),
                 const SizedBox(height: 12),
                 TextField(
-                  controller: vsNasionalController,
+                  controller: tptController,
                   decoration: const InputDecoration(
-                    labelText: 'vs Nasional (ex: 125%)',
+                    labelText: 'TPT - Tingkat Pengangguran (ex: 5.82%)',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.public),
+                    prefixIcon: Icon(Icons.work_off),
                   ),
                 ),
                 const SizedBox(height: 20),
                 const Divider(),
                 const SizedBox(height: 12),
                 const Text(
-                  'Kecamatan Tertinggi (Top 5):',
+                  'Data Grafik Semarang:',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 const SizedBox(height: 8),
-                ...List.generate(5, (index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: TextField(
-                      controller: distrikControllers[index],
-                      decoration: InputDecoration(
-                        labelText: 'Kecamatan ${index + 1}',
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.location_city),
-                      ),
-                    ),
-                  );
-                }),
-                const SizedBox(height: 20),
-                const Divider(),
-                const SizedBox(height: 12),
-                const Text(
-                  'Data Grafik Semarang (5 Tahun):',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                const SizedBox(height: 8),
-                ...List.generate(5, (index) {
+                ...List.generate(semarangYearControllers.length, (index) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
@@ -513,11 +457,11 @@ class _AdminPertumbuhanEkonomiScreenState
                 const Divider(),
                 const SizedBox(height: 12),
                 const Text(
-                  'Data Grafik Jawa Tengah (5 Tahun):',
+                  'Data Grafik Jawa Tengah:',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 const SizedBox(height: 8),
-                ...List.generate(5, (index) {
+                ...List.generate(jatengYearControllers.length, (index) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
@@ -558,16 +502,18 @@ class _AdminPertumbuhanEkonomiScreenState
           ),
           ElevatedButton(
             onPressed: () {
-              List<ChartDataPoint> semarangData = [];
-              List<ChartDataPoint> jatengData = [];
+              List<ChartDataPoint> semarangChartData = [];
+              List<ChartDataPoint> jatengChartData = [];
 
-              for (int i = 0; i < 5; i++) {
-                semarangData.add(ChartDataPoint(
+              for (int i = 0; i < semarangYearControllers.length; i++) {
+                semarangChartData.add(ChartDataPoint(
                   year:
                       int.tryParse(semarangYearControllers[i].text) ?? 2020 + i,
                   value: double.tryParse(semarangValueControllers[i].text) ?? 0,
                 ));
-                jatengData.add(ChartDataPoint(
+              }
+              for (int i = 0; i < jatengYearControllers.length; i++) {
+                jatengChartData.add(ChartDataPoint(
                   year: int.tryParse(jatengYearControllers[i].text) ?? 2020 + i,
                   value: double.tryParse(jatengValueControllers[i].text) ?? 0,
                 ));
@@ -581,15 +527,14 @@ class _AdminPertumbuhanEkonomiScreenState
                     tahun: tahunController.text,
                     pertumbuhanEkonomi: pertumbuhanController.text,
                     kontribusiPDRB: kontribusiController.text,
-                    sektorPerdagangan: sektorController.text,
+                    sektorIndustri: sektorIndustriController.text,
+                    sektorKonstruksi: sektorKonstruksiController.text,
+                    sektorPerdag: sektorPerdagController.text,
                     pdrbPerKapita: pdrbController.text,
                     vsJawaTengah: vsJatengController.text,
-                    vsNasional: vsNasionalController.text,
-                    distrikTertinggi: distrikControllers
-                        .map((c) => DistrikData(nama: c.text))
-                        .toList(),
-                    semarangData: semarangData,
-                    jatengData: jatengData,
+                    tpt: tptController.text,
+                    semarangData: semarangChartData,
+                    jatengData: jatengChartData,
                   ),
                 );
               } else {
@@ -599,20 +544,19 @@ class _AdminPertumbuhanEkonomiScreenState
                     tahun: tahunController.text,
                     pertumbuhanEkonomi: pertumbuhanController.text,
                     kontribusiPDRB: kontribusiController.text,
-                    sektorPerdagangan: sektorController.text,
+                    sektorIndustri: sektorIndustriController.text,
+                    sektorKonstruksi: sektorKonstruksiController.text,
+                    sektorPerdag: sektorPerdagController.text,
                     pdrbPerKapita: pdrbController.text,
                     vsJawaTengah: vsJatengController.text,
-                    vsNasional: vsNasionalController.text,
-                    distrikTertinggi: distrikControllers
-                        .map((c) => DistrikData(nama: c.text))
-                        .toList(),
-                    semarangData: semarangData,
-                    jatengData: jatengData,
+                    tpt: tptController.text,
+                    semarangData: semarangChartData,
+                    jatengData: jatengChartData,
                   ),
                 );
               }
 
-              setState(() {}); // Refresh UI
+              setState(() {});
 
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(

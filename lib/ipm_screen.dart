@@ -131,6 +131,13 @@ class _IpmScreenState extends State<IpmScreen>
         'pengeluaran': 17250.00,
         'ipm': 85.24
       },
+      2025: {
+        'uhh': 78.72,
+        'rls': 11.11,
+        'hls': 15.58,
+        'pengeluaran': 17402.00,
+        'ipm': 85.80
+      },
     };
   }
 
@@ -141,6 +148,7 @@ class _IpmScreenState extends State<IpmScreen>
       2022: {'ipmNasional': 73.77, 'ipmJateng': 72.80, 'ipmSemarang': 84.08},
       2023: {'ipmNasional': 74.39, 'ipmJateng': 73.39, 'ipmSemarang': 84.43},
       2024: {'ipmNasional': 75.02, 'ipmJateng': 73.87, 'ipmSemarang': 85.24},
+      2025: {'ipmNasional': 75.90, 'ipmJateng': 74.77, 'ipmSemarang': 85.80},
     };
   }
 
@@ -260,19 +268,15 @@ class _IpmScreenState extends State<IpmScreen>
           padding: EdgeInsets.all(sizing.horizontalPadding),
           child: Row(
             children: [
-              Material(
-                color: Colors.white.withOpacity(0.15),
+              InkWell(
+                onTap: () => Navigator.of(context).pop(),
                 borderRadius: BorderRadius.circular(12),
-                child: InkWell(
-                  onTap: () => Navigator.of(context).pop(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                    child: Icon(
-                      Icons.arrow_back_rounded,
-                      color: Colors.white,
-                      size: isSmallScreen ? 20 : 24,
-                    ),
+                child: Padding(
+                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+                  child: Icon(
+                    Icons.arrow_back_rounded,
+                    color: Colors.white,
+                    size: isSmallScreen ? 20 : 24,
                   ),
                 ),
               ),
@@ -308,17 +312,10 @@ class _IpmScreenState extends State<IpmScreen>
                   ],
                 ),
               ),
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.trending_up_rounded,
-                  color: Colors.white,
-                  size: isSmallScreen ? 20 : 24,
-                ),
+              Icon(
+                Icons.trending_up_rounded,
+                color: Colors.white,
+                size: isSmallScreen ? 20 : 24,
               ),
             ],
           ),
@@ -480,17 +477,10 @@ class _IpmScreenContent extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.analytics_rounded,
-                  color: _bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.analytics_rounded,
+                color: _bpsOrange,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -731,17 +721,10 @@ class _IpmScreenContent extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(isDialogSmall ? 8 : 10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          icon,
-                          color: Colors.white,
-                          size: isDialogSmall ? 20 : 24,
-                        ),
+                      Icon(
+                        icon,
+                        color: Colors.white,
+                        size: isDialogSmall ? 20 : 24,
                       ),
                       SizedBox(width: isDialogSmall ? 8 : 12),
                       Expanded(
@@ -769,19 +752,15 @@ class _IpmScreenContent extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Material(
-                        color: Colors.white.withOpacity(0.2),
+                      InkWell(
+                        onTap: () => Navigator.pop(dialogContext),
                         borderRadius: BorderRadius.circular(8),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(dialogContext),
-                          borderRadius: BorderRadius.circular(8),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6),
-                            child: Icon(
-                              Icons.close_rounded,
-                              color: Colors.white,
-                              size: isDialogSmall ? 18 : 20,
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: isDialogSmall ? 18 : 20,
                           ),
                         ),
                       ),
@@ -929,17 +908,10 @@ class _YearSelector extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.calendar_today_rounded,
-                  color: _bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.calendar_today_rounded,
+                color: _bpsOrange,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Text(
@@ -1067,17 +1039,10 @@ class _IpmComparisonChart extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsGreen.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.show_chart,
-                  color: _bpsGreen,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.show_chart,
+                color: _bpsGreen,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -1334,17 +1299,10 @@ class _IpmInformationPanel extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.info_outline_rounded,
-                  color: _bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.info_outline_rounded,
+                color: _bpsOrange,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(

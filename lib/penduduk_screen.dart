@@ -691,17 +691,13 @@ class _PendudukScreenState extends State<PendudukScreen>
           padding: EdgeInsets.all(sizing.horizontalPadding),
           child: Row(
             children: [
-              Material(
-                color: Colors.white.withOpacity(0.15),
+              InkWell(
+                onTap: () => Navigator.of(context).pop(),
                 borderRadius: BorderRadius.circular(12),
-                child: InkWell(
-                  onTap: () => Navigator.of(context).pop(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                    child: Icon(Icons.arrow_back_rounded,
-                        color: Colors.white, size: isSmallScreen ? 20 : 24),
-                  ),
+                child: Padding(
+                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+                  child: Icon(Icons.arrow_back_rounded,
+                      color: Colors.white, size: isSmallScreen ? 20 : 24),
                 ),
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1163,19 +1159,15 @@ class _PendudukScreenState extends State<PendudukScreen>
                           ],
                         ),
                       ),
-                      Material(
-                        color: Colors.white.withOpacity(0.2),
+                      InkWell(
+                        onTap: () => Navigator.pop(dialogContext),
                         borderRadius: BorderRadius.circular(8),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(dialogContext),
-                          borderRadius: BorderRadius.circular(8),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6),
-                            child: Icon(
-                              Icons.close_rounded,
-                              color: Colors.white,
-                              size: isSmallScreen ? 18 : 20,
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: isSmallScreen ? 18 : 20,
                           ),
                         ),
                       ),

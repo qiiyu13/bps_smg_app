@@ -147,6 +147,12 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
         'bekerja': 922345,
         'pengangguran': 57123
       },
+      2025: {
+        'tpt': 5.65,
+        'tingkatPartisipasi': 72.60,
+        'bekerja': 938766,
+        'pengangguran': 56228
+      },
     };
   }
 
@@ -177,6 +183,11 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
         'bkbk': 408912,
         'tingkatKesempatan': 94.18
       },
+      2025: {
+        'angkatanKerja': 994994,
+        'bkbk': 938766,
+        'tingkatKesempatan': 94.35
+      },
     };
   }
 
@@ -187,6 +198,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
       2022: {'Pertanian': 1.00, 'Manufaktur': 28.00, 'Jasa': 70.00},
       2023: {'Pertanian': 2.00, 'Manufaktur': 26.00, 'Jasa': 72.00},
       2024: {'Pertanian': 2.00, 'Manufaktur': 28.00, 'Jasa': 70.00},
+      2025: {'Pertanian': 2.00, 'Manufaktur': 28.00, 'Jasa': 70.00},
     };
   }
 
@@ -316,19 +328,15 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
           padding: EdgeInsets.all(sizing.horizontalPadding),
           child: Row(
             children: [
-              Material(
-                color: Colors.white.withOpacity(0.15),
+              InkWell(
+                onTap: () => Navigator.of(context).pop(),
                 borderRadius: BorderRadius.circular(12),
-                child: InkWell(
-                  onTap: () => Navigator.of(context).pop(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                    child: Icon(
-                      Icons.arrow_back_rounded,
-                      color: Colors.white,
-                      size: isSmallScreen ? 20 : 24,
-                    ),
+                child: Padding(
+                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+                  child: Icon(
+                    Icons.arrow_back_rounded,
+                    color: Colors.white,
+                    size: isSmallScreen ? 20 : 24,
                   ),
                 ),
               ),
@@ -364,17 +372,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                   ],
                 ),
               ),
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.work_rounded,
-                  color: Colors.white,
-                  size: isSmallScreen ? 20 : 24,
-                ),
+              Icon(
+                Icons.work_rounded,
+                color: Colors.white,
+                size: isSmallScreen ? 20 : 24,
               ),
             ],
           ),
@@ -405,17 +406,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.calendar_today_rounded,
-                  color: _bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.calendar_today_rounded,
+                color: _bpsBlue,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Text(
@@ -516,17 +510,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.analytics_rounded,
-                  color: _bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.analytics_rounded,
+                color: _bpsBlue,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -654,17 +641,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.info_rounded,
-                  color: _bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.info_rounded,
+                color: _bpsBlue,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -889,17 +869,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          icon,
-                          color: Colors.white,
-                          size: isSmallScreen ? 20 : 24,
-                        ),
+                      Icon(
+                        icon,
+                        color: Colors.white,
+                        size: isSmallScreen ? 20 : 24,
                       ),
                       SizedBox(width: isSmallScreen ? 8 : 12),
                       Expanded(
@@ -927,19 +900,15 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                           ],
                         ),
                       ),
-                      Material(
-                        color: Colors.white.withOpacity(0.2),
+                      InkWell(
+                        onTap: () => Navigator.pop(dialogContext),
                         borderRadius: BorderRadius.circular(8),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(dialogContext),
-                          borderRadius: BorderRadius.circular(8),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6),
-                            child: Icon(
-                              Icons.close_rounded,
-                              color: Colors.white,
-                              size: isSmallScreen ? 18 : 20,
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: isSmallScreen ? 18 : 20,
                           ),
                         ),
                       ),
@@ -1077,17 +1046,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.show_chart_rounded,
-                  color: _bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.show_chart_rounded,
+                color: _bpsBlue,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -1299,17 +1261,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.bar_chart_rounded,
-                  color: _bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.bar_chart_rounded,
+                color: _bpsBlue,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(

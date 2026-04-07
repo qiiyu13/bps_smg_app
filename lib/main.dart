@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:device_preview/device_preview.dart';
 import 'splash_screen.dart';
 import 'onboarding_screen.dart';
@@ -16,7 +17,8 @@ void main() {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]).then((_) {
-    runApp(DevicePreview(enabled: true, builder: (context) => const MyApp()));
+    runApp(DevicePreview(
+        enabled: kDebugMode, builder: (context) => const MyApp()));
   });
 }
 

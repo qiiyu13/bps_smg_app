@@ -452,19 +452,15 @@ class _IPGScreenState extends State<IPGScreen>
           padding: EdgeInsets.all(sizing.horizontalPadding),
           child: Row(
             children: [
-              Material(
-                color: Colors.white.withOpacity(0.15),
+              InkWell(
+                onTap: () => Navigator.of(context).pop(),
                 borderRadius: BorderRadius.circular(12),
-                child: InkWell(
-                  onTap: () => Navigator.of(context).pop(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                    child: Icon(
-                      Icons.arrow_back_rounded,
-                      color: Colors.white,
-                      size: isSmallScreen ? 20 : 24,
-                    ),
+                child: Padding(
+                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+                  child: Icon(
+                    Icons.arrow_back_rounded,
+                    color: Colors.white,
+                    size: isSmallScreen ? 20 : 24,
                   ),
                 ),
               ),
@@ -500,17 +496,10 @@ class _IPGScreenState extends State<IPGScreen>
                   ],
                 ),
               ),
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.balance_rounded,
-                  color: Colors.white,
-                  size: isSmallScreen ? 20 : 24,
-                ),
+              Icon(
+                Icons.balance_rounded,
+                color: Colors.white,
+                size: isSmallScreen ? 20 : 24,
               ),
             ],
           ),
@@ -541,17 +530,10 @@ class _IPGScreenState extends State<IPGScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.calendar_today_rounded,
-                  color: _bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.calendar_today_rounded,
+                color: _bpsOrange,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Text(
@@ -646,17 +628,10 @@ class _IPGScreenState extends State<IPGScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.analytics_rounded,
-                  color: _bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.analytics_rounded,
+                color: _bpsOrange,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -789,17 +764,10 @@ class _IPGScreenState extends State<IPGScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.analytics_rounded,
-                  color: _bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.analytics_rounded,
+                color: _bpsOrange,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -1008,17 +976,10 @@ class _IPGScreenState extends State<IPGScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsPurple.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.show_chart_rounded,
-                  color: _bpsPurple,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.show_chart_rounded,
+                color: _bpsPurple,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -1258,17 +1219,10 @@ class _IPGScreenState extends State<IPGScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.bar_chart_rounded,
-                  color: _bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.bar_chart_rounded,
+                color: _bpsOrange,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -1430,17 +1384,10 @@ class _IPGScreenState extends State<IPGScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.info_outline_rounded,
-                  color: _bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.info_outline_rounded,
+                color: _bpsOrange,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -1763,17 +1710,10 @@ class _IPGScreenState extends State<IPGScreen>
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          icon,
-                          color: Colors.white,
-                          size: isSmallScreen ? 20 : 24,
-                        ),
+                      Icon(
+                        icon,
+                        color: Colors.white,
+                        size: isSmallScreen ? 20 : 24,
                       ),
                       SizedBox(width: isSmallScreen ? 8 : 12),
                       Expanded(
@@ -1801,19 +1741,15 @@ class _IPGScreenState extends State<IPGScreen>
                           ],
                         ),
                       ),
-                      Material(
-                        color: Colors.white.withOpacity(0.2),
+                      InkWell(
+                        onTap: () => Navigator.pop(dialogContext),
                         borderRadius: BorderRadius.circular(8),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(dialogContext),
-                          borderRadius: BorderRadius.circular(8),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6),
-                            child: Icon(
-                              Icons.close_rounded,
-                              color: Colors.white,
-                              size: isSmallScreen ? 18 : 20,
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: isSmallScreen ? 18 : 20,
                           ),
                         ),
                       ),

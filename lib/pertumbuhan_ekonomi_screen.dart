@@ -194,19 +194,15 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
           padding: EdgeInsets.all(sizing.horizontalPadding),
           child: Row(
             children: [
-              Material(
-                color: Colors.white.withOpacity(0.15),
+              InkWell(
+                onTap: () => Navigator.of(context).pop(),
                 borderRadius: BorderRadius.circular(12),
-                child: InkWell(
-                  onTap: () => Navigator.of(context).pop(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                    child: Icon(
-                      Icons.arrow_back_rounded,
-                      color: Colors.white,
-                      size: isSmallScreen ? 20 : 24,
-                    ),
+                child: Padding(
+                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+                  child: Icon(
+                    Icons.arrow_back_rounded,
+                    color: Colors.white,
+                    size: isSmallScreen ? 20 : 24,
                   ),
                 ),
               ),
@@ -242,17 +238,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                   ],
                 ),
               ),
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.show_chart_rounded,
-                  color: Colors.white,
-                  size: isSmallScreen ? 20 : 24,
-                ),
+              Icon(
+                Icons.show_chart_rounded,
+                color: Colors.white,
+                size: isSmallScreen ? 20 : 24,
               ),
             ],
           ),
@@ -283,17 +272,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.calendar_today_rounded,
-                  color: _bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.calendar_today_rounded,
+                color: _bpsBlue,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Text(
@@ -388,17 +370,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.analytics_rounded,
-                  color: _bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.analytics_rounded,
+                color: _bpsBlue,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -472,7 +447,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
                 context: context,
-                value: data.sektorPerdagangan,
+                value: data.sektorPerdag,
                 label: 'Sektor Perdagangan',
                 color: _bpsOrange,
                 icon: Icons.store_rounded,
@@ -623,17 +598,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          icon,
-                          color: Colors.white,
-                          size: isSmallScreen ? 20 : 24,
-                        ),
+                      Icon(
+                        icon,
+                        color: Colors.white,
+                        size: isSmallScreen ? 20 : 24,
                       ),
                       SizedBox(width: isSmallScreen ? 8 : 12),
                       Expanded(
@@ -661,19 +629,15 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                           ],
                         ),
                       ),
-                      Material(
-                        color: Colors.white.withOpacity(0.2),
+                      InkWell(
+                        onTap: () => Navigator.pop(dialogContext),
                         borderRadius: BorderRadius.circular(8),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(dialogContext),
-                          borderRadius: BorderRadius.circular(8),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6),
-                            child: Icon(
-                              Icons.close_rounded,
-                              color: Colors.white,
-                              size: isSmallScreen ? 18 : 20,
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: isSmallScreen ? 18 : 20,
                           ),
                         ),
                       ),
@@ -799,17 +763,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.account_balance_wallet_rounded,
-                  color: _bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.account_balance_wallet_rounded,
+                color: _bpsBlue,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Text(
@@ -907,9 +864,9 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
               SizedBox(width: sizing.gridSpacing),
               Expanded(
                 child: _buildPDRBComparisonCard(
-                  value: data.vsNasional,
-                  label: 'vs Nasional',
-                  icon: Icons.public_rounded,
+                  value: data.tpt,
+                  label: 'TPT',
+                  icon: Icons.work_off_rounded,
                   color: _bpsOrange,
                   isSmallScreen: isSmallScreen,
                 ),
@@ -941,17 +898,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              icon,
-              color: color,
-              size: isSmallScreen ? 20 : 24,
-            ),
+          Icon(
+            icon,
+            color: color,
+            size: isSmallScreen ? 20 : 24,
           ),
           SizedBox(height: isSmallScreen ? 8 : 10),
           Text(
@@ -1002,17 +952,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.show_chart_rounded,
-                  color: _bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.show_chart_rounded,
+                color: _bpsBlue,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -1257,17 +1200,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
           children: [
             Row(
               children: [
-                Container(
-                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                  decoration: BoxDecoration(
-                    color: _bpsOrange.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.emoji_events_rounded,
-                    color: _bpsOrange,
-                    size: isSmallScreen ? 16 : 20,
-                  ),
+                Icon(
+                  Icons.emoji_events_rounded,
+                  color: _bpsOrange,
+                  size: isSmallScreen ? 16 : 20,
                 ),
                 SizedBox(width: sizing.itemSpacing),
                 Expanded(
@@ -1326,17 +1262,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
           children: [
             Row(
               children: [
-                Container(
-                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                  decoration: BoxDecoration(
-                    color: _bpsOrange.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.emoji_events_rounded,
-                    color: _bpsOrange,
-                    size: isSmallScreen ? 16 : 20,
-                  ),
+                Icon(
+                  Icons.emoji_events_rounded,
+                  color: _bpsOrange,
+                  size: isSmallScreen ? 16 : 20,
                 ),
                 SizedBox(width: sizing.itemSpacing),
                 Expanded(
@@ -1402,17 +1331,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.emoji_events_rounded,
-                  color: _bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.emoji_events_rounded,
+                color: _bpsOrange,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(

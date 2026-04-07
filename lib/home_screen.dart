@@ -12,6 +12,7 @@ import 'inflasi_screen.dart';
 import 'penduduk_screen.dart';
 import 'pendidikan_screen.dart';
 import 'tenaga_kerja_screen.dart';
+import 'pengangguran_screen.dart';
 import 'pertumbuhan_ekonomi_screen.dart';
 import 'ipg_screen.dart';
 import 'idg_screen.dart';
@@ -90,7 +91,7 @@ class _HomeScreenCache {
     ),
     const CategoryItem(
       label: 'Tenaga Kerja',
-      shortLabel: 'Ketenagakerjaan',
+      shortLabel: 'Tenaga Kerja',
       icon: Icons.work_rounded,
       screen: TenagaKerjaScreen(),
       group: 'Economic',
@@ -101,6 +102,14 @@ class _HomeScreenCache {
       shortLabel: 'Kemiskinan',
       icon: Icons.volunteer_activism_rounded,
       screen: KemiskinanScreen(),
+      group: 'Economic',
+      groupColor: bpsEconomicColor,
+    ),
+    const CategoryItem(
+      label: 'Pengangguran',
+      shortLabel: 'Pengangguran',
+      icon: Icons.work_off_rounded,
+      screen: PengangguranScreen(),
       group: 'Economic',
       groupColor: bpsEconomicColor,
     ),
@@ -703,36 +712,28 @@ class _HomeScreenContent extends StatelessWidget {
               ),
             ),
             // Stats cards section
-            Container(
-              margin:
-                  EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
+            SizedBox(
               height: sizing.statsCardHeight,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: bpsBlue.withOpacity(0.08),
-                    blurRadius: 20,
-                    offset: const Offset(0, 4),
-                    spreadRadius: -4,
-                  ),
-                ],
-              ),
-              clipBehavior: Clip.antiAlias,
+              // Removed fixed white background, border radius, and strict clipping
+              // so the cards feel like they are floating freely rather than being inside a frame.
               child: PageView.builder(
                 controller: statsPageController,
                 itemCount: 4,
-                physics: const PageScrollPhysics(),
+                physics: const BouncingScrollPhysics(), // Softer bounce effect when swiping
                 allowImplicitScrolling: true,
+                clipBehavior: Clip.none, // Allow shadows of the floating cards to show
                 itemBuilder: (context, index) {
-                  return switch (index) {
-                    0 => const _StatsCard1(),
-                    1 => const _StatsCard2(),
-                    2 => const _StatsCard3(),
-                    3 => const _StatsCard4(),
-                    _ => const SizedBox(),
-                  };
+                  return Padding(
+                    // Add the horizontal margin back here so the individual cards don't touch the edges
+                    padding: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
+                    child: switch (index) {
+                      0 => const _StatsCard1(),
+                      1 => const _StatsCard2(),
+                      2 => const _StatsCard3(),
+                      3 => const _StatsCard4(),
+                      _ => const SizedBox(),
+                    },
+                  );
                 },
               ),
             ),
@@ -1396,57 +1397,39 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
   Widget build(BuildContext context) {
     final sizing = ResponsiveSizing(context);
 
-    return Padding(
-      padding: const EdgeInsets.all(9),
-      child: GestureDetector(
-        onTapDown: _handleTapDown,
-        onTapUp: _handleTapUp,
-        onTapCancel: _handleTapCancel,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => widget.screen),
+    return GestureDetector(
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => widget.screen),
+        );
+      },
+      child: AnimatedBuilder(
+        animation: _scaleController,
+        builder: (context, child) {
+          final scale = 1.0 - (_scaleController.value * 0.02);
+          return Transform.scale(
+            scale: scale,
+            child: child,
           );
         },
-        child: AnimatedBuilder(
-          animation: _scaleController,
-          builder: (context, child) {
-            final scale = 1.0 - (_scaleController.value * 0.02);
-            return Transform.scale(
-              scale: scale,
-              child: child,
-            );
-          },
-          child: Container(
-            decoration: BoxDecoration(
+        child: Container(
+          decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: Colors.white.withOpacity(0.85),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withOpacity(0.98),
-                  widget.accentColor.withOpacity(0.06),
-                ],
-              ),
+              color: widget.accentColor,
               border: Border.all(
-                color: _isPressed
-                    ? widget.accentColor.withOpacity(0.5)
-                    : widget.accentColor.withOpacity(0.18),
-                width: _isPressed ? 2.0 : 1.5,
+                color: Colors.white.withOpacity(_isPressed ? 0.3 : 0.15),
+                width: 1.2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color:
-                      widget.accentColor.withOpacity(_isPressed ? 0.18 : 0.12),
-                  blurRadius: _isPressed ? 25 : 20,
-                  offset: const Offset(0, 6),
-                  spreadRadius: -4,
-                ),
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
+                  color: widget.accentColor.withOpacity(_isPressed ? 0.4 : 0.3),
+                  blurRadius: _isPressed ? 16 : 12,
+                  offset: const Offset(0, 4),
+                  spreadRadius: -2,
                 ),
               ],
             ),
@@ -1462,27 +1445,15 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
                     );
                   },
                   borderRadius: BorderRadius.circular(20),
-                  splashColor: widget.accentColor.withOpacity(0.1),
-                  highlightColor: widget.accentColor.withOpacity(0.05),
+                  splashColor: Colors.white.withOpacity(0.1),
+                  highlightColor: Colors.white.withOpacity(0.05),
                   child: Padding(
-                    padding: EdgeInsets.all(sizing.statsCardPadding - 4),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: sizing.statsCardPadding + 6,
+                      vertical: sizing.statsCardPadding - 2,
+                    ),
                     child: Row(
                       children: [
-                        // Icon with accent tint
-                        Container(
-                          width: sizing.statsIconContainerSize - 4,
-                          height: sizing.statsIconContainerSize - 4,
-                          decoration: BoxDecoration(
-                            color: widget.accentColor.withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            widget.icon,
-                            color: widget.accentColor,
-                            size: sizing.statsIconSize - 2,
-                          ),
-                        ),
-                        SizedBox(width: sizing.statsCardPadding - 6),
                         // Data
                         Expanded(
                           child: Column(
@@ -1495,29 +1466,29 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
                                   Text(
                                     widget.label,
                                     style: TextStyle(
-                                      fontSize: sizing.statsLabelFontSize,
-                                      fontWeight: FontWeight.w600,
-                                      color: bpsTextSecondary,
+                                      fontSize: sizing.statsLabelFontSize + 4,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
                                       fontFamily: 'Poppins',
+                                      letterSpacing: 0.3,
                                     ),
                                   ),
                                 ],
                               ),
-                              // Date with improved contrast (WCAG AA)
+                              // Date
                               if (widget.latestDate != null) ...[
-                                const SizedBox(height: 1),
+                                const SizedBox(height: 2),
                                 Text(
                                   _formatFullDate(widget.latestDate!),
                                   style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        bpsTextSecondary, // Darker for better contrast
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white.withOpacity(0.75),
                                     fontFamily: 'Poppins',
                                   ),
                                 ),
                               ],
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 8),
                               // Big number with superscript unit
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -1526,27 +1497,27 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
                                   Text(
                                     widget.value,
                                     style: TextStyle(
-                                      fontSize: sizing.statsValueFontSize + 2,
+                                      fontSize: sizing.statsValueFontSize + 4,
                                       fontWeight: FontWeight.w800,
-                                      color: bpsTextPrimary,
+                                      color: Colors.white,
                                       height: 1,
                                       fontFamily: 'Poppins',
                                       letterSpacing: -0.5,
                                     ),
                                   ),
                                   if (widget.unit.isNotEmpty) ...[
-                                    const SizedBox(width: 2),
+                                    const SizedBox(width: 3),
                                     Baseline(
-                                      baseline: sizing.statsValueFontSize + 2,
+                                      baseline: sizing.statsValueFontSize + 4,
                                       baselineType: TextBaseline.alphabetic,
                                       child: Text(
                                         widget.unit,
                                         style: TextStyle(
                                           fontSize:
-                                              (sizing.statsValueFontSize + 2) *
+                                              (sizing.statsValueFontSize + 4) *
                                                   0.55,
                                           fontWeight: FontWeight.w600,
-                                          color: bpsTextSecondary,
+                                          color: Colors.white.withOpacity(0.85),
                                           fontFamily: 'Poppins',
                                         ),
                                       ),
@@ -1559,55 +1530,38 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
                         ),
                         // Chart and delta indicator column
                         SizedBox(
-                          width: sizing.statsMiniChartWidth + 20,
+                          width: sizing.statsMiniChartWidth + 40,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              // Delta indicator pill - green with white text
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: bpsGreen,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: bpsGreen.withOpacity(0.3),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      _getDeltaIcon(),
-                                      size: 12,
+                              // Delta indicator
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    _getDeltaIcon(),
+                                    size: 20,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    widget.change,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
                                       color: Colors.white,
+                                      fontFamily: 'Poppins',
+                                      letterSpacing: 0.2,
                                     ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      widget.change,
-                                      style: const TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.white,
-                                        fontFamily: 'Poppins',
-                                        letterSpacing: 0.2,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 8),
                               // Sparkline chart
-                              _GlassMiniChart(
+                              _MiniChart(
                                 spots: widget.chartSpots,
-                                color: widget.accentColor,
+                                color: Colors.white.withOpacity(0.9),
                               ),
                             ],
                           ),
@@ -1620,8 +1574,7 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
 
@@ -1770,83 +1723,81 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => category.screen),
-          );
-        },
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: bpsBorder,
-              width: 1.5,
-            ),
-            boxShadow: [BPSShadows.cardShadow],
+        border: Border.all(
+          color: category.groupColor.withOpacity(0.15),
+          width: 1.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: category.groupColor.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+            spreadRadius: -2,
           ),
-          padding: EdgeInsets.all(sizing.categoryCardPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => category.screen),
+            );
+          },
+          borderRadius: BorderRadius.circular(16),
+          highlightColor: category.groupColor.withOpacity(0.05),
+          splashColor: category.groupColor.withOpacity(0.1),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding:
-                        EdgeInsets.all(sizing.categoryIconContainerPadding),
-                    decoration: BoxDecoration(
-                      color: category.groupColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      category.icon,
-                      color: category.groupColor,
-                      size: sizing.categoryIconSize,
-                    ),
+              // Subtle colored strip indicator on the left
+              Container(
+                width: 4,
+                decoration: BoxDecoration(
+                  color: category.groupColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    bottomLeft: Radius.circular(15),
                   ),
-                  const Spacer(),
-                  Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: bpsTextLabel,
-                    size: sizing.categoryArrowSize,
-                  ),
-                ],
+                ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    category.shortLabel,
-                    style: TextStyle(
-                      fontSize: sizing.categoryLabelFontSize,
-                      fontWeight: FontWeight.w700,
-                      color: bpsTextPrimary,
-                      height: 1.2,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: sizing.categoryCardPadding,
+                    vertical: 6,
                   ),
-                  if (category.label != category.shortLabel) ...[
-                    SizedBox(height: sizing.isVerySmall ? 2 : 4),
-                    Text(
-                      category.label,
-                      style: TextStyle(
-                        fontSize: sizing.categorySubLabelFontSize,
-                        color: bpsTextLabel,
-                        height: 1.2,
+                  child: Row(
+                    children: [
+                      Icon(
+                        category.icon,
+                        color: category.groupColor,
+                        size: sizing.isVerySmall ? 20 : 24,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ],
+                      SizedBox(width: sizing.itemSpacing),
+                      Expanded(
+                        child: Text(
+                          category.shortLabel,
+                          style: TextStyle(
+                            fontSize: sizing.isVerySmall
+                                ? sizing.categoryLabelFontSize - 2
+                                : sizing.categoryLabelFontSize - 1,
+                            fontWeight: FontWeight.w600,
+                            color: bpsTextPrimary,
+                            height: 1.2,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

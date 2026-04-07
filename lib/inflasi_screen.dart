@@ -354,19 +354,15 @@ class _InflasiScreenState extends State<InflasiScreen>
           padding: EdgeInsets.all(sizing.horizontalPadding),
           child: Row(
             children: [
-              Material(
-                color: Colors.white.withOpacity(0.15),
+              InkWell(
+                onTap: () => Navigator.of(context).pop(),
                 borderRadius: BorderRadius.circular(12),
-                child: InkWell(
-                  onTap: () => Navigator.of(context).pop(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                    child: Icon(
-                      Icons.arrow_back_rounded,
-                      color: Colors.white,
-                      size: isSmallScreen ? 20 : 24,
-                    ),
+                child: Padding(
+                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+                  child: Icon(
+                    Icons.arrow_back_rounded,
+                    color: Colors.white,
+                    size: isSmallScreen ? 20 : 24,
                   ),
                 ),
               ),
@@ -402,17 +398,10 @@ class _InflasiScreenState extends State<InflasiScreen>
                   ],
                 ),
               ),
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.analytics_rounded,
-                  color: Colors.white,
-                  size: isSmallScreen ? 20 : 24,
-                ),
+              Icon(
+                Icons.analytics_rounded,
+                color: Colors.white,
+                size: isSmallScreen ? 20 : 24,
               ),
             ],
           ),
@@ -443,17 +432,10 @@ class _InflasiScreenState extends State<InflasiScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.calendar_today_rounded,
-                  color: _bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.calendar_today_rounded,
+                color: _bpsBlue,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Text(
@@ -551,17 +533,10 @@ class _InflasiScreenState extends State<InflasiScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.calendar_month_rounded,
-                  color: _bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.calendar_month_rounded,
+                color: _bpsOrange,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Text(
@@ -683,17 +658,10 @@ class _InflasiScreenState extends State<InflasiScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.analytics_rounded,
-                  color: _bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.analytics_rounded,
+                color: _bpsBlue,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -931,17 +899,10 @@ class _InflasiScreenState extends State<InflasiScreen>
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          icon,
-                          color: Colors.white,
-                          size: isSmallScreen ? 20 : 24,
-                        ),
+                      Icon(
+                        icon,
+                        color: Colors.white,
+                        size: isSmallScreen ? 20 : 24,
                       ),
                       SizedBox(width: isSmallScreen ? 8 : 12),
                       Expanded(
@@ -969,19 +930,15 @@ class _InflasiScreenState extends State<InflasiScreen>
                           ],
                         ),
                       ),
-                      Material(
-                        color: Colors.white.withOpacity(0.2),
+                      InkWell(
+                        onTap: () => Navigator.pop(dialogContext),
                         borderRadius: BorderRadius.circular(8),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(dialogContext),
-                          borderRadius: BorderRadius.circular(8),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6),
-                            child: Icon(
-                              Icons.close_rounded,
-                              color: Colors.white,
-                              size: isSmallScreen ? 18 : 20,
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: isSmallScreen ? 18 : 20,
                           ),
                         ),
                       ),
@@ -1114,17 +1071,10 @@ class _InflasiScreenState extends State<InflasiScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.show_chart_rounded,
-                  color: _bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.show_chart_rounded,
+                color: _bpsBlue,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -1317,17 +1267,10 @@ class _InflasiScreenState extends State<InflasiScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsGreen.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.bar_chart_rounded,
-                  color: _bpsGreen,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.bar_chart_rounded,
+                color: _bpsGreen,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
@@ -1484,17 +1427,10 @@ class _InflasiScreenState extends State<InflasiScreen>
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.category_rounded,
-                  color: _bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
+              Icon(
+                Icons.category_rounded,
+                color: _bpsOrange,
+                size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
               Text(
