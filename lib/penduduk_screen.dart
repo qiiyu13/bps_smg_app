@@ -197,7 +197,7 @@ class _PendudukScreenState extends State<PendudukScreen>
         processedData = _getDefaultData();
       }
 
-      List<int> years = processedData.keys.toList()..sort();
+      List<int> years = processedData.keys.toList()..sort((a, b) => b.compareTo(a));
       _cachedSpots = [];
       for (int i = 0; i < years.length; i++) {
         double growthRate = processedData[years[i]]?.growthRate ?? 0.0;
@@ -292,7 +292,7 @@ class _PendudukScreenState extends State<PendudukScreen>
           semarangDataByYear = processedData;
           districtDensityByYear = loadedDistrictData;
           availableYears = years;
-          selectedYear = years.isNotEmpty ? years.last : 2024;
+          selectedYear = years.isNotEmpty ? years.first : 2024;
           isLoading = false;
         });
       }
@@ -588,7 +588,7 @@ class _PendudukScreenState extends State<PendudukScreen>
       setState(() {
         semarangDataByYear = processedData;
         districtDensityByYear = _getDefaultDistrictData();
-        availableYears = [2020, 2021, 2022, 2023, 2024];
+        availableYears = [2024, 2023, 2022, 2021, 2020];
         selectedYear = 2024;
         isLoading = false;
       });
@@ -597,7 +597,7 @@ class _PendudukScreenState extends State<PendudukScreen>
 
   SemarangData get currentSemarangData {
     return semarangDataByYear[selectedYear] ??
-        semarangDataByYear[availableYears.last]!;
+        semarangDataByYear[availableYears.first]!;
   }
 
   List<DistrictDensity> get currentDistrictDensity {
@@ -702,29 +702,16 @@ class _PendudukScreenState extends State<PendudukScreen>
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Data Penduduk',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: isSmallScreen
-                                ? sizing.headerTitleSize - 2
-                                : sizing.headerTitleSize,
-                            fontWeight: FontWeight.w700,
-                            height: 1.1),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis),
-                    SizedBox(height: isSmallScreen ? 2 : 4),
-                    Text('Data Tahun $selectedYear',
-                        style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: isSmallScreen
-                                ? sizing.headerSubtitleSize - 2
-                                : sizing.headerSubtitleSize,
-                            fontWeight: FontWeight.w400)),
-                  ],
-                ),
+                child: Text('Data Penduduk',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isSmallScreen
+                            ? sizing.headerTitleSize + 4
+                            : sizing.headerTitleSize + 8,
+                        fontWeight: FontWeight.w700,
+                        height: 1.1),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
               ),
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
@@ -1271,7 +1258,7 @@ class _PendudukScreenState extends State<PendudukScreen>
 
   Widget _buildPopulationChart(ResponsiveSizing sizing, bool isSmallScreen) {
     // Prepare data for LineChart - only 2020-2024
-    final chartYears = [2020, 2021, 2022, 2023, 2024];
+    final chartYears = [2024, 2023, 2022, 2021, 2020];
     final spots = <FlSpot>[];
     final yearLabels = <String>[];
 
@@ -1919,9 +1906,9 @@ class _PendudukScreenState extends State<PendudukScreen>
       return const SizedBox.shrink();
     }
 
-    final sortedYears = availableYears..sort();
-    final latestYear = sortedYears.last;
-    final firstYear = sortedYears.first;
+    final sortedYears = availableYears..sort((a, b) => b.compareTo(a));
+    final latestYear = sortedYears.first;
+    final firstYear = sortedYears.last;
     final latestData = semarangDataByYear[latestYear];
     final firstData = semarangDataByYear[firstYear];
 
@@ -1949,7 +1936,7 @@ class _PendudukScreenState extends State<PendudukScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
     );
   }
 }

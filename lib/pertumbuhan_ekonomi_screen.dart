@@ -43,8 +43,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
   @override
   void initState() {
     super.initState();
-    availableYears = dataManager.getAvailableYears()..sort();
-    selectedYear = availableYears.isNotEmpty ? availableYears.last : 2024;
+    availableYears = dataManager.getAvailableYears()..sort((a, b) => b.compareTo(a));
+    selectedYear = availableYears.isNotEmpty ? availableYears.first : 2024;
     _debounceTimer = Timer(const Duration(milliseconds: 100), () {});
     _loadRankings();
   }
@@ -208,34 +208,18 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Pertumbuhan Ekonomi',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: isSmallScreen
-                            ? sizing.headerTitleSize - 2
-                            : sizing.headerTitleSize,
-                        fontWeight: FontWeight.w700,
-                        height: 1.1,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: isSmallScreen ? 2 : 4),
-                    Text(
-                      'Data Tahun $selectedYear',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: isSmallScreen
-                            ? sizing.headerSubtitleSize - 2
-                            : sizing.headerSubtitleSize,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  'Pertumbuhan Ekonomi',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isSmallScreen
+                        ? sizing.headerTitleSize + 4
+                        : sizing.headerTitleSize + 8,
+                    fontWeight: FontWeight.w700,
+                    height: 1.1,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Icon(
@@ -1545,9 +1529,9 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
       return const SizedBox.shrink();
     }
 
-    final sortedYears = availableYears..sort();
-    final latestYear = sortedYears.last;
-    final firstYear = sortedYears.first;
+    final sortedYears = availableYears..sort((a, b) => b.compareTo(a));
+    final latestYear = sortedYears.first;
+    final firstYear = sortedYears.last;
 
     final latestData = dataManager.getDataByYear(latestYear.toString());
     final firstData = dataManager.getDataByYear(firstYear.toString());
@@ -1588,7 +1572,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
     );
   }
 }

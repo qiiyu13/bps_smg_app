@@ -160,9 +160,9 @@ class _IDGScreenState extends State<IDGScreen>
         if (mounted) {
           setState(() {
             idgDataByYear = processedData;
-            availableYears = processedData.keys.toList()..sort();
+            availableYears = processedData.keys.toList()..sort((a, b) => b.compareTo(a));
             if (availableYears.isNotEmpty) {
-              selectedYear = availableYears.last;
+              selectedYear = availableYears.first;
             }
             isLoading = false;
           });
@@ -176,7 +176,7 @@ class _IDGScreenState extends State<IDGScreen>
 
   IDGData get currentIDGData {
     if (idgDataByYear.isEmpty) return IDGData(year: selectedYear);
-    return idgDataByYear[selectedYear] ?? idgDataByYear[availableYears.last]!;
+    return idgDataByYear[selectedYear] ?? idgDataByYear[availableYears.first]!;
   }
 
   @override
@@ -242,9 +242,9 @@ class _IDGScreenState extends State<IDGScreen>
       return const SizedBox.shrink();
     }
 
-    final sortedYears = availableYears..sort();
-    final latestYear = sortedYears.last;
-    final firstYear = sortedYears.first;
+    final sortedYears = availableYears..sort((a, b) => b.compareTo(a));
+    final latestYear = sortedYears.first;
+    final firstYear = sortedYears.last;
     final latestData = idgDataByYear[latestYear];
     final firstData = idgDataByYear[firstYear];
 
@@ -268,7 +268,7 @@ class _IDGScreenState extends State<IDGScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
     );
   }
 
@@ -301,28 +301,16 @@ class _IDGScreenState extends State<IDGScreen>
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Indeks Pemberdayaan Gender',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: isSmallScreen
-                                ? sizing.headerTitleSize - 2
-                                : sizing.headerTitleSize,
-                            fontWeight: FontWeight.w700,
-                            height: 1.1),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis),
-                    SizedBox(height: isSmallScreen ? 2 : 4),
-                    Text('Data Tahun $selectedYear',
-                        style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: isSmallScreen
-                                ? sizing.headerSubtitleSize - 2
-                                : sizing.headerSubtitleSize)),
-                  ],
-                ),
+                child: Text('Indeks Pemberdayaan Gender',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isSmallScreen
+                            ? sizing.headerTitleSize + 4
+                            : sizing.headerTitleSize + 8,
+                        fontWeight: FontWeight.w700,
+                        height: 1.1),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
               ),
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 10 : 12),

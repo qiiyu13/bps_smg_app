@@ -211,7 +211,7 @@ class _InflasiScreenState extends State<InflasiScreen>
     },
   };
 
-  List<int> get availableYears => monthlyInflationData.keys.toList()..sort();
+  List<int> get availableYears => monthlyInflationData.keys.toList()..sort((a, b) => b.compareTo(a));
 
   List<double> get filteredMonthlyData {
     if (selectedMonth == null) {
@@ -368,34 +368,18 @@ class _InflasiScreenState extends State<InflasiScreen>
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Data Inflasi',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: isSmallScreen
-                            ? sizing.headerTitleSize - 2
-                            : sizing.headerTitleSize,
-                        fontWeight: FontWeight.w700,
-                        height: 1.1,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: isSmallScreen ? 2 : 4),
-                    Text(
-                      'Data Tahun $selectedYear',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: isSmallScreen
-                            ? sizing.headerSubtitleSize - 2
-                            : sizing.headerSubtitleSize,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  'Data Inflasi',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isSmallScreen
+                        ? sizing.headerTitleSize + 4
+                        : sizing.headerTitleSize + 8,
+                    fontWeight: FontWeight.w700,
+                    height: 1.1,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Icon(
@@ -1093,7 +1077,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Persentase Year-on-Year (${years.first}-${years.last})',
+                      'Persentase Year-on-Year (${years.last}-${years.first})',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 13,
                         color: _bpsTextSecondary,
@@ -1598,13 +1582,13 @@ class _InflasiScreenState extends State<InflasiScreen>
   }
 
   Widget _buildKesimpulanCard(ResponsiveSizing sizing, bool isSmallScreen) {
-    final sortedYears = monthlyInflationData.keys.toList()..sort();
+    final sortedYears = monthlyInflationData.keys.toList()..sort((a, b) => b.compareTo(a));
     if (sortedYears.length < 2) {
       return const SizedBox.shrink();
     }
 
-    final latestYear = sortedYears.last;
-    final firstYear = sortedYears.first;
+    final latestYear = sortedYears.first;
+    final firstYear = sortedYears.last;
     final latestData = monthlyInflationData[latestYear];
     final firstData = monthlyInflationData[firstYear];
 
@@ -1650,7 +1634,7 @@ class _InflasiScreenState extends State<InflasiScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
     );
   }
 }

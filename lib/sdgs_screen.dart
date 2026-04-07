@@ -278,27 +278,17 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                           color: Colors.white, size: isSmallScreen ? 20 : 24))),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                    Text('SDGs Jawa Tengah',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: isSmallScreen
-                                ? sizing.headerTitleSize - 2
-                                : sizing.headerTitleSize,
-                            fontWeight: FontWeight.w700,
-                            height: 1.1),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis),
-                    SizedBox(height: isSmallScreen ? 2 : 4),
-                    Text('Sustainable Development Goals',
-                        style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: isSmallScreen
-                                ? sizing.headerSubtitleSize - 2
-                                : sizing.headerSubtitleSize))
-                  ])),
+                child: Text('SDGs Jawa Tengah',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isSmallScreen
+                            ? sizing.headerTitleSize + 4
+                            : sizing.headerTitleSize + 8,
+                        fontWeight: FontWeight.w700,
+                        height: 1.1),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
+              ),
               Container(
                   padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
                   decoration: BoxDecoration(
@@ -1167,7 +1157,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
     );
   }
 }

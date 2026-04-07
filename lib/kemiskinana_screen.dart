@@ -196,11 +196,11 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
           }
 
           // Cache sorted years to avoid recalculation
-          _cachedSortedYears = yearlyData.keys.toList()..sort();
+          _cachedSortedYears = yearlyData.keys.toList()..sort((a, b) => b.compareTo(a));
 
           // Set selected year ke tahun terbaru yang ada
           if (_cachedSortedYears.isNotEmpty) {
-            selectedYear = _cachedSortedYears.last;
+            selectedYear = _cachedSortedYears.first;
           }
 
           errorMessage = null;
@@ -342,34 +342,18 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Data Kemiskinan',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: isSmallScreen
-                            ? sizing.headerTitleSize - 2
-                            : sizing.headerTitleSize,
-                        fontWeight: FontWeight.w700,
-                        height: 1.1,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: isSmallScreen ? 2 : 4),
-                    Text(
-                      'Data Tahun $selectedYear',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: isSmallScreen
-                            ? sizing.headerSubtitleSize - 2
-                            : sizing.headerSubtitleSize,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  'Data Kemiskinan',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isSmallScreen
+                        ? sizing.headerTitleSize + 4
+                        : sizing.headerTitleSize + 8,
+                    fontWeight: FontWeight.w700,
+                    height: 1.1,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Container(
@@ -557,7 +541,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
     );
   }
 

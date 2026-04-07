@@ -70,7 +70,7 @@ class PengangguranScreen extends StatefulWidget {
 class _PengangguranScreenState extends State<PengangguranScreen>
     with AutomaticKeepAliveClientMixin {
   int selectedYear = 2024;
-  List<int> availableYears = [2020, 2021, 2022, 2023, 2024, 2025];
+  List<int> availableYears = [2025, 2024, 2023, 2022, 2021, 2020];
   Map<int, PengangguranData> yearlyData = {};
   bool isLoading = true;
   String? errorMessage;
@@ -103,8 +103,8 @@ class _PengangguranScreenState extends State<PengangguranScreen>
           } else {
             yearlyData = _getDefaultData();
           }
-          availableYears = yearlyData.keys.toList()..sort();
-          selectedYear = availableYears.isNotEmpty ? availableYears.last : 2024;
+          availableYears = yearlyData.keys.toList()..sort((a, b) => b.compareTo(a));
+          selectedYear = availableYears.isNotEmpty ? availableYears.first : 2024;
           errorMessage = null;
           isLoading = false;
         });
@@ -328,34 +328,18 @@ class _PengangguranScreenState extends State<PengangguranScreen>
               SizedBox(width: sizing.itemSpacing),
               // Title + subtitle
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Pengangguran',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: isSmallScreen
-                            ? sizing.headerTitleSize - 2
-                            : sizing.headerTitleSize,
-                        fontWeight: FontWeight.w700,
-                        height: 1.1,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: isSmallScreen ? 2 : 4),
-                    Text(
-                      'Data Tahun $selectedYear',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: isSmallScreen
-                            ? sizing.headerSubtitleSize - 2
-                            : sizing.headerSubtitleSize,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  'Pengangguran',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isSmallScreen
+                        ? sizing.headerTitleSize + 4
+                        : sizing.headerTitleSize + 8,
+                    fontWeight: FontWeight.w700,
+                    height: 1.1,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               // Icon badge
@@ -479,7 +463,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
     final tptChange = prevData != null
         ? data.tptSemarang - prevData.tptSemarang
         : data.tptSemarang -
-            (yearlyData[availableYears.first]?.tptSemarang ?? data.tptSemarang);
+            (yearlyData[availableYears.last]?.tptSemarang ?? data.tptSemarang);
     final tpakChange =
         prevData != null ? data.tpakSemarang - prevData.tpakSemarang : 0.0;
 
@@ -647,7 +631,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
     final jatengSpots = <FlSpot>[];
     final nasionalSpots = <FlSpot>[];
 
-    for (final year in availableYears..sort()) {
+    for (final year in List<int>.from(availableYears)..sort()) {
       if (yearlyData.containsKey(year)) {
         final d = yearlyData[year]!;
         semarangSpots.add(FlSpot(year.toDouble(), d.tptSemarang));
@@ -678,7 +662,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
     final jatengSpots = <FlSpot>[];
     final nasionalSpots = <FlSpot>[];
 
-    for (final year in availableYears..sort()) {
+    for (final year in List<int>.from(availableYears)..sort()) {
       if (yearlyData.containsKey(year)) {
         final d = yearlyData[year]!;
         semarangSpots.add(FlSpot(year.toDouble(), d.tpakSemarang));
@@ -807,8 +791,8 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                       sideTitles: SideTitles(showTitles: false)),
                 ),
                 borderData: FlBorderData(show: false),
-                minX: availableYears.first.toDouble(),
-                maxX: availableYears.last.toDouble(),
+                minX: availableYears.last.toDouble(),
+                maxX: availableYears.first.toDouble(),
                 minY: minY,
                 maxY: maxY,
                 lineBarsData: List.generate(spots.length, (i) {

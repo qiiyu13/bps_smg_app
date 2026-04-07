@@ -32,7 +32,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
   int selectedYear = 2024;
   bool isLoading = true;
 
-  final List<int> years = [2020, 2021, 2022, 2023, 2024];
+  final List<int> years = [2024, 2023, 2022, 2021, 2020];
 
   // Data pendidikan per tahun (Data real Kota Semarang)
   Map<int, Map<String, dynamic>> educationData = {};
@@ -480,34 +480,18 @@ class _PendidikanScreenState extends State<PendidikanScreen>
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Data Pendidikan',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: isSmallScreen
-                            ? sizing.headerTitleSize - 2
-                            : sizing.headerTitleSize,
-                        fontWeight: FontWeight.w700,
-                        height: 1.1,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: isSmallScreen ? 2 : 4),
-                    Text(
-                      'Data Tahun $selectedYear',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: isSmallScreen
-                            ? sizing.headerSubtitleSize - 2
-                            : sizing.headerSubtitleSize,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  'Data Pendidikan',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isSmallScreen
+                        ? sizing.headerTitleSize + 4
+                        : sizing.headerTitleSize + 8,
+                    fontWeight: FontWeight.w700,
+                    height: 1.1,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Icon(
@@ -1961,9 +1945,9 @@ class _PendidikanScreenState extends State<PendidikanScreen>
       return const SizedBox.shrink();
     }
 
-    final sortedYears = years..sort();
-    final latestYear = sortedYears.last;
-    final firstYear = sortedYears.first;
+    final sortedYears = years..sort((a, b) => b.compareTo(a));
+    final latestYear = sortedYears.first;
+    final firstYear = sortedYears.last;
 
     final latestData = educationData[latestYear];
     final firstData = educationData[firstYear];
@@ -1995,7 +1979,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
     );
   }
 }

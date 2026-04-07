@@ -283,8 +283,8 @@ class _IPGScreenState extends State<IPGScreen>
             ipgDataByYear = processedData;
           }
 
-          availableYears = ipgDataByYear.keys.toList()..sort();
-          if (availableYears.isNotEmpty) selectedYear = availableYears.last;
+          availableYears = ipgDataByYear.keys.toList()..sort((a, b) => b.compareTo(a));
+          if (availableYears.isNotEmpty) selectedYear = availableYears.first;
           isLoading = false;
         });
       }
@@ -300,7 +300,7 @@ class _IPGScreenState extends State<IPGScreen>
 
   IPGData get currentIPGData {
     if (ipgDataByYear.isEmpty) return IPGData(year: selectedYear);
-    return ipgDataByYear[selectedYear] ?? ipgDataByYear[availableYears.last]!;
+    return ipgDataByYear[selectedYear] ?? ipgDataByYear[availableYears.first]!;
   }
 
   @override
@@ -403,9 +403,9 @@ class _IPGScreenState extends State<IPGScreen>
       return const SizedBox.shrink();
     }
 
-    final sortedYears = availableYears..sort();
-    final latestYear = sortedYears.last;
-    final firstYear = sortedYears.first;
+    final sortedYears = availableYears..sort((a, b) => b.compareTo(a));
+    final latestYear = sortedYears.first;
+    final firstYear = sortedYears.last;
     final latestData = ipgDataByYear[latestYear];
     final firstData = ipgDataByYear[firstYear];
 
@@ -429,7 +429,7 @@ class _IPGScreenState extends State<IPGScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: conclusionData['additionalPoints'] as List<String>?,
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
     );
   }
 
@@ -466,34 +466,18 @@ class _IPGScreenState extends State<IPGScreen>
               ),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Indeks Pembangunan Gender',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: isSmallScreen
-                            ? sizing.headerTitleSize - 2
-                            : sizing.headerTitleSize,
-                        fontWeight: FontWeight.w700,
-                        height: 1.1,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: isSmallScreen ? 2 : 4),
-                    Text(
-                      'Data Tahun $selectedYear',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: isSmallScreen
-                            ? sizing.headerSubtitleSize - 2
-                            : sizing.headerSubtitleSize,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  'Indeks Pembangunan Gender',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isSmallScreen
+                        ? sizing.headerTitleSize + 4
+                        : sizing.headerTitleSize + 8,
+                    fontWeight: FontWeight.w700,
+                    height: 1.1,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Icon(
@@ -987,7 +971,7 @@ class _IPGScreenState extends State<IPGScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Tren IPG (${availableYears.isNotEmpty ? availableYears.first : ""}-${availableYears.isNotEmpty ? availableYears.last : ""})',
+                      'Tren IPG (${availableYears.isNotEmpty ? availableYears.last : ""}-${availableYears.isNotEmpty ? availableYears.first : ""})',
                       style: TextStyle(
                         fontSize: isSmallScreen
                             ? sizing.groupTitleSize - 2
@@ -1230,7 +1214,7 @@ class _IPGScreenState extends State<IPGScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Tren IKG (${availableYears.isNotEmpty ? availableYears.first : ""}-${availableYears.isNotEmpty ? availableYears.last : ""})',
+                      'Tren IKG (${availableYears.isNotEmpty ? availableYears.last : ""}-${availableYears.isNotEmpty ? availableYears.first : ""})',
                       style: TextStyle(
                         fontSize: isSmallScreen
                             ? sizing.groupTitleSize - 2
