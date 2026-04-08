@@ -243,6 +243,21 @@ class _IPGScreenState extends State<IPGScreen>
                 "IPG": 96.37,
                 "IKG": 0.041
               },
+              {
+                "Tahun": 2025,
+                "UHH_Laki": 71.9,
+                "UHH_Perempuan": 75.6,
+                "HLS_Laki": 13.2,
+                "HLS_Perempuan": 13.5,
+                "RLS_Laki": 11.74,
+                "RLS_Perempuan": 10.52,
+                "PPP_Laki": 17470.0,
+                "PPP_Perempuan": 15270.0,
+                "IPM_Laki": null,
+                "IPM_Perempuan": null,
+                "IPG": null,
+                "IKG": null
+              },
             ];
 
             Map<int, IPGData> processedData = {};
@@ -266,8 +281,8 @@ class _IPGScreenState extends State<IPGScreen>
                             (row["PPP_Perempuan"] as num)) /
                         2)
                     .toDouble(),
-                ipg: (row["IPG"] as num).toDouble(),
-                ikg: (row["IKG"] as num).toDouble(),
+                ipg: (row["IPG"] as num?)?.toDouble(),
+                ikg: (row["IKG"] as num?)?.toDouble(),
                 uhhMale: (row["UHH_Laki"] as num).toDouble(),
                 uhhFemale: (row["UHH_Perempuan"] as num).toDouble(),
                 hlsMale: (row["HLS_Laki"] as num).toDouble(),
@@ -276,8 +291,8 @@ class _IPGScreenState extends State<IPGScreen>
                 rlsFemale: (row["RLS_Perempuan"] as num).toDouble(),
                 pppMale: (row["PPP_Laki"] as num).toDouble(),
                 pppFemale: (row["PPP_Perempuan"] as num).toDouble(),
-                ipmMale: (row["IPM_Laki"] as num).toDouble(),
-                ipmFemale: (row["IPM_Perempuan"] as num).toDouble(),
+                ipmMale: (row["IPM_Laki"] as num?)?.toDouble(),
+                ipmFemale: (row["IPM_Perempuan"] as num?)?.toDouble(),
               );
             }
             ipgDataByYear = processedData;
@@ -904,6 +919,7 @@ class _IPGScreenState extends State<IPGScreen>
   Widget _buildIPGChart(ResponsiveSizing sizing, bool isSmallScreen) {
     List<FlSpot> ipgSpots = [];
     List<String> yearLabels = [];
+    List<int> validYearIndices = [];
 
     for (int i = 0; i < availableYears.length; i++) {
       final year = availableYears[i];
@@ -911,12 +927,12 @@ class _IPGScreenState extends State<IPGScreen>
       if (yearData?.ipg != null) {
         ipgSpots.add(FlSpot(i.toDouble(), yearData!.ipg!));
         yearLabels.add(year.toString());
+        validYearIndices.add(i);
       }
     }
 
     bool hasValidData = ipgSpots.isNotEmpty;
 
-    // Calculate dynamic Y-axis range
     double minY = 94.0;
     double maxY = 97.0;
     double yInterval = 0.5;
@@ -925,18 +941,15 @@ class _IPGScreenState extends State<IPGScreen>
       double minIPG = ipgSpots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
       double maxIPG = ipgSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
 
-      // Add padding and round to nice numbers
       minY = (minIPG - 0.5).floorToDouble();
       maxY = (maxIPG + 0.5).ceilToDouble();
 
-      // Ensure minimum range for better visualization
       if (maxY - minY < 2.0) {
         double mid = (minY + maxY) / 2;
         minY = mid - 1.0;
         maxY = mid + 1.0;
       }
 
-      // Calculate interval for ~5-6 grid lines
       double range = maxY - minY;
       yInterval = (range / 5 * 10).round() / 10;
       if (yInterval < 0.5) yInterval = 0.5;
@@ -1084,12 +1097,7 @@ class _IPGScreenState extends State<IPGScreen>
                   borderData: FlBorderData(show: false),
                   lineBarsData: [
                     LineChartBarData(
-                      spots: availableYears.asMap().entries.map((entry) {
-                        final index = entry.key;
-                        final year = entry.value;
-                        final yearData = ipgDataByYear[year];
-                        return FlSpot(index.toDouble(), yearData?.ipg ?? 0);
-                      }).toList(),
+                      spots: ipgSpots,
                       isCurved: true,
                       color: _bpsPurple,
                       barWidth: 3,
@@ -1122,15 +1130,18 @@ class _IPGScreenState extends State<IPGScreen>
                       getTooltipItems: (touchedSpots) {
                         return touchedSpots.map((spot) {
                           final index = spot.x.toInt();
-                          final year = availableYears[index];
-                          return LineTooltipItem(
-                            '$year\n${spot.y.toStringAsFixed(3)}',
-                            const TextStyle(
-                              color: _bpsPurple,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                            ),
-                          );
+                          if (index >= 0 && index < validYearIndices.length) {
+                            final year = int.parse(yearLabels[index]);
+                            return LineTooltipItem(
+                              '$year\nIPG: ${spot.y.toStringAsFixed(2)}',
+                              const TextStyle(
+                                color: _bpsPurple,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            );
+                          }
+                          return null;
                         }).toList();
                       },
                     ),
@@ -1153,6 +1164,7 @@ class _IPGScreenState extends State<IPGScreen>
   Widget _buildIKGChart(ResponsiveSizing sizing, bool isSmallScreen) {
     List<BarChartGroupData> barGroups = [];
     List<String> yearLabels = [];
+    List<int> validYearIndices = [];
 
     for (int i = 0; i < availableYears.length; i++) {
       final year = availableYears[i];
@@ -1180,6 +1192,7 @@ class _IPGScreenState extends State<IPGScreen>
           ),
         );
         yearLabels.add(year.toString());
+        validYearIndices.add(i);
       }
     }
 
@@ -1291,7 +1304,8 @@ class _IPGScreenState extends State<IPGScreen>
                               reservedSize: 30,
                               getTitlesWidget: (value, meta) {
                                 final index = value.toInt();
-                                if (index >= 0 && index < yearLabels.length) {
+                                if (index >= 0 &&
+                                    index < validYearIndices.length) {
                                   return Padding(
                                     padding: EdgeInsets.only(
                                         top: isSmallScreen ? 6 : 8),
@@ -1327,7 +1341,8 @@ class _IPGScreenState extends State<IPGScreen>
                             getTooltipColor: (group) => _bpsCardBg,
                             getTooltipItem: (group, groupIndex, rod, rodIndex) {
                               final index = group.x;
-                              if (index >= 0 && index < yearLabels.length) {
+                              if (index >= 0 &&
+                                  index < validYearIndices.length) {
                                 return BarTooltipItem(
                                   '${yearLabels[index]}\nIKG: ${NumberFormatUtils.formatDecimal(rod.toY, decimalPlaces: 3)}',
                                   TextStyle(

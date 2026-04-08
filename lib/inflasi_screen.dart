@@ -62,7 +62,7 @@ class _InflasiScreenState extends State<InflasiScreen>
     'Desember',
   ];
 
-  final Map<int, List<double>> monthlyInflationData = {
+  final Map<int, List<double?>> monthlyInflationData = {
     2019: [
       0.32,
       0.01,
@@ -133,22 +133,54 @@ class _InflasiScreenState extends State<InflasiScreen>
       0.08,
       0.15
     ],
+    2024: [
+      -0.11,
+      0.55,
+      0.62,
+      0.32,
+      -0.21,
+      -0.26,
+      -0.13,
+      -0.04,
+      0.01,
+      0.20,
+      0.22,
+      0.50
+    ],
+    2025: [
+      -0.69,
+      -0.64,
+      1.43,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
   };
 
-  final Map<int, double> yearlyInflation = {
+  final Map<int, double?> yearlyInflation = {
     2019: 2.72,
     2020: 1.68,
     2021: 1.87,
     2022: 4.21,
     2023: 2.61,
+    2024: 1.69,
+    2025: 0.70,
   };
 
-  final Map<int, double> coreInflation = {
+  final Map<int, double?> coreInflation = {
     2019: 3.04,
     2020: 1.59,
     2021: 1.64,
     2022: 3.04,
     2023: 1.93,
+    2024: null,
+    2025: null,
   };
 
   final Map<int, double> ihkData = {
@@ -157,6 +189,8 @@ class _InflasiScreenState extends State<InflasiScreen>
     2021: 109.82,
     2022: 114.44,
     2023: 113.59,
+    2024: 106.09,
+    2025: 106.18,
   };
 
   final Map<String, Map<String, double>> inflationComponents = {
@@ -165,49 +199,63 @@ class _InflasiScreenState extends State<InflasiScreen>
       '2020': 3.28,
       '2021': 2.84,
       '2022': 5.33,
-      '2023': 4.12
+      '2023': 4.12,
+      '2024': 1.35,
+      '2025': 2.87,
     },
     'Pakaian & Alas Kaki': {
       '2019': 0.84,
       '2020': 0.45,
       '2021': 0.67,
       '2022': 1.23,
-      '2023': 0.92
+      '2023': 0.92,
+      '2024': 0.77,
+      '2025': 0.75,
     },
     'Perumahan & Fasilitas': {
       '2019': 1.69,
       '2020': 1.45,
       '2021': 1.52,
       '2022': 2.15,
-      '2023': 1.78
+      '2023': 1.78,
+      '2024': -2.41,
+      '2025': -10.55,
     },
     'Perawatan Kesehatan': {
       '2019': 2.43,
       '2020': 2.15,
       '2021': 2.67,
       '2022': 3.45,
-      '2023': 2.89
+      '2023': 2.89,
+      '2024': 1.97,
+      '2025': 1.11,
     },
     'Transportasi': {
       '2019': 1.24,
       '2020': 0.89,
       '2021': 1.45,
       '2022': 4.67,
-      '2023': 2.34
+      '2023': 2.34,
+      '2024': 0.58,
+      '2025': 0.85,
     },
     'Komunikasi & Keuangan': {
       '2019': 1.02,
       '2020': 0.78,
       '2021': 0.95,
       '2022': 1.34,
-      '2023': 1.12
+      '2023': 1.12,
+      '2024': -0.68,
+      '2025': -1.06,
     },
     'Rekreasi & Olahraga': {
       '2019': 2.18,
       '2020': 1.67,
       '2021': 2.05,
       '2022': 2.89,
-      '2023': 2.45
+      '2023': 2.45,
+      '2024': 1.31,
+      '2025': 0.97,
     },
   };
 
@@ -215,18 +263,25 @@ class _InflasiScreenState extends State<InflasiScreen>
       monthlyInflationData.keys.toList()..sort((a, b) => b.compareTo(a));
 
   List<double> get filteredMonthlyData {
+    final data = monthlyInflationData[selectedYear] ?? [];
     if (selectedMonth == null) {
-      return monthlyInflationData[selectedYear] ?? [];
+      return data.whereType<double>().toList();
     } else {
-      return [monthlyInflationData[selectedYear]![selectedMonth!]];
+      final value = data[selectedMonth!];
+      return value != null ? [value] : [];
     }
   }
 
   double get currentInflationValue {
+    final data = monthlyInflationData[selectedYear];
     if (selectedMonth == null) {
-      return monthlyInflationData[selectedYear]?.last ?? 0.0;
+      if (data == null) return 0.0;
+      for (int i = data.length - 1; i >= 0; i--) {
+        if (data[i] != null) return data[i]!;
+      }
+      return 0.0;
     } else {
-      return monthlyInflationData[selectedYear]?[selectedMonth!] ?? 0.0;
+      return data?[selectedMonth!] ?? 0.0;
     }
   }
 
@@ -1032,8 +1087,10 @@ class _InflasiScreenState extends State<InflasiScreen>
       return FlSpot(e.key.toDouble(), val);
     }).toList();
 
-    final maxY = (yearlyInflation.values.reduce((a, b) => a > b ? a : b) + 0.5)
-        .ceilToDouble();
+    final validValues = yearlyInflation.values.whereType<double>().toList();
+    final maxY = validValues.isEmpty
+        ? 5.0
+        : (validValues.reduce((a, b) => a > b ? a : b) + 0.5).ceilToDouble();
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -1602,9 +1659,10 @@ class _InflasiScreenState extends State<InflasiScreen>
     }
 
     // Calculate average inflation for each year
-    double calculateAverage(List<double> values) {
-      if (values.isEmpty) return 0.0;
-      return values.reduce((a, b) => a + b) / values.length;
+    double calculateAverage(List<double?> values) {
+      final filtered = values.whereType<double>().toList();
+      if (filtered.isEmpty) return 0.0;
+      return filtered.reduce((a, b) => a + b) / filtered.length;
     }
 
     final latestInflasi = calculateAverage(latestData);

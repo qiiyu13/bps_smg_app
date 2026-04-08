@@ -959,7 +959,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Tren Pertumbuhan Tahun 2020-2024 (%)',
+                      'Tren Pertumbuhan Tahun 2020-2025 (%)',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 14,
                         color: _bpsTextSecondary,

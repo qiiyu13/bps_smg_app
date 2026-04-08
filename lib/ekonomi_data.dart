@@ -46,6 +46,34 @@ class EkonomiDataManager {
 
   List<EkonomiData> dataList = [
     EkonomiData(
+      id: '0',
+      tahun: '2025',
+      pertumbuhanEkonomi: '6.54%',
+      kontribusiPDRB: '14.94%',
+      sektorIndustri: '28.07%',
+      sektorKonstruksi: '27.13%',
+      sektorPerdag: '12.88%',
+      pdrbPerKapita: 'Rp 167.236 Juta',
+      vsJawaTengah: 'Rank #4/35',
+      tpt: '5.65%',
+      semarangData: [
+        ChartDataPoint(year: 2020, value: -1.85),
+        ChartDataPoint(year: 2021, value: 5.16),
+        ChartDataPoint(year: 2022, value: 5.73),
+        ChartDataPoint(year: 2023, value: 5.79),
+        ChartDataPoint(year: 2024, value: 5.62),
+        ChartDataPoint(year: 2025, value: 6.54),
+      ],
+      jatengData: [
+        ChartDataPoint(year: 2020, value: -2.63),
+        ChartDataPoint(year: 2021, value: 3.36),
+        ChartDataPoint(year: 2022, value: 5.30),
+        ChartDataPoint(year: 2023, value: 4.99),
+        ChartDataPoint(year: 2024, value: 4.77),
+        ChartDataPoint(year: 2025, value: 10.67),
+      ],
+    ),
+    EkonomiData(
       id: '1',
       tahun: '2024',
       pertumbuhanEkonomi: '5.62%',
@@ -62,13 +90,15 @@ class EkonomiDataManager {
         ChartDataPoint(year: 2022, value: 5.73),
         ChartDataPoint(year: 2023, value: 5.79),
         ChartDataPoint(year: 2024, value: 5.62),
+        ChartDataPoint(year: 2025, value: 6.54),
       ],
       jatengData: [
-        ChartDataPoint(year: 2020, value: -1.50),
-        ChartDataPoint(year: 2021, value: 4.80),
-        ChartDataPoint(year: 2022, value: 5.20),
-        ChartDataPoint(year: 2023, value: 5.10),
-        ChartDataPoint(year: 2024, value: 5.05),
+        ChartDataPoint(year: 2020, value: -2.63),
+        ChartDataPoint(year: 2021, value: 3.36),
+        ChartDataPoint(year: 2022, value: 5.30),
+        ChartDataPoint(year: 2023, value: 4.99),
+        ChartDataPoint(year: 2024, value: 4.77),
+        ChartDataPoint(year: 2025, value: 10.67),
       ],
     ),
     EkonomiData(
@@ -87,12 +117,14 @@ class EkonomiDataManager {
         ChartDataPoint(year: 2021, value: 5.16),
         ChartDataPoint(year: 2022, value: 5.73),
         ChartDataPoint(year: 2023, value: 5.79),
+        ChartDataPoint(year: 2025, value: 6.54),
       ],
       jatengData: [
-        ChartDataPoint(year: 2020, value: -1.50),
-        ChartDataPoint(year: 2021, value: 4.80),
-        ChartDataPoint(year: 2022, value: 5.20),
-        ChartDataPoint(year: 2023, value: 5.10),
+        ChartDataPoint(year: 2020, value: -2.63),
+        ChartDataPoint(year: 2021, value: 3.36),
+        ChartDataPoint(year: 2022, value: 5.30),
+        ChartDataPoint(year: 2023, value: 4.99),
+        ChartDataPoint(year: 2025, value: 10.67),
       ],
     ),
     EkonomiData(
@@ -110,11 +142,13 @@ class EkonomiDataManager {
         ChartDataPoint(year: 2020, value: -1.85),
         ChartDataPoint(year: 2021, value: 5.16),
         ChartDataPoint(year: 2022, value: 5.73),
+        ChartDataPoint(year: 2025, value: 6.54),
       ],
       jatengData: [
-        ChartDataPoint(year: 2020, value: -1.50),
-        ChartDataPoint(year: 2021, value: 4.80),
-        ChartDataPoint(year: 2022, value: 5.20),
+        ChartDataPoint(year: 2020, value: -2.63),
+        ChartDataPoint(year: 2021, value: 3.36),
+        ChartDataPoint(year: 2022, value: 5.30),
+        ChartDataPoint(year: 2025, value: 10.67),
       ],
     ),
     EkonomiData(
@@ -131,10 +165,12 @@ class EkonomiDataManager {
       semarangData: [
         ChartDataPoint(year: 2020, value: -1.85),
         ChartDataPoint(year: 2021, value: 5.16),
+        ChartDataPoint(year: 2025, value: 6.54),
       ],
       jatengData: [
-        ChartDataPoint(year: 2020, value: -1.50),
-        ChartDataPoint(year: 2021, value: 4.80),
+        ChartDataPoint(year: 2020, value: -2.63),
+        ChartDataPoint(year: 2021, value: 3.36),
+        ChartDataPoint(year: 2025, value: 10.67),
       ],
     ),
     EkonomiData(
@@ -150,9 +186,11 @@ class EkonomiDataManager {
       tpt: '9.57%',
       semarangData: [
         ChartDataPoint(year: 2020, value: -1.85),
+        ChartDataPoint(year: 2025, value: 6.54),
       ],
       jatengData: [
-        ChartDataPoint(year: 2020, value: -1.50),
+        ChartDataPoint(year: 2020, value: -2.63),
+        ChartDataPoint(year: 2025, value: 10.67),
       ],
     ),
   ];

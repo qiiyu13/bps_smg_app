@@ -112,7 +112,7 @@ class _PendudukScreenState extends State<PendudukScreen>
   Map<int, SemarangData> semarangDataByYear = {};
   Map<int, List<DistrictDensity>> districtDensityByYear = {};
   List<int> availableYears = [];
-  int selectedYear = 2024;
+  int selectedYear = 2025;
   bool isLoading = true;
 
   List<FlSpot> _cachedSpots = [];
@@ -355,6 +355,16 @@ class _PendudukScreenState extends State<PendudukScreen>
           districts: 16,
           villages: 177,
           growthRate: 0.83),
+      2025: SemarangData(
+          year: 2025,
+          population: 1722421,
+          malePopulation: 851637,
+          femalePopulation: 870784,
+          area: 373.7,
+          density: 4609,
+          districts: 16,
+          villages: 177,
+          growthRate: 0.80),
     };
   }
 
@@ -399,6 +409,14 @@ class _PendudukScreenState extends State<PendudukScreen>
         'usiaProduktifPercentage': 71.09,
         'usiaTua': 137183,
         'usiaTuaPercentage': 8.03
+      },
+      2025: {
+        'usiaMuda': 354365,
+        'usiaMudaPercentage': 20.57,
+        'usiaProduktif': 1221858,
+        'usiaProduktifPercentage': 70.94,
+        'usiaTua': 146198,
+        'usiaTuaPercentage': 8.49
       },
     };
   }
@@ -445,6 +463,14 @@ class _PendudukScreenState extends State<PendudukScreen>
         DistrictDensity(name: "Ngaliyan", density: 3860, population: 146.628),
         DistrictDensity(name: "Banyumanik", density: 5595, population: 143.746)
       ],
+      2025: [
+        DistrictDensity(name: "Tembalang", density: 4635, population: 204.865),
+        DistrictDensity(name: "Pedurungan", density: 9578, population: 198.452),
+        DistrictDensity(
+            name: "Semarang Barat", density: 6870, population: 149.357),
+        DistrictDensity(name: "Ngaliyan", density: 3890, population: 147.797),
+        DistrictDensity(name: "Banyumanik", density: 5609, population: 144.087)
+      ],
     };
   }
 
@@ -455,7 +481,8 @@ class _PendudukScreenState extends State<PendudukScreen>
       const FlSpot(1, 0.0018),
       const FlSpot(2, 0.0021),
       const FlSpot(3, 0.0209),
-      const FlSpot(4, 0.0083)
+      const FlSpot(4, 0.0083),
+      const FlSpot(5, 0.0080)
     ];
 
     _ageDataByYear = {
@@ -549,6 +576,12 @@ class _PendudukScreenState extends State<PendudukScreen>
         'usiaTua': {'total': 137183, 'percentage': 8.03},
         'totalPopulation': 1708833
       },
+      2025: {
+        'usiaMuda': {'total': 354365, 'percentage': 20.57},
+        'usiaProduktif': {'total': 1221858, 'percentage': 70.94},
+        'usiaTua': {'total': 146198, 'percentage': 8.49},
+        'totalPopulation': 1722421
+      },
     };
 
     _cachedPieDataByYear = {};
@@ -589,8 +622,8 @@ class _PendudukScreenState extends State<PendudukScreen>
       setState(() {
         semarangDataByYear = processedData;
         districtDensityByYear = _getDefaultDistrictData();
-        availableYears = [2024, 2023, 2022, 2021, 2020];
-        selectedYear = 2024;
+        availableYears = [2025, 2024, 2023, 2022, 2021, 2020];
+        selectedYear = 2025;
         isLoading = false;
       });
     }
@@ -1259,7 +1292,7 @@ class _PendudukScreenState extends State<PendudukScreen>
 
   Widget _buildPopulationChart(ResponsiveSizing sizing, bool isSmallScreen) {
     // Prepare data for LineChart - only 2020-2024
-    final chartYears = [2024, 2023, 2022, 2021, 2020];
+    final chartYears = [2025, 2024, 2023, 2022, 2021, 2020];
     final spots = <FlSpot>[];
     final yearLabels = <String>[];
 

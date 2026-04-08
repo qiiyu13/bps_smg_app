@@ -191,6 +191,16 @@ class _AdminPendudukScreenState extends State<AdminPendudukScreen>
         'villages': 177,
         'growthRate': 0.83
       },
+      2025: {
+        'population': 1722421,
+        'malePopulation': 851637,
+        'femalePopulation': 870784,
+        'area': 373.7,
+        'density': 4609,
+        'districts': 16,
+        'villages': 177,
+        'growthRate': 0.80
+      },
     };
   }
 
@@ -236,6 +246,14 @@ class _AdminPendudukScreenState extends State<AdminPendudukScreen>
         'usiaTua': 137183,
         'usiaTuaPercentage': 8.03
       },
+      2025: {
+        'usiaMuda': 354365,
+        'usiaMudaPercentage': 20.57,
+        'usiaProduktif': 1221858,
+        'usiaProduktifPercentage': 70.94,
+        'usiaTua': 146198,
+        'usiaTuaPercentage': 8.49
+      },
     };
   }
 
@@ -275,6 +293,13 @@ class _AdminPendudukScreenState extends State<AdminPendudukScreen>
         {'name': 'Semarang Barat', 'density': 6869, 'population': 149.327},
         {'name': 'Ngaliyan', 'density': 3860, 'population': 146.628},
         {'name': 'Banyumanik', 'density': 5595, 'population': 143.746},
+      ],
+      2025: [
+        {'name': 'Tembalang', 'density': 4635, 'population': 204.865},
+        {'name': 'Pedurungan', 'density': 9578, 'population': 198.452},
+        {'name': 'Semarang Barat', 'density': 6870, 'population': 149.357},
+        {'name': 'Ngaliyan', 'density': 3890, 'population': 147.797},
+        {'name': 'Banyumanik', 'density': 5609, 'population': 144.087},
       ],
     };
   }

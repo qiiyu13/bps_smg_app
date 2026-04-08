@@ -141,6 +141,14 @@ class _IDGScreenState extends State<IDGScreen>
             "IDG": 78.71,
             "IKG": 0.14
           },
+          {
+            "Tahun": 2025,
+            "SUMBANGAN": null,
+            "TENAGA": null,
+            "PARLEMEN": null,
+            "IDG": null,
+            "IKG": null
+          },
         ];
 
         for (var row in rawData) {
@@ -838,6 +846,7 @@ class _IDGScreenState extends State<IDGScreen>
   Widget _buildIDGOnlyChart(ResponsiveSizing sizing, bool isSmallScreen) {
     List<FlSpot> idgSpots = [];
     List<String> yearLabels = [];
+    List<int> validYearIndices = [];
 
     for (int i = 0; i < availableYears.length; i++) {
       final year = availableYears[i];
@@ -845,10 +854,10 @@ class _IDGScreenState extends State<IDGScreen>
       if (data?.idg != null) {
         idgSpots.add(FlSpot(i.toDouble(), data!.idg!));
         yearLabels.add(year.toString());
+        validYearIndices.add(i);
       }
     }
 
-    // Calculate dynamic Y-axis range
     double minY = 70.0;
     double maxY = 80.0;
     double yInterval = 2.0;
@@ -857,22 +866,21 @@ class _IDGScreenState extends State<IDGScreen>
       double minIDG = idgSpots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
       double maxIDG = idgSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
 
-      // Add padding and round to nice numbers
       minY = (minIDG - 2.0).floorToDouble();
       maxY = (maxIDG + 2.0).ceilToDouble();
 
-      // Ensure minimum range for better visualization
       if (maxY - minY < 4.0) {
         double mid = (minY + maxY) / 2;
         minY = mid - 2.0;
         maxY = mid + 2.0;
       }
 
-      // Calculate interval for ~5-6 grid lines
       double range = maxY - minY;
       yInterval = (range / 5).roundToDouble();
       if (yInterval < 1.0) yInterval = 1.0;
     }
+
+    List<FlSpot> chartSpots = List.from(idgSpots);
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -948,9 +956,10 @@ class _IDGScreenState extends State<IDGScreen>
                             interval: 1,
                             getTitlesWidget: (value, meta) {
                               final index = value.toInt();
-                              if (index >= 0 && index < availableYears.length) {
+                              if (index >= 0 &&
+                                  index < validYearIndices.length) {
                                 return Text(
-                                  availableYears[index].toString(),
+                                  yearLabels[index],
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
@@ -993,13 +1002,21 @@ class _IDGScreenState extends State<IDGScreen>
                       borderData: FlBorderData(show: false),
                       lineBarsData: [
                         LineChartBarData(
-                          spots: idgSpots,
+                          spots: chartSpots,
                           isCurved: true,
                           color: _bpsPurple,
                           barWidth: 3,
                           dotData: FlDotData(
                             show: true,
                             getDotPainter: (spot, percent, bar, index) {
+                              if (spot.y.isNaN) {
+                                return FlDotCirclePainter(
+                                  radius: 0,
+                                  color: Colors.transparent,
+                                  strokeWidth: 0,
+                                  strokeColor: Colors.transparent,
+                                );
+                              }
                               return FlDotCirclePainter(
                                 radius: 6,
                                 color: _bpsPurple,
@@ -1025,10 +1042,11 @@ class _IDGScreenState extends State<IDGScreen>
                           ),
                           getTooltipItems: (touchedSpots) {
                             return touchedSpots.map((spot) {
+                              if (spot.y.isNaN) return null;
                               final index = spot.x.toInt();
                               final year = availableYears[index];
                               return LineTooltipItem(
-                                '$year\n${spot.y.toStringAsFixed(3)}',
+                                '$year\nIDG: ${spot.y.toStringAsFixed(2)}',
                                 const TextStyle(
                                   color: _bpsPurple,
                                   fontWeight: FontWeight.bold,
