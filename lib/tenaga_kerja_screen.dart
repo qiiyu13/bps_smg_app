@@ -1608,7 +1608,9 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList(),
     );
   }
 }

@@ -160,7 +160,8 @@ class _IDGScreenState extends State<IDGScreen>
         if (mounted) {
           setState(() {
             idgDataByYear = processedData;
-            availableYears = processedData.keys.toList()..sort((a, b) => b.compareTo(a));
+            availableYears = processedData.keys.toList()
+              ..sort((a, b) => b.compareTo(a));
             if (availableYears.isNotEmpty) {
               selectedYear = availableYears.first;
             }
@@ -268,7 +269,9 @@ class _IDGScreenState extends State<IDGScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList(),
     );
   }
 

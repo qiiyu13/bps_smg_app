@@ -253,8 +253,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      const AdminIDGScreen(),
+                                  builder: (context) => const AdminIDGScreen(),
                                 ),
                               );
                             },

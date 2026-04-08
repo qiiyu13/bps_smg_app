@@ -43,7 +43,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
   @override
   void initState() {
     super.initState();
-    availableYears = dataManager.getAvailableYears()..sort((a, b) => b.compareTo(a));
+    availableYears = dataManager.getAvailableYears()
+      ..sort((a, b) => b.compareTo(a));
     selectedYear = availableYears.isNotEmpty ? availableYears.first : 2024;
     _debounceTimer = Timer(const Duration(milliseconds: 100), () {});
     _loadRankings();
@@ -1572,7 +1573,9 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList(),
     );
   }
 }

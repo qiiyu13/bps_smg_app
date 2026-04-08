@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Unified BPS (Badan Pusat Statistik) Theme
-/// 
+///
 /// This file contains all color definitions, text styles, and theme configurations
 /// for the BPS Kota Semarang application to ensure consistency across all screens.
 
@@ -15,7 +15,7 @@ const Color bpsBlue = Color(0xFF2E99D6);
 /// BPS Orange - Used for warnings, secondary highlights, economic indicators
 const Color bpsOrange = Color(0xFFE88D34);
 
-/// BPS Green - Used for success states, positive trends, social indicators  
+/// BPS Green - Used for success states, positive trends, social indicators
 const Color bpsGreen = Color(0xFF7DBD42);
 
 /// BPS Red - Used for errors, alerts, critical indicators
@@ -279,34 +279,34 @@ class BPSTextStyles {
 
 class BPSShadows {
   static BoxShadow get cardShadow => BoxShadow(
-    color: Colors.black.withOpacity(0.04),
-    blurRadius: 8,
-    offset: const Offset(0, 2),
-  );
+        color: Colors.black.withOpacity(0.04),
+        blurRadius: 8,
+        offset: const Offset(0, 2),
+      );
 
   static BoxShadow get elevatedShadow => BoxShadow(
-    color: Colors.black.withOpacity(0.08),
-    blurRadius: 20,
-    offset: const Offset(0, 4),
-  );
+        color: Colors.black.withOpacity(0.08),
+        blurRadius: 20,
+        offset: const Offset(0, 4),
+      );
 
   static BoxShadow get headerShadow => BoxShadow(
-    color: bpsBlue.withOpacity(0.2),
-    blurRadius: 30,
-    offset: const Offset(0, 10),
-  );
+        color: bpsBlue.withOpacity(0.2),
+        blurRadius: 30,
+        offset: const Offset(0, 10),
+      );
 
   static BoxShadow get bottomNavShadow => BoxShadow(
-    color: Colors.black.withOpacity(0.08),
-    blurRadius: 20,
-    offset: const Offset(0, -4),
-  );
+        color: Colors.black.withOpacity(0.08),
+        blurRadius: 20,
+        offset: const Offset(0, -4),
+      );
 
   static BoxShadow statCardShadow(Color color) => BoxShadow(
-    color: color.withOpacity(0.1),
-    blurRadius: 15,
-    offset: const Offset(0, 6),
-  );
+        color: color.withOpacity(0.1),
+        blurRadius: 15,
+        offset: const Offset(0, 6),
+      );
 }
 
 // ============================================
@@ -315,32 +315,33 @@ class BPSShadows {
 
 class BPSDecorations {
   static BoxDecoration cardDecoration({Color? borderColor}) => BoxDecoration(
-    color: bpsCardBg,
-    borderRadius: BorderRadius.circular(16),
-    border: Border.all(
-      color: borderColor ?? bpsBorder,
-      width: 1.5,
-    ),
-    boxShadow: [BPSShadows.cardShadow],
-  );
+        color: bpsCardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: borderColor ?? bpsBorder,
+          width: 1.5,
+        ),
+        boxShadow: [BPSShadows.cardShadow],
+      );
 
   static BoxDecoration statCardDecoration(Color accentColor) => BoxDecoration(
-    color: bpsCardBg,
-    borderRadius: BorderRadius.circular(20),
-    border: Border.all(
-      color: accentColor.withOpacity(0.2),
-      width: 2,
-    ),
-    boxShadow: [BPSShadows.statCardShadow(accentColor)],
-  );
+        color: bpsCardBg,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: accentColor.withOpacity(0.2),
+          width: 2,
+        ),
+        boxShadow: [BPSShadows.statCardShadow(accentColor)],
+      );
 
   static BoxDecoration iconContainerDecoration(Color color) => BoxDecoration(
-    color: color.withOpacity(0.12),
-    borderRadius: BorderRadius.circular(12),
-  );
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(12),
+      );
 
-  static BoxDecoration groupIconContainerDecoration(Color color) => BoxDecoration(
-    color: color.withOpacity(0.1),
-    borderRadius: BorderRadius.circular(8),
-  );
+  static BoxDecoration groupIconContainerDecoration(Color color) =>
+      BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      );
 }

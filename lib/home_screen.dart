@@ -719,13 +719,16 @@ class _HomeScreenContent extends StatelessWidget {
               child: PageView.builder(
                 controller: statsPageController,
                 itemCount: 4,
-                physics: const BouncingScrollPhysics(), // Softer bounce effect when swiping
+                physics:
+                    const BouncingScrollPhysics(), // Softer bounce effect when swiping
                 allowImplicitScrolling: true,
-                clipBehavior: Clip.none, // Allow shadows of the floating cards to show
+                clipBehavior:
+                    Clip.none, // Allow shadows of the floating cards to show
                 itemBuilder: (context, index) {
                   return Padding(
                     // Add the horizontal margin back here so the individual cards don't touch the edges
-                    padding: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: sizing.horizontalPadding),
                     child: switch (index) {
                       0 => const _StatsCard1(),
                       1 => const _StatsCard2(),
@@ -1418,163 +1421,158 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
         },
         child: Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: widget.accentColor,
-              border: Border.all(
-                color: Colors.white.withOpacity(_isPressed ? 0.3 : 0.15),
-                width: 1.2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: widget.accentColor.withOpacity(_isPressed ? 0.4 : 0.3),
-                  blurRadius: _isPressed ? 16 : 12,
-                  offset: const Offset(0, 4),
-                  spreadRadius: -2,
-                ),
-              ],
+            borderRadius: BorderRadius.circular(20),
+            color: widget.accentColor,
+            border: Border.all(
+              color: Colors.white.withOpacity(_isPressed ? 0.3 : 0.15),
+              width: 1.2,
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => widget.screen),
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(20),
-                  splashColor: Colors.white.withOpacity(0.1),
-                  highlightColor: Colors.white.withOpacity(0.05),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: sizing.statsCardPadding + 6,
-                      vertical: sizing.statsCardPadding - 2,
-                    ),
-                    child: Row(
-                      children: [
-                        // Data
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Label row
-                              Row(
-                                children: [
-                                  Text(
-                                    widget.label,
-                                    style: TextStyle(
-                                      fontSize: sizing.statsLabelFontSize + 4,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                      fontFamily: 'Poppins',
-                                      letterSpacing: 0.3,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              // Date
-                              if (widget.latestDate != null) ...[
-                                const SizedBox(height: 2),
+            boxShadow: [
+              BoxShadow(
+                color: widget.accentColor.withOpacity(_isPressed ? 0.4 : 0.3),
+                blurRadius: _isPressed ? 16 : 12,
+                offset: const Offset(0, 4),
+                spreadRadius: -2,
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => widget.screen),
+                  );
+                },
+                borderRadius: BorderRadius.circular(20),
+                splashColor: Colors.white.withOpacity(0.1),
+                highlightColor: Colors.white.withOpacity(0.05),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: sizing.statsCardPadding + 6,
+                    vertical: sizing.statsCardPadding - 2,
+                  ),
+                  child: Row(
+                    children: [
+                      // Data
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Label row
+                            Row(
+                              children: [
                                 Text(
-                                  _formatFullDate(widget.latestDate!),
+                                  widget.label,
                                   style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white.withOpacity(0.75),
-                                    fontFamily: 'Poppins',
+                                    fontSize: sizing.statsLabelFontSize + 4,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                    letterSpacing: 0.3,
                                   ),
                                 ),
                               ],
-                              const SizedBox(height: 8),
-                              // Big number with superscript unit
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.alphabetic,
-                                children: [
-                                  Text(
-                                    widget.value,
-                                    style: TextStyle(
-                                      fontSize: sizing.statsValueFontSize + 4,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.white,
-                                      height: 1,
-                                      fontFamily: 'Poppins',
-                                      letterSpacing: -0.5,
-                                    ),
+                            ),
+                            // Date
+                            if (widget.latestDate != null) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                _formatFullDate(widget.latestDate!),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white.withOpacity(0.75),
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 8),
+                            // Big number with superscript unit
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  widget.value,
+                                  style: TextStyle(
+                                    fontSize: sizing.statsValueFontSize + 4,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                    height: 1,
+                                    letterSpacing: -0.5,
                                   ),
-                                  if (widget.unit.isNotEmpty) ...[
-                                    const SizedBox(width: 3),
-                                    Baseline(
-                                      baseline: sizing.statsValueFontSize + 4,
-                                      baselineType: TextBaseline.alphabetic,
-                                      child: Text(
-                                        widget.unit,
-                                        style: TextStyle(
-                                          fontSize:
-                                              (sizing.statsValueFontSize + 4) *
-                                                  0.55,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white.withOpacity(0.85),
-                                          fontFamily: 'Poppins',
-                                        ),
+                                ),
+                                if (widget.unit.isNotEmpty) ...[
+                                  const SizedBox(width: 3),
+                                  Baseline(
+                                    baseline: sizing.statsValueFontSize + 4,
+                                    baselineType: TextBaseline.alphabetic,
+                                    child: Text(
+                                      widget.unit,
+                                      style: TextStyle(
+                                        fontSize:
+                                            (sizing.statsValueFontSize + 4) *
+                                                0.55,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white.withOpacity(0.85),
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ],
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
+                          ],
                         ),
-                        // Chart and delta indicator column
-                        SizedBox(
-                          width: sizing.statsMiniChartWidth + 40,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              // Delta indicator
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    _getDeltaIcon(),
-                                    size: 20,
+                      ),
+                      // Chart and delta indicator column
+                      SizedBox(
+                        width: sizing.statsMiniChartWidth + 40,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // Delta indicator
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  _getDeltaIcon(),
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  widget.change,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
                                     color: Colors.white,
+                                    letterSpacing: 0.2,
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    widget.change,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                      fontFamily: 'Poppins',
-                                      letterSpacing: 0.2,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              // Sparkline chart
-                              _MiniChart(
-                                spots: widget.chartSpots,
-                                color: Colors.white.withOpacity(0.9),
-                              ),
-                            ],
-                          ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            // Sparkline chart
+                            _MiniChart(
+                              spots: widget.chartSpots,
+                              color: Colors.white.withOpacity(0.9),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -1724,6 +1722,7 @@ class _CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -1758,13 +1757,7 @@ class _CategoryCard extends StatelessWidget {
               // Subtle colored strip indicator on the left
               Container(
                 width: 4,
-                decoration: BoxDecoration(
-                  color: category.groupColor,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    bottomLeft: Radius.circular(15),
-                  ),
-                ),
+                color: category.groupColor,
               ),
               Expanded(
                 child: Padding(

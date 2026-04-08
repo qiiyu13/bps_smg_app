@@ -36,13 +36,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (username == _adminUsername && password == _adminPassword) {
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Login berhasil!'),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
 
@@ -52,13 +53,14 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       setState(() => _isLoading = false);
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Username atau password salah'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
     }
@@ -209,6 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
   }
+
   Widget _buildButton({
     required String label,
     required String subtitle,
@@ -223,14 +226,14 @@ class _LoginScreenState extends State<LoginScreen> {
         gradient: gradient,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isPrimary 
+          color: isPrimary
               ? const Color(0xFF3B82F6).withOpacity(0.3)
               : Colors.grey[300]!,
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: isPrimary 
+            color: isPrimary
                 ? const Color(0xFF3B82F6).withOpacity(0.15)
                 : Colors.black.withOpacity(0.04),
             blurRadius: 12,
@@ -272,7 +275,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: isPrimary ? Colors.white : const Color(0xFF1F2937),
+                          color: isPrimary
+                              ? Colors.white
+                              : const Color(0xFF1F2937),
                         ),
                       ),
                       const SizedBox(height: 3),
@@ -280,7 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         subtitle,
                         style: TextStyle(
                           fontSize: 13,
-                          color: isPrimary 
+                          color: isPrimary
                               ? Colors.white.withOpacity(0.85)
                               : Colors.grey[600],
                         ),
@@ -291,7 +296,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 18,
-                  color: isPrimary ? Colors.white.withOpacity(0.8) : Colors.grey[400],
+                  color: isPrimary
+                      ? Colors.white.withOpacity(0.8)
+                      : Colors.grey[400],
                 ),
               ],
             ),
@@ -365,7 +372,8 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: InputDecoration(
                 labelText: 'Username',
                 labelStyle: TextStyle(color: Colors.grey[700]),
-                prefixIcon: const Icon(Icons.person_outline, size: 22, color: Color(0xFF3B82F6)),
+                prefixIcon: const Icon(Icons.person_outline,
+                    size: 22, color: Color(0xFF3B82F6)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide(color: Colors.grey[300]!),
@@ -376,11 +384,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+                  borderSide:
+                      const BorderSide(color: Color(0xFF3B82F6), width: 2),
                 ),
                 filled: true,
                 fillColor: const Color(0xFFF8FAFC),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -398,14 +408,18 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: InputDecoration(
                 labelText: 'Password',
                 labelStyle: TextStyle(color: Colors.grey[700]),
-                prefixIcon: const Icon(Icons.lock_outline, size: 22, color: Color(0xFF3B82F6)),
+                prefixIcon: const Icon(Icons.lock_outline,
+                    size: 22, color: Color(0xFF3B82F6)),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                    _obscurePassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
                     size: 22,
                     color: Colors.grey[600],
                   ),
-                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                  onPressed: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -417,11 +431,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 2),
+                  borderSide:
+                      const BorderSide(color: Color(0xFF3B82F6), width: 2),
                 ),
                 filled: true,
                 fillColor: const Color(0xFFF8FAFC),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -464,7 +480,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: 22,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.5,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
                     : const Text(

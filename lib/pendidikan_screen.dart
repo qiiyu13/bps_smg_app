@@ -1979,7 +1979,9 @@ class _PendidikanScreenState extends State<PendidikanScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList(),
     );
   }
 }

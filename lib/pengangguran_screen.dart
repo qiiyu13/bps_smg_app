@@ -103,8 +103,10 @@ class _PengangguranScreenState extends State<PengangguranScreen>
           } else {
             yearlyData = _getDefaultData();
           }
-          availableYears = yearlyData.keys.toList()..sort((a, b) => b.compareTo(a));
-          selectedYear = availableYears.isNotEmpty ? availableYears.first : 2024;
+          availableYears = yearlyData.keys.toList()
+            ..sort((a, b) => b.compareTo(a));
+          selectedYear =
+              availableYears.isNotEmpty ? availableYears.first : 2024;
           errorMessage = null;
           isLoading = false;
         });

@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         primaryColor: const Color(0xFF1976D2),
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'Roboto',
+        fontFamily: 'PlusJakartaSans',
         // Performance: Use platform-specific page transitions
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {

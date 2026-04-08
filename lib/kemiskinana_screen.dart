@@ -196,7 +196,8 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
           }
 
           // Cache sorted years to avoid recalculation
-          _cachedSortedYears = yearlyData.keys.toList()..sort((a, b) => b.compareTo(a));
+          _cachedSortedYears = yearlyData.keys.toList()
+            ..sort((a, b) => b.compareTo(a));
 
           // Set selected year ke tahun terbaru yang ada
           if (_cachedSortedYears.isNotEmpty) {
@@ -541,7 +542,9 @@ class _KemiskinanScreenContent extends StatelessWidget {
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList(),
     );
   }
 

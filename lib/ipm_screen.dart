@@ -69,7 +69,8 @@ class _IpmScreenState extends State<IpmScreen>
 
       if (mounted) {
         setState(() {
-          _cachedSortedYears = ipmData.keys.toList()..sort((a, b) => b.compareTo(a));
+          _cachedSortedYears = ipmData.keys.toList()
+            ..sort((a, b) => b.compareTo(a));
           if (_cachedSortedYears.isNotEmpty) {
             selectedYear = _cachedSortedYears.first;
           }
@@ -83,7 +84,8 @@ class _IpmScreenState extends State<IpmScreen>
       _initializeDefaultKomponenData();
       if (mounted) {
         setState(() {
-          _cachedSortedYears = ipmData.keys.toList()..sort((a, b) => b.compareTo(a));
+          _cachedSortedYears = ipmData.keys.toList()
+            ..sort((a, b) => b.compareTo(a));
           if (_cachedSortedYears.isNotEmpty) {
             selectedYear = _cachedSortedYears.first;
           }
@@ -435,7 +437,9 @@ class _IpmScreenContent extends StatelessWidget {
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList(),
     );
   }
 

@@ -211,7 +211,8 @@ class _InflasiScreenState extends State<InflasiScreen>
     },
   };
 
-  List<int> get availableYears => monthlyInflationData.keys.toList()..sort((a, b) => b.compareTo(a));
+  List<int> get availableYears =>
+      monthlyInflationData.keys.toList()..sort((a, b) => b.compareTo(a));
 
   List<double> get filteredMonthlyData {
     if (selectedMonth == null) {
@@ -1582,7 +1583,8 @@ class _InflasiScreenState extends State<InflasiScreen>
   }
 
   Widget _buildKesimpulanCard(ResponsiveSizing sizing, bool isSmallScreen) {
-    final sortedYears = monthlyInflationData.keys.toList()..sort((a, b) => b.compareTo(a));
+    final sortedYears = monthlyInflationData.keys.toList()
+      ..sort((a, b) => b.compareTo(a));
     if (sortedYears.length < 2) {
       return const SizedBox.shrink();
     }
@@ -1634,7 +1636,9 @@ class _InflasiScreenState extends State<InflasiScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList(),
     );
   }
 }

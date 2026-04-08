@@ -123,7 +123,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                 sizing.horizontalPadding + 4,
               ),
               child: SizedBox(
-                height: sizing.headerLogoSize + sizing.itemSpacing + sizing.searchBarHeight,
+                height: sizing.headerLogoSize +
+                    sizing.itemSpacing +
+                    sizing.searchBarHeight,
                 child: Stack(
                   children: [
                     // Back button at top left
@@ -131,7 +133,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                       left: 0,
                       top: 0,
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                        icon: const Icon(Icons.arrow_back_rounded,
+                            color: Colors.white),
                         onPressed: () => Navigator.of(context).pop(),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
@@ -276,7 +279,8 @@ class _ProfileScreenState extends State<ProfileScreen>
           child: Row(
             children: [
               Container(
-                padding: EdgeInsets.all(sizing.categoryIconContainerPadding - 2),
+                padding:
+                    EdgeInsets.all(sizing.categoryIconContainerPadding - 2),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -335,7 +339,8 @@ class _ProfileScreenState extends State<ProfileScreen>
         final emailUrl = Uri.parse('mailto:$value');
         await launchUrl(emailUrl, mode: LaunchMode.externalApplication);
       } else if (title == 'Telepon') {
-        final telUrl = Uri.parse('tel:${value.replaceAll(RegExp(r'[^\d+]'), '')}');
+        final telUrl =
+            Uri.parse('tel:${value.replaceAll(RegExp(r'[^\d+]'), '')}');
         await launchUrl(telUrl);
       } else if (title == 'Alamat') {
         final address = Uri.encodeComponent(

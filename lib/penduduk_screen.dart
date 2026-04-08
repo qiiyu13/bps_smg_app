@@ -197,7 +197,8 @@ class _PendudukScreenState extends State<PendudukScreen>
         processedData = _getDefaultData();
       }
 
-      List<int> years = processedData.keys.toList()..sort((a, b) => b.compareTo(a));
+      List<int> years = processedData.keys.toList()
+        ..sort((a, b) => b.compareTo(a));
       _cachedSpots = [];
       for (int i = 0; i < years.length; i++) {
         double growthRate = processedData[years[i]]?.growthRate ?? 0.0;
@@ -1936,7 +1937,9 @@ class _PendudukScreenState extends State<PendudukScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList(),
     );
   }
 }

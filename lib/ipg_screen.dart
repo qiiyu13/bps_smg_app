@@ -283,7 +283,8 @@ class _IPGScreenState extends State<IPGScreen>
             ipgDataByYear = processedData;
           }
 
-          availableYears = ipgDataByYear.keys.toList()..sort((a, b) => b.compareTo(a));
+          availableYears = ipgDataByYear.keys.toList()
+            ..sort((a, b) => b.compareTo(a));
           if (availableYears.isNotEmpty) selectedYear = availableYears.first;
           isLoading = false;
         });
@@ -429,7 +430,9 @@ class _IPGScreenState extends State<IPGScreen>
       status: conclusionData['status'] as KesimpulanStatus,
       sizing: sizing,
       isSmallScreen: isSmallScreen,
-      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList(),
     );
   }
 
