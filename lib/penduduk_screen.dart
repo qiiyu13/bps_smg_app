@@ -198,7 +198,7 @@ class _PendudukScreenState extends State<PendudukScreen>
       }
 
       List<int> years = processedData.keys.toList()
-        ..sort((a, b) => b.compareTo(a));
+        ..sort((a, b) => a.compareTo(b));
       _cachedSpots = [];
       for (int i = 0; i < years.length; i++) {
         double growthRate = processedData[years[i]]?.growthRate ?? 0.0;
@@ -293,7 +293,7 @@ class _PendudukScreenState extends State<PendudukScreen>
           semarangDataByYear = processedData;
           districtDensityByYear = loadedDistrictData;
           availableYears = years;
-          selectedYear = years.isNotEmpty ? years.first : 2024;
+          selectedYear = years.isNotEmpty ? years.last : 2024;
           isLoading = false;
         });
       }
@@ -622,7 +622,7 @@ class _PendudukScreenState extends State<PendudukScreen>
       setState(() {
         semarangDataByYear = processedData;
         districtDensityByYear = _getDefaultDistrictData();
-        availableYears = [2025, 2024, 2023, 2022, 2021, 2020];
+        availableYears = [2020, 2021, 2022, 2023, 2024, 2025];
         selectedYear = 2025;
         isLoading = false;
       });
@@ -1291,8 +1291,8 @@ class _PendudukScreenState extends State<PendudukScreen>
   }
 
   Widget _buildPopulationChart(ResponsiveSizing sizing, bool isSmallScreen) {
-    // Prepare data for LineChart - only 2020-2024
-    final chartYears = [2025, 2024, 2023, 2022, 2021, 2020];
+    // Prepare data for LineChart - years from oldest (left) to newest (right)
+    final chartYears = [2020, 2021, 2022, 2023, 2024, 2025];
     final spots = <FlSpot>[];
     final yearLabels = <String>[];
 
@@ -1940,9 +1940,9 @@ class _PendudukScreenState extends State<PendudukScreen>
       return const SizedBox.shrink();
     }
 
-    final sortedYears = availableYears..sort((a, b) => b.compareTo(a));
-    final latestYear = sortedYears.first;
-    final firstYear = sortedYears.last;
+    final sortedYears = availableYears..sort((a, b) => a.compareTo(b));
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
     final latestData = semarangDataByYear[latestYear];
     final firstData = semarangDataByYear[firstYear];
 

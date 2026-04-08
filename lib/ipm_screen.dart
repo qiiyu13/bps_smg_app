@@ -70,9 +70,9 @@ class _IpmScreenState extends State<IpmScreen>
       if (mounted) {
         setState(() {
           _cachedSortedYears = ipmData.keys.toList()
-            ..sort((a, b) => b.compareTo(a));
+            ..sort((a, b) => a.compareTo(b));
           if (_cachedSortedYears.isNotEmpty) {
-            selectedYear = _cachedSortedYears.first;
+            selectedYear = _cachedSortedYears.last;
           }
           errorMessage = null;
           isLoading = false;
@@ -85,9 +85,9 @@ class _IpmScreenState extends State<IpmScreen>
       if (mounted) {
         setState(() {
           _cachedSortedYears = ipmData.keys.toList()
-            ..sort((a, b) => b.compareTo(a));
+            ..sort((a, b) => a.compareTo(b));
           if (_cachedSortedYears.isNotEmpty) {
-            selectedYear = _cachedSortedYears.first;
+            selectedYear = _cachedSortedYears.last;
           }
           errorMessage = 'Gagal memuat data: ${e.toString()}';
           isLoading = false;

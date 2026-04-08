@@ -299,8 +299,10 @@ class _IPGScreenState extends State<IPGScreen>
           }
 
           availableYears = ipgDataByYear.keys.toList()
-            ..sort((a, b) => b.compareTo(a));
-          if (availableYears.isNotEmpty) selectedYear = availableYears.first;
+            ..sort((a, b) => a.compareTo(b));
+          if (availableYears.isNotEmpty) {
+            selectedYear = availableYears.last;
+          }
           isLoading = false;
         });
       }
@@ -419,9 +421,9 @@ class _IPGScreenState extends State<IPGScreen>
       return const SizedBox.shrink();
     }
 
-    final sortedYears = availableYears..sort((a, b) => b.compareTo(a));
-    final latestYear = sortedYears.first;
-    final firstYear = sortedYears.last;
+    final sortedYears = availableYears..sort((a, b) => a.compareTo(b));
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
     final latestData = ipgDataByYear[latestYear];
     final firstData = ipgDataByYear[firstYear];
 

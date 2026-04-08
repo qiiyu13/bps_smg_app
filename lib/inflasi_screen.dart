@@ -260,7 +260,7 @@ class _InflasiScreenState extends State<InflasiScreen>
   };
 
   List<int> get availableYears =>
-      monthlyInflationData.keys.toList()..sort((a, b) => b.compareTo(a));
+      monthlyInflationData.keys.toList()..sort((a, b) => a.compareTo(b));
 
   List<double> get filteredMonthlyData {
     final data = monthlyInflationData[selectedYear] ?? [];

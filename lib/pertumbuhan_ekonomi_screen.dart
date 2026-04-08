@@ -44,8 +44,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
   void initState() {
     super.initState();
     availableYears = dataManager.getAvailableYears()
-      ..sort((a, b) => b.compareTo(a));
-    selectedYear = availableYears.isNotEmpty ? availableYears.first : 2024;
+      ..sort((a, b) => a.compareTo(b));
+    selectedYear = availableYears.isNotEmpty ? availableYears.last : 2024;
     _debounceTimer = Timer(const Duration(milliseconds: 100), () {});
     _loadRankings();
   }
@@ -1530,9 +1530,9 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
       return const SizedBox.shrink();
     }
 
-    final sortedYears = availableYears..sort((a, b) => b.compareTo(a));
-    final latestYear = sortedYears.first;
-    final firstYear = sortedYears.last;
+    final sortedYears = availableYears..sort((a, b) => a.compareTo(b));
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
 
     final latestData = dataManager.getDataByYear(latestYear.toString());
     final firstData = dataManager.getDataByYear(firstYear.toString());

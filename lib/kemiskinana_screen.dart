@@ -197,11 +197,11 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
 
           // Cache sorted years to avoid recalculation
           _cachedSortedYears = yearlyData.keys.toList()
-            ..sort((a, b) => b.compareTo(a));
+            ..sort((a, b) => a.compareTo(b));
 
           // Set selected year ke tahun terbaru yang ada
           if (_cachedSortedYears.isNotEmpty) {
-            selectedYear = _cachedSortedYears.first;
+            selectedYear = _cachedSortedYears.last;
           }
 
           errorMessage = null;

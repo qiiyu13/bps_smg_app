@@ -96,9 +96,9 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
       }
 
       setState(() {
-        availableYears = yearData.keys.toList()..sort((a, b) => b.compareTo(a));
+        availableYears = yearData.keys.toList()..sort((a, b) => a.compareTo(b));
         if (availableYears.isNotEmpty) {
-          selectedYear = availableYears.first;
+          selectedYear = availableYears.last;
         }
         isLoading = false;
       });
@@ -109,9 +109,9 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
       _initializeDefaultDistribusiData();
       _initializeDefaultJatengData();
       setState(() {
-        availableYears = yearData.keys.toList()..sort((a, b) => b.compareTo(a));
+        availableYears = yearData.keys.toList()..sort((a, b) => a.compareTo(b));
         if (availableYears.isNotEmpty) {
-          selectedYear = availableYears.first;
+          selectedYear = availableYears.last;
         }
         isLoading = false;
       });
@@ -1575,9 +1575,9 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
       return const SizedBox.shrink();
     }
 
-    final sortedYears = availableYears..sort((a, b) => b.compareTo(a));
-    final latestYear = sortedYears.first;
-    final firstYear = sortedYears.last;
+    final sortedYears = availableYears..sort((a, b) => a.compareTo(b));
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
 
     final latestIndikator = indikatorData[latestYear];
     final firstIndikator = indikatorData[firstYear];

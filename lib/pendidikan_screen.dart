@@ -1945,9 +1945,9 @@ class _PendidikanScreenState extends State<PendidikanScreen>
       return const SizedBox.shrink();
     }
 
-    final sortedYears = years..sort((a, b) => b.compareTo(a));
-    final latestYear = sortedYears.first;
-    final firstYear = sortedYears.last;
+    final sortedYears = years..sort((a, b) => a.compareTo(b));
+    final latestYear = sortedYears.last;
+    final firstYear = sortedYears.first;
 
     final latestData = educationData[latestYear];
     final firstData = educationData[firstYear];

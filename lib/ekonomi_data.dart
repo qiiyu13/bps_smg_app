@@ -228,6 +228,6 @@ class EkonomiDataManager {
 
   List<int> getAvailableYears() {
     return dataList.map((e) => int.parse(e.tahun)).toList()
-      ..sort((a, b) => b.compareTo(a));
+      ..sort((a, b) => a.compareTo(b));
   }
 }
