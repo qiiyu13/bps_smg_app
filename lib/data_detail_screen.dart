@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:share_plus/share_plus.dart';
@@ -226,7 +227,7 @@ class _DataDetailScreenState extends State<DataDetailScreen> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${growthRate >= 0 ? '+' : ''}${growthRate.toStringAsFixed(2)}%',
+                      '${growthRate >= 0 ? '+' : ''}${NumberFormatUtils.formatValue(growthRate, decimalPlaces: 2)}%',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -479,9 +480,9 @@ class _DataDetailScreenState extends State<DataDetailScreen> {
     if (dataDetail!['unit'] == 'Juta Jiwa') {
       return '${value.toInt()}M';
     } else if (dataDetail!['unit'] == 'Persen') {
-      return '${value.toStringAsFixed(1)}%';
+      return '${NumberFormatUtils.formatValue(value, decimalPlaces: 1)}%';
     }
-    return value.toStringAsFixed(1);
+    return NumberFormatUtils.formatValue(value, decimalPlaces: 1);
   }
 
   Widget _buildDataInfo() {

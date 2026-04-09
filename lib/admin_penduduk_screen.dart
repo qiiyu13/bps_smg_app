@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -504,7 +505,7 @@ class _AdminPendudukScreenState extends State<AdminPendudukScreen>
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content: Text(
-                            'Total harus 100%! Saat ini: ${total.toStringAsFixed(2)}%')),
+                            'Total harus 100%! Saat ini: ${NumberFormatUtils.formatValue(total, decimalPlaces: 2)}%')),
                   );
                   return;
                 }
@@ -746,7 +747,7 @@ class _AdminPendudukScreenState extends State<AdminPendudukScreen>
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    'Data estimasi dari tahun $lastYear (pertumbuhan +0.5%)',
+                    'Data estimasi dari tahun $lastYear (pertumbuhan +0,5%)',
                     style: const TextStyle(fontSize: 12),
                   ),
                 ),
@@ -871,7 +872,7 @@ class _AdminPendudukScreenState extends State<AdminPendudukScreen>
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content: Text(
-                            'Total % harus 100! Saat ini: ${totalPercentage.toStringAsFixed(2)}%')),
+                            'Total % harus 100! Saat ini: ${NumberFormatUtils.formatValue(totalPercentage, decimalPlaces: 2)}%')),
                   );
                   return;
                 }
@@ -1554,7 +1555,7 @@ class _AdminPendudukScreenState extends State<AdminPendudukScreen>
                                 Text('Versi:',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
-                                Text('3.2',
+                                Text('3,2',
                                     style: TextStyle(color: Colors.blue)),
                               ],
                             ),

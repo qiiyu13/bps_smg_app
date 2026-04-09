@@ -1006,7 +1006,7 @@ class _AdminIpmScreenState extends State<AdminIpmScreen>
                                 Text('Versi:',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
-                                Text('1.0',
+                                Text('1,0',
                                     style: TextStyle(color: Color(0xFF4CAF50))),
                               ],
                             ),

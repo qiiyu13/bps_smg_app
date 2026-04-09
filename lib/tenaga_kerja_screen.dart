@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1380,7 +1381,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         ),
                         children: [
                           TextSpan(
-                            text: '${percentage.toStringAsFixed(1)}%\n',
+                            text: '${NumberFormatUtils.formatValue(percentage, decimalPlaces: 1)}%\n',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w800,

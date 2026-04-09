@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'number_format_utils.dart';
@@ -830,7 +831,7 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
               return ListTile(
                 title: Text('Tahun $year'),
                 subtitle: Text(
-                    'Inflasi: ${yearlyInflation[year]?.toStringAsFixed(2)}%'),
+                    'Inflasi: ${NumberFormatUtils.formatValue(yearlyInflation[year], decimalPlaces: 2)}%'),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
@@ -1426,7 +1427,7 @@ class _AdminInflasiScreenState extends State<AdminInflasiScreen> {
                                 ),
                                 child: Text(
                                   monthlyInflationData[_selectedYear]
-                                          ?.map((e) => e.toStringAsFixed(2))
+                                          ?.map((e) => NumberFormatUtils.formatValue(e, decimalPlaces: 2))
                                           .join(', ') ??
                                       'Tidak ada data',
                                   style: const TextStyle(fontSize: 12),

@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'responsive_sizing.dart';
 
@@ -281,10 +282,10 @@ class KesimpulanGenerator {
     String conclusion;
     if (isDecreasing) {
       conclusion =
-          'Tahun $latestYear, persentase kemiskinan Kota Semarang mencapai ${latestPercentage.toStringAsFixed(2)}%, menunjukkan $statusText sebesar ${absChange.toStringAsFixed(2)} poin persentase dibandingkan tahun $firstYear. Tren menurun yang konsisten ini mencerminkan efektivitas program penanggulangan kemiskinan.';
+          'Tahun $latestYear, persentase kemiskinan Kota Semarang mencapai ${NumberFormatUtils.formatValue(latestPercentage, decimalPlaces: 2)}%, menunjukkan $statusText sebesar ${NumberFormatUtils.formatValue(absChange, decimalPlaces: 2)} poin persentase dibandingkan tahun $firstYear. Tren menurun yang konsisten ini mencerminkan efektivitas program penanggulangan kemiskinan.';
     } else {
       conclusion =
-          'Tahun $latestYear, persentase kemiskinan Kota Semarang mencapai ${latestPercentage.toStringAsFixed(2)}%, mengalami $statusText sebesar ${absChange.toStringAsFixed(2)} poin persentase dibandingkan tahun $firstYear. Kondisi ini memerlukan perhatian khusus dan intervensi kebijakan yang lebih intensif.';
+          'Tahun $latestYear, persentase kemiskinan Kota Semarang mencapai ${NumberFormatUtils.formatValue(latestPercentage, decimalPlaces: 2)}%, mengalami $statusText sebesar ${NumberFormatUtils.formatValue(absChange, decimalPlaces: 2)} poin persentase dibandingkan tahun $firstYear. Kondisi ini memerlukan perhatian khusus dan intervensi kebijakan yang lebih intensif.';
     }
 
     List<String> additionalPoints = [];
@@ -322,7 +323,7 @@ class KesimpulanGenerator {
     }
 
     String conclusion =
-        'Tahun $latestYear, Indeks Pembangunan Manusia (IPM) Kota Semarang mencapai ${latestIPM.toStringAsFixed(2)}, menunjukkan tingkat pembangunan manusia yang ';
+        'Tahun $latestYear, Indeks Pembangunan Manusia (IPM) Kota Semarang mencapai ${NumberFormatUtils.formatValue(latestIPM, decimalPlaces: 2)}, menunjukkan tingkat pembangunan manusia yang ';
 
     if (latestIPM >= 80) {
       conclusion += 'sangat tinggi. ';
@@ -334,7 +335,7 @@ class KesimpulanGenerator {
 
     if (isIncreasing) {
       conclusion +=
-          'Nilai ini meningkat sebesar ${change.toStringAsFixed(2)} poin dibandingkan tahun $firstYear, mencerminkan peningkatan kualitas hidup masyarakat.';
+          'Nilai ini meningkat sebesar ${NumberFormatUtils.formatValue(change, decimalPlaces: 2)} poin dibandingkan tahun $firstYear, mencerminkan peningkatan kualitas hidup masyarakat.';
     } else {
       conclusion +=
           'Nilai ini mengalami penurunan, memerlukan evaluasi dan perbaikan program pembangunan.';
@@ -345,7 +346,7 @@ class KesimpulanGenerator {
       final diff = latestIPM - nationalAverage;
       if (diff > 0) {
         additionalPoints.add(
-            'IPM Kota Semarang lebih tinggi ${diff.toStringAsFixed(2)} poin dari rata-rata nasional (${nationalAverage.toStringAsFixed(2)}), menunjukkan posisi yang relatif baik.');
+            'IPM Kota Semarang lebih tinggi ${NumberFormatUtils.formatValue(diff, decimalPlaces: 2)} poin dari rata-rata nasional (${NumberFormatUtils.formatValue(nationalAverage, decimalPlaces: 2)}), menunjukkan posisi yang relatif baik.');
       } else {
         additionalPoints.add(
             'IPM Kota Semarang masih di bawah rata-rata nasional, perlu upaya percepatan pembangunan.');
@@ -355,7 +356,7 @@ class KesimpulanGenerator {
       final diff = latestIPM - provincialAverage;
       if (diff > 0) {
         additionalPoints.add(
-            'Lebih tinggi ${diff.toStringAsFixed(2)} poin dari rata-rata provinsi Jawa Tengah (${provincialAverage.toStringAsFixed(2)}).');
+            'Lebih tinggi ${NumberFormatUtils.formatValue(diff, decimalPlaces: 2)} poin dari rata-rata provinsi Jawa Tengah (${NumberFormatUtils.formatValue(provincialAverage, decimalPlaces: 2)}).');
       }
     }
 
@@ -389,27 +390,27 @@ class KesimpulanGenerator {
     }
 
     String conclusion =
-        'Tahun $latestYear, pertumbuhan ekonomi Kota Semarang mencapai ${latestGrowth.toStringAsFixed(2)}%, menunjukkan $performance. ';
+        'Tahun $latestYear, pertumbuhan ekonomi Kota Semarang mencapai ${NumberFormatUtils.formatValue(latestGrowth, decimalPlaces: 2)}%, menunjukkan $performance. ';
 
     final trendChange = latestGrowth - firstGrowth;
     if (trendChange > 0) {
       conclusion +=
-          'Terjadi percepatan pertumbuhan sebesar ${trendChange.toStringAsFixed(2)} poin persentase dibandingkan tahun $firstYear, mencerminkan pemulihan dan penguatan ekonomi.';
+          'Terjadi percepatan pertumbuhan sebesar ${NumberFormatUtils.formatValue(trendChange, decimalPlaces: 2)} poin persentase dibandingkan tahun $firstYear, mencerminkan pemulihan dan penguatan ekonomi.';
     } else if (trendChange < 0) {
       conclusion +=
-          'Mengalami perlambatan sebesar ${trendChange.abs().toStringAsFixed(2)} poin persentase dibandingkan tahun $firstYear, perlu strategi stimulasi ekonomi.';
+          'Mengalami perlambatan sebesar ${NumberFormatUtils.formatValue(trendChange.abs(), decimalPlaces: 2)} poin persentase dibandingkan tahun $firstYear, perlu strategi stimulasi ekonomi.';
     } else {
       conclusion +=
-          'Tren pertumbuhan relatif stabil dengan rata-rata ${averageGrowth.toStringAsFixed(2)}% selama periode teramati.';
+          'Tren pertumbuhan relatif stabil dengan rata-rata ${NumberFormatUtils.formatValue(averageGrowth, decimalPlaces: 2)}% selama periode teramati.';
     }
 
     List<String> additionalPoints = [];
     if (averageGrowth >= 5.0) {
       additionalPoints.add(
-          'Rata-rata pertumbuhan ${averageGrowth.toStringAsFixed(2)}% menunjukkan fundamental ekonomi yang kuat dan berkelanjutan.');
+          'Rata-rata pertumbuhan ${NumberFormatUtils.formatValue(averageGrowth, decimalPlaces: 2)}% menunjukkan fundamental ekonomi yang kuat dan berkelanjutan.');
     } else if (averageGrowth >= 3.0) {
       additionalPoints.add(
-          'Rata-rata pertumbuhan ${averageGrowth.toStringAsFixed(2)}% menunjukkan stabilitas ekonomi yang perlu dipertahankan.');
+          'Rata-rata pertumbuhan ${NumberFormatUtils.formatValue(averageGrowth, decimalPlaces: 2)}% menunjukkan stabilitas ekonomi yang perlu dipertahankan.');
     } else {
       additionalPoints.add(
           'Rata-rata pertumbuhan di bawah target, memerlukan diversifikasi sektor ekonomi dan peningkatan investasi.');
@@ -446,14 +447,14 @@ class KesimpulanGenerator {
     }
 
     String conclusion =
-        'Tahun $latestYear, Indeks Pembangunan Gender (IDG) Kota Semarang mencapai ${latestIDG.toStringAsFixed(2)}, yang berarti $parityLevel. ';
+        'Tahun $latestYear, Indeks Pembangunan Gender (IDG) Kota Semarang mencapai ${NumberFormatUtils.formatValue(latestIDG, decimalPlaces: 2)}, yang berarti $parityLevel. ';
 
     if (change > 0) {
       conclusion +=
-          'Terdapat peningkatan sebesar ${change.toStringAsFixed(2)} poin dibandingkan tahun $firstYear, menunjukkan kemajuan dalam pemberdayaan perempuan.';
+          'Terdapat peningkatan sebesar ${NumberFormatUtils.formatValue(change, decimalPlaces: 2)} poin dibandingkan tahun $firstYear, menunjukkan kemajuan dalam pemberdayaan perempuan.';
     } else if (change < 0) {
       conclusion +=
-          'Mengalami penurunan sebesar ${change.abs().toStringAsFixed(2)} poin, memerlukan evaluasi kebijakan kesetaraan gender.';
+          'Mengalami penurunan sebesar ${NumberFormatUtils.formatValue(change.abs(), decimalPlaces: 2)} poin, memerlukan evaluasi kebijakan kesetaraan gender.';
     } else {
       conclusion +=
           'Nilai relatif stabil, perlu percepatan program pemberdayaan perempuan.';
@@ -496,14 +497,14 @@ class KesimpulanGenerator {
     }
 
     String conclusion =
-        'Tahun $latestYear, Indeks Pemberdayaan Gender (IPG) Kota Semarang mencapai ${latestIPG.toStringAsFixed(2)}, menunjukkan $empowermentLevel dalam hal partisipasi perempuan di bidang politik dan ekonomi. ';
+        'Tahun $latestYear, Indeks Pemberdayaan Gender (IPG) Kota Semarang mencapai ${NumberFormatUtils.formatValue(latestIPG, decimalPlaces: 2)}, menunjukkan $empowermentLevel dalam hal partisipasi perempuan di bidang politik dan ekonomi. ';
 
     if (change > 0) {
       conclusion +=
-          'Meningkat sebesar ${change.toStringAsFixed(2)} poin dibandingkan tahun $firstYear, mencerminkan peningkatan peran perempuan dalam pengambilan keputusan.';
+          'Meningkat sebesar ${NumberFormatUtils.formatValue(change, decimalPlaces: 2)} poin dibandingkan tahun $firstYear, mencerminkan peningkatan peran perempuan dalam pengambilan keputusan.';
     } else if (change < 0) {
       conclusion +=
-          'Mengalami penurunan sebesar ${change.abs().toStringAsFixed(2)} poin, memerlukan perhatian khusus pada representasi perempuan.';
+          'Mengalami penurunan sebesar ${NumberFormatUtils.formatValue(change.abs(), decimalPlaces: 2)} poin, memerlukan perhatian khusus pada representasi perempuan.';
     } else {
       conclusion +=
           'Tren stabil, perlu upaya lebih lanjut untuk meningkatkan partisipasi perempuan.';
@@ -539,15 +540,15 @@ class KesimpulanGenerator {
     }
 
     String conclusion =
-        'Tahun $latestYear, tingkat inflasi Kota Semarang mencapai ${latestInflasi.toStringAsFixed(2)}%, menunjukkan $inflationLevel. ';
+        'Tahun $latestYear, tingkat inflasi Kota Semarang mencapai ${NumberFormatUtils.formatValue(latestInflasi, decimalPlaces: 2)}%, menunjukkan $inflationLevel. ';
 
     final change = latestInflasi - firstInflasi;
     if (change > 0) {
       conclusion +=
-          'Mengalami kenaikan sebesar ${change.toStringAsFixed(2)} poin persentase dibandingkan tahun $firstYear.';
+          'Mengalami kenaikan sebesar ${NumberFormatUtils.formatValue(change, decimalPlaces: 2)} poin persentase dibandingkan tahun $firstYear.';
     } else if (change < 0) {
       conclusion +=
-          'Menurun sebesar ${change.abs().toStringAsFixed(2)} poin persentase dibandingkan tahun $firstYear, menunjukkan stabilitas harga yang membaik.';
+          'Menurun sebesar ${NumberFormatUtils.formatValue(change.abs(), decimalPlaces: 2)} poin persentase dibandingkan tahun $firstYear, menunjukkan stabilitas harga yang membaik.';
     } else {
       conclusion += 'Relatif stabil dibandingkan tahun $firstYear.';
     }
@@ -555,10 +556,10 @@ class KesimpulanGenerator {
     List<String> additionalPoints = [];
     if (averageInflasi <= 3.5) {
       additionalPoints.add(
-          'Rata-rata inflasi ${averageInflasi.toStringAsFixed(2)}% berada dalam kisaran target Bank Indonesia, menunjukkan manajemen moneter yang efektif.');
+          'Rata-rata inflasi ${NumberFormatUtils.formatValue(averageInflasi, decimalPlaces: 2)}% berada dalam kisaran target Bank Indonesia, menunjukkan manajemen moneter yang efektif.');
     } else {
       additionalPoints.add(
-          'Rata-rata inflasi ${averageInflasi.toStringAsFixed(2)}% di atas target ideal, perlu koordinasi kebijakan fiskal dan moneter.');
+          'Rata-rata inflasi ${NumberFormatUtils.formatValue(averageInflasi, decimalPlaces: 2)}% di atas target ideal, perlu koordinasi kebijakan fiskal dan moneter.');
     }
 
     return {
@@ -593,14 +594,14 @@ class KesimpulanGenerator {
     }
 
     String conclusion =
-        'Tahun $latestYear, tingkat pengangguran Kota Semarang mencapai ${latestUnemployment.toStringAsFixed(2)}%, menunjukkan $employmentStatus. ';
+        'Tahun $latestYear, tingkat pengangguran Kota Semarang mencapai ${NumberFormatUtils.formatValue(latestUnemployment, decimalPlaces: 2)}%, menunjukkan $employmentStatus. ';
 
     if (change < 0) {
       conclusion +=
-          'Mengalami penurunan sebesar ${change.abs().toStringAsFixed(2)} poin persentase dibandingkan tahun $firstYear, mencerminkan penciptaan lapangan kerja yang efektif.';
+          'Mengalami penurunan sebesar ${NumberFormatUtils.formatValue(change.abs(), decimalPlaces: 2)} poin persentase dibandingkan tahun $firstYear, mencerminkan penciptaan lapangan kerja yang efektif.';
     } else if (change > 0) {
       conclusion +=
-          'Meningkat sebesar ${change.toStringAsFixed(2)} poin persentase dibandingkan tahun $firstYear, memerlukan percepatan program penyerapan tenaga kerja.';
+          'Meningkat sebesar ${NumberFormatUtils.formatValue(change, decimalPlaces: 2)} poin persentase dibandingkan tahun $firstYear, memerlukan percepatan program penyerapan tenaga kerja.';
     } else {
       conclusion += 'Relatif stabil dibandingkan tahun $firstYear.';
     }
@@ -608,10 +609,10 @@ class KesimpulanGenerator {
     List<String> additionalPoints = [];
     if (participationRate >= 70) {
       additionalPoints.add(
-          'Tingkat partisipasi angkatan kerja yang tinggi (${participationRate.toStringAsFixed(1)}%) menunjukkan potensi sumber daya manusia yang produktif.');
+          'Tingkat partisipasi angkatan kerja yang tinggi (${NumberFormatUtils.formatValue(participationRate, decimalPlaces: 1)}%) menunjukkan potensi sumber daya manusia yang produktif.');
     } else {
       additionalPoints.add(
-          'Tingkat partisipasi angkatan kerja ${participationRate.toStringAsFixed(1)}% masih berpotensi ditingkatkan melalui program pemberdayaan.');
+          'Tingkat partisipasi angkatan kerja ${NumberFormatUtils.formatValue(participationRate, decimalPlaces: 1)}% masih berpotensi ditingkatkan melalui program pemberdayaan.');
     }
 
     return {
@@ -648,19 +649,19 @@ class KesimpulanGenerator {
     }
 
     String conclusion =
-        'Tahun $latestYear, jumlah penduduk Kota Semarang mencapai ${_formatPopulation(latestPopulation)}, dengan $growthDescription sebesar ${growthRate.toStringAsFixed(2)}% per tahun. ';
+        'Tahun $latestYear, jumlah penduduk Kota Semarang mencapai ${_formatPopulation(latestPopulation)}, dengan $growthDescription sebesar ${NumberFormatUtils.formatValue(growthRate, decimalPlaces: 2)}% per tahun. ';
 
     final populationChange = latestPopulation - firstPopulation;
     conclusion +=
-        'Terdapat penambahan ${populationChange >= 1000000 ? "${(populationChange / 1000000).toStringAsFixed(2)} juta" : "${(populationChange / 1000).toStringAsFixed(0)} ribu"} jiwa sejak tahun $firstYear.';
+        'Terdapat penambahan ${populationChange >= 1000000 ? "${NumberFormatUtils.formatValue((populationChange / 1000000), decimalPlaces: 2)} juta" : "${NumberFormatUtils.formatValue((populationChange / 1000), decimalPlaces: 0)} ribu"} jiwa sejak tahun $firstYear.';
 
     List<String> additionalPoints = [];
     if (density > 10000) {
       additionalPoints.add(
-          'Kepadatan penduduk yang tinggi (${density.toStringAsFixed(0)} jiwa/km²) memerlukan manajemen perkotaan yang efektif dan penyediaan infrastruktur memadai.');
+          'Kepadatan penduduk yang tinggi (${NumberFormatUtils.formatValue(density, decimalPlaces: 0)} jiwa/km²) memerlukan manajemen perkotaan yang efektif dan penyediaan infrastruktur memadai.');
     } else {
       additionalPoints.add(
-          'Kepadatan penduduk ${density.toStringAsFixed(0)} jiwa/km² masih dalam batas wajar untuk pengelolaan kota.');
+          'Kepadatan penduduk ${NumberFormatUtils.formatValue(density, decimalPlaces: 0)} jiwa/km² masih dalam batas wajar untuk pengelolaan kota.');
     }
 
     return {
@@ -695,14 +696,14 @@ class KesimpulanGenerator {
     }
 
     String conclusion =
-        'Tahun $latestYear, angka partisipasi pendidikan Kota Semarang mencapai ${latestEnrollment.toStringAsFixed(2)}%, menunjukkan $educationLevel. ';
+        'Tahun $latestYear, angka partisipasi pendidikan Kota Semarang mencapai ${NumberFormatUtils.formatValue(latestEnrollment, decimalPlaces: 2)}%, menunjukkan $educationLevel. ';
 
     if (change > 0) {
       conclusion +=
-          'Meningkat sebesar ${change.toStringAsFixed(2)} poin persentase dibandingkan tahun $firstYear, mencerminkan akses pendidikan yang semakin baik.';
+          'Meningkat sebesar ${NumberFormatUtils.formatValue(change, decimalPlaces: 2)} poin persentase dibandingkan tahun $firstYear, mencerminkan akses pendidikan yang semakin baik.';
     } else if (change < 0) {
       conclusion +=
-          'Menurun sebesar ${change.abs().toStringAsFixed(2)} poin persentase, memerlukan intervensi untuk meningkatkan akses pendidikan.';
+          'Menurun sebesar ${NumberFormatUtils.formatValue(change.abs(), decimalPlaces: 2)} poin persentase, memerlukan intervensi untuk meningkatkan akses pendidikan.';
     } else {
       conclusion += 'Relatif stabil dibandingkan tahun $firstYear.';
     }
@@ -748,7 +749,7 @@ class KesimpulanGenerator {
     }
 
     String conclusion =
-        'Tahun $latestYear, pencapaian Tujuan Pembangunan Berkelanjutan (SDGs) Kota Semarang menunjukkan $progressLevel dengan rata-rata skor ${averageScore.toStringAsFixed(2)}. Dari $totalIndicators indikator, terdapat $onTrackCount indikator yang berada pada jalur target.';
+        'Tahun $latestYear, pencapaian Tujuan Pembangunan Berkelanjutan (SDGs) Kota Semarang menunjukkan $progressLevel dengan rata-rata skor ${NumberFormatUtils.formatValue(averageScore, decimalPlaces: 2)}. Dari $totalIndicators indikator, terdapat $onTrackCount indikator yang berada pada jalur target.';
 
     List<String> additionalPoints = [];
     if (progressRate > 0) {
@@ -768,9 +769,9 @@ class KesimpulanGenerator {
   // Helper method
   static String _formatPopulation(int population) {
     if (population >= 1000000) {
-      return '${(population / 1000000).toStringAsFixed(2)} juta jiwa';
+      return '${NumberFormatUtils.formatValue((population / 1000000), decimalPlaces: 2)} juta jiwa';
     } else if (population >= 1000) {
-      return '${(population / 1000).toStringAsFixed(0)} ribu jiwa';
+      return '${NumberFormatUtils.formatValue((population / 1000), decimalPlaces: 0)} ribu jiwa';
     }
     return '$population jiwa';
   }

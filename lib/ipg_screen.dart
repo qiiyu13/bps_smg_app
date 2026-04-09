@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1075,7 +1076,7 @@ class _IPGScreenState extends State<IPGScreen>
                         interval: yInterval,
                         getTitlesWidget: (value, meta) {
                           return Text(
-                            value.toStringAsFixed(1),
+                            NumberFormatUtils.formatValue(value, decimalPlaces: 1),
                             style: TextStyle(
                               fontSize: 10,
                               color: Colors.grey[600],
@@ -1135,7 +1136,7 @@ class _IPGScreenState extends State<IPGScreen>
                           if (index >= 0 && index < validYearIndices.length) {
                             final year = int.parse(yearLabels[index]);
                             return LineTooltipItem(
-                              '$year\nIPG: ${spot.y.toStringAsFixed(2)}',
+                              '$year\nIPG: ${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}',
                               const TextStyle(
                                 color: _bpsPurple,
                                 fontWeight: FontWeight.bold,

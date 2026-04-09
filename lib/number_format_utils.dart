@@ -142,7 +142,7 @@ class NumberFormatUtils {
 
   /// Helper method to format value for display
   static String formatValue(dynamic value,
-      {bool isCompact = false, bool isPercentage = false}) {
+      {bool isCompact = false, bool isPercentage = false, int? decimalPlaces}) {
     if (value == null) return 'N/A';
 
     if (isPercentage) {
@@ -160,7 +160,7 @@ class NumberFormatUtils {
       if (isCompact) {
         return formatCompact(value);
       }
-      return formatDecimal(value);
+      return formatDecimal(value, decimalPlaces: decimalPlaces ?? 2);
     }
 
     return value.toString();

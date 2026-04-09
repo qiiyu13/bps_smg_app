@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -617,7 +618,7 @@ class _AdminTenagaKerjaScreenState extends State<AdminTenagaKerjaScreen>
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content: Text(
-                            'Total harus 100%! Saat ini: ${total.toStringAsFixed(2)}%')),
+                            'Total harus 100%! Saat ini: ${NumberFormatUtils.formatValue(total, decimalPlaces: 2)}%')),
                   );
                   return;
                 }
@@ -916,7 +917,7 @@ class _AdminTenagaKerjaScreenState extends State<AdminTenagaKerjaScreen>
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content: Text(
-                            'Total distribusi harus 100%! Saat ini: ${totalDistribusi.toStringAsFixed(2)}%')),
+                            'Total distribusi harus 100%! Saat ini: ${NumberFormatUtils.formatValue(totalDistribusi, decimalPlaces: 2)}%')),
                   );
                   return;
                 }
@@ -1592,7 +1593,7 @@ class _AdminTenagaKerjaScreenState extends State<AdminTenagaKerjaScreen>
                                 Text('Versi:',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
-                                Text('1.0',
+                                Text('1,0',
                                     style: TextStyle(color: Colors.blue)),
                               ],
                             ),

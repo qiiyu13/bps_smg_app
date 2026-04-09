@@ -14,86 +14,86 @@ class _MapScreenState extends State<MapScreen> {
     {
       'id': 'jawa-barat',
       'name': 'Jawa Barat',
-      'population': '48.0 Juta',
+      'population': '48,0 Juta',
       'density': '1.341 per km²',
-      'poverty': '7.25%',
+      'poverty': '7,25%',
       'area': '35.377 km²',
       'capital': 'Bandung',
       'governor': 'Ridwan Kamil',
       'districts': 27,
       'cities': 9,
       'gdp': 'Rp 2.565 Triliun',
-      'unemployment': '8.45%'
+      'unemployment': '8,45%'
     },
     {
       'id': 'jawa-tengah',
       'name': 'Jawa Tengah',
-      'population': '36.5 Juta',
+      'population': '36,5 Juta',
       'density': '1.124 per km²',
-      'poverty': '10.64%',
+      'poverty': '10,64%',
       'area': '32.548 km²',
       'capital': 'Semarang',
       'governor': 'Ganjar Pranowo',
       'districts': 29,
       'cities': 6,
       'gdp': 'Rp 1.875 Triliun',
-      'unemployment': '5.23%'
+      'unemployment': '5,23%'
     },
     {
       'id': 'jawa-timur',
       'name': 'Jawa Timur',
-      'population': '40.7 Juta',
+      'population': '40,7 Juta',
       'density': '855 per km²',
-      'poverty': '10.37%',
+      'poverty': '10,37%',
       'area': '47.800 km²',
       'capital': 'Surabaya',
       'governor': 'Khofifah Indar Parawansa',
       'districts': 29,
       'cities': 9,
       'gdp': 'Rp 2.278 Triliun',
-      'unemployment': '4.11%'
+      'unemployment': '4,11%'
     },
     {
       'id': 'bali',
       'name': 'Bali',
-      'population': '4.3 Juta',
+      'population': '4,3 Juta',
       'density': '750 per km²',
-      'poverty': '4.14%',
+      'poverty': '4,14%',
       'area': '5.780 km²',
       'capital': 'Denpasar',
       'governor': 'I Wayan Koster',
       'districts': 8,
       'cities': 1,
       'gdp': 'Rp 274 Miliar',
-      'unemployment': '2.88%'
+      'unemployment': '2,88%'
     },
     {
       'id': 'sumatra-utara',
       'name': 'Sumatera Utara',
-      'population': '15.1 Juta',
+      'population': '15,1 Juta',
       'density': '209 per km²',
-      'poverty': '8.75%',
+      'poverty': '8,75%',
       'area': '72.460 km²',
       'capital': 'Medan',
       'governor': 'Edy Rahmayadi',
       'districts': 25,
       'cities': 8,
       'gdp': 'Rp 732 Miliar',
-      'unemployment': '5.67%'
+      'unemployment': '5,67%'
     },
     {
       'id': 'dki-jakarta',
       'name': 'DKI Jakarta',
-      'population': '10.6 Juta',
+      'population': '10,6 Juta',
       'density': '15.900 per km²',
-      'poverty': '3.47%',
+      'poverty': '3,47%',
       'area': '664 km²',
       'capital': 'Jakarta',
       'governor': 'Anies Baswedan',
       'districts': 1,
       'cities': 5,
       'gdp': 'Rp 2.842 Triliun',
-      'unemployment': '7.22%'
+      'unemployment': '7,22%'
     },
   ];
 

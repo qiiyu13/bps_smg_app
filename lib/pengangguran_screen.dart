@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -517,10 +518,10 @@ class _PengangguranScreenState extends State<PengangguranScreen>
           // Indicator rows
           _buildIndicatorRow(
             label: 'TPT Kota Semarang',
-            value: '${data.tptSemarang.toStringAsFixed(2)}%',
+            value: '${NumberFormatUtils.formatValue(data.tptSemarang, decimalPlaces: 2)}%',
             subtitle: tptChange < 0
-                ? 'turun ${tptChange.abs().toStringAsFixed(2)}% dari tahun lalu'
-                : 'naik ${tptChange.toStringAsFixed(2)}% dari tahun lalu',
+                ? 'turun ${NumberFormatUtils.formatValue(tptChange.abs(), decimalPlaces: 2)}% dari tahun lalu'
+                : 'naik ${NumberFormatUtils.formatValue(tptChange, decimalPlaces: 2)}% dari tahun lalu',
             icon: Icons.trending_down_rounded,
             color: tptColor,
             isSmallScreen: isSmallScreen,
@@ -529,10 +530,10 @@ class _PengangguranScreenState extends State<PengangguranScreen>
           _buildDivider(),
           _buildIndicatorRow(
             label: 'TPAK Kota Semarang',
-            value: '${data.tpakSemarang.toStringAsFixed(2)}%',
+            value: '${NumberFormatUtils.formatValue(data.tpakSemarang, decimalPlaces: 2)}%',
             subtitle: tpakChange > 0
-                ? 'naik ${tpakChange.toStringAsFixed(2)}% dari tahun lalu'
-                : 'turun ${tpakChange.abs().toStringAsFixed(2)}% dari tahun lalu',
+                ? 'naik ${NumberFormatUtils.formatValue(tpakChange, decimalPlaces: 2)}% dari tahun lalu'
+                : 'turun ${NumberFormatUtils.formatValue(tpakChange.abs(), decimalPlaces: 2)}% dari tahun lalu',
             icon: Icons.people_rounded,
             color: tpakColor,
             isSmallScreen: isSmallScreen,
@@ -541,7 +542,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
           _buildDivider(),
           _buildIndicatorRow(
             label: 'TPT Jawa Tengah',
-            value: '${data.tptJateng.toStringAsFixed(2)}%',
+            value: '${NumberFormatUtils.formatValue(data.tptJateng, decimalPlaces: 2)}%',
             subtitle: 'Perbandingan regional',
             icon: Icons.location_on_rounded,
             color: _bpsOrange,
@@ -551,7 +552,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
           _buildDivider(),
           _buildIndicatorRow(
             label: 'TPT Nasional',
-            value: '${data.tptNasional.toStringAsFixed(2)}%',
+            value: '${NumberFormatUtils.formatValue(data.tptNasional, decimalPlaces: 2)}%',
             subtitle: 'Perbandingan nasional',
             icon: Icons.public_rounded,
             color: _bpsBlue,
@@ -835,7 +836,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots.map((spot) {
                         return LineTooltipItem(
-                          '${labels[spot.barIndex]}: ${spot.y.toStringAsFixed(2)}$unit',
+                          '${labels[spot.barIndex]}: ${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}$unit',
                           TextStyle(
                             color: colors[spot.barIndex],
                             fontWeight: FontWeight.w700,
@@ -901,10 +902,10 @@ class _PengangguranScreenState extends State<PengangguranScreen>
 
     if (tptChange < 0) {
       kesimpulanAnak.add(
-          'TPT Kota Semarang $selectedYear turun ${tptChange.abs().toStringAsFixed(2)} persen poin dibanding tahun sebelumnya, menunjukkan peningkatan penyerapan tenaga kerja.');
+          'TPT Kota Semarang $selectedYear turun ${NumberFormatUtils.formatValue(tptChange.abs(), decimalPlaces: 2)} persen poin dibanding tahun sebelumnya, menunjukkan peningkatan penyerapan tenaga kerja.');
     } else if (tptChange > 0) {
       kesimpulanAnak.add(
-          'TPT Kota Semarang $selectedYear naik ${tptChange.toStringAsFixed(2)} persen poin dibanding tahun sebelumnya, perlu perhatian dalam program ketenagakerjaan.');
+          'TPT Kota Semarang $selectedYear naik ${NumberFormatUtils.formatValue(tptChange, decimalPlaces: 2)} persen poin dibanding tahun sebelumnya, perlu perhatian dalam program ketenagakerjaan.');
     } else {
       kesimpulanAnak.add(
           'TPT Kota Semarang $selectedYear relatif stabil dibanding tahun sebelumnya.');
@@ -912,12 +913,12 @@ class _PengangguranScreenState extends State<PengangguranScreen>
 
     if (tpakChange > 0) {
       kesimpulanAnak.add(
-          'TPAK meningkat ${tpakChange.toStringAsFixed(2)} persen poin, menunjukkan peningkatan partisipasi penduduk dalam angkatan kerja.');
+          'TPAK meningkat ${NumberFormatUtils.formatValue(tpakChange, decimalPlaces: 2)} persen poin, menunjukkan peningkatan partisipasi penduduk dalam angkatan kerja.');
     }
 
     if (data.tptSemarang < data.tptNasional) {
       kesimpulanAnak.add(
-          'TPT Kota Semarang (${data.tptSemarang.toStringAsFixed(2)}%) lebih rendah dari TPT Nasional (${data.tptNasional.toStringAsFixed(2)}%), menunjukkan kondisi ketenagakerjaan yang lebih baik.');
+          'TPT Kota Semarang (${NumberFormatUtils.formatValue(data.tptSemarang, decimalPlaces: 2)}%) lebih rendah dari TPT Nasional (${NumberFormatUtils.formatValue(data.tptNasional, decimalPlaces: 2)}%), menunjukkan kondisi ketenagakerjaan yang lebih baik.');
     }
 
     final status =

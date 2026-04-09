@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -978,7 +979,7 @@ class _IDGScreenState extends State<IDGScreen>
                             interval: yInterval,
                             getTitlesWidget: (value, meta) {
                               return Text(
-                                value.toStringAsFixed(0),
+                                NumberFormatUtils.formatValue(value, decimalPlaces: 0),
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Colors.grey[600],
@@ -1046,7 +1047,7 @@ class _IDGScreenState extends State<IDGScreen>
                               final index = spot.x.toInt();
                               final year = availableYears[index];
                               return LineTooltipItem(
-                                '$year\nIDG: ${spot.y.toStringAsFixed(2)}',
+                                '$year\nIDG: ${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}',
                                 const TextStyle(
                                   color: _bpsPurple,
                                   fontWeight: FontWeight.bold,

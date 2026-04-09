@@ -347,7 +347,7 @@ class _AdminPertumbuhanEkonomiScreenState
                 TextField(
                   controller: pertumbuhanController,
                   decoration: const InputDecoration(
-                    labelText: 'Pertumbuhan Ekonomi (ex: 5.62%)',
+                    labelText: 'Pertumbuhan Ekonomi (ex: 5,62%)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.trending_up),
                   ),
@@ -356,7 +356,7 @@ class _AdminPertumbuhanEkonomiScreenState
                 TextField(
                   controller: kontribusiController,
                   decoration: const InputDecoration(
-                    labelText: 'Kontribusi PDRB (ex: 14.2%)',
+                    labelText: 'Kontribusi PDRB (ex: 14,2%)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.pie_chart),
                   ),
@@ -365,7 +365,7 @@ class _AdminPertumbuhanEkonomiScreenState
                 TextField(
                   controller: sektorIndustriController,
                   decoration: const InputDecoration(
-                    labelText: 'Sektor Industri (ex: 25.04%)',
+                    labelText: 'Sektor Industri (ex: 25,04%)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.factory),
                   ),
@@ -374,7 +374,7 @@ class _AdminPertumbuhanEkonomiScreenState
                 TextField(
                   controller: sektorKonstruksiController,
                   decoration: const InputDecoration(
-                    labelText: 'Sektor Konstruksi (ex: 24.43%)',
+                    labelText: 'Sektor Konstruksi (ex: 24,43%)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.construction),
                   ),
@@ -383,7 +383,7 @@ class _AdminPertumbuhanEkonomiScreenState
                 TextField(
                   controller: sektorPerdagController,
                   decoration: const InputDecoration(
-                    labelText: 'Sektor Perdagangan (ex: 13.97%)',
+                    labelText: 'Sektor Perdagangan (ex: 13,97%)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.store),
                   ),
@@ -392,7 +392,7 @@ class _AdminPertumbuhanEkonomiScreenState
                 TextField(
                   controller: pdrbController,
                   decoration: const InputDecoration(
-                    labelText: 'PDRB per Kapita (ex: Rp 100.04 Juta)',
+                    labelText: 'PDRB per Kapita (ex: Rp 100,04 Juta)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.account_balance_wallet),
                   ),
@@ -410,7 +410,7 @@ class _AdminPertumbuhanEkonomiScreenState
                 TextField(
                   controller: tptController,
                   decoration: const InputDecoration(
-                    labelText: 'TPT - Tingkat Pengangguran (ex: 5.82%)',
+                    labelText: 'TPT - Tingkat Pengangguran (ex: 5,82%)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.work_off),
                   ),

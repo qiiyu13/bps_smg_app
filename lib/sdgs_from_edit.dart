@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'sdgs_data_service.dart';
@@ -76,22 +77,22 @@ class _SDGsFormEditScreenState extends State<SDGsFormEditScreen>
 
     for (var year in years) {
       _controllers['samitasilayak_$year'] = TextEditingController(
-        text: (samitasilayak[year] ?? 0).toStringAsFixed(2),
+        text: NumberFormatUtils.formatValue((samitasilayak[year] ?? 0), decimalPlaces: 2),
       );
       _controllers['tikRemaja_$year'] = TextEditingController(
-        text: (tikRemaja[year] ?? 0).toStringAsFixed(2),
+        text: NumberFormatUtils.formatValue((tikRemaja[year] ?? 0), decimalPlaces: 2),
       );
       _controllers['tikDewasa_$year'] = TextEditingController(
-        text: (tikDewasa[year] ?? 0).toStringAsFixed(2),
+        text: NumberFormatUtils.formatValue((tikDewasa[year] ?? 0), decimalPlaces: 2),
       );
       _controllers['aktaLahir_$year'] = TextEditingController(
-        text: (aktaLahir[year] ?? 0).toStringAsFixed(2),
+        text: NumberFormatUtils.formatValue((aktaLahir[year] ?? 0), decimalPlaces: 2),
       );
       _controllers['apm_$year'] = TextEditingController(
-        text: (apm[year] ?? 0).toStringAsFixed(2),
+        text: NumberFormatUtils.formatValue((apm[year] ?? 0), decimalPlaces: 2),
       );
       _controllers['apk_$year'] = TextEditingController(
-        text: (apk[year] ?? 0).toStringAsFixed(2),
+        text: NumberFormatUtils.formatValue((apk[year] ?? 0), decimalPlaces: 2),
       );
     }
   }
@@ -522,7 +523,7 @@ class _SDGsFormEditScreenState extends State<SDGsFormEditScreen>
               ],
               decoration: InputDecoration(
                 labelText: 'Nilai ($selectedYear)',
-                hintText: '0.00',
+                hintText: '0,00',
                 suffixText: '%',
                 prefixIcon: Icon(Icons.edit, color: color, size: 18),
                 border: OutlineInputBorder(

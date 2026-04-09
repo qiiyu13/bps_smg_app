@@ -80,22 +80,22 @@ class _AddEditEducationScreenState extends State<AddEditEducationScreen> {
       text: editData?.year ?? DateTime.now().year.toString(),
     );
     _angkaMelekHurufController = TextEditingController(
-      text: editData?.angkaMelekHuruf.toString() ?? '96.0',
+      text: editData?.angkaMelekHuruf.toString() ?? '96,0',
     );
     _rataRataLamaSekolahController = TextEditingController(
-      text: editData?.rataRataLamaSekolah.toString() ?? '8.0',
+      text: editData?.rataRataLamaSekolah.toString() ?? '8,0',
     );
     _harapanLamaSekolahController = TextEditingController(
-      text: editData?.harapanLamaSekolah.toString() ?? '13.0',
+      text: editData?.harapanLamaSekolah.toString() ?? '13,0',
     );
     _rasioGuruMuridController = TextEditingController(
-      text: editData?.rasioGuruMurid.toString() ?? '15.0',
+      text: editData?.rasioGuruMurid.toString() ?? '15,0',
     );
     _tingkatKelulusanController = TextEditingController(
-      text: editData?.tingkatKelulusan.toString() ?? '98.0',
+      text: editData?.tingkatKelulusan.toString() ?? '98,0',
     );
     _aksesPendidikanTinggiController = TextEditingController(
-      text: editData?.aksesPendidikanTinggi.toString() ?? '30.0',
+      text: editData?.aksesPendidikanTinggi.toString() ?? '30,0',
     );
 
     // Jenjang pendidikan
@@ -359,42 +359,42 @@ class _AddEditEducationScreenState extends State<AddEditEducationScreen> {
         _buildTextField(
           controller: _angkaMelekHurufController,
           label: 'Angka Melek Huruf (%)',
-          hint: '96.0',
+          hint: '96,0',
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 12),
         _buildTextField(
           controller: _rataRataLamaSekolahController,
           label: 'Rata-rata Lama Sekolah (tahun)',
-          hint: '8.0',
+          hint: '8,0',
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 12),
         _buildTextField(
           controller: _harapanLamaSekolahController,
           label: 'Harapan Lama Sekolah (tahun)',
-          hint: '13.0',
+          hint: '13,0',
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 12),
         _buildTextField(
           controller: _rasioGuruMuridController,
           label: 'Rasio Guru:Murid',
-          hint: '15.0',
+          hint: '15,0',
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 12),
         _buildTextField(
           controller: _tingkatKelulusanController,
           label: 'Tingkat Kelulusan (%)',
-          hint: '98.0',
+          hint: '98,0',
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 12),
         _buildTextField(
           controller: _aksesPendidikanTinggiController,
           label: 'Akses Pendidikan Tinggi (%)',
-          hint: '30.0',
+          hint: '30,0',
           keyboardType: TextInputType.number,
         ),
       ],
@@ -499,7 +499,7 @@ class _AddEditEducationScreenState extends State<AddEditEducationScreen> {
                       child: _buildTextField(
                         controller: _rasioControllers[index]['sekolahMurid']!,
                         label: 'Rasio Sekolah-Murid',
-                        hint: '0.0',
+                        hint: '0,0',
                         keyboardType: TextInputType.number,
                       ),
                     ),
@@ -508,7 +508,7 @@ class _AddEditEducationScreenState extends State<AddEditEducationScreen> {
                       child: _buildTextField(
                         controller: _rasioControllers[index]['guruMurid']!,
                         label: 'Rasio Guru-Murid',
-                        hint: '0.0',
+                        hint: '0,0',
                         keyboardType: TextInputType.number,
                       ),
                     ),
@@ -546,7 +546,7 @@ class _AddEditEducationScreenState extends State<AddEditEducationScreen> {
                 child: _buildTextField(
                   controller: _putusSekolahControllers[index]['persentase']!,
                   label: 'Persentase (%)',
-                  hint: '0.0',
+                  hint: '0,0',
                   keyboardType: TextInputType.number,
                 ),
               ),
@@ -590,7 +590,7 @@ class _AddEditEducationScreenState extends State<AddEditEducationScreen> {
                       child: _buildTextField(
                         controller: _partisipasiControllers[index]['apm']!,
                         label: 'APM (%)',
-                        hint: '0.0',
+                        hint: '0,0',
                         keyboardType: TextInputType.number,
                       ),
                     ),
@@ -599,7 +599,7 @@ class _AddEditEducationScreenState extends State<AddEditEducationScreen> {
                       child: _buildTextField(
                         controller: _partisipasiControllers[index]['apk']!,
                         label: 'APK (%)',
-                        hint: '0.0',
+                        hint: '0,0',
                         keyboardType: TextInputType.number,
                       ),
                     ),

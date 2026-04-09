@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1399,7 +1400,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                       interval: 0.5,
                       getTitlesWidget: (value, meta) {
                         return Text(
-                          '${value.toStringAsFixed(1)}%',
+                          '${NumberFormatUtils.formatValue(value, decimalPlaces: 1)}%',
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.grey[600],
@@ -1458,7 +1459,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                         final index = spot.x.toInt();
                         final year = yearLabels[index];
                         return LineTooltipItem(
-                          '$year\n${spot.y.toStringAsFixed(2)}%',
+                          '$year\n${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}%',
                           const TextStyle(
                             color: _bpsGreen,
                             fontWeight: FontWeight.bold,

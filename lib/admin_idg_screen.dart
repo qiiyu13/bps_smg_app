@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -823,7 +824,7 @@ class _AdminIDGScreenState extends State<AdminIDGScreen>
                     const Icon(Icons.balance, color: Colors.white, size: 32),
                     const SizedBox(height: 8),
                     Text(
-                      '${data['ikg']?.toStringAsFixed(3) ?? 'N/A'}',
+                      '${NumberFormatUtils.formatValue(data['ikg'], decimalPlaces: 3) ?? 'N/A'}',
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,

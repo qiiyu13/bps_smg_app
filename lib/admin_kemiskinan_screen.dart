@@ -35,49 +35,49 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
             // Data default
             yearlyData = {
               2020: {
-                'pendudukMiskin': '79.58 Ribu',
+                'pendudukMiskin': '79,58 Ribu',
                 'pendudukMiskinValue': 79.58,
-                'persentase': '4.34%',
+                'persentase': '4,34%',
                 'persentaseValue': 4.34,
-                'garisMiskin': 'Rp 522,691',
-                'indeksKedalaman': '0.68',
-                'indeksKeparahan': '0.16',
+                'garisMiskin': 'Rp 522.691',
+                'indeksKedalaman': '0,68',
+                'indeksKeparahan': '0,16',
               },
               2021: {
-                'pendudukMiskin': '84.45 Ribu',
+                'pendudukMiskin': '84,45 Ribu',
                 'pendudukMiskinValue': 84.45,
-                'persentase': '4.56%',
+                'persentase': '4,56%',
                 'persentaseValue': 4.56,
-                'garisMiskin': 'Rp 543,929',
-                'indeksKedalaman': '0.67',
-                'indeksKeparahan': '0.14',
+                'garisMiskin': 'Rp 543.929',
+                'indeksKedalaman': '0,67',
+                'indeksKeparahan': '0,14',
               },
               2022: {
-                'pendudukMiskin': '79.87 Ribu',
+                'pendudukMiskin': '79,87 Ribu',
                 'pendudukMiskinValue': 79.87,
-                'persentase': '4.25%',
+                'persentase': '4,25%',
                 'persentaseValue': 4.25,
-                'garisMiskin': 'Rp 589,598',
-                'indeksKedalaman': '0.56',
-                'indeksKeparahan': '0.11',
+                'garisMiskin': 'Rp 589.598',
+                'indeksKedalaman': '0,56',
+                'indeksKeparahan': '0,11',
               },
               2023: {
-                'pendudukMiskin': '80.53 Ribu',
+                'pendudukMiskin': '80,53 Ribu',
                 'pendudukMiskinValue': 80.53,
-                'persentase': '4.23%',
+                'persentase': '4,23%',
                 'persentaseValue': 4.23,
-                'garisMiskin': 'Rp 642,456',
-                'indeksKedalaman': '0.54',
-                'indeksKeparahan': '0.10',
+                'garisMiskin': 'Rp 642.456',
+                'indeksKedalaman': '0,54',
+                'indeksKeparahan': '0,10',
               },
               2024: {
-                'pendudukMiskin': '77.79 Ribu',
+                'pendudukMiskin': '77,79 Ribu',
                 'pendudukMiskinValue': 77.79,
-                'persentase': '4.03%',
+                'persentase': '4,03%',
                 'persentaseValue': 4.03,
-                'garisMiskin': 'Rp 671,936',
-                'indeksKedalaman': '0.59',
-                'indeksKeparahan': '0.12',
+                'garisMiskin': 'Rp 671.936',
+                'indeksKedalaman': '0,59',
+                'indeksKeparahan': '0,12',
               },
             };
           }
@@ -411,7 +411,7 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
                 TextField(
                   controller: pendudukMiskinController,
                   decoration: const InputDecoration(
-                    labelText: 'Jumlah Penduduk Miskin (ex: 79.58 Ribu)',
+                    labelText: 'Jumlah Penduduk Miskin (ex: 79,58 Ribu)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.people_outline),
                   ),
@@ -420,7 +420,7 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
                 TextField(
                   controller: pendudukMiskinValueController,
                   decoration: const InputDecoration(
-                    labelText: 'Nilai Penduduk Miskin (ex: 79.58)',
+                    labelText: 'Nilai Penduduk Miskin (ex: 79,58)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.numbers),
                     helperText: 'Untuk grafik',
@@ -431,7 +431,7 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
                 TextField(
                   controller: persentaseController,
                   decoration: const InputDecoration(
-                    labelText: 'Persentase Kemiskinan (ex: 4.34%)',
+                    labelText: 'Persentase Kemiskinan (ex: 4,34%)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.pie_chart),
                   ),
@@ -440,7 +440,7 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
                 TextField(
                   controller: persentaseValueController,
                   decoration: const InputDecoration(
-                    labelText: 'Nilai Persentase (ex: 4.34)',
+                    labelText: 'Nilai Persentase (ex: 4,34)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.numbers),
                     helperText: 'Untuk grafik',
@@ -451,7 +451,7 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
                 TextField(
                   controller: garisMiskinController,
                   decoration: const InputDecoration(
-                    labelText: 'Garis Kemiskinan (ex: Rp 522,691)',
+                    labelText: 'Garis Kemiskinan (ex: Rp 522.691)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.attach_money),
                   ),
@@ -460,7 +460,7 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
                 TextField(
                   controller: indeksKedalamanController,
                   decoration: const InputDecoration(
-                    labelText: 'Indeks Kedalaman P1 (ex: 0.68)',
+                    labelText: 'Indeks Kedalaman P1 (ex: 0,68)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.analytics),
                   ),
@@ -470,7 +470,7 @@ class _AdminKemiskinanScreenState extends State<AdminKemiskinanScreen> {
                 TextField(
                   controller: indeksKeparahanController,
                   decoration: const InputDecoration(
-                    labelText: 'Indeks Keparahan P2 (ex: 0.16)',
+                    labelText: 'Indeks Keparahan P2 (ex: 0,16)',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.trending_down),
                   ),

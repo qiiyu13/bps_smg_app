@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -1006,7 +1007,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                         return Padding(
                           padding: const EdgeInsets.only(right: 4),
                           child: Text(
-                            '${value.toStringAsFixed(1)}%',
+                            '${NumberFormatUtils.formatValue(value, decimalPlaces: 1)}%',
                             style: TextStyle(
                               fontSize: isSmallScreen ? 9 : 10,
                               color: _bpsTextSecondary,
@@ -1541,7 +1542,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
       return const SizedBox.shrink();
     }
 
-    // Parse growth values from string (e.g., "5.62%" -> 5.62)
+    // Parse growth values from string (e.g., "5,62%" -> 5.62)
     double parseGrowth(String growthStr) {
       final cleaned = growthStr.replaceAll('%', '').replaceAll(',', '.');
       return double.tryParse(cleaned) ?? 0.0;

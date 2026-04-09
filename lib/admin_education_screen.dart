@@ -1,3 +1,4 @@
+import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'education_data.dart';
@@ -581,7 +582,7 @@ class _AdminEducationScreenState extends State<AdminEducationScreen> {
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       if (groupIndex >= data.length) return null;
                       return BarTooltipItem(
-                        '${data[groupIndex].jenjang}\n${(rod.toY / 1000).toStringAsFixed(1)} ribu murid',
+                        '${data[groupIndex].jenjang}\n${NumberFormatUtils.formatValue((rod.toY / 1000), decimalPlaces: 1)} ribu murid',
                         const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -1317,7 +1318,7 @@ class _AdminEducationScreenState extends State<AdminEducationScreen> {
                       children: [
                         _buildMiniStat(
                             'Total Murid',
-                            '${(totalMurid / 1000).toStringAsFixed(1)}k',
+                            '${NumberFormatUtils.formatValue((totalMurid / 1000), decimalPlaces: 1)}k',
                             Icons.groups,
                             Colors.blue),
                         const SizedBox(width: 12),
