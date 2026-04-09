@@ -27,8 +27,9 @@ class InflasiScreen extends StatefulWidget {
 
 class _InflasiScreenState extends State<InflasiScreen>
     with AutomaticKeepAliveClientMixin {
-  int selectedYear = 2023;
+  int selectedYear = 2026;
   int? selectedMonth;
+  int? selectedComponentMonth; // For component breakdown
 
   @override
   bool get wantKeepAlive => true;
@@ -63,75 +64,33 @@ class _InflasiScreenState extends State<InflasiScreen>
   ];
 
   final Map<int, List<double?>> monthlyInflationData = {
-    2019: [
-      0.32,
-      0.01,
-      0.11,
-      -0.10,
-      0.48,
-      0.55,
+    2022: [
       0.31,
-      -0.02,
-      -0.27,
-      0.02,
-      -0.16,
-      0.30
-    ],
-    2020: [
-      0.40,
-      0.28,
-      0.10,
-      -0.10,
-      0.07,
-      0.18,
-      -0.05,
-      -0.05,
-      -0.05,
-      -0.09,
-      0.28,
+      -0.08,
+      0.66,
+      0.86,
+      0.53,
+      0.93,
+      0.59,
+      -0.44,
+      1.13,
+      -0.18,
+      0.13,
       0.45
     ],
-    2021: [
-      0.26,
-      0.10,
-      0.08,
-      -0.13,
-      0.32,
-      0.33,
-      0.21,
-      0.03,
-      0.12,
-      0.12,
-      0.37,
-      0.57
-    ],
-    2022: [
-      0.56,
-      0.64,
-      0.66,
-      0.95,
-      0.40,
-      0.56,
-      0.64,
-      0.21,
-      1.17,
-      0.12,
-      0.03,
-      0.66
-    ],
     2023: [
-      0.34,
-      -0.02,
-      0.12,
-      -0.07,
-      0.09,
-      0.59,
+      0.30,
       0.21,
-      0.18,
-      -0.04,
-      -0.06,
-      0.08,
-      0.15
+      0.20,
+      0.27,
+      0.22,
+      0.02,
+      0.23,
+      0.02,
+      0.42,
+      0.17,
+      0.52,
+      0.22
     ],
     2024: [
       -0.11,
@@ -150,112 +109,815 @@ class _InflasiScreenState extends State<InflasiScreen>
     2025: [
       -0.69,
       -0.64,
-      1.43,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
+      1.42,
+      1.53,
+      -0.42,
+      0.22,
+      0.23,
+      -0.05,
+      0.18,
+      0.39,
+      0.22,
+      0.42
+    ],
+    2026: [
+      0.25,
+      0.67,
+      0.37,
     ],
   };
 
   final Map<int, double?> yearlyInflation = {
-    2019: 2.72,
-    2020: 1.68,
-    2021: 1.87,
-    2022: 4.21,
-    2023: 2.61,
+    2022: 4.99,
+    2023: 2.84,
     2024: 1.69,
-    2025: 0.70,
-  };
-
-  final Map<int, double?> coreInflation = {
-    2019: 3.04,
-    2020: 1.59,
-    2021: 1.64,
-    2022: 3.04,
-    2023: 1.93,
-    2024: null,
-    2025: null,
+    2025: 2.84,
+    2026: 3.57, // Latest available YoY (March 2026)
   };
 
   final Map<int, double> ihkData = {
-    2019: 106.02,
-    2020: 107.80,
-    2021: 109.82,
-    2022: 114.44,
-    2023: 113.59,
+    2022: 116.05,
+    2023: 116.05,
     2024: 106.09,
-    2025: 106.18,
+    2025: 109.10,
+    2026: 109.97, // Latest available (March 2026)
   };
 
-  final Map<String, Map<String, double>> inflationComponents = {
+  // Inflation components with monthly data for all years (11 categories)
+  final Map<String, Map<int, List<double?>>> inflationComponentsMonthly = {
     'Makanan, Minuman & Tembakau': {
-      '2019': 4.55,
-      '2020': 3.28,
-      '2021': 2.84,
-      '2022': 5.33,
-      '2023': 4.12,
-      '2024': 1.35,
-      '2025': 2.87,
+      2022: [
+        0.82,
+        -1.31,
+        1.46,
+        1.89,
+        1.02,
+        2.47,
+        1.58,
+        -2.11,
+        -0.19,
+        -1.54,
+        0.30,
+        1.50
+      ],
+      2023: [
+        1.29,
+        0.50,
+        0.15,
+        0.71,
+        0.60,
+        0.06,
+        0.30,
+        -0.11,
+        0.73,
+        0.40,
+        2.14,
+        0.53
+      ],
+      2024: [
+        -0.56,
+        1.99,
+        2.08,
+        0.16,
+        -1.01,
+        -1.18,
+        -0.90,
+        -0.66,
+        -0.32,
+        0.56,
+        0.61,
+        1.52
+      ],
+      2025: [
+        1.93,
+        -0.49,
+        1.38,
+        -0.09,
+        -1.65,
+        0.90,
+        0.05,
+        -0.69,
+        0.37,
+        0.50,
+        0.62,
+        1.12
+      ],
+      2026: [
+        -1.79,
+        0.08,
+        1.26,
+      ],
     },
     'Pakaian & Alas Kaki': {
-      '2019': 0.84,
-      '2020': 0.45,
-      '2021': 0.67,
-      '2022': 1.23,
-      '2023': 0.92,
-      '2024': 0.77,
-      '2025': 0.75,
+      2022: [
+        0.32,
+        0.26,
+        0.25,
+        0.78,
+        0.03,
+        0.68,
+        0.24,
+        0.66,
+        0.42,
+        0.27,
+        0.42,
+        0.08
+      ],
+      2023: [
+        -0.04,
+        0.01,
+        0.25,
+        0.24,
+        0.11,
+        0.27,
+        0.09,
+        0.01,
+        0.02,
+        0.09,
+        0.06,
+        0.22
+      ],
+      2024: [
+        0.14,
+        0.00,
+        0.13,
+        -0.11,
+        0.11,
+        0.00,
+        0.01,
+        0.10,
+        0.00,
+        0.14,
+        0.04,
+        0.01
+      ],
+      2025: [
+        0.19,
+        0.03,
+        0.50,
+        0.00,
+        0.08,
+        0.06,
+        0.18,
+        -0.01,
+        0.01,
+        0.01,
+        0.03,
+        0.03
+      ],
+      2026: [
+        -1.34,
+        2.03,
+        0.15,
+      ],
     },
     'Perumahan & Fasilitas': {
-      '2019': 1.69,
-      '2020': 1.45,
-      '2021': 1.52,
-      '2022': 2.15,
-      '2023': 1.78,
-      '2024': -2.41,
-      '2025': -10.55,
+      2022: [
+        0.16,
+        0.01,
+        0.07,
+        0.06,
+        0.03,
+        0.06,
+        0.26,
+        0.38,
+        0.37,
+        0.18,
+        -0.20,
+        -0.05
+      ],
+      2023: [
+        0.10,
+        0.01,
+        0.03,
+        0.02,
+        0.01,
+        0.00,
+        -0.04,
+        0.01,
+        0.01,
+        -0.03,
+        -0.02,
+        -0.01
+      ],
+      2024: [
+        -0.02,
+        -0.01,
+        0.02,
+        0.07,
+        -0.13,
+        -0.07,
+        0.03,
+        0.00,
+        0.57,
+        0.35,
+        -0.02,
+        -0.05
+      ],
+      2025: [
+        -10.17,
+        -6.17,
+        9.41,
+        9.07,
+        -0.01,
+        -0.04,
+        0.02,
+        0.11,
+        0.12,
+        0.06,
+        0.11,
+        0.17
+      ],
+      2026: [
+        0.10,
+        2.04,
+        0.04,
+      ],
     },
-    'Perawatan Kesehatan': {
-      '2019': 2.43,
-      '2020': 2.15,
-      '2021': 2.67,
-      '2022': 3.45,
-      '2023': 2.89,
-      '2024': 1.97,
-      '2025': 1.11,
+    'Perlengkapan Rumah Tangga': {
+      2022: [
+        0.85,
+        0.64,
+        0.72,
+        0.33,
+        0.38,
+        0.69,
+        0.38,
+        -0.09,
+        0.15,
+        0.15,
+        0.03,
+        0.43
+      ],
+      2023: [
+        0.06,
+        0.14,
+        0.00,
+        -0.02,
+        0.14,
+        0.26,
+        0.18,
+        0.32,
+        0.05,
+        0.08,
+        0.03,
+        0.03
+      ],
+      2024: [
+        0.12,
+        0.22,
+        0.07,
+        0.09,
+        0.13,
+        0.06,
+        0.11,
+        0.10,
+        0.02,
+        0.43,
+        -0.11,
+        0.15
+      ],
+      2025: [
+        0.08,
+        0.29,
+        0.08,
+        -0.01,
+        0.00,
+        0.11,
+        -0.04,
+        -0.19,
+        0.00,
+        0.11,
+        -0.35,
+        0.06
+      ],
+      2026: [
+        -0.03,
+        0.08,
+        0.09,
+      ],
+    },
+    'Kesehatan': {
+      2022: [
+        0.01,
+        0.27,
+        -0.07,
+        0.03,
+        0.02,
+        0.08,
+        0.06,
+        0.22,
+        0.15,
+        0.19,
+        0.16,
+        -0.03
+      ],
+      2023: [
+        0.54,
+        0.07,
+        0.32,
+        0.64,
+        0.10,
+        0.47,
+        0.12,
+        0.01,
+        0.20,
+        0.04,
+        0.02,
+        0.04
+      ],
+      2024: [
+        0.05,
+        0.05,
+        -0.08,
+        0.08,
+        0.12,
+        -0.16,
+        0.08,
+        0.16,
+        0.14,
+        0.15,
+        0.05,
+        0.22
+      ],
+      2025: [
+        0.12,
+        0.25,
+        0.09,
+        0.00,
+        0.01,
+        0.14,
+        0.02,
+        0.06,
+        0.14,
+        0.15,
+        0.07,
+        0.01
+      ],
+      2026: [
+        -0.63,
+        0.03,
+        0.27,
+      ],
     },
     'Transportasi': {
-      '2019': 1.24,
-      '2020': 0.89,
-      '2021': 1.45,
-      '2022': 4.67,
-      '2023': 2.34,
-      '2024': 0.58,
-      '2025': 0.85,
+      2022: [
+        -0.07,
+        0.58,
+        0.86,
+        2.06,
+        1.61,
+        1.33,
+        0.87,
+        -0.91,
+        7.92,
+        0.48,
+        0.33,
+        0.02
+      ],
+      2023: [
+        -0.87,
+        0.38,
+        0.86,
+        0.35,
+        0.48,
+        -0.79,
+        0.67,
+        -0.58,
+        1.23,
+        0.30,
+        -0.15,
+        0.38
+      ],
+      2024: [
+        -0.17,
+        0.09,
+        -0.25,
+        0.74,
+        -0.12,
+        0.09,
+        0.04,
+        0.34,
+        -0.10,
+        -0.78,
+        0.12,
+        0.56
+      ],
+      2025: [
+        -0.12,
+        0.51,
+        -0.35,
+        1.41,
+        -0.33,
+        -0.29,
+        0.37,
+        0.10,
+        -0.36,
+        0.03,
+        0.39,
+        -0.18
+      ],
+      2026: [
+        -0.13,
+        -0.05,
+        0.24,
+      ],
     },
     'Komunikasi & Keuangan': {
-      '2019': 1.02,
-      '2020': 0.78,
-      '2021': 0.95,
-      '2022': 1.34,
-      '2023': 1.12,
-      '2024': -0.68,
-      '2025': -1.06,
+      2022: [
+        -0.15,
+        0.05,
+        -0.06,
+        -0.03,
+        0.14,
+        -0.55,
+        -0.12,
+        -0.32,
+        -0.05,
+        -0.22,
+        -0.09,
+        -0.03
+      ],
+      2023: [
+        -0.02,
+        0.11,
+        -0.11,
+        -0.34,
+        -0.18,
+        0.01,
+        -0.34,
+        0.00,
+        0.28,
+        0.00,
+        0.00,
+        0.09
+      ],
+      2024: [
+        0.00,
+        -0.08,
+        0.00,
+        -0.24,
+        -0.18,
+        -0.10,
+        -0.06,
+        -0.18,
+        -0.07,
+        0.03,
+        -0.22,
+        null
+      ],
+      2025: [
+        0.00,
+        0.00,
+        0.00,
+        -0.42,
+        -0.02,
+        0.00,
+        0.00,
+        -0.21,
+        0.03,
+        -0.02,
+        0.00,
+        0.01
+      ],
+      2026: [
+        0.01,
+        0.08,
+        0.37,
+      ],
     },
     'Rekreasi & Olahraga': {
-      '2019': 2.18,
-      '2020': 1.67,
-      '2021': 2.05,
-      '2022': 2.89,
-      '2023': 2.45,
+      2022: [
+        0.14,
+        0.34,
+        0.08,
+        0.10,
+        0.63,
+        0.10,
+        0.43,
+        0.24,
+        -1.58,
+        2.48,
+        0.98,
+        0.06
+      ],
+      2023: [
+        1.03,
+        0.17,
+        0.23,
+        0.11,
+        0.00,
+        -0.02,
+        -0.03,
+        0.30,
+        0.00,
+        0.09,
+        0.00,
+        0.04
+      ],
+      2024: [
+        0.05,
+        0.13,
+        0.03,
+        0.13,
+        -0.22,
+        0.03,
+        0.16,
+        -0.06,
+        0.16,
+        0.00,
+        -0.06,
+        0.19
+      ],
+      2025: [
+        0.45,
+        0.17,
+        0.07,
+        0.22,
+        0.01,
+        0.00,
+        -0.02,
+        0.12,
+        0.02,
+        0.00,
+        -0.24,
+        0.04
+      ],
+      2026: [
+        0.18,
+        0.44,
+        0.27,
+      ],
+    },
+    'Pendidikan': {
+      2022: [
+        0.00,
+        0.00,
+        0.00,
+        0.00,
+        0.00,
+        0.00,
+        -1.21,
+        0.12,
+        0.21,
+        0.00,
+        0.00,
+        0.00
+      ],
+      2023: [
+        0.00,
+        0.00,
+        0.00,
+        0.00,
+        0.00,
+        0.00,
+        1.12,
+        0.72,
+        0.14,
+        0.00,
+        0.00,
+        0.00
+      ],
+      2024: [
+        0.00,
+        0.00,
+        0.00,
+        0.00,
+        0.00,
+        0.00,
+        0.24,
+        0.59,
+        0.00,
+        0.00,
+        0.00,
+        null
+      ],
+      2025: [
+        0.00,
+        0.00,
+        0.00,
+        0.00,
+        0.00,
+        0.00,
+        1.88,
+        1.26,
+        0.00,
+        0.00,
+        0.00,
+        0.00
+      ],
+      2026: [
+        0.07,
+        -0.08,
+        0.00,
+      ],
+    },
+    'Restoran': {
+      2022: [
+        0.03,
+        0.22,
+        0.52,
+        0.27,
+        0.21,
+        0.46,
+        0.48,
+        0.74,
+        0.38,
+        0.04,
+        0.05,
+        0.22
+      ],
+      2023: [
+        0.09,
+        0.05,
+        0.00,
+        0.04,
+        0.05,
+        0.84,
+        0.04,
+        0.64,
+        0.04,
+        0.00,
+        0.00,
+        0.04
+      ],
+      2024: [
+        0.20,
+        0.49,
+        1.02,
+        0.70,
+        0.26,
+        0.13,
+        0.10,
+        0.01,
+        0.05,
+        0.37,
+        0.19,
+        0.21
+      ],
+      2025: [
+        0.73,
+        0.08,
+        0.18,
+        0.94,
+        0.23,
+        0.08,
+        0.05,
+        0.07,
+        0.00,
+        0.05,
+        0.04,
+        0.07
+      ],
+      2026: [
+        0.22,
+        -0.06,
+        0.08,
+      ],
+    },
+    'Perawatan Pribadi': {
+      2022: [
+        0.45,
+        1.19,
+        1.51,
+        0.81,
+        0.05,
+        0.94,
+        0.28,
+        0.67,
+        0.07,
+        0.11,
+        0.28,
+        0.88
+      ],
+      2023: [
+        0.81,
+        0.08,
+        0.45,
+        0.39,
+        -0.02,
+        -0.09,
+        -0.02,
+        0.02,
+        0.46,
+        0.32,
+        0.24,
+        0.45
+      ],
+      2024: [
+        0.18,
+        0.00,
+        0.67,
+        1.87,
+        0.60,
+        0.39,
+        0.62,
+        0.37,
+        0.24,
+        1.00,
+        0.84,
+        0.29
+      ],
+      2025: [
+        0.77,
+        1.22,
+        0.98,
+        3.22,
+        0.04,
+        0.49,
+        0.06,
+        0.18,
+        1.67,
+        3.46,
+        0.33,
+        2.05
+      ],
+      2026: [
+        3.41,
+        0.07,
+        -0.44,
+      ],
+    },
+  };
+
+  // Yearly totals for all categories (YoY inflation)
+  final Map<String, Map<String, double>> inflationComponentsYearly = {
+    'Makanan, Minuman & Tembakau': {
+      '2022': 5.91,
+      '2023': 7.52,
+      '2024': 1.35,
+      '2025': 3.98,
+      '2026': 0.00
+    },
+    'Pakaian & Alas Kaki': {
+      '2022': 4.51,
+      '2023': 1.33,
+      '2024': 0.77,
+      '2025': 1.11,
+      '2026': 0.00
+    },
+    'Perumahan & Fasilitas': {
+      '2022': 1.33,
+      '2023': 0.09,
+      '2024': -2.41,
+      '2025': 1.12,
+      '2026': 0.00
+    },
+    'Perlengkapan Rumah Tangga': {
+      '2022': 4.75,
+      '2023': 1.27,
       '2024': 1.31,
-      '2025': 0.97,
+      '2025': 0.13,
+      '2026': 0.00
+    },
+    'Kesehatan': {
+      '2022': 1.08,
+      '2023': 2.58,
+      '2024': 1.97,
+      '2025': 1.04,
+      '2026': 0.00
+    },
+    'Transportasi': {
+      '2022': 15.88,
+      '2023': 2.26,
+      '2024': 0.58,
+      '2025': 1.17,
+      '2026': 0.00
+    },
+    'Komunikasi & Keuangan': {
+      '2022': -1.43,
+      '2023': -0.50,
+      '2024': -0.68,
+      '2025': -0.63,
+      '2026': 0.00
+    },
+    'Rekreasi & Olahraga': {
+      '2022': 4.03,
+      '2023': 1.93,
+      '2024': 1.31,
+      '2025': 0.83,
+      '2026': 0.00
+    },
+    'Pendidikan': {
+      '2022': -0.89,
+      '2023': 2.00,
+      '2024': 1.45,
+      '2025': 3.16,
+      '2026': 0.00
+    },
+    'Restoran': {
+      '2022': 3.66,
+      '2023': 1.85,
+      '2024': 1.55,
+      '2025': 2.55,
+      '2026': 0.00
+    },
+    'Perawatan Pribadi': {
+      '2022': 7.49,
+      '2023': 3.13,
+      '2024': 2.10,
+      '2025': 15.41,
+      '2026': 0.00
     },
   };
 
@@ -267,6 +929,7 @@ class _InflasiScreenState extends State<InflasiScreen>
     if (selectedMonth == null) {
       return data.whereType<double>().toList();
     } else {
+      if (selectedMonth! >= data.length) return [];
       final value = data[selectedMonth!];
       return value != null ? [value] : [];
     }
@@ -281,7 +944,8 @@ class _InflasiScreenState extends State<InflasiScreen>
       }
       return 0.0;
     } else {
-      return data?[selectedMonth!] ?? 0.0;
+      if (data == null || selectedMonth! >= data.length) return 0.0;
+      return data[selectedMonth!] ?? 0.0;
     }
   }
 
@@ -504,6 +1168,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                     setState(() {
                       selectedYear = year;
                       selectedMonth = null;
+                      selectedComponentMonth = null;
                     });
                   },
                   borderRadius: BorderRadius.circular(10),
@@ -620,51 +1285,55 @@ class _InflasiScreenState extends State<InflasiScreen>
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             child: Row(
-              children: List.generate(months.length, (index) {
-                final isSelected = selectedMonth == index;
-                return Padding(
-                  padding: EdgeInsets.only(right: sizing.itemSpacing),
-                  child: Material(
-                    color: isSelected ? _bpsOrange : _bpsBackground,
-                    borderRadius: BorderRadius.circular(10),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          selectedMonth = isSelected ? null : index;
-                        });
-                      },
+              children: List.generate(
+                monthlyInflationData[selectedYear]?.length ?? 12,
+                (index) {
+                  final isSelected = selectedMonth == index;
+                  return Padding(
+                    padding: EdgeInsets.only(right: sizing.itemSpacing),
+                    child: Material(
+                      color: isSelected ? _bpsOrange : _bpsBackground,
                       borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        constraints: BoxConstraints(
-                          minWidth: isSmallScreen ? 50 : 60,
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: isSmallScreen ? 10 : 12,
-                          vertical: isSmallScreen ? 8 : 10,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: isSelected ? _bpsOrange : _bpsBorder,
-                            width: isSelected ? 2 : 1.5,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            selectedMonth = isSelected ? null : index;
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          constraints: BoxConstraints(
+                            minWidth: isSmallScreen ? 50 : 60,
                           ),
-                        ),
-                        child: Text(
-                          months[index],
-                          style: TextStyle(
-                            fontSize: isSmallScreen ? 13 : 14,
-                            fontWeight:
-                                isSelected ? FontWeight.w700 : FontWeight.w600,
-                            color:
-                                isSelected ? Colors.white : _bpsTextSecondary,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isSmallScreen ? 10 : 12,
+                            vertical: isSmallScreen ? 8 : 10,
                           ),
-                          textAlign: TextAlign.center,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: isSelected ? _bpsOrange : _bpsBorder,
+                              width: isSelected ? 2 : 1.5,
+                            ),
+                          ),
+                          child: Text(
+                            months[index],
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 13 : 14,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
+                              color:
+                                  isSelected ? Colors.white : _bpsTextSecondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                },
+              ),
             ),
           ),
         ],
@@ -674,7 +1343,6 @@ class _InflasiScreenState extends State<InflasiScreen>
 
   Widget _buildMainIndicators(ResponsiveSizing sizing, bool isSmallScreen) {
     final yearInflation = yearlyInflation[selectedYear] ?? 0.0;
-    final coreInfl = coreInflation[selectedYear] ?? 0.0;
     final ihk = ihkData[selectedYear] ?? 0.0;
 
     return Container(
@@ -774,16 +1442,6 @@ class _InflasiScreenState extends State<InflasiScreen>
                 icon: Icons.calendar_month_rounded,
                 description:
                     'Inflasi bulanan (Month-to-Month) mengukur perubahan harga barang dan jasa dari bulan ke bulan. Fluktuasi bulanan dipengaruhi oleh faktor musiman dan kebijakan harga.',
-              ),
-              _buildIndicatorDivider(isSmallScreen),
-              _buildCompactIndicatorRow(
-                context: context,
-                value: NumberFormatUtils.formatPercentage(coreInfl),
-                label: 'Inflasi Inti',
-                color: _bpsGreen,
-                icon: Icons.insights_rounded,
-                description:
-                    'Inflasi inti (Core Inflation) menghilangkan komponen harga yang bergejolak (volatile) seperti bahan makanan dan energi. Indikator ini mencerminkan tekanan inflasi yang lebih fundamental.',
               ),
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
@@ -1135,7 +1793,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Persentase Year-on-Year (${years.last}-${years.first})',
+                      'Persentase Year-on-Year (${years.first}-${years.last})',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 13,
                         color: _bpsTextSecondary,
@@ -1214,7 +1872,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                 borderData: FlBorderData(show: false),
                 minX: 0,
                 maxX: (years.length - 1).toDouble(),
-                minY: 1.0,
+                minY: 0,
                 maxY: maxY,
                 lineBarsData: [
                   LineChartBarData(
@@ -1447,6 +2105,10 @@ class _InflasiScreenState extends State<InflasiScreen>
   Widget _buildInflationComponents(
       ResponsiveSizing sizing, bool isSmallScreen) {
     final yearStr = selectedYear.toString();
+    // Check if selected year has monthly component data
+    final hasMonthlyData = inflationComponentsMonthly.values.any(
+      (categoryData) => categoryData.containsKey(selectedYear),
+    );
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -1475,22 +2137,44 @@ class _InflasiScreenState extends State<InflasiScreen>
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
-              Text(
-                'Komponen Inflasi',
-                style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? sizing.groupTitleSize - 2
-                      : sizing.groupTitleSize,
-                  fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+              Expanded(
+                child: Text(
+                  'Komponen Inflasi',
+                  style: TextStyle(
+                    fontSize: isSmallScreen
+                        ? sizing.groupTitleSize - 2
+                        : sizing.groupTitleSize,
+                    fontWeight: FontWeight.w700,
+                    color: _bpsTextPrimary,
+                  ),
                 ),
               ),
             ],
           ),
+          // Month selector for 2023 data
+          if (hasMonthlyData) ...[
+            SizedBox(height: isSmallScreen ? 12 : 16),
+            _buildComponentMonthSelector(sizing, isSmallScreen),
+          ],
           SizedBox(height: isSmallScreen ? 12 : 16),
-          ...inflationComponents.entries.map((entry) {
-            final value = entry.value[yearStr] ?? 0.0;
+          ...inflationComponentsYearly.entries.map((entry) {
             final color = _getComponentColor(entry.key);
+            double value;
+
+            // Use monthly data if available and month selected
+            if (hasMonthlyData && selectedComponentMonth != null) {
+              final monthlyData =
+                  inflationComponentsMonthly[entry.key]?[selectedYear];
+              if (monthlyData != null &&
+                  selectedComponentMonth! < monthlyData.length) {
+                value = monthlyData[selectedComponentMonth!] ?? 0.0;
+              } else {
+                value = 0.0;
+              }
+            } else {
+              // Use yearly data
+              value = entry.value[yearStr] ?? 0.0;
+            }
 
             return Padding(
               padding: EdgeInsets.only(bottom: sizing.itemSpacing),
@@ -1558,6 +2242,120 @@ class _InflasiScreenState extends State<InflasiScreen>
     );
   }
 
+  Widget _buildComponentMonthSelector(
+      ResponsiveSizing sizing, bool isSmallScreen) {
+    // Determine available months based on data for selected year
+    int availableMonths = 12;
+    final firstCategory = inflationComponentsMonthly.entries.firstOrNull;
+    if (firstCategory != null) {
+      final yearData = firstCategory.value[selectedYear];
+      if (yearData != null) {
+        availableMonths = yearData.length;
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.calendar_month_rounded,
+              color: _bpsTeal,
+              size: isSmallScreen ? 14 : 16,
+            ),
+            SizedBox(width: sizing.itemSpacing - 4),
+            Text(
+              selectedComponentMonth == null
+                  ? 'Data Tahunan (YoY)'
+                  : 'Data Bulan: ${fullMonths[selectedComponentMonth!]} (MtM)',
+              style: TextStyle(
+                fontSize: isSmallScreen ? 12 : 13,
+                fontWeight: FontWeight.w600,
+                color: _bpsTextSecondary,
+              ),
+            ),
+            const Spacer(),
+            if (selectedComponentMonth != null)
+              Material(
+                color: _bpsTeal.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
+                child: InkWell(
+                  onTap: () => setState(() => selectedComponentMonth = null),
+                  borderRadius: BorderRadius.circular(6),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: sizing.itemSpacing - 4,
+                      vertical: 2,
+                    ),
+                    child: Text(
+                      'Tahunan',
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 10 : 11,
+                        color: _bpsTeal,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+        SizedBox(height: isSmallScreen ? 8 : 10),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            children: List.generate(availableMonths, (index) {
+              final isSelected = selectedComponentMonth == index;
+              return Padding(
+                padding: EdgeInsets.only(right: sizing.itemSpacing - 4),
+                child: Material(
+                  color: isSelected ? _bpsTeal : _bpsBackground,
+                  borderRadius: BorderRadius.circular(8),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        selectedComponentMonth = isSelected ? null : index;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      constraints: BoxConstraints(
+                        minWidth: isSmallScreen ? 40 : 48,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 8 : 10,
+                        vertical: isSmallScreen ? 6 : 8,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: isSelected ? _bpsTeal : _bpsBorder,
+                          width: isSelected ? 2 : 1,
+                        ),
+                      ),
+                      child: Text(
+                        months[index],
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 11 : 12,
+                          fontWeight:
+                              isSelected ? FontWeight.w700 : FontWeight.w600,
+                          color: isSelected ? Colors.white : _bpsTextSecondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildLegendItem(String label, Color color, bool isSmallScreen) {
     return Container(
       padding: EdgeInsets.symmetric(
@@ -1605,7 +2403,9 @@ class _InflasiScreenState extends State<InflasiScreen>
         return _bpsPurple;
       case 'Perumahan & Fasilitas':
         return _bpsBlue;
-      case 'Perawatan Kesehatan':
+      case 'Perlengkapan Rumah Tangga':
+        return const Color(0xFF795548);
+      case 'Kesehatan':
         return _bpsRed;
       case 'Transportasi':
         return _bpsGreen;
@@ -1613,6 +2413,12 @@ class _InflasiScreenState extends State<InflasiScreen>
         return const Color(0xFF3F51B5);
       case 'Rekreasi & Olahraga':
         return _bpsTeal;
+      case 'Pendidikan':
+        return const Color(0xFFFF9800);
+      case 'Restoran':
+        return const Color(0xFFE91E63);
+      case 'Perawatan Pribadi':
+        return const Color(0xFF9C27B0);
       default:
         return _bpsTextSecondary;
     }
@@ -1626,7 +2432,9 @@ class _InflasiScreenState extends State<InflasiScreen>
         return Icons.checkroom_rounded;
       case 'Perumahan & Fasilitas':
         return Icons.home_rounded;
-      case 'Perawatan Kesehatan':
+      case 'Perlengkapan Rumah Tangga':
+        return Icons.chair_rounded;
+      case 'Kesehatan':
         return Icons.local_hospital_rounded;
       case 'Transportasi':
         return Icons.directions_car_rounded;
@@ -1634,6 +2442,12 @@ class _InflasiScreenState extends State<InflasiScreen>
         return Icons.phone_iphone_rounded;
       case 'Rekreasi & Olahraga':
         return Icons.sports_soccer_rounded;
+      case 'Pendidikan':
+        return Icons.school_rounded;
+      case 'Restoran':
+        return Icons.food_bank_rounded;
+      case 'Perawatan Pribadi':
+        return Icons.spa_rounded;
       default:
         return Icons.category_rounded;
     }

@@ -255,8 +255,8 @@ class KesimpulanGenerator {
     required double latestPercentage,
     required double firstPercentage,
     required String latestPopulation,
-    String? urbanPercentage,
-    String? ruralPercentage,
+    required String garisKemiskinan,
+    required String indeksKedalaman,
   }) {
     final change = latestPercentage - firstPercentage;
     final isDecreasing = change < 0;
@@ -289,10 +289,10 @@ class KesimpulanGenerator {
     }
 
     List<String> additionalPoints = [];
-    if (urbanPercentage != null && ruralPercentage != null) {
-      additionalPoints.add(
-          'Terdapat perbedaan tingkat kemiskinan antara wilayah kota dan desa yang perlu mendapatkan penanganan berbeda.');
-    }
+    additionalPoints.add(
+        'Garis kemiskinan tahun $latestYear sebesar $garisKemiskinan menunjukkan ambang batas pengeluaran minimum untuk memenuhi kebutuhan dasar.');
+    additionalPoints.add(
+        'Indeks Kedalaman Kemiskinan (P1) sebesar $indeksKedalaman menggambarkan seberapa jauh rata-rata pengeluaran penduduk miskin dari garis kemiskinan.');
 
     return {
       'status': status,

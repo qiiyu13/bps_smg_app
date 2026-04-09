@@ -24,8 +24,6 @@ class PengangguranData {
   final double tpakSemarang;
   final double tptJateng;
   final double tpakJateng;
-  final double tptNasional;
-  final double tpakNasional;
 
   PengangguranData({
     required this.year,
@@ -33,8 +31,6 @@ class PengangguranData {
     required this.tpakSemarang,
     required this.tptJateng,
     required this.tpakJateng,
-    required this.tptNasional,
-    required this.tpakNasional,
   });
 
   factory PengangguranData.fromMap(int year, Map<String, dynamic> map) {
@@ -44,8 +40,6 @@ class PengangguranData {
       tpakSemarang: (map['tpakSemarang'] as num?)?.toDouble() ?? 0.0,
       tptJateng: (map['tptJateng'] as num?)?.toDouble() ?? 0.0,
       tpakJateng: (map['tpakJateng'] as num?)?.toDouble() ?? 0.0,
-      tptNasional: (map['tptNasional'] as num?)?.toDouble() ?? 0.0,
-      tpakNasional: (map['tpakNasional'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -55,8 +49,6 @@ class PengangguranData {
       'tpakSemarang': tpakSemarang,
       'tptJateng': tptJateng,
       'tpakJateng': tpakJateng,
-      'tptNasional': tptNasional,
-      'tpakNasional': tpakNasional,
     };
   }
 }
@@ -128,37 +120,29 @@ class _PengangguranScreenState extends State<PengangguranScreen>
         year: 2020,
         tptSemarang: 9.57,
         tpakSemarang: 69.89,
-        tptJateng: 6.92,
+        tptJateng: 6.48,
         tpakJateng: 68.50,
-        tptNasional: 7.07,
-        tpakNasional: 67.93,
       ),
       2021: PengangguranData(
         year: 2021,
         tptSemarang: 9.54,
         tpakSemarang: 69.41,
-        tptJateng: 6.45,
+        tptJateng: 5.95,
         tpakJateng: 69.10,
-        tptNasional: 6.49,
-        tpakNasional: 68.04,
       ),
       2022: PengangguranData(
         year: 2022,
         tptSemarang: 7.60,
         tpakSemarang: 70.96,
-        tptJateng: 5.89,
+        tptJateng: 5.57,
         tpakJateng: 69.70,
-        tptNasional: 5.86,
-        tpakNasional: 68.06,
       ),
       2023: PengangguranData(
         year: 2023,
         tptSemarang: 5.99,
         tpakSemarang: 69.42,
-        tptJateng: 5.34,
+        tptJateng: 5.13,
         tpakJateng: 70.30,
-        tptNasional: 5.32,
-        tpakNasional: 68.08,
       ),
       2024: PengangguranData(
         year: 2024,
@@ -166,17 +150,13 @@ class _PengangguranScreenState extends State<PengangguranScreen>
         tpakSemarang: 69.88,
         tptJateng: 4.78,
         tpakJateng: 70.90,
-        tptNasional: 4.91,
-        tpakNasional: 67.22,
       ),
       2025: PengangguranData(
         year: 2025,
         tptSemarang: 5.65,
         tpakSemarang: 72.60,
-        tptJateng: 4.50,
+        tptJateng: 4.76,
         tpakJateng: 71.50,
-        tptNasional: 4.70,
-        tpakNasional: 67.50,
       ),
     };
   }
@@ -518,7 +498,8 @@ class _PengangguranScreenState extends State<PengangguranScreen>
           // Indicator rows
           _buildIndicatorRow(
             label: 'TPT Kota Semarang',
-            value: '${NumberFormatUtils.formatValue(data.tptSemarang, decimalPlaces: 2)}%',
+            value:
+                '${NumberFormatUtils.formatValue(data.tptSemarang, decimalPlaces: 2)}%',
             subtitle: tptChange < 0
                 ? 'turun ${NumberFormatUtils.formatValue(tptChange.abs(), decimalPlaces: 2)}% dari tahun lalu'
                 : 'naik ${NumberFormatUtils.formatValue(tptChange, decimalPlaces: 2)}% dari tahun lalu',
@@ -530,7 +511,8 @@ class _PengangguranScreenState extends State<PengangguranScreen>
           _buildDivider(),
           _buildIndicatorRow(
             label: 'TPAK Kota Semarang',
-            value: '${NumberFormatUtils.formatValue(data.tpakSemarang, decimalPlaces: 2)}%',
+            value:
+                '${NumberFormatUtils.formatValue(data.tpakSemarang, decimalPlaces: 2)}%',
             subtitle: tpakChange > 0
                 ? 'naik ${NumberFormatUtils.formatValue(tpakChange, decimalPlaces: 2)}% dari tahun lalu'
                 : 'turun ${NumberFormatUtils.formatValue(tpakChange.abs(), decimalPlaces: 2)}% dari tahun lalu',
@@ -542,20 +524,11 @@ class _PengangguranScreenState extends State<PengangguranScreen>
           _buildDivider(),
           _buildIndicatorRow(
             label: 'TPT Jawa Tengah',
-            value: '${NumberFormatUtils.formatValue(data.tptJateng, decimalPlaces: 2)}%',
+            value:
+                '${NumberFormatUtils.formatValue(data.tptJateng, decimalPlaces: 2)}%',
             subtitle: 'Perbandingan regional',
             icon: Icons.location_on_rounded,
             color: _bpsOrange,
-            isSmallScreen: isSmallScreen,
-            sizing: sizing,
-          ),
-          _buildDivider(),
-          _buildIndicatorRow(
-            label: 'TPT Nasional',
-            value: '${NumberFormatUtils.formatValue(data.tptNasional, decimalPlaces: 2)}%',
-            subtitle: 'Perbandingan nasional',
-            icon: Icons.public_rounded,
-            color: _bpsBlue,
             isSmallScreen: isSmallScreen,
             sizing: sizing,
             isLast: true,
@@ -631,14 +604,12 @@ class _PengangguranScreenState extends State<PengangguranScreen>
   Widget _buildTPTChart(ResponsiveSizing sizing, bool isSmallScreen) {
     final semarangSpots = <FlSpot>[];
     final jatengSpots = <FlSpot>[];
-    final nasionalSpots = <FlSpot>[];
 
     for (final year in List<int>.from(availableYears)..sort()) {
       if (yearlyData.containsKey(year)) {
         final d = yearlyData[year]!;
         semarangSpots.add(FlSpot(year.toDouble(), d.tptSemarang));
         jatengSpots.add(FlSpot(year.toDouble(), d.tptJateng));
-        nasionalSpots.add(FlSpot(year.toDouble(), d.tptNasional));
       }
     }
 
@@ -652,9 +623,9 @@ class _PengangguranScreenState extends State<PengangguranScreen>
       maxY: 12,
       interval: 2,
       unit: '%',
-      spots: [semarangSpots, jatengSpots, nasionalSpots],
-      colors: [_bpsBlue, _bpsOrange, _bpsGreen],
-      labels: ['Semarang', 'Jawa Tengah', 'Nasional'],
+      spots: [semarangSpots, jatengSpots],
+      colors: [_bpsBlue, _bpsOrange],
+      labels: ['Semarang', 'Jawa Tengah'],
     );
   }
 
@@ -662,14 +633,12 @@ class _PengangguranScreenState extends State<PengangguranScreen>
   Widget _buildTPAKChart(ResponsiveSizing sizing, bool isSmallScreen) {
     final semarangSpots = <FlSpot>[];
     final jatengSpots = <FlSpot>[];
-    final nasionalSpots = <FlSpot>[];
 
     for (final year in List<int>.from(availableYears)..sort()) {
       if (yearlyData.containsKey(year)) {
         final d = yearlyData[year]!;
         semarangSpots.add(FlSpot(year.toDouble(), d.tpakSemarang));
         jatengSpots.add(FlSpot(year.toDouble(), d.tpakJateng));
-        nasionalSpots.add(FlSpot(year.toDouble(), d.tpakNasional));
       }
     }
 
@@ -683,9 +652,9 @@ class _PengangguranScreenState extends State<PengangguranScreen>
       maxY: 80,
       interval: 5,
       unit: '%',
-      spots: [semarangSpots, jatengSpots, nasionalSpots],
-      colors: [_bpsBlue, _bpsOrange, _bpsGreen],
-      labels: ['Semarang', 'Jawa Tengah', 'Nasional'],
+      spots: [semarangSpots, jatengSpots],
+      colors: [_bpsBlue, _bpsOrange],
+      labels: ['Semarang', 'Jawa Tengah'],
     );
   }
 
@@ -914,11 +883,6 @@ class _PengangguranScreenState extends State<PengangguranScreen>
     if (tpakChange > 0) {
       kesimpulanAnak.add(
           'TPAK meningkat ${NumberFormatUtils.formatValue(tpakChange, decimalPlaces: 2)} persen poin, menunjukkan peningkatan partisipasi penduduk dalam angkatan kerja.');
-    }
-
-    if (data.tptSemarang < data.tptNasional) {
-      kesimpulanAnak.add(
-          'TPT Kota Semarang (${NumberFormatUtils.formatValue(data.tptSemarang, decimalPlaces: 2)}%) lebih rendah dari TPT Nasional (${NumberFormatUtils.formatValue(data.tptNasional, decimalPlaces: 2)}%), menunjukkan kondisi ketenagakerjaan yang lebih baik.');
     }
 
     final status =

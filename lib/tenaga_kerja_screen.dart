@@ -208,11 +208,12 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
 
   void _initializeDefaultJatengData() {
     jatengData = {
-      2020: {'tpt': 6.92, 'tingkatPartisipasi': 68.5},
-      2021: {'tpt': 6.45, 'tingkatPartisipasi': 69.1},
-      2022: {'tpt': 5.89, 'tingkatPartisipasi': 69.7},
-      2023: {'tpt': 5.34, 'tingkatPartisipasi': 70.3},
+      2020: {'tpt': 6.48, 'tingkatPartisipasi': 68.5},
+      2021: {'tpt': 5.95, 'tingkatPartisipasi': 69.1},
+      2022: {'tpt': 5.57, 'tingkatPartisipasi': 69.7},
+      2023: {'tpt': 5.13, 'tingkatPartisipasi': 70.3},
       2024: {'tpt': 4.78, 'tingkatPartisipasi': 70.9},
+      2025: {'tpt': 4.76, 'tingkatPartisipasi': 71.5},
     };
   }
 
@@ -1381,7 +1382,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         ),
                         children: [
                           TextSpan(
-                            text: '${NumberFormatUtils.formatValue(percentage, decimalPlaces: 1)}%\n',
+                            text:
+                                '${NumberFormatUtils.formatValue(percentage, decimalPlaces: 1)}%\n',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w800,

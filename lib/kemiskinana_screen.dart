@@ -29,10 +29,6 @@ class PovertyData {
   final String garisMiskin;
   final String indeksKedalaman;
   final String indeksKeparahan;
-  final String kemiskinanKota;
-  final String kemiskinanKotaChange;
-  final String kemiskinanDesa;
-  final String kemiskinanDesaChange;
 
   const PovertyData({
     required this.year,
@@ -43,10 +39,6 @@ class PovertyData {
     required this.garisMiskin,
     required this.indeksKedalaman,
     required this.indeksKeparahan,
-    required this.kemiskinanKota,
-    required this.kemiskinanKotaChange,
-    required this.kemiskinanDesa,
-    required this.kemiskinanDesaChange,
   });
 
   factory PovertyData.fromMap(int year, Map<String, dynamic> map) {
@@ -60,10 +52,6 @@ class PovertyData {
       garisMiskin: map['garisMiskin']?.toString() ?? '-',
       indeksKedalaman: map['indeksKedalaman']?.toString() ?? '-',
       indeksKeparahan: map['indeksKeparahan']?.toString() ?? '-',
-      kemiskinanKota: map['kemiskinanKota']?.toString() ?? '-',
-      kemiskinanKotaChange: map['kemiskinanKotaChange']?.toString() ?? '-',
-      kemiskinanDesa: map['kemiskinanDesa']?.toString() ?? '-',
-      kemiskinanDesaChange: map['kemiskinanDesaChange']?.toString() ?? '-',
     );
   }
 
@@ -76,10 +64,6 @@ class PovertyData {
         'garisMiskin': garisMiskin,
         'indeksKedalaman': indeksKedalaman,
         'indeksKeparahan': indeksKeparahan,
-        'kemiskinanKota': kemiskinanKota,
-        'kemiskinanKotaChange': kemiskinanKotaChange,
-        'kemiskinanDesa': kemiskinanDesa,
-        'kemiskinanDesaChange': kemiskinanDesaChange,
       };
 }
 
@@ -135,10 +119,6 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                 'garisMiskin': 'Rp 522.691',
                 'indeksKedalaman': '0,68',
                 'indeksKeparahan': '0,16',
-                'kemiskinanKota': '4,34%',
-                'kemiskinanKotaChange': '+0,20%',
-                'kemiskinanDesa': '12,82%',
-                'kemiskinanDesaChange': '+0,27%',
               }),
               2021: PovertyData.fromMap(2021, {
                 'pendudukMiskin': '84,45 Ribu',
@@ -148,10 +128,6 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                 'garisMiskin': 'Rp 543.929',
                 'indeksKedalaman': '0,67',
                 'indeksKeparahan': '0,14',
-                'kemiskinanKota': '4,56%',
-                'kemiskinanKotaChange': '+0,28%',
-                'kemiskinanDesa': '13,20%',
-                'kemiskinanDesaChange': '+0,38%',
               }),
               2022: PovertyData.fromMap(2022, {
                 'pendudukMiskin': '79,87 Ribu',
@@ -161,10 +137,6 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                 'garisMiskin': 'Rp 589.598',
                 'indeksKedalaman': '0,56',
                 'indeksKeparahan': '0,11',
-                'kemiskinanKota': '4,25%',
-                'kemiskinanKotaChange': '-0,22%',
-                'kemiskinanDesa': '12,34%',
-                'kemiskinanDesaChange': '-0,86%',
               }),
               2023: PovertyData.fromMap(2023, {
                 'pendudukMiskin': '80,53 Ribu',
@@ -174,10 +146,6 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                 'garisMiskin': 'Rp 642.456',
                 'indeksKedalaman': '0,54',
                 'indeksKeparahan': '0,10',
-                'kemiskinanKota': '4,23%',
-                'kemiskinanKotaChange': '-0,41%',
-                'kemiskinanDesa': '12,45%',
-                'kemiskinanDesaChange': '-0,89%',
               }),
               2024: PovertyData.fromMap(2024, {
                 'pendudukMiskin': '77,79 Ribu',
@@ -187,10 +155,15 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                 'garisMiskin': 'Rp 671.936',
                 'indeksKedalaman': '0,59',
                 'indeksKeparahan': '0,12',
-                'kemiskinanKota': '4,03%',
-                'kemiskinanKotaChange': '-0,29%',
-                'kemiskinanDesa': '12,11%',
-                'kemiskinanDesaChange': '-0,34%',
+              }),
+              2025: PovertyData.fromMap(2025, {
+                'pendudukMiskin': '74,36 Ribu',
+                'pendudukMiskinValue': 74.36,
+                'persentase': '3,80%',
+                'persentaseValue': 3.8,
+                'garisMiskin': 'Rp 709.785',
+                'indeksKedalaman': '0,41',
+                'indeksKeparahan': '0,05',
               }),
             };
           }
@@ -466,8 +439,8 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 displayValues: cachedSortedYears
                     .map((y) => yearlyData[y]!.pendudukMiskinDisplay)
                     .toList(),
-                minY: 75,
-                maxY: 87,
+                minY: 72,
+                maxY: 86,
                 yInterval: 2,
                 yAxisSuffix: ' Ribu',
                 indicatorTitle: 'Jumlah Penduduk Miskin',
@@ -491,8 +464,8 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 displayValues: cachedSortedYears
                     .map((y) => yearlyData[y]!.persentaseDisplay)
                     .toList(),
-                minY: 3.8,
-                maxY: 4.8,
+                minY: 3.6,
+                maxY: 4.7,
                 yInterval: 0.2,
                 yAxisSuffix: '%',
                 indicatorTitle: 'Persentase Kemiskinan',
@@ -532,8 +505,8 @@ class _KemiskinanScreenContent extends StatelessWidget {
       latestPercentage: latestData.persentaseValue,
       firstPercentage: firstData.persentaseValue,
       latestPopulation: latestData.pendudukMiskinDisplay,
-      urbanPercentage: latestData.kemiskinanKota,
-      ruralPercentage: latestData.kemiskinanDesa,
+      garisKemiskinan: latestData.garisMiskin,
+      indeksKedalaman: latestData.indeksKedalaman,
     );
 
     return KesimpulanWidget(

@@ -130,7 +130,7 @@ class _IpmScreenState extends State<IpmScreen>
         'uhh': 78.23,
         'rls': 11.05,
         'hls': 15.57,
-        'pengeluaran': 17250.00,
+        'pengeluaran': 16990.00,
         'ipm': 85.24
       },
       2025: {

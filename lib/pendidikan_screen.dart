@@ -29,10 +29,10 @@ class PendidikanScreen extends StatefulWidget {
 
 class _PendidikanScreenState extends State<PendidikanScreen>
     with AutomaticKeepAliveClientMixin {
-  int selectedYear = 2024;
+  int selectedYear = 2025;
   bool isLoading = true;
 
-  final List<int> years = [2024, 2023, 2022, 2021, 2020];
+  final List<int> years = [2025, 2024, 2023, 2022, 2021];
 
   // Data pendidikan per tahun (Data real Kota Semarang)
   Map<int, Map<String, dynamic>> educationData = {};
@@ -91,64 +91,11 @@ class _PendidikanScreenState extends State<PendidikanScreen>
 
   Map<int, Map<String, dynamic>> _getDefaultData() {
     return {
-      2020: {
-        'angkaMelekHuruf': 96.1,
-        'rataRataLamaSekolah': 8.5,
-        'harapanLamaSekolah': 12.9,
-        'rasioGuruMurid': 16.1,
-        'tingkatKelulusan': 98.3,
-        'aksesPendidikanTinggi': 31.5,
-        'jenjangPendidikan': [
-          {'jenjang': 'TK', 'sekolah': 650, 'guru': 2200, 'murid': 28200},
-          {'jenjang': 'RA', 'sekolah': 135, 'guru': 680, 'murid': 8600},
-          {'jenjang': 'SD', 'sekolah': 490, 'guru': 6950, 'murid': 127800},
-          {'jenjang': 'MI', 'sekolah': 88, 'guru': 1150, 'murid': 18700},
-          {'jenjang': 'SMP', 'sekolah': 185, 'guru': 3700, 'murid': 62100},
-          {'jenjang': 'MTs', 'sekolah': 38, 'guru': 800, 'murid': 9300},
-          {'jenjang': 'SMA', 'sekolah': 72, 'guru': 1850, 'murid': 29600},
-          {'jenjang': 'SMK', 'sekolah': 83, 'guru': 2400, 'murid': 37200},
-          {'jenjang': 'MA', 'sekolah': 30, 'guru': 720, 'murid': 6400},
-        ],
-        'rasioData': [
-          {
-            'jenjang': 'TK/RA',
-            'rasioSekolahMurid': 43.4,
-            'rasioGuruMurid': 12.8
-          },
-          {
-            'jenjang': 'SD/MI',
-            'rasioSekolahMurid': 260.8,
-            'rasioGuruMurid': 18.4
-          },
-          {
-            'jenjang': 'SMP/MTs',
-            'rasioSekolahMurid': 335.7,
-            'rasioGuruMurid': 16.8
-          },
-          {
-            'jenjang': 'SMA/SMK/MA',
-            'rasioSekolahMurid': 405.5,
-            'rasioGuruMurid': 16.3
-          },
-        ],
-        'angkaPutusSekolah': [
-          {'tingkat': 'SD', 'persentase': 0.7},
-          {'tingkat': 'SMP', 'persentase': 1.2},
-          {'tingkat': 'SMA', 'persentase': 2.5},
-        ],
-        'partisipasiPendidikan': [
-          {'jenjang': 'SD/MI/Sederajat', 'apm': 99.60, 'apk': 102.57},
-          {'jenjang': 'SMP/MTs/Sederajat', 'apm': 91.77, 'apk': 92.54},
-          {'jenjang': 'SMA/SMK/MA/Sederajat', 'apm': 69.95, 'apk': 104.60},
-        ],
-      },
       2021: {
         'angkaMelekHuruf': 96.5,
-        'rataRataLamaSekolah': 8.7,
-        'harapanLamaSekolah': 13.1,
-        'rasioGuruMurid': 15.36,
-        'tingkatKelulusan': 98.6,
-        'aksesPendidikanTinggi': 33.2,
+        'rataRataLamaSekolah': 10.78,
+        'harapanLamaSekolah': 15.53,
+        'rasioGuruMurid': 16.08,
         'jenjangPendidikan': [
           {'jenjang': 'TK', 'sekolah': 668, 'guru': 2272, 'murid': 28986},
           {'jenjang': 'RA', 'sekolah': 137, 'guru': 693, 'murid': 8774},
@@ -182,168 +129,186 @@ class _PendidikanScreenState extends State<PendidikanScreen>
             'rasioGuruMurid': 14.75
           },
         ],
-        'angkaPutusSekolah': [
-          {'tingkat': 'SD', 'persentase': 0.6},
-          {'tingkat': 'SMP', 'persentase': 1.0},
-          {'tingkat': 'SMA', 'persentase': 2.2},
-        ],
         'partisipasiPendidikan': [
-          {'jenjang': 'SD/MI/Sederajat', 'apm': 99.70, 'apk': 102.80},
-          {'jenjang': 'SMP/MTs/Sederajat', 'apm': 92.15, 'apk': 93.20},
-          {'jenjang': 'SMA/SMK/MA/Sederajat', 'apm': 71.20, 'apk': 105.30},
+          {'jenjang': 'SD/MI/Sederajat', 'apm': 99.58, 'apk': 102.66},
+          {'jenjang': 'SMP/MTs/Sederajat', 'apm': 90.86, 'apk': 95.00},
+          {'jenjang': 'SMA/SMK/MA/Sederajat', 'apm': 70.23, 'apk': 105.01},
         ],
       },
       2022: {
         'angkaMelekHuruf': 96.9,
-        'rataRataLamaSekolah': 8.9,
-        'harapanLamaSekolah': 13.3,
-        'rasioGuruMurid': 15.36,
-        'tingkatKelulusan': 98.9,
-        'aksesPendidikanTinggi': 35.1,
+        'rataRataLamaSekolah': 10.80,
+        'harapanLamaSekolah': 15.54,
+        'rasioGuruMurid': 15.79,
         'jenjangPendidikan': [
-          {'jenjang': 'TK', 'sekolah': 668, 'guru': 2272, 'murid': 28986},
-          {'jenjang': 'RA', 'sekolah': 137, 'guru': 693, 'murid': 8774},
-          {'jenjang': 'SD', 'sekolah': 506, 'guru': 7140, 'murid': 131398},
-          {'jenjang': 'MI', 'sekolah': 92, 'guru': 1180, 'murid': 19205},
-          {'jenjang': 'SMP', 'sekolah': 191, 'guru': 3802, 'murid': 63809},
-          {'jenjang': 'MTs', 'sekolah': 41, 'guru': 823, 'murid': 9538},
-          {'jenjang': 'SMA', 'sekolah': 74, 'guru': 1889, 'murid': 30402},
-          {'jenjang': 'SMK', 'sekolah': 86, 'guru': 2464, 'murid': 38239},
-          {'jenjang': 'MA', 'sekolah': 32, 'guru': 742, 'murid': 6521},
+          {'jenjang': 'TK', 'sekolah': 668, 'guru': 2473, 'murid': 32620},
+          {'jenjang': 'RA', 'sekolah': 140, 'guru': 636, 'murid': 10051},
+          {'jenjang': 'SD', 'sekolah': 507, 'guru': 7102, 'murid': 128239},
+          {'jenjang': 'MI', 'sekolah': 94, 'guru': 1137, 'murid': 19730},
+          {'jenjang': 'SMP', 'sekolah': 192, 'guru': 3757, 'murid': 62716},
+          {'jenjang': 'MTs', 'sekolah': 43, 'guru': 798, 'murid': 9499},
+          {'jenjang': 'SMA', 'sekolah': 73, 'guru': 1919, 'murid': 30552},
+          {'jenjang': 'SMK', 'sekolah': 86, 'guru': 2379, 'murid': 36343},
+          {'jenjang': 'MA', 'sekolah': 33, 'guru': 662, 'murid': 6680},
         ],
         'rasioData': [
           {
             'jenjang': 'TK/RA',
-            'rasioSekolahMurid': 46.91,
-            'rasioGuruMurid': 12.74
+            'rasioSekolahMurid': 52.81,
+            'rasioGuruMurid': 13.72
           },
           {
             'jenjang': 'SD/MI',
-            'rasioSekolahMurid': 251.84,
-            'rasioGuruMurid': 18.10
+            'rasioSekolahMurid': 246.20,
+            'rasioGuruMurid': 17.96
           },
           {
             'jenjang': 'SMP/MTs',
-            'rasioSekolahMurid': 316.15,
-            'rasioGuruMurid': 15.86
+            'rasioSekolahMurid': 307.30,
+            'rasioGuruMurid': 15.85
           },
           {
             'jenjang': 'SMA/SMK/MA',
-            'rasioSekolahMurid': 391.47,
-            'rasioGuruMurid': 14.75
+            'rasioSekolahMurid': 383.20,
+            'rasioGuruMurid': 14.83
           },
         ],
-        'angkaPutusSekolah': [
-          {'tingkat': 'SD', 'persentase': 0.5},
-          {'tingkat': 'SMP', 'persentase': 0.9},
-          {'tingkat': 'SMA', 'persentase': 1.9},
-        ],
         'partisipasiPendidikan': [
-          {'jenjang': 'SD/MI/Sederajat', 'apm': 99.80, 'apk': 103.00},
-          {'jenjang': 'SMP/MTs/Sederajat', 'apm': 92.50, 'apk': 93.80},
-          {'jenjang': 'SMA/SMK/MA/Sederajat', 'apm': 72.50, 'apk': 106.00},
+          {'jenjang': 'SD/MI/Sederajat', 'apm': 99.97, 'apk': 103.03},
+          {'jenjang': 'SMP/MTs/Sederajat', 'apm': 91.26, 'apk': 91.26},
+          {'jenjang': 'SMA/SMK/MA/Sederajat', 'apm': 70.24, 'apk': 104.23},
         ],
       },
       2023: {
         'angkaMelekHuruf': 97.2,
-        'rataRataLamaSekolah': 9.1,
-        'harapanLamaSekolah': 13.5,
-        'rasioGuruMurid': 15.4,
-        'tingkatKelulusan': 99.1,
-        'aksesPendidikanTinggi': 37.3,
+        'rataRataLamaSekolah': 10.81,
+        'harapanLamaSekolah': 15.55,
+        'rasioGuruMurid': 15.82,
         'jenjangPendidikan': [
-          {'jenjang': 'TK', 'sekolah': 690, 'guru': 2380, 'murid': 29800},
-          {'jenjang': 'RA', 'sekolah': 142, 'guru': 710, 'murid': 9000},
-          {'jenjang': 'SD', 'sekolah': 512, 'guru': 7320, 'murid': 133200},
-          {'jenjang': 'MI', 'sekolah': 95, 'guru': 1200, 'murid': 19800},
-          {'jenjang': 'SMP', 'sekolah': 198, 'guru': 3950, 'murid': 65100},
-          {'jenjang': 'MTs', 'sekolah': 43, 'guru': 850, 'murid': 9800},
-          {'jenjang': 'SMA', 'sekolah': 78, 'guru': 1950, 'murid': 31500},
-          {'jenjang': 'SMK', 'sekolah': 90, 'guru': 2550, 'murid': 39500},
-          {'jenjang': 'MA', 'sekolah': 35, 'guru': 780, 'murid': 6800},
+          {'jenjang': 'TK', 'sekolah': 683, 'guru': 2515, 'murid': 34757},
+          {'jenjang': 'RA', 'sekolah': 141, 'guru': 654, 'murid': 10425},
+          {'jenjang': 'SD', 'sekolah': 509, 'guru': 7076, 'murid': 125975},
+          {'jenjang': 'MI', 'sekolah': 94, 'guru': 1166, 'murid': 19756},
+          {'jenjang': 'SMP', 'sekolah': 194, 'guru': 3757, 'murid': 63248},
+          {'jenjang': 'MTs', 'sekolah': 48, 'guru': 827, 'murid': 9293},
+          {'jenjang': 'SMA', 'sekolah': 70, 'guru': 1874, 'murid': 30935},
+          {'jenjang': 'SMK', 'sekolah': 83, 'guru': 2298, 'murid': 36517},
+          {'jenjang': 'MA', 'sekolah': 34, 'guru': 676, 'murid': 6705},
         ],
         'rasioData': [
           {
             'jenjang': 'TK/RA',
-            'rasioSekolahMurid': 43.2,
-            'rasioGuruMurid': 12.5
+            'rasioSekolahMurid': 54.83,
+            'rasioGuruMurid': 14.26
           },
           {
             'jenjang': 'SD/MI',
-            'rasioSekolahMurid': 260.2,
-            'rasioGuruMurid': 18.2
+            'rasioSekolahMurid': 241.68,
+            'rasioGuruMurid': 17.68
           },
           {
             'jenjang': 'SMP/MTs',
-            'rasioSekolahMurid': 328.8,
-            'rasioGuruMurid': 16.5
+            'rasioSekolahMurid': 299.76,
+            'rasioGuruMurid': 15.82
           },
           {
             'jenjang': 'SMA/SMK/MA',
-            'rasioSekolahMurid': 379.1,
-            'rasioGuruMurid': 14.9
+            'rasioSekolahMurid': 396.56,
+            'rasioGuruMurid': 15.30
           },
         ],
-        'angkaPutusSekolah': [
-          {'tingkat': 'SD', 'persentase': 0.4},
-          {'tingkat': 'SMP', 'persentase': 0.8},
-          {'tingkat': 'SMA', 'persentase': 1.7},
-        ],
         'partisipasiPendidikan': [
-          {'jenjang': 'SD/MI/Sederajat', 'apm': 99.85, 'apk': 103.20},
-          {'jenjang': 'SMP/MTs/Sederajat', 'apm': 93.00, 'apk': 94.50},
-          {'jenjang': 'SMA/SMK/MA/Sederajat', 'apm': 74.00, 'apk': 107.00},
+          {'jenjang': 'SD/MI/Sederajat', 'apm': 99.75, 'apk': 102.43},
+          {'jenjang': 'SMP/MTs/Sederajat', 'apm': 80.17, 'apk': 84.92},
+          {'jenjang': 'SMA/SMK/MA/Sederajat', 'apm': 61.01, 'apk': 102.59},
         ],
       },
       2024: {
         'angkaMelekHuruf': 97.6,
-        'rataRataLamaSekolah': 9.3,
-        'harapanLamaSekolah': 13.7,
-        'rasioGuruMurid': 15.0,
-        'tingkatKelulusan': 99.3,
-        'aksesPendidikanTinggi': 39.5,
+        'rataRataLamaSekolah': 11.05,
+        'harapanLamaSekolah': 15.57,
+        'rasioGuruMurid': 16.56,
         'jenjangPendidikan': [
-          {'jenjang': 'TK', 'sekolah': 705, 'guru': 2450, 'murid': 30200},
-          {'jenjang': 'RA', 'sekolah': 145, 'guru': 725, 'murid': 9200},
-          {'jenjang': 'SD', 'sekolah': 515, 'guru': 7420, 'murid': 134000},
-          {'jenjang': 'MI', 'sekolah': 98, 'guru': 1220, 'murid': 20000},
-          {'jenjang': 'SMP', 'sekolah': 202, 'guru': 4020, 'murid': 65800},
-          {'jenjang': 'MTs', 'sekolah': 45, 'guru': 870, 'murid': 10000},
-          {'jenjang': 'SMA', 'sekolah': 80, 'guru': 2000, 'murid': 32000},
-          {'jenjang': 'SMK', 'sekolah': 92, 'guru': 2600, 'murid': 40000},
-          {'jenjang': 'MA', 'sekolah': 38, 'guru': 800, 'murid': 7000},
+          {'jenjang': 'TK', 'sekolah': 692, 'guru': 2561, 'murid': 34315},
+          {'jenjang': 'RA', 'sekolah': 141, 'guru': 654, 'murid': 10425},
+          {'jenjang': 'SD', 'sekolah': 510, 'guru': 7083, 'murid': 125715},
+          {'jenjang': 'MI', 'sekolah': 94, 'guru': 1166, 'murid': 19756},
+          {'jenjang': 'SMP', 'sekolah': 193, 'guru': 3854, 'murid': 63841},
+          {'jenjang': 'MTs', 'sekolah': 48, 'guru': 827, 'murid': 9293},
+          {'jenjang': 'SMA', 'sekolah': 72, 'guru': 1841, 'murid': 31289},
+          {'jenjang': 'SMK', 'sekolah': 83, 'guru': 2220, 'murid': 36353},
+          {'jenjang': 'MA', 'sekolah': 34, 'guru': 676, 'murid': 6705},
         ],
         'rasioData': [
           {
             'jenjang': 'TK/RA',
-            'rasioSekolahMurid': 42.8,
-            'rasioGuruMurid': 12.3
+            'rasioSekolahMurid': 49.59,
+            'rasioGuruMurid': 13.40
           },
           {
             'jenjang': 'SD/MI',
-            'rasioSekolahMurid': 260.2,
-            'rasioGuruMurid': 18.1
+            'rasioSekolahMurid': 246.50,
+            'rasioGuruMurid': 17.75
           },
           {
             'jenjang': 'SMP/MTs',
-            'rasioSekolahMurid': 325.7,
-            'rasioGuruMurid': 16.4
+            'rasioSekolahMurid': 330.78,
+            'rasioGuruMurid': 16.56
           },
           {
             'jenjang': 'SMA/SMK/MA',
-            'rasioSekolahMurid': 375.9,
-            'rasioGuruMurid': 14.7
+            'rasioSekolahMurid': 436.40,
+            'rasioGuruMurid': 16.66
           },
         ],
-        'angkaPutusSekolah': [
-          {'tingkat': 'SD', 'persentase': 0.3},
-          {'tingkat': 'SMP', 'persentase': 0.7},
-          {'tingkat': 'SMA', 'persentase': 1.5},
+        'partisipasiPendidikan': [
+          {'jenjang': 'SD/MI/Sederajat', 'apm': 99.14, 'apk': 101.11},
+          {'jenjang': 'SMP/MTs/Sederajat', 'apm': 79.63, 'apk': 85.48},
+          {'jenjang': 'SMA/SMK/MA/Sederajat', 'apm': 60.49, 'apk': 97.81},
+        ],
+      },
+      2025: {
+        'angkaMelekHuruf': 98.0,
+        'rataRataLamaSekolah': 11.20,
+        'harapanLamaSekolah': 15.60,
+        'rasioGuruMurid': 16.47,
+        'jenjangPendidikan': [
+          {'jenjang': 'TK', 'sekolah': 696, 'guru': 2326, 'murid': 33344},
+          {'jenjang': 'RA', 'sekolah': 141, 'guru': 597, 'murid': 9625},
+          {'jenjang': 'SD', 'sekolah': 513, 'guru': 7217, 'murid': 124968},
+          {'jenjang': 'MI', 'sekolah': 93, 'guru': 1099, 'murid': 19469},
+          {'jenjang': 'SMP', 'sekolah': 193, 'guru': 3904, 'murid': 64306},
+          {'jenjang': 'MTs', 'sekolah': 49, 'guru': 681, 'murid': 9298},
+          {'jenjang': 'SMA', 'sekolah': 69, 'guru': 1843, 'murid': 30742},
+          {'jenjang': 'SMK', 'sekolah': 82, 'guru': 2224, 'murid': 36100},
+          {'jenjang': 'MA', 'sekolah': 33, 'guru': 593, 'murid': 6842},
+        ],
+        'rasioData': [
+          {
+            'jenjang': 'TK/RA',
+            'rasioSekolahMurid': 47.91,
+            'rasioGuruMurid': 14.34
+          },
+          {
+            'jenjang': 'SD/MI',
+            'rasioSekolahMurid': 243.60,
+            'rasioGuruMurid': 17.32
+          },
+          {
+            'jenjang': 'SMP/MTs',
+            'rasioSekolahMurid': 333.19,
+            'rasioGuruMurid': 16.47
+          },
+          {
+            'jenjang': 'SMA/SMK/MA',
+            'rasioSekolahMurid': 442.66,
+            'rasioGuruMurid': 16.44
+          },
         ],
         'partisipasiPendidikan': [
-          {'jenjang': 'SD/MI/Sederajat', 'apm': 99.90, 'apk': 103.50},
-          {'jenjang': 'SMP/MTs/Sederajat', 'apm': 93.50, 'apk': 95.20},
-          {'jenjang': 'SMA/SMK/MA/Sederajat', 'apm': 75.50, 'apk': 108.00},
+          {'jenjang': 'SD/MI/Sederajat', 'apm': 97.7, 'apk': 101.71},
+          {'jenjang': 'SMP/MTs/Sederajat', 'apm': 80.86, 'apk': 92.32},
+          {'jenjang': 'SMA/SMK/MA/Sederajat', 'apm': 71.45, 'apk': 89.31},
         ],
       },
     };
@@ -429,8 +394,6 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                                 _buildRasioChart(sizing, isSmallScreen),
                                 SizedBox(height: sizing.sectionSpacing),
                                 _buildPartisipasiChart(sizing, isSmallScreen),
-                                SizedBox(height: sizing.sectionSpacing),
-                                _buildDropoutRateCard(sizing, isSmallScreen),
                                 SizedBox(height: sizing.sectionSpacing),
                                 _buildAdditionalStats(sizing, isSmallScreen),
                                 SizedBox(height: sizing.sectionSpacing),
@@ -708,17 +671,6 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 icon: Icons.timer,
                 description:
                     'Rata-rata Lama Sekolah (RLS) menunjukkan jumlah tahun rata-rata yang dihabiskan oleh penduduk usia 25 tahun ke atas untuk menempuh pendidikan formal.',
-              ),
-              _buildIndicatorDivider(isSmallScreen),
-              _buildCompactIndicatorRow(
-                context: context,
-                value: '${currentData['tingkatKelulusan']}%',
-                label: 'Angka Kelulusan',
-                color: _bpsGreen,
-                icon: Icons.emoji_events,
-                description:
-                    'Angka Kelulusan menunjukkan persentase siswa yang berhasil menyelesaikan pendidikan pada jenjang tertentu dalam satu tahun ajaran.',
-                isLast: true,
               ),
             ],
           ),
@@ -1080,7 +1032,8 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                   touchTooltipData: BarTouchTooltipData(
                     tooltipRoundedRadius: 8,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                      String jenjang = data[groupIndex]['jenjang'] ?? '';
+                      String jenjang =
+                          data[groupIndex]['jenjang']?.toString() ?? '';
                       String jumlah = NumberFormatUtils.formatCompact(rod.toY);
                       return BarTooltipItem(
                         '$jenjang\n$jumlah ribu murid',
@@ -1103,7 +1056,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                           return Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(
-                              data[value.toInt()]['jenjang'] ?? '',
+                              data[value.toInt()]['jenjang']?.toString() ?? '',
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 9 : 10,
                                 fontWeight: FontWeight.w600,
@@ -1697,111 +1650,6 @@ class _PendidikanScreenState extends State<PendidikanScreen>
     );
   }
 
-  Widget _buildDropoutRateCard(ResponsiveSizing sizing, bool isSmallScreen) {
-    final dropoutData = currentData['angkaPutusSekolah'] as List;
-
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: _bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.trending_down,
-                color: _bpsRed,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Angka Putus Sekolah',
-                      style: TextStyle(
-                        fontSize: isSmallScreen
-                            ? sizing.groupTitleSize - 2
-                            : sizing.groupTitleSize,
-                        fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Tahun $selectedYear',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 12 : 13,
-                        color: _bpsTextSecondary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 16 : 20),
-          ...dropoutData.map((item) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        item['tingkat'],
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 12 : 13,
-                          fontWeight: FontWeight.w600,
-                          color: _bpsTextPrimary,
-                        ),
-                      ),
-                      Text(
-                        '${item['persentase']}%',
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 12 : 13,
-                          fontWeight: FontWeight.bold,
-                          color: _bpsTextPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: LinearProgressIndicator(
-                      value: item['persentase'] / 5,
-                      minHeight: 7,
-                      backgroundColor: _bpsBorder,
-                      valueColor: AlwaysStoppedAnimation<Color>(_bpsRed),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
   Widget _buildAdditionalStats(ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -1897,16 +1745,6 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 icon: Icons.school,
                 description:
                     'Harapan Lama Sekolah (HLS) menunjukkan lamanya sekolah (dalam tahun) yang diharapkan akan dirasakan oleh anak pada umur tertentu di masa mendatang.',
-              ),
-              _buildIndicatorDivider(isSmallScreen),
-              _buildCompactIndicatorRow(
-                context: context,
-                value: '${currentData['aksesPendidikanTinggi']}%',
-                label: 'Akses Pendidikan Tinggi',
-                color: _bpsOrange,
-                icon: Icons.business,
-                description:
-                    'Akses Pendidikan Tinggi menunjukkan persentase penduduk yang memiliki akses dan kesempatan untuk melanjutkan pendidikan ke jenjang perguruan tinggi.',
                 isLast: true,
               ),
             ],
@@ -1945,7 +1783,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
       return const SizedBox.shrink();
     }
 
-    final sortedYears = years..sort((a, b) => a.compareTo(b));
+    final sortedYears = List<int>.from(years)..sort((a, b) => a.compareTo(b));
     final latestYear = sortedYears.last;
     final firstYear = sortedYears.first;
 

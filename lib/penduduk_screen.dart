@@ -1306,6 +1306,26 @@ class _PendudukScreenState extends State<PendudukScreen>
       }
     }
 
+    // Calculate dynamic Y-axis range based on data
+    double minY = 0;
+    double maxY = 2.5;
+    if (spots.isNotEmpty) {
+      final growthRates = spots.map((s) => s.y).toList();
+      final dataMin = growthRates.reduce((a, b) => a < b ? a : b);
+      final dataMax = growthRates.reduce((a, b) => a > b ? a : b);
+      // Add padding to min/max for better visualization
+      minY = (dataMin * 0.8).clamp(0, double.infinity);
+      maxY = dataMax * 1.2;
+      // Ensure minimum range for better spacing
+      if (maxY - minY < 1.0) {
+        maxY = minY + 1.0;
+      }
+    }
+
+    // Calculate interval based on range
+    final yRange = maxY - minY;
+    final interval = yRange <= 1.0 ? 0.2 : (yRange <= 2.0 ? 0.5 : 1.0);
+
     return Container(
       padding: EdgeInsets.all(isSmallScreen
           ? sizing.statsCardPadding - 4
@@ -1349,125 +1369,125 @@ class _PendudukScreenState extends State<PendudukScreen>
             ],
           ),
           SizedBox(height: isSmallScreen ? 16 : 20),
-          SizedBox(
-            height: isSmallScreen ? 180 : 220,
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: 0.5,
-                  getDrawingHorizontalLine: (value) {
-                    return FlLine(
-                      color: Colors.grey.withOpacity(0.2),
-                      strokeWidth: 1,
-                    );
-                  },
-                ),
-                titlesData: FlTitlesData(
-                  show: true,
-                  rightTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  topTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 30,
-                      interval: 1,
-                      getTitlesWidget: (value, meta) {
-                        final index = value.toInt();
-                        if (index >= 0 && index < yearLabels.length) {
-                          return Text(
-                            yearLabels[index],
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: _bpsGreen,
+          Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: SizedBox(
+              height: isSmallScreen ? 200 : 240,
+              child: LineChart(
+                LineChartData(
+                  minY: minY,
+                  maxY: maxY,
+                  titlesData: FlTitlesData(
+                    show: true,
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    topTitles: AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 30,
+                        interval: 1,
+                        getTitlesWidget: (value, meta) {
+                          final index = value.toInt();
+                          if (index >= 0 && index < yearLabels.length) {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(
+                                yearLabels[index],
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 10 : 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: _bpsGreen,
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: interval,
+                        getTitlesWidget: (value, meta) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 4),
+                            child: Text(
+                              '${NumberFormatUtils.formatValue(value, decimalPlaces: 1)}%',
+                              style: TextStyle(
+                                fontSize: isSmallScreen ? 9 : 10,
+                                color: Colors.grey[600],
+                              ),
+                              textAlign: TextAlign.right,
                             ),
                           );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 40,
-                      interval: 0.5,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          '${NumberFormatUtils.formatValue(value, decimalPlaces: 1)}%',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey[600],
-                          ),
-                        );
-                      },
-                    ),
-                    axisNameWidget: const Padding(
-                      padding: EdgeInsets.only(bottom: 8),
-                      child: Text(
-                        'Laju Pertumbuhan (%)',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        },
                       ),
                     ),
                   ),
-                ),
-                borderData: FlBorderData(show: false),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: spots,
-                    isCurved: true,
-                    color: _bpsGreen,
-                    barWidth: 3,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, percent, bar, index) {
-                        return FlDotCirclePainter(
-                          radius: 6,
-                          color: _bpsGreen,
-                          strokeWidth: 2,
-                          strokeColor: Colors.white,
-                        );
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: interval,
+                    getDrawingHorizontalLine: (value) {
+                      return FlLine(
+                        color: Colors.grey.withOpacity(0.2),
+                        strokeWidth: 1,
+                      );
+                    },
+                  ),
+                  borderData: FlBorderData(show: false),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: spots,
+                      isCurved: true,
+                      color: _bpsGreen,
+                      barWidth: 3,
+                      dotData: FlDotData(
+                        show: true,
+                        getDotPainter: (spot, percent, bar, index) {
+                          return FlDotCirclePainter(
+                            radius: 6,
+                            color: _bpsGreen,
+                            strokeWidth: 2,
+                            strokeColor: Colors.white,
+                          );
+                        },
+                      ),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: _bpsGreen.withOpacity(0.1),
+                      ),
+                    ),
+                  ],
+                  lineTouchData: LineTouchData(
+                    enabled: true,
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipColor: (spot) => Colors.white,
+                      tooltipRoundedRadius: 8,
+                      tooltipBorder: BorderSide(
+                        color: Colors.grey.shade300,
+                        width: 1,
+                      ),
+                      getTooltipItems: (touchedSpots) {
+                        return touchedSpots.map((spot) {
+                          final index = spot.x.toInt();
+                          final year = yearLabels[index];
+                          return LineTooltipItem(
+                            '$year\n${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}%',
+                            const TextStyle(
+                              color: _bpsGreen,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          );
+                        }).toList();
                       },
                     ),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: _bpsGreen.withOpacity(0.1),
-                    ),
-                  ),
-                ],
-                lineTouchData: LineTouchData(
-                  enabled: true,
-                  touchTooltipData: LineTouchTooltipData(
-                    getTooltipColor: (spot) => Colors.white,
-                    tooltipRoundedRadius: 8,
-                    tooltipBorder: BorderSide(
-                      color: Colors.grey.shade300,
-                      width: 1,
-                    ),
-                    getTooltipItems: (touchedSpots) {
-                      return touchedSpots.map((spot) {
-                        final index = spot.x.toInt();
-                        final year = yearLabels[index];
-                        return LineTooltipItem(
-                          '$year\n${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}%',
-                          const TextStyle(
-                            color: _bpsGreen,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                          ),
-                        );
-                      }).toList();
-                    },
                   ),
                 ),
               ),

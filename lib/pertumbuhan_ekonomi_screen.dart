@@ -433,12 +433,12 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
                 context: context,
-                value: data.sektorPerdag,
-                label: 'Sektor Perdagangan',
+                value: data.sektorIndustri,
+                label: 'Sektor Industri Pengolahan',
                 color: _bpsOrange,
-                icon: Icons.store_rounded,
+                icon: Icons.factory_rounded,
                 description:
-                    'Sektor perdagangan merupakan salah satu penopang ekonomi utama wilayah.',
+                    'Sektor Industri Pengolahan merupakan sektor terbesar kontributor PDRB Kota Semarang.',
                 isLast: true,
               ),
             ],
@@ -960,7 +960,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Tren Pertumbuhan Tahun 2020-2025 (%)',
+                      'Tren Pertumbuhan Tahun 2020–2025 (%)',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 14,
                         color: _bpsTextSecondary,
