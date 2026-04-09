@@ -31,6 +31,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
     with AutomaticKeepAliveClientMixin {
   int selectedYear = 2025;
   bool isLoading = true;
+  final Set<int> _shownNotices = {};
 
   final List<int> years = [2025, 2024, 2023, 2022, 2021];
 
@@ -41,6 +42,164 @@ class _PendidikanScreenState extends State<PendidikanScreen>
 
   @override
   bool get wantKeepAlive => true;
+
+  void _show2024DataNotice() {
+    if (_shownNotices.contains(2024)) return;
+
+    _shownNotices.add(2024);
+
+    final sizing = ResponsiveSizing(context);
+    final isSmallScreen = sizing.isVerySmall || sizing.isSmall;
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogContext) {
+        return Dialog(
+          insetPadding: EdgeInsets.all(isSmallScreen ? 16 : 24),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: isSmallScreen
+                  ? MediaQuery.of(dialogContext).size.width - 32
+                  : 450,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
+                  decoration: BoxDecoration(
+                    color: _bpsRed,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.warning_rounded,
+                        color: Colors.white,
+                        size: isSmallScreen ? 24 : 28,
+                      ),
+                      SizedBox(width: isSmallScreen ? 10 : 12),
+                      Expanded(
+                        child: Text(
+                          'Informasi Penting',
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 16 : 18,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => Navigator.pop(dialogContext),
+                        borderRadius: BorderRadius.circular(8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: isSmallScreen ? 20 : 22,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+                        decoration: BoxDecoration(
+                          color: _bpsRed.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: _bpsRed.withOpacity(0.3),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.info_outline_rounded,
+                              color: _bpsRed,
+                              size: isSmallScreen ? 18 : 20,
+                            ),
+                            SizedBox(width: isSmallScreen ? 8 : 10),
+                            Expanded(
+                              child: Text(
+                                'Catatan Data Tahun 2024',
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 14 : 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: _bpsTextPrimary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: isSmallScreen ? 12 : 16),
+                      Text(
+                        'Data tahun 2024 menggunakan data dari tahun 2023 untuk jenjang pendidikan RA, MI, MTs, dan MA karena keterbatasan ketersediaan data semester ganjil 2024/2025.',
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 13 : 14,
+                          color: _bpsTextSecondary,
+                          height: 1.6,
+                        ),
+                      ),
+                      SizedBox(height: isSmallScreen ? 8 : 10),
+                      Text(
+                        'Data yang ditampilkan adalah estimasi berdasarkan data tahun ajaran 2023/2024.',
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 13 : 14,
+                          color: _bpsTextSecondary,
+                          height: 1.6,
+                        ),
+                      ),
+                      SizedBox(height: isSmallScreen ? 16 : 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(dialogContext),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _bpsRed,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              vertical: isSmallScreen ? 12 : 14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Saya Mengerti',
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 14 : 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   int getTotalMurid(int year) {
     final jenjangData = educationData[year]!['jenjangPendidikan'] as List;
@@ -519,7 +678,14 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 color: isSelected ? _bpsGreen : _bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
-                  onTap: () => setState(() => selectedYear = year),
+                  onTap: () {
+                    setState(() => selectedYear = year);
+                    if (year == 2024) {
+                      Future.delayed(const Duration(milliseconds: 100), () {
+                        _show2024DataNotice();
+                      });
+                    }
+                  },
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     constraints: BoxConstraints(
