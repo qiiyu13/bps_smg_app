@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:device_preview/device_preview.dart';
+import 'services/github_data_service.dart';
 import 'splash_screen.dart';
 import 'onboarding_screen.dart';
 import 'home_screen.dart';
@@ -75,9 +76,7 @@ class _AppInitializerState extends State<AppInitializer> {
 
   Future<void> _initializeApp() async {
     try {
-      print("🚀 Inisialisasi aplikasi...");
-      // Let splash screen handle its own navigation timing
-      // No forced timeout - video will play to completion
+      await GitHubDataService.init();
     } catch (e, s) {
       print("❌ Error saat inisialisasi: $e");
       print(s);
