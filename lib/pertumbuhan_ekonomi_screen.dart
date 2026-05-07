@@ -44,6 +44,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
   @override
   void initState() {
     super.initState();
+    dataManager.loadFromGitHub();
     availableYears = dataManager.getAvailableYears()
       ..sort((a, b) => a.compareTo(b));
     selectedYear = availableYears.isNotEmpty ? availableYears.last : 2024;

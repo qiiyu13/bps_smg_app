@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'services/github_data_service.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
@@ -56,44 +57,77 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
 
   Future<void> _loadData() async {
     try {
+      final githubData = GitHubDataService.getData('tenaga_kerja');
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      String? savedYearData = prefs.getString('tenaga_kerja_year_data');
-      if (savedYearData != null) {
-        Map<String, dynamic> decoded = json.decode(savedYearData);
-        yearData = decoded.map((key, value) =>
+      // --- Year data ---
+      final yearSection = githubData?['yearData'] as Map<String, dynamic>?;
+      if (yearSection != null) {
+        yearData = yearSection.map((key, value) =>
             MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+        await prefs.setString('tenaga_kerja_year_data', json.encode(yearSection));
       } else {
-        _initializeDefaultYearData();
+        String? savedYearData = prefs.getString('tenaga_kerja_year_data');
+        if (savedYearData != null) {
+          final decoded = json.decode(savedYearData) as Map<String, dynamic>;
+          yearData = decoded.map((key, value) =>
+              MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+        } else {
+          _initializeDefaultYearData();
+        }
       }
 
-      String? savedIndikatorData =
-          prefs.getString('tenaga_kerja_indikator_data');
-      if (savedIndikatorData != null) {
-        Map<String, dynamic> decoded = json.decode(savedIndikatorData);
-        indikatorData = decoded.map((key, value) =>
+      // --- Indikator data ---
+      final indikatorSection = githubData?['indikatorData'] as Map<String, dynamic>?;
+      if (indikatorSection != null) {
+        indikatorData = indikatorSection.map((key, value) =>
             MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+        await prefs.setString('tenaga_kerja_indikator_data', json.encode(indikatorSection));
       } else {
-        _initializeDefaultIndikatorData();
+        String? savedIndikatorData = prefs.getString('tenaga_kerja_indikator_data');
+        if (savedIndikatorData != null) {
+          final decoded = json.decode(savedIndikatorData) as Map<String, dynamic>;
+          indikatorData = decoded.map((key, value) =>
+              MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+        } else {
+          _initializeDefaultIndikatorData();
+        }
       }
 
-      String? savedDistribusiData =
-          prefs.getString('tenaga_kerja_distribusi_data');
-      if (savedDistribusiData != null) {
-        Map<String, dynamic> decoded = json.decode(savedDistribusiData);
-        distribusiData = decoded.map((key, value) =>
-            MapEntry(int.parse(key), Map<String, double>.from(value as Map)));
+      // --- Distribusi data ---
+      final distribusiSection = githubData?['distribusiData'] as Map<String, dynamic>?;
+      if (distribusiSection != null) {
+        distribusiData = distribusiSection.map((key, value) =>
+            MapEntry(int.parse(key), Map<String, double>.from(
+              (value as Map).map((k, v) => MapEntry(k as String, (v as num).toDouble())),
+            )));
+        await prefs.setString('tenaga_kerja_distribusi_data', json.encode(distribusiSection));
       } else {
-        _initializeDefaultDistribusiData();
+        String? savedDistribusiData = prefs.getString('tenaga_kerja_distribusi_data');
+        if (savedDistribusiData != null) {
+          final decoded = json.decode(savedDistribusiData) as Map<String, dynamic>;
+          distribusiData = decoded.map((key, value) =>
+              MapEntry(int.parse(key), Map<String, double>.from(value as Map)));
+        } else {
+          _initializeDefaultDistribusiData();
+        }
       }
 
-      String? savedJatengData = prefs.getString('tenaga_kerja_jateng_data');
-      if (savedJatengData != null) {
-        Map<String, dynamic> decoded = json.decode(savedJatengData);
-        jatengData = decoded.map((key, value) =>
+      // --- Jateng data ---
+      final jatengSection = githubData?['jatengData'] as Map<String, dynamic>?;
+      if (jatengSection != null) {
+        jatengData = jatengSection.map((key, value) =>
             MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+        await prefs.setString('tenaga_kerja_jateng_data', json.encode(jatengSection));
       } else {
-        _initializeDefaultJatengData();
+        String? savedJatengData = prefs.getString('tenaga_kerja_jateng_data');
+        if (savedJatengData != null) {
+          final decoded = json.decode(savedJatengData) as Map<String, dynamic>;
+          jatengData = decoded.map((key, value) =>
+              MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+        } else {
+          _initializeDefaultJatengData();
+        }
       }
 
       setState(() {

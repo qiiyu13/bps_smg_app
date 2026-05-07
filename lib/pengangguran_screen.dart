@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'services/github_data_service.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
@@ -79,23 +80,38 @@ class _PengangguranScreenState extends State<PengangguranScreen>
 
   Future<void> _loadData() async {
     try {
+      final githubData = GitHubDataService.getData('tenaga_kerja');
       final prefs = await SharedPreferences.getInstance();
-      final savedData = prefs.getString('pengangguran_data');
+
+      final pengangguranSection = githubData?['pengangguranData'] as Map<String, dynamic>?;
+      if (pengangguranSection != null) {
+        yearlyData = pengangguranSection.map(
+          (key, value) => MapEntry(
+            int.parse(key),
+            PengangguranData.fromMap(
+                int.parse(key), Map<String, dynamic>.from(value as Map)),
+          ),
+        );
+        await prefs.setString('pengangguran_data', json.encode(pengangguranSection));
+      } else {
+        final savedData = prefs.getString('pengangguran_data');
+
+        if (savedData != null) {
+          final decoded = json.decode(savedData) as Map<String, dynamic>;
+          yearlyData = decoded.map(
+            (key, value) => MapEntry(
+              int.parse(key),
+              PengangguranData.fromMap(
+                  int.parse(key), Map<String, dynamic>.from(value as Map)),
+            ),
+          );
+        } else {
+          yearlyData = _getDefaultData();
+        }
+      }
 
       if (mounted) {
         setState(() {
-          if (savedData != null) {
-            final decoded = json.decode(savedData) as Map<String, dynamic>;
-            yearlyData = decoded.map(
-              (key, value) => MapEntry(
-                int.parse(key),
-                PengangguranData.fromMap(
-                    int.parse(key), Map<String, dynamic>.from(value as Map)),
-              ),
-            );
-          } else {
-            yearlyData = _getDefaultData();
-          }
           availableYears = yearlyData.keys.toList()
             ..sort((a, b) => a.compareTo(b));
           selectedYear = availableYears.isNotEmpty ? availableYears.last : 2024;

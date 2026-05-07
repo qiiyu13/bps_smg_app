@@ -1,3 +1,5 @@
+import 'services/github_data_service.dart';
+
 class EkonomiData {
   final String id;
   String tahun;
@@ -26,6 +28,29 @@ class EkonomiData {
     required this.semarangData,
     required this.jatengData,
   });
+
+  factory EkonomiData.fromJson(Map<String, dynamic> json) {
+    return EkonomiData(
+      id: json['id']?.toString() ?? '',
+      tahun: json['tahun']?.toString() ?? '',
+      pertumbuhanEkonomi: json['pertumbuhanEkonomi']?.toString() ?? '',
+      kontribusiPDRB: json['kontribusiPDRB']?.toString() ?? '',
+      sektorIndustri: json['sektorIndustri']?.toString() ?? '',
+      sektorKonstruksi: json['sektorKonstruksi']?.toString() ?? '',
+      sektorPerdag: json['sektorPerdag']?.toString() ?? '',
+      pdrbPerKapita: json['pdrbPerKapita']?.toString() ?? '',
+      vsJawaTengah: json['vsJawaTengah']?.toString() ?? '',
+      tpt: json['tpt']?.toString() ?? '',
+      semarangData: (json['semarangData'] as List<dynamic>?)
+              ?.map((e) => ChartDataPoint.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      jatengData: (json['jatengData'] as List<dynamic>?)
+              ?.map((e) => ChartDataPoint.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+  }
 }
 
 class ChartDataPoint {
@@ -33,6 +58,13 @@ class ChartDataPoint {
   final double value;
 
   const ChartDataPoint({required this.year, required this.value});
+
+  factory ChartDataPoint.fromJson(Map<String, dynamic> json) {
+    return ChartDataPoint(
+      year: (json['year'] as num).toInt(),
+      value: (json['value'] as num).toDouble(),
+    );
+  }
 }
 
 class EkonomiDataManager {
@@ -190,6 +222,19 @@ class EkonomiDataManager {
       jatengData: _jatengChartData,
     ),
   ];
+
+  void loadFromGitHub() {
+    final githubData = GitHubDataService.getData('ekonomi');
+    if (githubData == null) return;
+    final ekonomiList = githubData['ekonomiData'] as List<dynamic>?;
+    if (ekonomiList == null) return;
+    final parsed = ekonomiList
+        .map((e) => EkonomiData.fromJson(e as Map<String, dynamic>))
+        .toList();
+    if (parsed.isNotEmpty) {
+      dataList = parsed;
+    }
+  }
 
   EkonomiData? getDataByYear(String year) {
     try {
