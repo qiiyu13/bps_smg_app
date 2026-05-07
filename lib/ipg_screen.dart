@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
+import 'services/github_data_service.dart';
 
 // BPS Color Palette (matching kemiskinana_screen.dart)
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -153,6 +154,29 @@ class _IPGScreenState extends State<IPGScreen>
 
   Future<void> _loadIPGData() async {
     try {
+      final githubData = GitHubDataService.getData('ipg');
+      if (githubData != null && githubData['ipgData'] != null) {
+        final ipgDataRaw = githubData['ipgData'] as Map<String, dynamic>;
+        if (mounted) {
+          setState(() {
+            ipgDataByYear = ipgDataRaw.map(
+              (key, value) => MapEntry(
+                int.parse(key),
+                IPGData.fromMap(
+                    int.parse(key), Map<String, dynamic>.from(value as Map)),
+              ),
+            );
+            availableYears = ipgDataByYear.keys.toList()
+              ..sort((a, b) => a.compareTo(b));
+            if (availableYears.isNotEmpty) {
+              selectedYear = availableYears.last;
+            }
+            isLoading = false;
+          });
+        }
+        return;
+      }
+
       final prefs = await SharedPreferences.getInstance();
       final savedData = prefs.getString('ipg_data');
 

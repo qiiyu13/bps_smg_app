@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
+import 'services/github_data_service.dart';
 
 // BPS Color Palette
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -80,6 +81,38 @@ class _IDGScreenState extends State<IDGScreen>
 
   Future<void> _loadIDGData() async {
     try {
+      final githubData = GitHubDataService.getData('idg');
+      if (githubData != null && githubData['idgData'] != null) {
+        final idgDataRaw = githubData['idgData'] as Map<String, dynamic>;
+        Map<int, IDGData> processedData = {};
+        idgDataRaw.forEach((key, value) {
+          final int year = int.parse(key);
+          final Map<String, dynamic> data = Map<String, dynamic>.from(value as Map);
+          processedData[year] = IDGData(
+            year: year,
+            sumbangan: (data['SUMBANGAN'] as num?)?.toDouble(),
+            tenaga: (data['TENAGA'] as num?)?.toDouble(),
+            parlemen: (data['PARLEMEN'] as num?)?.toDouble(),
+            idg: (data['IDG'] as num?)?.toDouble(),
+            ikg: (data['IKG'] as num?)?.toDouble(),
+          );
+        });
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) {
+            setState(() {
+              idgDataByYear = processedData;
+              availableYears = processedData.keys.toList()
+                ..sort((a, b) => a.compareTo(b));
+              if (availableYears.isNotEmpty) {
+                selectedYear = availableYears.last;
+              }
+              isLoading = false;
+            });
+          }
+        });
+        return;
+      }
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? savedData = prefs.getString('idg_data');
 
