@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'sdgs_github_repository.dart';
+import 'services/github_data_service.dart';
 
 class KotaData {
   String id;
@@ -135,12 +135,12 @@ class SDGsDataService {
     if (existingData.isEmpty) {
       if (kDebugMode) print('Initializing SDGs data...');
 
-      // Try to fetch from GitHub first
-      final githubData = await SDGsGitHubRepository.fetchLatestData();
+      // Try to fetch from GitHub cache first
+      final githubData = GitHubDataService.getData('sdgs');
 
       if (githubData != null) {
         // Parse GitHub JSON data
-        if (kDebugMode) print('Loading data from GitHub...');
+        if (kDebugMode) print('Loading data from GitHub cache...');
         final cities = githubData['cities'] as List<dynamic>;
         for (var cityJson in cities) {
           final kota = _parseKotaFromJson(cityJson as Map<String, dynamic>);
@@ -148,7 +148,7 @@ class SDGsDataService {
         }
       } else {
         // Fallback to hardcoded data
-        if (kDebugMode) print('GitHub unavailable, using hardcoded data...');
+        if (kDebugMode) print('GitHub cache unavailable, using hardcoded data...');
         for (var kota in _getDefaultData()) {
           await createKota(kota);
         }
