@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
+import 'services/github_data_service.dart';
 
 // BPS Color Palette
 const Color _bpsBlue = Color(0xFF2E99D6);
@@ -168,30 +169,53 @@ class _PendudukScreenState extends State<PendudukScreen>
 
   Future<void> _loadData() async {
     try {
+      final githubData = GitHubDataService.getData('penduduk');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? savedData = prefs.getString('penduduk_data');
       String? savedAgeData = prefs.getString('age_distribution_data');
       String? savedDistrictData = prefs.getString('district_density_data');
 
       Map<int, SemarangData> processedData;
+      Map<int, Map<String, dynamic>> loadedAgeData;
+      Map<int, List<DistrictDensity>> loadedDistrictData;
 
-      if (savedData != null) {
-        Map<String, dynamic> decoded = json.decode(savedData);
+      // --- Penduduk data ---
+      final pendudukSection = githubData?['penduduk'] as Map<String, dynamic>?;
+      if (pendudukSection != null) {
         processedData = {};
-
-        decoded.forEach((key, value) {
+        pendudukSection.forEach((key, value) {
           int year = int.parse(key);
           Map<String, dynamic> data = value as Map<String, dynamic>;
           processedData[year] = SemarangData(
             year: year,
-            population: data['population'],
-            malePopulation: data['malePopulation'],
-            femalePopulation: data['femalePopulation'],
-            area: data['area']?.toDouble(),
-            density: data['density'],
-            districts: data['districts'],
-            villages: data['villages'],
-            growthRate: data['growthRate']?.toDouble(),
+            population: (data['population'] as num?)?.toInt(),
+            malePopulation: (data['malePopulation'] as num?)?.toInt(),
+            femalePopulation: (data['femalePopulation'] as num?)?.toInt(),
+            area: (data['area'] as num?)?.toDouble(),
+            density: (data['density'] as num?)?.toInt(),
+            districts: (data['districts'] as num?)?.toInt(),
+            villages: (data['villages'] as num?)?.toInt(),
+            growthRate: (data['growthRate'] as num?)?.toDouble(),
+          );
+        });
+        await prefs.setString('penduduk_data', json.encode(pendudukSection));
+      } else if (savedData != null) {
+        final decoded = json.decode(savedData) as Map<String, dynamic>;
+        processedData = {};
+
+        decoded.forEach((key, value) {
+          int year = int.parse(key);
+          final data = value as Map<String, dynamic>;
+          processedData[year] = SemarangData(
+            year: year,
+            population: (data['population'] as num?)?.toInt(),
+            malePopulation: (data['malePopulation'] as num?)?.toInt(),
+            femalePopulation: (data['femalePopulation'] as num?)?.toInt(),
+            area: (data['area'] as num?)?.toDouble(),
+            density: (data['density'] as num?)?.toInt(),
+            districts: (data['districts'] as num?)?.toInt(),
+            villages: (data['villages'] as num?)?.toInt(),
+            growthRate: (data['growthRate'] as num?)?.toDouble(),
           );
         });
       } else {
@@ -206,9 +230,17 @@ class _PendudukScreenState extends State<PendudukScreen>
         _cachedSpots.add(FlSpot(i.toDouble(), growthRate / 100));
       }
 
-      Map<int, Map<String, dynamic>> loadedAgeData;
-      if (savedAgeData != null) {
-        Map<String, dynamic> decoded = json.decode(savedAgeData);
+      // --- Age distribution data ---
+      final ageSection = githubData?['ageDistribution'] as Map<String, dynamic>?;
+      if (ageSection != null) {
+        loadedAgeData = {};
+        ageSection.forEach((key, value) {
+          loadedAgeData[int.parse(key)] =
+              Map<String, dynamic>.from(value as Map);
+        });
+        await prefs.setString('age_distribution_data', json.encode(ageSection));
+      } else if (savedAgeData != null) {
+        final decoded = json.decode(savedAgeData) as Map<String, dynamic>;
         loadedAgeData = {};
         decoded.forEach((key, value) {
           loadedAgeData[int.parse(key)] =
@@ -221,47 +253,50 @@ class _PendudukScreenState extends State<PendudukScreen>
       _ageDataByYear = loadedAgeData.map((year, ageData) {
         return MapEntry(year, {
           'usiaMuda': {
-            'total': ageData['usiaMuda'],
-            'percentage': ageData['usiaMudaPercentage']
+            'total': (ageData['usiaMuda'] as num).toInt(),
+            'percentage': (ageData['usiaMudaPercentage'] as num).toDouble()
           },
           'usiaProduktif': {
-            'total': ageData['usiaProduktif'],
-            'percentage': ageData['usiaProduktifPercentage']
+            'total': (ageData['usiaProduktif'] as num).toInt(),
+            'percentage': (ageData['usiaProduktifPercentage'] as num).toDouble()
           },
           'usiaTua': {
-            'total': ageData['usiaTua'],
-            'percentage': ageData['usiaTuaPercentage']
+            'total': (ageData['usiaTua'] as num).toInt(),
+            'percentage': (ageData['usiaTuaPercentage'] as num).toDouble()
           },
-          'totalPopulation': ageData['usiaMuda'] +
-              ageData['usiaProduktif'] +
-              ageData['usiaTua'],
+          'totalPopulation': (ageData['usiaMuda'] as num).toInt() +
+              (ageData['usiaProduktif'] as num).toInt() +
+              (ageData['usiaTua'] as num).toInt(),
         });
       });
 
       _cachedPieDataByYear = {};
       for (int year in _ageDataByYear.keys) {
         final ageData = _ageDataByYear[year]!;
+        final usiaMudaPct = (ageData['usiaMuda']['percentage'] as num).toDouble();
+        final usiaProduktifPct = (ageData['usiaProduktif']['percentage'] as num).toDouble();
+        final usiaTuaPct = (ageData['usiaTua']['percentage'] as num).toDouble();
         _cachedPieDataByYear[year] = [
           PieChartSectionData(
             color: _bpsBlue,
-            value: ageData['usiaMuda']['percentage'].toDouble(),
-            title: '${ageData['usiaMuda']['percentage']}%',
+            value: usiaMudaPct,
+            title: '$usiaMudaPct%',
             radius: 60,
             titleStyle: const TextStyle(
                 fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           PieChartSectionData(
             color: _bpsGreen,
-            value: ageData['usiaProduktif']['percentage'].toDouble(),
-            title: '${ageData['usiaProduktif']['percentage']}%',
+            value: usiaProduktifPct,
+            title: '$usiaProduktifPct%',
             radius: 60,
             titleStyle: const TextStyle(
                 fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           PieChartSectionData(
             color: _bpsOrange,
-            value: ageData['usiaTua']['percentage'].toDouble(),
-            title: '${ageData['usiaTua']['percentage']}%',
+            value: usiaTuaPct,
+            title: '$usiaTuaPct%',
             radius: 60,
             titleStyle: const TextStyle(
                 fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
@@ -269,19 +304,35 @@ class _PendudukScreenState extends State<PendudukScreen>
         ];
       }
 
-      Map<int, List<DistrictDensity>> loadedDistrictData;
-      if (savedDistrictData != null) {
-        Map<String, dynamic> decoded = json.decode(savedDistrictData);
+      // --- District density data ---
+      final districtSection = githubData?['districtDensity'] as Map<String, dynamic>?;
+      if (districtSection != null) {
         loadedDistrictData = {};
-        decoded.forEach((key, value) {
+        districtSection.forEach((key, value) {
           int year = int.parse(key);
           List<dynamic> districts = value as List<dynamic>;
           loadedDistrictData[year] = districts.map((d) {
             Map<String, dynamic> district = d as Map<String, dynamic>;
             return DistrictDensity(
-              name: district['name'],
-              density: district['density'],
-              population: district['population'].toDouble(),
+              name: district['name'] as String,
+              density: (district['density'] as num).toInt(),
+              population: (district['population'] as num).toDouble(),
+            );
+          }).toList();
+        });
+        await prefs.setString('district_density_data', json.encode(districtSection));
+      } else if (savedDistrictData != null) {
+        final decoded = json.decode(savedDistrictData) as Map<String, dynamic>;
+        loadedDistrictData = {};
+        decoded.forEach((key, value) {
+          int year = int.parse(key);
+          List<dynamic> districts = value as List<dynamic>;
+          loadedDistrictData[year] = districts.map((d) {
+            final district = d as Map<String, dynamic>;
+            return DistrictDensity(
+              name: district['name'] as String,
+              density: (district['density'] as num).toInt(),
+              population: (district['population'] as num).toDouble(),
             );
           }).toList();
         });
