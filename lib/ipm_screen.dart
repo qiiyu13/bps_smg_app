@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'services/github_data_service.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
@@ -47,24 +48,43 @@ class _IpmScreenState extends State<IpmScreen>
 
   Future<void> _loadData() async {
     try {
+      final githubData = GitHubDataService.getData('ipm');
       final prefs = await SharedPreferences.getInstance();
 
-      final savedIpmData = prefs.getString('ipm_data');
-      if (savedIpmData != null) {
-        final decoded = json.decode(savedIpmData) as Map<String, dynamic>;
-        ipmData = decoded.map((key, value) =>
-            MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+      final ipmSection = githubData?['ipmData'] as Map<String, dynamic>?;
+      if (ipmSection != null) {
+        ipmData = ipmSection.map((key, value) =>
+            MapEntry(int.parse(key), (value as Map<String, dynamic>).map(
+              (k, v) => MapEntry(k, (v as num).toDouble()),
+            )));
+        await prefs.setString('ipm_data', json.encode(ipmSection));
       } else {
-        _initializeDefaultIpmData();
+        final savedIpmData = prefs.getString('ipm_data');
+        if (savedIpmData != null) {
+          final decoded = json.decode(savedIpmData) as Map<String, dynamic>;
+          ipmData = decoded.map((key, value) =>
+              MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+        } else {
+          _initializeDefaultIpmData();
+        }
       }
 
-      final savedKomponenData = prefs.getString('ipm_komponen_data');
-      if (savedKomponenData != null) {
-        final decoded = json.decode(savedKomponenData) as Map<String, dynamic>;
-        komponenData = decoded.map((key, value) =>
-            MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+      final komponenSection = githubData?['komponenData'] as Map<String, dynamic>?;
+      if (komponenSection != null) {
+        komponenData = komponenSection.map((key, value) =>
+            MapEntry(int.parse(key), (value as Map<String, dynamic>).map(
+              (k, v) => MapEntry(k, (v as num).toDouble()),
+            )));
+        await prefs.setString('ipm_komponen_data', json.encode(komponenSection));
       } else {
-        _initializeDefaultKomponenData();
+        final savedKomponenData = prefs.getString('ipm_komponen_data');
+        if (savedKomponenData != null) {
+          final decoded = json.decode(savedKomponenData) as Map<String, dynamic>;
+          komponenData = decoded.map((key, value) =>
+              MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+        } else {
+          _initializeDefaultKomponenData();
+        }
       }
 
       if (mounted) {

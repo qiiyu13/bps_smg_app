@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'services/github_data_service.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
@@ -218,22 +219,34 @@ class _PendidikanScreenState extends State<PendidikanScreen>
 
   Future<void> _loadData() async {
     try {
+      final githubData = GitHubDataService.getData('pendidikan');
       final prefs = await SharedPreferences.getInstance();
-      final savedData = prefs.getString('pendidikan_data');
+
+      final pendidikanSection = githubData?['pendidikanData'] as Map<String, dynamic>?;
+      if (pendidikanSection != null) {
+        educationData = pendidikanSection.map((key, value) {
+          final yearData = Map<String, dynamic>.from(value as Map);
+          final converted = _convertPendidikanYearData(yearData);
+          return MapEntry(int.parse(key), converted);
+        });
+        await prefs.setString('pendidikan_data', json.encode(pendidikanSection));
+      } else {
+        final savedData = prefs.getString('pendidikan_data');
+        if (savedData != null) {
+          final decoded = json.decode(savedData) as Map<String, dynamic>;
+          educationData = decoded.map(
+            (key, value) => MapEntry(
+              int.parse(key),
+              Map<String, dynamic>.from(value as Map),
+            ),
+          );
+        } else {
+          educationData = _getDefaultData();
+        }
+      }
 
       if (mounted) {
         setState(() {
-          if (savedData != null) {
-            final decoded = json.decode(savedData) as Map<String, dynamic>;
-            educationData = decoded.map(
-              (key, value) => MapEntry(
-                int.parse(key),
-                Map<String, dynamic>.from(value as Map),
-              ),
-            );
-          } else {
-            educationData = _getDefaultData();
-          }
           isLoading = false;
         });
       }
@@ -246,6 +259,59 @@ class _PendidikanScreenState extends State<PendidikanScreen>
         });
       }
     }
+  }
+
+  Map<String, dynamic> _convertPendidikanYearData(Map<String, dynamic> data) {
+    final converted = <String, dynamic>{};
+
+    final doubleKeys = ['angkaMelekHuruf', 'rataRataLamaSekolah', 'harapanLamaSekolah', 'rasioGuruMurid'];
+    for (final key in doubleKeys) {
+      if (data.containsKey(key)) {
+        converted[key] = (data[key] as num).toDouble();
+      }
+    }
+
+    if (data.containsKey('jenjangPendidikan')) {
+      final list = data['jenjangPendidikan'] as List;
+      converted['jenjangPendidikan'] = list.map((item) {
+        final map = Map<String, dynamic>.from(item as Map);
+        for (final k in ['sekolah', 'guru', 'murid']) {
+          if (map.containsKey(k) && map[k] is num) {
+            map[k] = (map[k] as num).toInt();
+          }
+        }
+        return map;
+      }).toList();
+    }
+
+    if (data.containsKey('rasioData')) {
+      final list = data['rasioData'] as List;
+      converted['rasioData'] = list.map((item) {
+        final map = Map<String, dynamic>.from(item as Map);
+        for (final k in ['rasioSekolahMurid', 'rasioGuruMurid']) {
+          if (map.containsKey(k) && map[k] is num) {
+            map[k] = (map[k] as num).toDouble();
+          }
+        }
+        return map;
+      }).toList();
+    }
+
+    if (data.containsKey('partisipasiPendidikan')) {
+      final list = data['partisipasiPendidikan'] as List;
+      converted['partisipasiPendidikan'] = list.map((item) {
+        final map = Map<String, dynamic>.from(item as Map);
+        for (final k in ['apm', 'apk']) {
+          if (map.containsKey(k) && map[k] is num) {
+            map[k] = (map[k] as num).toDouble();
+          }
+        }
+        return map;
+      }).toList();
+    }
+
+    converted.addAll(data..removeWhere((key, _) => converted.containsKey(key)));
+    return converted;
   }
 
   Map<int, Map<String, dynamic>> _getDefaultData() {

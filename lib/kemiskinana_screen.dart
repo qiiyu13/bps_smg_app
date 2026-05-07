@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'services/github_data_service.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
@@ -93,86 +94,94 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
 
   Future<void> _loadData() async {
     try {
+      final githubData = GitHubDataService.getData('kemiskinan');
       final prefs = await SharedPreferences.getInstance();
-      final savedData = prefs.getString('kemiskinan_data');
+
+      final kemiskinanSection = githubData?['kemiskinanData'] as Map<String, dynamic>?;
+      if (kemiskinanSection != null) {
+        yearlyData = kemiskinanSection.map(
+          (key, value) => MapEntry(
+            int.parse(key),
+            PovertyData.fromMap(int.parse(key), Map<String, dynamic>.from(value as Map)),
+          ),
+        );
+        await prefs.setString('kemiskinan_data', json.encode(kemiskinanSection));
+      } else {
+        final savedData = prefs.getString('kemiskinan_data');
+
+        if (savedData != null) {
+          final decoded = json.decode(savedData) as Map<String, dynamic>;
+          yearlyData = decoded.map(
+            (key, value) => MapEntry(
+              int.parse(key),
+              PovertyData.fromMap(int.parse(key), Map<String, dynamic>.from(value as Map)),
+            ),
+          );
+        } else {
+          yearlyData = {
+            2020: PovertyData.fromMap(2020, {
+              'pendudukMiskin': '79,58 Ribu',
+              'pendudukMiskinValue': 79.58,
+              'persentase': '4,34%',
+              'persentaseValue': 4.34,
+              'garisMiskin': 'Rp 522.691',
+              'indeksKedalaman': '0,68',
+              'indeksKeparahan': '0,16',
+            }),
+            2021: PovertyData.fromMap(2021, {
+              'pendudukMiskin': '84,45 Ribu',
+              'pendudukMiskinValue': 84.45,
+              'persentase': '4,56%',
+              'persentaseValue': 4.56,
+              'garisMiskin': 'Rp 543.929',
+              'indeksKedalaman': '0,67',
+              'indeksKeparahan': '0,14',
+            }),
+            2022: PovertyData.fromMap(2022, {
+              'pendudukMiskin': '79,87 Ribu',
+              'pendudukMiskinValue': 79.87,
+              'persentase': '4,25%',
+              'persentaseValue': 4.25,
+              'garisMiskin': 'Rp 589.598',
+              'indeksKedalaman': '0,56',
+              'indeksKeparahan': '0,11',
+            }),
+            2023: PovertyData.fromMap(2023, {
+              'pendudukMiskin': '80,53 Ribu',
+              'pendudukMiskinValue': 80.53,
+              'persentase': '4,23%',
+              'persentaseValue': 4.23,
+              'garisMiskin': 'Rp 642.456',
+              'indeksKedalaman': '0,54',
+              'indeksKeparahan': '0,10',
+            }),
+            2024: PovertyData.fromMap(2024, {
+              'pendudukMiskin': '77,79 Ribu',
+              'pendudukMiskinValue': 77.79,
+              'persentase': '4,03%',
+              'persentaseValue': 4.03,
+              'garisMiskin': 'Rp 671.936',
+              'indeksKedalaman': '0,59',
+              'indeksKeparahan': '0,12',
+            }),
+            2025: PovertyData.fromMap(2025, {
+              'pendudukMiskin': '74,36 Ribu',
+              'pendudukMiskinValue': 74.36,
+              'persentase': '3,80%',
+              'persentaseValue': 3.8,
+              'garisMiskin': 'Rp 709.785',
+              'indeksKedalaman': '0,41',
+              'indeksKeparahan': '0,05',
+            }),
+          };
+        }
+      }
 
       if (mounted) {
         setState(() {
-          if (savedData != null) {
-            // Data dari admin
-            final decoded = json.decode(savedData) as Map<String, dynamic>;
-            yearlyData = decoded.map(
-              (key, value) => MapEntry(
-                int.parse(key),
-                PovertyData.fromMap(
-                    int.parse(key), Map<String, dynamic>.from(value as Map)),
-              ),
-            );
-          } else {
-            // Data default jika belum ada dari admin
-            yearlyData = {
-              2020: PovertyData.fromMap(2020, {
-                'pendudukMiskin': '79,58 Ribu',
-                'pendudukMiskinValue': 79.58,
-                'persentase': '4,34%',
-                'persentaseValue': 4.34,
-                'garisMiskin': 'Rp 522.691',
-                'indeksKedalaman': '0,68',
-                'indeksKeparahan': '0,16',
-              }),
-              2021: PovertyData.fromMap(2021, {
-                'pendudukMiskin': '84,45 Ribu',
-                'pendudukMiskinValue': 84.45,
-                'persentase': '4,56%',
-                'persentaseValue': 4.56,
-                'garisMiskin': 'Rp 543.929',
-                'indeksKedalaman': '0,67',
-                'indeksKeparahan': '0,14',
-              }),
-              2022: PovertyData.fromMap(2022, {
-                'pendudukMiskin': '79,87 Ribu',
-                'pendudukMiskinValue': 79.87,
-                'persentase': '4,25%',
-                'persentaseValue': 4.25,
-                'garisMiskin': 'Rp 589.598',
-                'indeksKedalaman': '0,56',
-                'indeksKeparahan': '0,11',
-              }),
-              2023: PovertyData.fromMap(2023, {
-                'pendudukMiskin': '80,53 Ribu',
-                'pendudukMiskinValue': 80.53,
-                'persentase': '4,23%',
-                'persentaseValue': 4.23,
-                'garisMiskin': 'Rp 642.456',
-                'indeksKedalaman': '0,54',
-                'indeksKeparahan': '0,10',
-              }),
-              2024: PovertyData.fromMap(2024, {
-                'pendudukMiskin': '77,79 Ribu',
-                'pendudukMiskinValue': 77.79,
-                'persentase': '4,03%',
-                'persentaseValue': 4.03,
-                'garisMiskin': 'Rp 671.936',
-                'indeksKedalaman': '0,59',
-                'indeksKeparahan': '0,12',
-              }),
-              2025: PovertyData.fromMap(2025, {
-                'pendudukMiskin': '74,36 Ribu',
-                'pendudukMiskinValue': 74.36,
-                'persentase': '3,80%',
-                'persentaseValue': 3.8,
-                'garisMiskin': 'Rp 709.785',
-                'indeksKedalaman': '0,41',
-                'indeksKeparahan': '0,05',
-              }),
-            };
-          }
-
-          // Cache sorted years to avoid recalculation
           _cachedSortedYears = yearlyData.keys.toList()
             ..sort((a, b) => a.compareTo(b));
 
-          // Set selected year ke tahun terbaru yang ada
           if (_cachedSortedYears.isNotEmpty) {
             selectedYear = _cachedSortedYears.last;
           }
