@@ -107,4 +107,4 @@ flutter build apk --release
 ---
 
 **Lawang** - Layanan data Wilayah Semarang  
-BPS Kota Semarang © 2024
+BPS Kota Semarang © 2026
