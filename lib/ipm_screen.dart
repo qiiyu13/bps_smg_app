@@ -6,20 +6,7 @@ import 'services/github_data_service.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
-
-// BPS Color Palette (matching home_screen.dart)
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsPurple = Color(0xFF7B1FA2);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsTextLabel = Color(0xFFA0A0A0);
-const Color _bpsBorder = Color(0xFFE0E0E0);
-const Color _bpsTeal = Color(0xFF1ABC9C);
+import 'app_theme.dart';
 
 class IpmScreen extends StatefulWidget {
   const IpmScreen({super.key});
@@ -184,7 +171,7 @@ class _IpmScreenState extends State<IpmScreen>
     final isSmallScreen = sizing.isVerySmall || sizing.isSmall;
 
     return Scaffold(
-      backgroundColor: _bpsBackground,
+      backgroundColor: bpsBackground,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
@@ -194,13 +181,13 @@ class _IpmScreenState extends State<IpmScreen>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const CircularProgressIndicator(color: _bpsOrange),
+                        const CircularProgressIndicator(color: bpsOrange),
                         SizedBox(height: sizing.sectionSpacing - 8),
                         Text(
                           'Memuat data IPM...',
                           style: TextStyle(
                             fontSize: sizing.categoryLabelFontSize,
-                            color: _bpsTextSecondary,
+                            color: bpsTextSecondary,
                           ),
                         ),
                       ],
@@ -216,7 +203,7 @@ class _IpmScreenState extends State<IpmScreen>
                               Icon(
                                 Icons.error_outline,
                                 size: sizing.isVerySmall ? 48 : 64,
-                                color: _bpsRed,
+                                color: bpsRed,
                               ),
                               SizedBox(height: sizing.sectionSpacing - 8),
                               Text(
@@ -224,7 +211,7 @@ class _IpmScreenState extends State<IpmScreen>
                                 style: TextStyle(
                                   fontSize: sizing.sectionTitleSize,
                                   fontWeight: FontWeight.bold,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                 ),
                               ),
                               SizedBox(height: sizing.itemSpacing),
@@ -233,7 +220,7 @@ class _IpmScreenState extends State<IpmScreen>
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: sizing.categoryLabelFontSize,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                 ),
                               ),
                               SizedBox(height: sizing.sectionSpacing),
@@ -242,8 +229,8 @@ class _IpmScreenState extends State<IpmScreen>
                                 icon: const Icon(Icons.refresh),
                                 label: const Text('Coba Lagi'),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: _bpsOrange,
-                                  foregroundColor: _bpsCardBg,
+                                  backgroundColor: bpsOrange,
+                                  foregroundColor: bpsCardBg,
                                   padding: EdgeInsets.symmetric(
                                     horizontal: sizing.horizontalPadding,
                                     vertical: sizing.itemSpacing,
@@ -275,10 +262,10 @@ class _IpmScreenState extends State<IpmScreen>
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsOrange,
+        color: bpsOrange,
         boxShadow: [
           BoxShadow(
-            color: _bpsOrange.withOpacity(0.2),
+            color: bpsOrange.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -365,7 +352,7 @@ class _IpmScreenContent extends StatelessWidget {
               Icon(
                 Icons.inbox_outlined,
                 size: sizing.isVerySmall ? 48 : 64,
-                color: _bpsTextLabel,
+                color: bpsTextLabel,
               ),
               SizedBox(height: sizing.sectionSpacing - 8),
               Text(
@@ -373,7 +360,7 @@ class _IpmScreenContent extends StatelessWidget {
                 style: TextStyle(
                   fontSize: sizing.sectionTitleSize,
                   fontWeight: FontWeight.bold,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
               SizedBox(height: sizing.itemSpacing),
@@ -382,7 +369,7 @@ class _IpmScreenContent extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: sizing.categoryLabelFontSize,
-                  color: _bpsTextSecondary,
+                  color: bpsTextSecondary,
                 ),
               ),
             ],
@@ -469,9 +456,9 @@ class _IpmScreenContent extends StatelessWidget {
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -487,7 +474,7 @@ class _IpmScreenContent extends StatelessWidget {
             children: [
               Icon(
                 Icons.analytics_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -499,7 +486,7 @@ class _IpmScreenContent extends StatelessWidget {
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -510,7 +497,7 @@ class _IpmScreenContent extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsOrange.withOpacity(0.1),
+                    color: bpsOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -518,7 +505,7 @@ class _IpmScreenContent extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsOrange,
+                        color: bpsOrange,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -526,7 +513,7 @@ class _IpmScreenContent extends StatelessWidget {
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsOrange,
+                          color: bpsOrange,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -544,7 +531,7 @@ class _IpmScreenContent extends StatelessWidget {
                 value: NumberFormatUtils.formatDecimal(data['ipm'] as double,
                     decimalPlaces: 2),
                 label: 'IPM',
-                color: _bpsGreen,
+                color: bpsGreen,
                 icon: Icons.trending_up_rounded,
                 description:
                     'Indeks Pembangunan Manusia (IPM) mengukur capaian pembangunan manusia berbasis sejumlah komponen dasar kualitas hidup meliputi umur panjang dan hidup sehat, pengetahuan, dan standar hidup layak.',
@@ -556,7 +543,7 @@ class _IpmScreenContent extends StatelessWidget {
                 value:
                     '${NumberFormatUtils.formatDecimal(data['uhh'] as double, decimalPlaces: 2)} Tahun',
                 label: 'UHH',
-                color: _bpsRed,
+                color: bpsRed,
                 icon: Icons.favorite,
                 description:
                     'Umur Harapan Hidup (UHH) saat lahir didefinisikan sebagai rata-rata perkiraan banyak tahun yang dapat ditempuh oleh seseorang sejak lahir. UHH mencerminkan derajat kesehatan suatu masyarakat.',
@@ -567,7 +554,7 @@ class _IpmScreenContent extends StatelessWidget {
                 value:
                     '${NumberFormatUtils.formatDecimal(data['hls'] as double, decimalPlaces: 2)} Tahun',
                 label: 'HLS',
-                color: _bpsBlue,
+                color: bpsBlue,
                 icon: Icons.school,
                 description:
                     'Harapan Lama Sekolah (HLS) didefinisikan sebagai lamanya sekolah (dalam tahun) yang diharapkan akan dirasakan oleh anak pada umur tertentu di masa mendatang.',
@@ -578,7 +565,7 @@ class _IpmScreenContent extends StatelessWidget {
                 value:
                     '${NumberFormatUtils.formatDecimal(data['rls'] as double, decimalPlaces: 2)} Tahun',
                 label: 'RLS',
-                color: _bpsGreen,
+                color: bpsGreen,
                 icon: Icons.auto_stories,
                 description:
                     'Rata-rata Lama Sekolah (RLS) didefinisikan sebagai jumlah tahun yang digunakan oleh penduduk dalam menjalani pendidikan formal.',
@@ -588,7 +575,7 @@ class _IpmScreenContent extends StatelessWidget {
                 context: context,
                 value: formatNumber(data['pengeluaran']),
                 label: 'Pengeluaran per Kapita',
-                color: _bpsOrange,
+                color: bpsOrange,
                 icon: Icons.monetization_on,
                 description:
                     'Pengeluaran per kapita disesuaikan merupakan rata-rata pengeluaran per kapita per tahun yang telah disesuaikan dengan paritas daya beli (Purchasing Power Parity).',
@@ -641,7 +628,7 @@ class _IpmScreenContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: isSmallScreen ? 13 : 14,
                     fontWeight: FontWeight.w600,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -655,7 +642,7 @@ class _IpmScreenContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -682,7 +669,7 @@ class _IpmScreenContent extends StatelessWidget {
       child: Divider(
         height: 1,
         thickness: 1,
-        color: _bpsBorder.withOpacity(0.5),
+        color: bpsBorder.withOpacity(0.5),
       ),
     );
   }
@@ -801,7 +788,7 @@ class _IpmScreenContent extends StatelessWidget {
                                 'Nilai Indikator',
                                 style: TextStyle(
                                   fontSize: isDialogSmall ? 13 : 14,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -811,7 +798,7 @@ class _IpmScreenContent extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: isDialogSmall ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -825,7 +812,7 @@ class _IpmScreenContent extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.all(isDialogSmall ? 12 : 16),
                           decoration: BoxDecoration(
-                            color: _bpsBackground,
+                            color: bpsBackground,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -854,7 +841,7 @@ class _IpmScreenContent extends StatelessWidget {
                                       description,
                                       style: TextStyle(
                                         fontSize: isDialogSmall ? 13 : 14,
-                                        color: _bpsTextSecondary,
+                                        color: bpsTextSecondary,
                                         height: 1.5,
                                       ),
                                     ),
@@ -900,9 +887,9 @@ class _YearSelector extends StatelessWidget {
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -918,7 +905,7 @@ class _YearSelector extends StatelessWidget {
             children: [
               Icon(
                 Icons.calendar_today_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -929,7 +916,7 @@ class _YearSelector extends StatelessWidget {
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
             ],
@@ -941,7 +928,7 @@ class _YearSelector extends StatelessWidget {
             children: years.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsOrange : _bpsBackground,
+                color: isSelected ? bpsOrange : bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () => onYearSelected(year),
@@ -957,13 +944,13 @@ class _YearSelector extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsOrange : _bpsBorder,
+                        color: isSelected ? bpsOrange : bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsOrange.withOpacity(0.3),
+                                color: bpsOrange.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -976,7 +963,7 @@ class _YearSelector extends StatelessWidget {
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : _bpsTextSecondary,
+                        color: isSelected ? Colors.white : bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -1031,9 +1018,9 @@ class _IpmComparisonChart extends StatelessWidget {
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
@@ -1049,7 +1036,7 @@ class _IpmComparisonChart extends StatelessWidget {
             children: [
               Icon(
                 Icons.show_chart,
-                color: _bpsGreen,
+                color: bpsGreen,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1064,7 +1051,7 @@ class _IpmComparisonChart extends StatelessWidget {
                             ? sizing.groupTitleSize - 2
                             : sizing.groupTitleSize,
                         fontWeight: FontWeight.w800,
-                        color: _bpsTextPrimary,
+                        color: bpsTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -1072,7 +1059,7 @@ class _IpmComparisonChart extends StatelessWidget {
                       'Tren dari tahun ${cachedSortedYears.first} hingga ${cachedSortedYears.last}',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 13,
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1085,11 +1072,11 @@ class _IpmComparisonChart extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildLegendItem('Semarang', _bpsGreen),
+              _buildLegendItem('Semarang', bpsGreen),
               const SizedBox(width: 12),
-              _buildLegendItem('Jateng', _bpsBlue),
+              _buildLegendItem('Jateng', bpsBlue),
               const SizedBox(width: 12),
-              _buildLegendItem('Nasional', _bpsOrange),
+              _buildLegendItem('Nasional', bpsOrange),
             ],
           ),
           SizedBox(height: isSmallScreen ? 16 : 20),
@@ -1106,7 +1093,7 @@ class _IpmComparisonChart extends StatelessWidget {
                     horizontalInterval: 2,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: _bpsBorder,
+                        color: bpsBorder,
                         strokeWidth: 0.5,
                       );
                     },
@@ -1123,7 +1110,7 @@ class _IpmComparisonChart extends StatelessWidget {
                                 decimalPlaces: 0),
                             style: TextStyle(
                               fontSize: isSmallScreen ? 10 : 12,
-                              color: _bpsTextSecondary,
+                              color: bpsTextSecondary,
                               fontWeight: FontWeight.w500,
                             ),
                           );
@@ -1145,7 +1132,7 @@ class _IpmComparisonChart extends StatelessWidget {
                                 yearLabels[index],
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 10 : 12,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1164,7 +1151,7 @@ class _IpmComparisonChart extends StatelessWidget {
                   lineTouchData: LineTouchData(
                     enabled: true,
                     touchTooltipData: LineTouchTooltipData(
-                      getTooltipColor: (spot) => _bpsCardBg,
+                      getTooltipColor: (spot) => bpsCardBg,
                       tooltipRoundedRadius: 8,
                       tooltipBorder:
                           BorderSide(color: Colors.grey[300]!, width: 1),
@@ -1180,10 +1167,10 @@ class _IpmComparisonChart extends StatelessWidget {
                                     ? 'Jateng'
                                     : 'Nasional');
                             Color color = barSpot.barIndex == 0
-                                ? _bpsGreen
+                                ? bpsGreen
                                 : (barSpot.barIndex == 1
-                                    ? _bpsBlue
-                                    : _bpsOrange);
+                                    ? bpsBlue
+                                    : bpsOrange);
                             return LineTooltipItem(
                               '${yearLabels[index]}\n$label: ${NumberFormatUtils.formatDecimal(barSpot.y, decimalPlaces: 2)}',
                               TextStyle(
@@ -1199,9 +1186,9 @@ class _IpmComparisonChart extends StatelessWidget {
                     ),
                   ),
                   lineBarsData: [
-                    _buildLineData(semarangSpots, _bpsGreen),
-                    _buildLineData(jatengSpots, _bpsBlue),
-                    _buildLineData(nasionalSpots, _bpsOrange),
+                    _buildLineData(semarangSpots, bpsGreen),
+                    _buildLineData(jatengSpots, bpsBlue),
+                    _buildLineData(nasionalSpots, bpsOrange),
                   ],
                 ),
               ),
@@ -1226,7 +1213,7 @@ class _IpmComparisonChart extends StatelessWidget {
             radius: isSmallScreen ? 3 : 5,
             color: color,
             strokeWidth: isSmallScreen ? 1.5 : 2.5,
-            strokeColor: _bpsCardBg,
+            strokeColor: bpsCardBg,
           );
         },
       ),
@@ -1272,7 +1259,7 @@ class _IpmComparisonChart extends StatelessWidget {
             style: TextStyle(
               fontSize: isSmallScreen ? 11 : 12,
               fontWeight: FontWeight.w600,
-              color: _bpsTextPrimary,
+              color: bpsTextPrimary,
             ),
           ),
         ],
@@ -1298,9 +1285,9 @@ class _IpmInformationPanel extends StatelessWidget {
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsBackground,
+        color: bpsBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1309,7 +1296,7 @@ class _IpmInformationPanel extends StatelessWidget {
             children: [
               Icon(
                 Icons.info_outline_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1321,7 +1308,7 @@ class _IpmInformationPanel extends StatelessWidget {
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w800,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -1332,7 +1319,7 @@ class _IpmInformationPanel extends StatelessWidget {
             'Indeks Pembangunan Manusia (IPM) mengukur capaian pembangunan manusia berbasis dimensi dasar: umur panjang dan hidup sehat (UHH), pengetahuan (HLS & RLS), dan standar hidup layak (pengeluaran per kapita).',
             style: TextStyle(
               fontSize: sizing.categoryLabelFontSize,
-              color: _bpsTextPrimary,
+              color: bpsTextPrimary,
               height: 1.5,
             ),
           ),
@@ -1340,7 +1327,7 @@ class _IpmInformationPanel extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
             decoration: BoxDecoration(
-              color: _bpsCardBg,
+              color: bpsCardBg,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -1350,7 +1337,7 @@ class _IpmInformationPanel extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.check_circle,
-                      color: _bpsGreen,
+                      color: bpsGreen,
                       size: isSmallScreen ? 18 : 20,
                     ),
                     SizedBox(width: sizing.itemSpacing - 4),
@@ -1360,7 +1347,7 @@ class _IpmInformationPanel extends StatelessWidget {
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 14,
                           fontWeight: FontWeight.w700,
-                          color: _bpsGreen,
+                          color: bpsGreen,
                         ),
                       ),
                     ),
@@ -1371,7 +1358,7 @@ class _IpmInformationPanel extends StatelessWidget {
                   'IPM Semarang termasuk kategori SANGAT TINGGI (>80). IPM dihitung menggunakan rata-rata geometrik dari indeks kesehatan, pendidikan, dan pengeluaran.',
                   style: TextStyle(
                     fontSize: isSmallScreen ? 12 : 13,
-                    color: _bpsTextSecondary,
+                    color: bpsTextSecondary,
                     height: 1.5,
                   ),
                 ),
@@ -1382,7 +1369,7 @@ class _IpmInformationPanel extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
             decoration: BoxDecoration(
-              color: _bpsCardBg,
+              color: bpsCardBg,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -1392,7 +1379,7 @@ class _IpmInformationPanel extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.school_outlined,
-                      color: _bpsBlue,
+                      color: bpsBlue,
                       size: isSmallScreen ? 18 : 20,
                     ),
                     SizedBox(width: sizing.itemSpacing - 4),
@@ -1402,7 +1389,7 @@ class _IpmInformationPanel extends StatelessWidget {
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 14,
                           fontWeight: FontWeight.w700,
-                          color: _bpsBlue,
+                          color: bpsBlue,
                         ),
                       ),
                     ),
@@ -1413,7 +1400,7 @@ class _IpmInformationPanel extends StatelessWidget {
                   'Diukur melalui Harapan Lama Sekolah (HLS) dan Rata-rata Lama Sekolah (RLS) penduduk usia 25 tahun ke atas.',
                   style: TextStyle(
                     fontSize: isSmallScreen ? 12 : 13,
-                    color: _bpsTextSecondary,
+                    color: bpsTextSecondary,
                     height: 1.5,
                   ),
                 ),
@@ -1448,7 +1435,7 @@ class _IpmInformationPanel extends StatelessWidget {
           '• ',
           style: TextStyle(
             fontSize: sizing.categoryLabelFontSize,
-            color: _bpsOrange,
+            color: bpsOrange,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -1457,7 +1444,7 @@ class _IpmInformationPanel extends StatelessWidget {
             text,
             style: TextStyle(
               fontSize: sizing.categoryLabelFontSize,
-              color: _bpsTextPrimary,
+              color: bpsTextPrimary,
               height: 1.5,
             ),
           ),

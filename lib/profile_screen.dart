@@ -4,7 +4,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'app_theme.dart';
 import 'responsive_sizing.dart';
-import 'home_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -54,11 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   void _navigateToHome() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
-      (route) => false,
-    );
+    Navigator.of(context).pop();
   }
 
   @override
@@ -106,72 +101,71 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   Widget _buildHeader(ResponsiveSizing sizing) {
     return SliverToBoxAdapter(
-      child: FadeTransition(
-        opacity: _fadeAnimation,
-        child: Container(
-          decoration: BoxDecoration(
-            color: bpsBlue,
-            boxShadow: [BPSShadows.headerShadow],
-          ),
-          child: SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                sizing.horizontalPadding,
-                sizing.horizontalPadding,
-                sizing.horizontalPadding,
-                sizing.horizontalPadding + 4,
-              ),
-              child: SizedBox(
-                height: sizing.headerLogoSize +
-                    sizing.itemSpacing +
-                    sizing.searchBarHeight,
-                child: Stack(
-                  children: [
-                    // Back button at top left
-                    Positioned(
-                      left: 0,
-                      top: 0,
-                      child: IconButton(
-                        icon: const Icon(Icons.arrow_back_rounded,
-                            color: Colors.white),
-                        onPressed: () => Navigator.of(context).pop(),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        iconSize: 28,
+      child: Container(
+        decoration: BoxDecoration(
+          color: bpsBlue,
+          boxShadow: [BPSShadows.headerShadow],
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              sizing.horizontalPadding,
+              sizing.horizontalPadding,
+              sizing.horizontalPadding,
+              sizing.horizontalPadding + 4,
+            ),
+            child: SizedBox(
+              // Match home header content height exactly:
+              // logo container + gap + actual search bar height (without the extra horizontalPadding baked into searchBarHeight)
+              height: (sizing.headerLogoPadding * 2 + sizing.headerLogoSize) +
+                  sizing.horizontalPadding +
+                  (sizing.searchPadding * 2 + 20),
+              child: Stack(
+                children: [
+                  // Back button at top left
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back_rounded,
+                          color: Colors.white),
+                      onPressed: () => Navigator.of(context).pop(),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      iconSize: 20,
+                    ),
+                  ),
+                  // Logo centered vertically and horizontally
+                  Center(
+                    child: Image.asset(
+                      'assets/images/logo_white.png',
+                      width: (sizing.headerLogoSize * 2) + 8,
+                      height: (sizing.headerLogoSize * 2) + 8,
+                      filterQuality: FilterQuality.medium,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(
+                          Icons.account_balance_rounded,
+                          color: Colors.white,
+                          size: (sizing.headerLogoSize * 2) + 8,
+                        );
+                      },
+                    ),
+                  ),
+                  // Version at bottom right
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Text(
+                      'V$appVersion',
+                      style: TextStyle(
+                        fontSize: sizing.headerSubtitleSize,
+                        color: Colors.white.withOpacity(0.8),
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    // Logo centered vertically and horizontally - larger size
-                    Center(
-                      child: Image.asset(
-                        'assets/images/logo_white.png',
-                        width: (sizing.headerLogoSize * 2) + 8,
-                        height: (sizing.headerLogoSize * 2) + 8,
-                        filterQuality: FilterQuality.medium,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.account_balance_rounded,
-                            color: Colors.white,
-                            size: (sizing.headerLogoSize * 2) + 8,
-                          );
-                        },
-                      ),
-                    ),
-                    // Version at bottom right
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Text(
-                        'V$appVersion',
-                        style: TextStyle(
-                          fontSize: sizing.headerSubtitleSize,
-                          color: Colors.white.withOpacity(0.8),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

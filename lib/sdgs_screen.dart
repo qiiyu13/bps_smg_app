@@ -5,18 +5,7 @@ import 'dart:math';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
-
-// BPS Color Palette
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsPurple = Color(0xFF7B1FA2);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsBorder = Color(0xFFE0E0E0);
+import 'app_theme.dart';
 
 class UserSDGsScreen extends StatefulWidget {
   const UserSDGsScreen({Key? key}) : super(key: key);
@@ -82,16 +71,6 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
       debugPrint('Error loading data: $e');
       if (mounted) setState(() => isLoading = false);
     }
-  }
-
-  Future<void> _refreshData() async {
-    _cardController.reset();
-    await _loadData();
-    _cardController.forward();
-    if (mounted)
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Data berhasil diperbarui'),
-          duration: Duration(seconds: 2)));
   }
 
   void _filterSearch(String query) {
@@ -166,7 +145,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
   }
 
   Color _getIndicatorColor(int index) {
-    const colors = [_bpsBlue, _bpsGreen, _bpsOrange, _bpsPurple, _bpsRed];
+    const colors = [bpsBlue, bpsGreen, bpsOrange, bpsPurple, bpsRed];
     return colors[index % colors.length];
   }
 
@@ -204,18 +183,18 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor: _bpsBackground,
+        backgroundColor: bpsBackground,
         body: Column(children: [
           _buildHeader(context, sizing, isSmallScreen),
           const Expanded(
               child:
-                  Center(child: CircularProgressIndicator(color: _bpsOrange)))
+                  Center(child: CircularProgressIndicator(color: bpsOrange)))
         ]),
       );
     }
 
     return Scaffold(
-      backgroundColor: _bpsBackground,
+      backgroundColor: bpsBackground,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
@@ -257,9 +236,9 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
-      decoration: BoxDecoration(color: _bpsOrange, boxShadow: [
+      decoration: BoxDecoration(color: bpsOrange, boxShadow: [
         BoxShadow(
-            color: _bpsOrange.withOpacity(0.2),
+            color: bpsOrange.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(0, 4))
       ]),
@@ -309,9 +288,9 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -328,12 +307,12 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
+                  color: bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.calendar_today_rounded,
-                  color: _bpsOrange,
+                  color: bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -345,7 +324,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
             ],
@@ -357,7 +336,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
             children: availableYears.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsOrange : _bpsBackground,
+                color: isSelected ? bpsOrange : bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () {
@@ -377,13 +356,13 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsOrange : _bpsBorder,
+                        color: isSelected ? bpsOrange : bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsOrange.withOpacity(0.3),
+                                color: bpsOrange.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -396,7 +375,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : _bpsTextSecondary,
+                        color: isSelected ? Colors.white : bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -416,7 +395,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -429,34 +408,34 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           Container(
               padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
               decoration: BoxDecoration(
-                  color: _bpsGreen.withOpacity(0.1),
+                  color: bpsGreen.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10)),
               child: Icon(Icons.search_rounded,
-                  color: _bpsGreen, size: isSmallScreen ? 16 : 18)),
+                  color: bpsGreen, size: isSmallScreen ? 16 : 18)),
           SizedBox(width: sizing.itemSpacing),
           Text('Cari Kota/Kabupaten',
               style: TextStyle(
                   fontSize: isSmallScreen ? 14 : 16,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary))
+                  color: bpsTextPrimary))
         ]),
         SizedBox(height: isSmallScreen ? 12 : 16),
         Container(
           decoration: BoxDecoration(
-              color: _bpsBackground,
+              color: bpsBackground,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _bpsBorder)),
+              border: Border.all(color: bpsBorder)),
           child: TextField(
             decoration: InputDecoration(
                 hintText: 'Ketik nama kota/kabupaten...',
                 hintStyle: TextStyle(
-                    color: _bpsTextSecondary,
+                    color: bpsTextSecondary,
                     fontSize: isSmallScreen ? 13 : 14),
                 prefixIcon: Icon(Icons.location_city,
-                    color: _bpsOrange, size: isSmallScreen ? 18 : 20),
+                    color: bpsOrange, size: isSmallScreen ? 18 : 20),
                 suffixIcon: searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear, color: _bpsTextSecondary),
+                        icon: const Icon(Icons.clear, color: bpsTextSecondary),
                         onPressed: () => _filterSearch(''))
                     : null,
                 border: InputBorder.none,
@@ -476,7 +455,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -489,24 +468,24 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           Container(
               padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
               decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
+                  color: bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10)),
               child: Icon(Icons.place_rounded,
-                  color: _bpsOrange, size: isSmallScreen ? 16 : 18)),
+                  color: bpsOrange, size: isSmallScreen ? 16 : 18)),
           SizedBox(width: sizing.itemSpacing),
           Text('Pilih Kota/Kabupaten',
               style: TextStyle(
                   fontSize: isSmallScreen ? 14 : 16,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary))
+                  color: bpsTextPrimary))
         ]),
         SizedBox(height: isSmallScreen ? 12 : 16),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-              color: _bpsBackground,
+              color: bpsBackground,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _bpsBorder)),
+              border: Border.all(color: bpsBorder)),
           child: DropdownButton<String>(
             value: _searchedKotaList.any((kota) => kota.nama == selectedKota)
                 ? selectedKota
@@ -540,10 +519,10 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
       return Container(
           padding: EdgeInsets.all(sizing.statsCardPadding),
           decoration: BoxDecoration(
-              color: _bpsCardBg, borderRadius: BorderRadius.circular(16)),
+              color: bpsCardBg, borderRadius: BorderRadius.circular(16)),
           child: const Center(
               child: Text('Tidak ada data untuk kota yang dipilih',
-                  style: TextStyle(color: _bpsTextSecondary))));
+                  style: TextStyle(color: bpsTextSecondary))));
 
     final stats = [
       {
@@ -552,7 +531,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
             ? _getIndicatorValue(kotaData, 'samitasilayak')
             : 0.0,
         'icon': Icons.clean_hands,
-        'color': _bpsOrange,
+        'color': bpsOrange,
         'available': _isYearAvailable('samitasilayak')
       },
       {
@@ -561,7 +540,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
             ? _getIndicatorValue(kotaData, 'tikRemaja')
             : 0.0,
         'icon': Icons.computer,
-        'color': _bpsGreen,
+        'color': bpsGreen,
         'available': _isYearAvailable('tikRemaja')
       },
       {
@@ -570,7 +549,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
             ? _getIndicatorValue(kotaData, 'aktaLahir')
             : 0.0,
         'icon': Icons.assignment,
-        'color': _bpsOrange,
+        'color': bpsOrange,
         'available': _isYearAvailable('aktaLahir')
       },
       {
@@ -578,7 +557,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
         'value':
             _isYearAvailable('apm') ? _getIndicatorValue(kotaData, 'apm') : 0.0,
         'icon': Icons.school,
-        'color': _bpsPurple,
+        'color': bpsPurple,
         'available': _isYearAvailable('apm')
       },
       {
@@ -586,7 +565,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
         'value':
             _isYearAvailable('apk') ? _getIndicatorValue(kotaData, 'apk') : 0.0,
         'icon': Icons.auto_graph,
-        'color': _bpsRed,
+        'color': bpsRed,
         'available': _isYearAvailable('apk')
       },
     ];
@@ -596,7 +575,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -609,16 +588,16 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           Container(
               padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
               decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
+                  color: bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10)),
               child: Icon(Icons.analytics_rounded,
-                  color: _bpsOrange, size: isSmallScreen ? 16 : 18)),
+                  color: bpsOrange, size: isSmallScreen ? 16 : 18)),
           SizedBox(width: sizing.itemSpacing),
           Text('Indikator SDGs - $selectedYear',
               style: TextStyle(
                   fontSize: isSmallScreen ? 14 : 16,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary))
+                  color: bpsTextPrimary))
         ]),
         SizedBox(height: isSmallScreen ? 12 : 16),
         SizedBox(
@@ -663,7 +642,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           color: color.withOpacity(0.08),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-              color: available ? color.withOpacity(0.2) : _bpsBorder)),
+              color: available ? color.withOpacity(0.2) : bpsBorder)),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Stack(alignment: Alignment.center, children: [
           SizedBox(
@@ -680,7 +659,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
         Text(title,
             style: TextStyle(
                 fontSize: isSmallScreen ? 10 : 11,
-                color: _bpsTextPrimary,
+                color: bpsTextPrimary,
                 fontWeight: FontWeight.w600),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -690,7 +669,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
             style: TextStyle(
                 fontSize: isSmallScreen ? 14 : 16,
                 fontWeight: FontWeight.bold,
-                color: _bpsTextPrimary)),
+                color: bpsTextPrimary)),
       ]),
     );
   }
@@ -709,7 +688,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -722,10 +701,10 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           Container(
               padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
               decoration: BoxDecoration(
-                  color: _bpsGreen.withOpacity(0.1),
+                  color: bpsGreen.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10)),
               child: Icon(Icons.bar_chart_rounded,
-                  color: _bpsGreen, size: isSmallScreen ? 16 : 18)),
+                  color: bpsGreen, size: isSmallScreen ? 16 : 18)),
           SizedBox(width: sizing.itemSpacing),
           Expanded(
               child: Column(
@@ -735,11 +714,11 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                     style: TextStyle(
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary)),
+                        color: bpsTextPrimary)),
                 Text('${kotaData?.nama ?? 'Kota'} - Tahun $selectedYear',
                     style: TextStyle(
                         fontSize: isSmallScreen ? 10 : 11,
-                        color: _bpsTextSecondary))
+                        color: bpsTextSecondary))
               ]))
         ]),
         SizedBox(height: isSmallScreen ? 16 : 20),
@@ -747,19 +726,19 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           Container(
               height: 200,
               decoration: BoxDecoration(
-                  color: _bpsBackground,
+                  color: bpsBackground,
                   borderRadius: BorderRadius.circular(12)),
               child: Center(
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                     Icon(Icons.info_outline,
-                        size: 36, color: _bpsTextSecondary),
+                        size: 36, color: bpsTextSecondary),
                     const SizedBox(height: 8),
                     Text('Data tidak tersedia untuk tahun ini',
                         style: TextStyle(
                             fontSize: isSmallScreen ? 12 : 13,
-                            color: _bpsTextSecondary))
+                            color: bpsTextSecondary))
                   ])))
         else
           SizedBox(
@@ -772,7 +751,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                       drawVerticalLine: false,
                       horizontalInterval: 20,
                       getDrawingHorizontalLine: (value) =>
-                          FlLine(color: _bpsBorder, strokeWidth: 0.5)),
+                          FlLine(color: bpsBorder, strokeWidth: 0.5)),
                   titlesData: FlTitlesData(
                       bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
@@ -783,14 +762,14 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                                       style: TextStyle(
                                           fontSize: isSmallScreen ? 9 : 10,
                                           fontWeight: FontWeight.w500,
-                                          color: _bpsTextSecondary),
+                                          color: bpsTextSecondary),
                                       textAlign: TextAlign.center)))),
                       leftTitles: AxisTitles(
                           sideTitles: SideTitles(
                               showTitles: true,
                               interval: 20,
                               getTitlesWidget: (value, meta) =>
-                                  Text('${value.toInt()}%', style: TextStyle(fontSize: isSmallScreen ? 9 : 10, color: _bpsTextSecondary)))),
+                                  Text('${value.toInt()}%', style: TextStyle(fontSize: isSmallScreen ? 9 : 10, color: bpsTextSecondary)))),
                       topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                       rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false))),
                   maxY: 110))),
@@ -819,7 +798,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -832,10 +811,10 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           Container(
               padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
               decoration: BoxDecoration(
-                  color: _bpsOrange.withOpacity(0.1),
+                  color: bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10)),
               child: Icon(Icons.leaderboard_rounded,
-                  color: _bpsOrange, size: isSmallScreen ? 16 : 18)),
+                  color: bpsOrange, size: isSmallScreen ? 16 : 18)),
           SizedBox(width: sizing.itemSpacing),
           Expanded(
               child: Column(
@@ -845,18 +824,18 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                     style: TextStyle(
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary)),
+                        color: bpsTextPrimary)),
                 Text('Tahun $selectedYear',
                     style: TextStyle(
                         fontSize: isSmallScreen ? 10 : 11,
-                        color: _bpsTextSecondary))
+                        color: bpsTextSecondary))
               ]))
         ]),
         SizedBox(height: isSmallScreen ? 12 : 16),
         Container(
           padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
           decoration: BoxDecoration(
-              color: _bpsOrange.withOpacity(0.05),
+              color: bpsOrange.withOpacity(0.05),
               borderRadius: BorderRadius.circular(12)),
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
@@ -864,19 +843,19 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                 'Rata-rata',
                 NumberFormatUtils.formatPercentage(average),
                 Icons.bar_chart,
-                _bpsOrange,
+                bpsOrange,
                 isSmallScreen),
             _buildComparisonStatItem(
                 'Tertinggi',
                 NumberFormatUtils.formatPercentage(highest),
                 Icons.arrow_upward,
-                _bpsGreen,
+                bpsGreen,
                 isSmallScreen),
             _buildComparisonStatItem(
                 'Terendah',
                 NumberFormatUtils.formatPercentage(lowest),
                 Icons.arrow_downward,
-                _bpsRed,
+                bpsRed,
                 isSmallScreen),
           ]),
         ),
@@ -898,8 +877,8 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                       BarChartRodData(
                           toY: sortedValues[index],
                           color: isSelected
-                              ? _bpsOrange
-                              : _bpsOrange.withOpacity(0.4),
+                              ? bpsOrange
+                              : bpsOrange.withOpacity(0.4),
                           width: 18,
                           borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(6)))
@@ -911,7 +890,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                       drawVerticalLine: false,
                       horizontalInterval: 20,
                       getDrawingHorizontalLine: (value) =>
-                          FlLine(color: _bpsBorder, strokeWidth: 0.5)),
+                          FlLine(color: bpsBorder, strokeWidth: 0.5)),
                   titlesData: FlTitlesData(
                     bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
@@ -938,8 +917,8 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                                                       ? FontWeight.bold
                                                       : FontWeight.w500,
                                                   color: isSelected
-                                                      ? _bpsOrange
-                                                      : _bpsTextSecondary)))));
+                                                      ? bpsOrange
+                                                      : bpsTextSecondary)))));
                             })),
                     leftTitles: AxisTitles(
                         sideTitles: SideTitles(
@@ -948,7 +927,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                             getTitlesWidget: (value, meta) => Text(
                                 '${value.toInt()}%',
                                 style: TextStyle(
-                                    fontSize: 9, color: _bpsTextSecondary)))),
+                                    fontSize: 9, color: bpsTextSecondary)))),
                     topTitles: const AxisTitles(
                         sideTitles: SideTitles(showTitles: false)),
                     rightTitles: const AxisTitles(
@@ -974,13 +953,13 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
       const SizedBox(height: 6),
       Text(label,
           style: TextStyle(
-              fontSize: isSmallScreen ? 9 : 10, color: _bpsTextSecondary)),
+              fontSize: isSmallScreen ? 9 : 10, color: bpsTextSecondary)),
       const SizedBox(height: 2),
       Text(value,
           style: TextStyle(
               fontSize: isSmallScreen ? 12 : 14,
               fontWeight: FontWeight.bold,
-              color: _bpsTextPrimary)),
+              color: bpsTextPrimary)),
     ]);
   }
 
@@ -994,7 +973,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-                color: _bpsGreen.withOpacity(0.3),
+                color: bpsGreen.withOpacity(0.3),
                 blurRadius: 12,
                 offset: const Offset(0, 4))
           ]),

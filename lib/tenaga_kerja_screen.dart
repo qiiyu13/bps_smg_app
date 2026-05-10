@@ -5,22 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'services/github_data_service.dart';
 import 'responsive_sizing.dart';
-import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
-
-// BPS Color Palette (matching kemiskinana_screen.dart)
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsTextLabel = Color(0xFFA0A0A0);
-const Color _bpsBorder = Color(0xFFE0E0E0);
-const Color _bpsPurple = Color(0xFF7B1FA2);
-const Color _bpsTeal = Color(0xFF1ABC9C);
+import 'app_theme.dart';
 
 class TenagaKerjaScreen extends StatefulWidget {
   const TenagaKerjaScreen({super.key});
@@ -258,16 +244,16 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor: _bpsBackground,
+        backgroundColor: bpsBackground,
         body: Center(
-          child: CircularProgressIndicator(color: _bpsBlue),
+          child: CircularProgressIndicator(color: bpsBlue),
         ),
       );
     }
 
     if (availableYears.isEmpty || yearData.isEmpty) {
       return Scaffold(
-        backgroundColor: _bpsBackground,
+        backgroundColor: bpsBackground,
         body: Column(
           children: [
             _buildHeader(context, sizing, isSmallScreen),
@@ -281,7 +267,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                       Icon(
                         Icons.inbox_outlined,
                         size: isSmallScreen ? 48 : 64,
-                        color: _bpsTextLabel,
+                        color: bpsTextLabel,
                       ),
                       SizedBox(height: sizing.sectionSpacing - 8),
                       Text(
@@ -289,7 +275,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         style: TextStyle(
                           fontSize: sizing.sectionTitleSize,
                           fontWeight: FontWeight.bold,
-                          color: _bpsTextPrimary,
+                          color: bpsTextPrimary,
                         ),
                       ),
                       SizedBox(height: sizing.itemSpacing),
@@ -298,7 +284,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: sizing.categoryLabelFontSize,
-                          color: _bpsTextSecondary,
+                          color: bpsTextSecondary,
                         ),
                       ),
                     ],
@@ -312,7 +298,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
     }
 
     return Scaffold(
-      backgroundColor: _bpsBackground,
+      backgroundColor: bpsBackground,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
@@ -352,10 +338,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsBlue,
+        color: bpsBlue,
         boxShadow: [
           BoxShadow(
-            color: _bpsBlue.withOpacity(0.2),
+            color: bpsBlue.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -413,9 +399,9 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -431,7 +417,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
             children: [
               Icon(
                 Icons.calendar_today_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -442,7 +428,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
             ],
@@ -454,7 +440,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
             children: availableYears.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsBlue : _bpsBackground,
+                color: isSelected ? bpsBlue : bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () => setState(() => selectedYear = year),
@@ -470,13 +456,13 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsBlue : _bpsBorder,
+                        color: isSelected ? bpsBlue : bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsBlue.withOpacity(0.3),
+                                color: bpsBlue.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -489,7 +475,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : _bpsTextSecondary,
+                        color: isSelected ? Colors.white : bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -517,9 +503,9 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -535,7 +521,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
             children: [
               Icon(
                 Icons.analytics_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -547,7 +533,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -558,7 +544,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsBlue.withOpacity(0.1),
+                    color: bpsBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -566,7 +552,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsBlue,
+                        color: bpsBlue,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -574,7 +560,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsBlue,
+                          color: bpsBlue,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -591,7 +577,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                 context: context,
                 value: NumberFormatUtils.formatPercentage(tpt),
                 label: 'Tingkat Pengangguran Terbuka',
-                color: _bpsBlue,
+                color: bpsBlue,
                 icon: Icons.trending_down_rounded,
                 description:
                     'TPT menunjukkan persentase angkatan kerja yang sedang mencari pekerjaan terhadap total angkatan kerja. Semakin rendah TPT, semakin baik kondisi ketenagakerjaan.',
@@ -602,7 +588,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                 context: context,
                 value: NumberFormatUtils.formatPercentage(tingkatPartisipasi),
                 label: 'Tingkat Partisipasi Angkatan Kerja',
-                color: _bpsGreen,
+                color: bpsGreen,
                 icon: Icons.people_rounded,
                 description:
                     'TPAK menggambarkan persentase penduduk usia kerja yang aktif secara ekonomi (bekerja atau mencari pekerjaan) terhadap total penduduk usia kerja.',
@@ -612,7 +598,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                 context: context,
                 value: _formatNumber(bekerja),
                 label: 'Jumlah Penduduk Bekerja',
-                color: _bpsOrange,
+                color: bpsOrange,
                 icon: Icons.work_rounded,
                 description:
                     'Total penduduk yang bekerja, yaitu yang melakukan kegiatan ekonomi dengan maksud memperoleh atau membantu memperoleh pendapatan atau keuntungan.',
@@ -622,7 +608,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                 context: context,
                 value: _formatNumber(pengangguran),
                 label: 'Jumlah Pengangguran',
-                color: _bpsRed,
+                color: bpsRed,
                 icon: Icons.group_off_rounded,
                 description:
                     'Total penduduk yang sedang mencari pekerjaan, mempersiapkan usaha, tidak mencari pekerjaan karena merasa tidak mungkin mendapatkan pekerjaan, atau sudah punya pekerjaan tetapi belum mulai bekerja.',
@@ -648,9 +634,9 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -666,7 +652,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
             children: [
               Icon(
                 Icons.info_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -678,7 +664,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -689,7 +675,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsBlue.withOpacity(0.1),
+                    color: bpsBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -697,7 +683,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsBlue,
+                        color: bpsBlue,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -705,7 +691,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsBlue,
+                          color: bpsBlue,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -722,7 +708,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                 context: context,
                 value: _formatNumber(angkatanKerja),
                 label: 'Angkatan Kerja',
-                color: _bpsBlue,
+                color: bpsBlue,
                 icon: Icons.groups_rounded,
                 description:
                     'Total penduduk usia kerja (15 tahun ke atas) yang bekerja atau sedang mencari pekerjaan. Angkatan kerja adalah penjumlahan dari penduduk yang bekerja dan pengangguran.',
@@ -733,7 +719,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                 context: context,
                 value: _formatNumber(bkbk),
                 label: 'Bukan Angkatan Kerja',
-                color: _bpsBlue,
+                color: bpsBlue,
                 icon: Icons.people_outline_rounded,
                 description:
                     'Penduduk usia kerja yang tidak bekerja dan tidak mencari pekerjaan. Termasuk di dalamnya adalah yang bersekolah, mengurus rumah tangga, pensiunan, dan lain-lain.',
@@ -743,7 +729,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                 context: context,
                 value: NumberFormatUtils.formatPercentage(tingkatKesempatan),
                 label: 'Tingkat Kesempatan Kerja',
-                color: _bpsBlue,
+                color: bpsBlue,
                 icon: Icons.work_history_rounded,
                 description:
                     'Persentase penduduk yang bekerja terhadap angkatan kerja. Indikator ini menunjukkan seberapa besar kesempatan kerja yang tersedia bagi angkatan kerja.',
@@ -805,7 +791,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 13 : 14,
                     fontWeight: FontWeight.w600,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -819,7 +805,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -846,7 +832,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
       child: Divider(
         height: 1,
         thickness: 1,
-        color: _bpsBorder.withOpacity(0.5),
+        color: bpsBorder.withOpacity(0.5),
       ),
     );
   }
@@ -961,7 +947,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                                 'Nilai Indikator',
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 13 : 14,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -971,7 +957,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -982,7 +968,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         Container(
                           padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                           decoration: BoxDecoration(
-                            color: _bpsBackground,
+                            color: bpsBackground,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -1011,7 +997,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                                       description,
                                       style: TextStyle(
                                         fontSize: isSmallScreen ? 13 : 14,
-                                        color: _bpsTextSecondary,
+                                        color: bpsTextSecondary,
                                         height: 1.5,
                                       ),
                                     ),
@@ -1053,9 +1039,9 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1071,7 +1057,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
             children: [
               Icon(
                 Icons.show_chart_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1086,7 +1072,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                             ? sizing.groupTitleSize - 2
                             : sizing.groupTitleSize,
                         fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary,
+                        color: bpsTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -1094,7 +1080,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                       'Perbandingan Tingkat Pengangguran (%)',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 13,
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                       ),
                     ),
                   ],
@@ -1108,8 +1094,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
             runSpacing: isSmallScreen ? 8 : 12,
             alignment: WrapAlignment.center,
             children: [
-              _buildLegendItem('Kota Semarang', _bpsBlue, isSmallScreen),
-              _buildLegendItem('Jawa Tengah', _bpsGreen, isSmallScreen),
+              _buildLegendItem('Kota Semarang', bpsBlue, isSmallScreen),
+              _buildLegendItem('Jawa Tengah', bpsGreen, isSmallScreen),
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
@@ -1123,7 +1109,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                   horizontalInterval: 1,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: _bpsBorder,
+                      color: bpsBorder,
                       strokeWidth: 0.5,
                     );
                   },
@@ -1139,7 +1125,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                           NumberFormatUtils.formatPercentage(value),
                           style: TextStyle(
                             fontSize: isSmallScreen ? 10 : 12,
-                            color: _bpsTextSecondary,
+                            color: bpsTextSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         );
@@ -1160,7 +1146,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                               availableYears[index].toString(),
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 10 : 12,
-                                color: _bpsTextPrimary,
+                                color: bpsTextPrimary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -1188,7 +1174,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                       return FlSpot(e.key.toDouble(), e.value);
                     }).toList(),
                     isCurved: true,
-                    color: _bpsBlue,
+                    color: bpsBlue,
                     barWidth: isSmallScreen ? 2.5 : 3.5,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
@@ -1196,7 +1182,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: isSmallScreen ? 3 : 4,
-                          color: _bpsBlue,
+                          color: bpsBlue,
                           strokeWidth: isSmallScreen ? 1.5 : 2.5,
                           strokeColor: Colors.white,
                         );
@@ -1206,8 +1192,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          _bpsBlue.withOpacity(0.15),
-                          _bpsBlue.withOpacity(0.01),
+                          bpsBlue.withOpacity(0.15),
+                          bpsBlue.withOpacity(0.01),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -1219,7 +1205,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                       return FlSpot(e.key.toDouble(), e.value);
                     }).toList(),
                     isCurved: true,
-                    color: _bpsGreen,
+                    color: bpsGreen,
                     barWidth: isSmallScreen ? 2.5 : 3.5,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
@@ -1227,7 +1213,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: isSmallScreen ? 3 : 4,
-                          color: _bpsGreen,
+                          color: bpsGreen,
                           strokeWidth: isSmallScreen ? 1.5 : 2.5,
                           strokeColor: Colors.white,
                         );
@@ -1237,8 +1223,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          _bpsGreen.withOpacity(0.15),
-                          _bpsGreen.withOpacity(0.01),
+                          bpsGreen.withOpacity(0.15),
+                          bpsGreen.withOpacity(0.01),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -1267,9 +1253,9 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1286,7 +1272,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
             children: [
               Icon(
                 Icons.bar_chart_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1309,7 +1295,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                                   ? sizing.groupTitleSize - 2
                                   : sizing.groupTitleSize,
                               fontWeight: FontWeight.w700,
-                              color: _bpsTextPrimary,
+                              color: bpsTextPrimary,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -1317,7 +1303,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                             'Persentase Tenaga Kerja per Sektor',
                             style: TextStyle(
                               fontSize: isSmallScreen ? 12 : 13,
-                              color: _bpsTextSecondary,
+                              color: bpsTextSecondary,
                             ),
                           ),
                         ],
@@ -1342,7 +1328,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                               fontWeight: FontWeight.w700,
                               color: selectedSector != null
                                   ? _getSectorColor(selectedSector!)
-                                  : _bpsTextPrimary,
+                                  : bpsTextPrimary,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -1350,7 +1336,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                             'Tenaga kerja di sektor',
                             style: TextStyle(
                               fontSize: isSmallScreen ? 12 : 13,
-                              color: _bpsTextSecondary,
+                              color: bpsTextSecondary,
                             ),
                           ),
                         ],
@@ -1451,7 +1437,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                             child: Text(
                               sectorName,
                               style: TextStyle(
-                                color: _bpsTextSecondary,
+                                color: bpsTextSecondary,
                                 fontWeight: FontWeight.w600,
                                 fontSize: isSmallScreen ? 11 : 12,
                               ),
@@ -1472,7 +1458,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         return Text(
                           '${value.toInt()}%',
                           style: TextStyle(
-                            color: _bpsTextLabel,
+                            color: bpsTextLabel,
                             fontWeight: FontWeight.w500,
                             fontSize: isSmallScreen ? 10 : 11,
                           ),
@@ -1493,7 +1479,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                   horizontalInterval: 25,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: _bpsBorder,
+                      color: bpsBorder,
                       strokeWidth: 1,
                     );
                   },
@@ -1517,7 +1503,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         backDrawRodData: BackgroundBarChartRodData(
                           show: true,
                           toY: 100,
-                          color: _bpsBorder.withOpacity(0.3),
+                          color: bpsBorder.withOpacity(0.3),
                         ),
                       ),
                     ],
@@ -1587,13 +1573,13 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
   Color _getSectorColor(String sector) {
     switch (sector) {
       case 'Pertanian':
-        return _bpsGreen;
+        return bpsGreen;
       case 'Manufaktur':
-        return _bpsBlue;
+        return bpsBlue;
       case 'Jasa':
-        return _bpsPurple;
+        return bpsPurple;
       default:
-        return _bpsTextSecondary;
+        return bpsTextSecondary;
     }
   }
 

@@ -5,6 +5,17 @@ import 'package:fl_chart/fl_chart.dart';
 import 'services/github_data_service.dart';
 
 class HomeSnapshotData {
+  static SharedPreferences? _prefs;
+
+  static Future<SharedPreferences> _getPrefs() async {
+    _prefs ??= await SharedPreferences.getInstance();
+    return _prefs!;
+  }
+
+  static void clearPrefsCache() {
+    _prefs = null;
+  }
+
   static Future<Map<String, dynamic>?> loadPendudukData() async {
     try {
       final githubData = GitHubDataService.getData('penduduk');
@@ -37,7 +48,7 @@ class HomeSnapshotData {
         }
       }
 
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _getPrefs();
       final savedData = prefs.getString('penduduk_data');
 
       Map<int, Map<String, dynamic>> decoded;
@@ -110,7 +121,7 @@ class HomeSnapshotData {
         }
       }
 
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _getPrefs();
       final savedData = prefs.getString('ipm_data');
 
       Map<int, Map<String, dynamic>> decoded;
@@ -184,7 +195,7 @@ class HomeSnapshotData {
         }
       }
 
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _getPrefs();
       final savedData = prefs.getString('kemiskinan_data');
 
       Map<int, Map<String, dynamic>> decoded;
@@ -275,7 +286,7 @@ class HomeSnapshotData {
         }
       }
 
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _getPrefs();
       final savedData = prefs.getString('inflasi_yearly_data');
 
       Map<int, double> data;

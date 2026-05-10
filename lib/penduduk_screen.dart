@@ -4,21 +4,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
-import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
 import 'services/github_data_service.dart';
-
-// BPS Color Palette
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsTextLabel = Color(0xFFA0A0A0);
-const Color _bpsBorder = Color(0xFFE0E0E0);
+import 'app_theme.dart';
 
 class SemarangData {
   final int year;
@@ -110,7 +98,7 @@ class PendudukScreen extends StatefulWidget {
 }
 
 class _PendudukScreenState extends State<PendudukScreen>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+    with AutomaticKeepAliveClientMixin {
   Map<int, SemarangData> semarangDataByYear = {};
   Map<int, List<DistrictDensity>> districtDensityByYear = {};
   List<int> availableYears = [];
@@ -127,9 +115,6 @@ class _PendudukScreenState extends State<PendudukScreen>
   String? selectedAgeGroup;
   String? selectedAgeValue;
 
-  late AnimationController _pieChartAnimationController;
-  late Animation<double> _pieChartAnimation;
-
   @override
   bool get wantKeepAlive => true;
 
@@ -137,33 +122,22 @@ class _PendudukScreenState extends State<PendudukScreen>
   void initState() {
     super.initState();
 
-    _pieChartAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 4),
-    )..repeat(reverse: true);
-
-    _pieChartAnimation = CurvedAnimation(
-      parent: _pieChartAnimationController,
-      curve: Curves.easeInOut,
-    );
-
     _initializeColors();
     _loadData();
   }
 
   @override
   void dispose() {
-    _pieChartAnimationController.dispose();
     super.dispose();
   }
 
   void _initializeColors() {
     _districtColors = [
-      _bpsBlue,
-      _bpsOrange,
-      _bpsGreen,
-      _bpsRed,
-      _bpsBlue.withOpacity(0.7),
+      bpsBlue,
+      bpsOrange,
+      bpsGreen,
+      bpsRed,
+      bpsBlue.withOpacity(0.7),
     ];
   }
 
@@ -278,7 +252,7 @@ class _PendudukScreenState extends State<PendudukScreen>
         final usiaTuaPct = (ageData['usiaTua']['percentage'] as num).toDouble();
         _cachedPieDataByYear[year] = [
           PieChartSectionData(
-            color: _bpsBlue,
+            color: bpsBlue,
             value: usiaMudaPct,
             title: '$usiaMudaPct%',
             radius: 60,
@@ -286,7 +260,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                 fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           PieChartSectionData(
-            color: _bpsGreen,
+            color: bpsGreen,
             value: usiaProduktifPct,
             title: '$usiaProduktifPct%',
             radius: 60,
@@ -294,7 +268,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                 fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           PieChartSectionData(
-            color: _bpsOrange,
+            color: bpsOrange,
             value: usiaTuaPct,
             title: '$usiaTuaPct%',
             radius: 60,
@@ -641,7 +615,7 @@ class _PendudukScreenState extends State<PendudukScreen>
       final ageData = _ageDataByYear[year]!;
       _cachedPieDataByYear[year] = [
         PieChartSectionData(
-            color: _bpsBlue,
+            color: bpsBlue,
             value: ageData['usiaMuda']['percentage'].toDouble(),
             title: '${ageData['usiaMuda']['percentage']}%',
             radius: 60,
@@ -650,7 +624,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                 fontWeight: FontWeight.bold,
                 color: Colors.white)),
         PieChartSectionData(
-            color: _bpsGreen,
+            color: bpsGreen,
             value: ageData['usiaProduktif']['percentage'].toDouble(),
             title: '${ageData['usiaProduktif']['percentage']}%',
             radius: 60,
@@ -659,7 +633,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                 fontWeight: FontWeight.bold,
                 color: Colors.white)),
         PieChartSectionData(
-            color: _bpsOrange,
+            color: bpsOrange,
             value: ageData['usiaTua']['percentage'].toDouble(),
             title: '${ageData['usiaTua']['percentage']}%',
             radius: 60,
@@ -698,7 +672,7 @@ class _PendudukScreenState extends State<PendudukScreen>
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor: _bpsBackground,
+        backgroundColor: bpsBackground,
         body: Column(
           children: [
             _buildHeader(context, sizing, isSmallScreen),
@@ -707,10 +681,10 @@ class _PendudukScreenState extends State<PendudukScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(color: _bpsGreen),
+                    CircularProgressIndicator(color: bpsGreen),
                     SizedBox(height: 16),
                     Text('Memuat data...',
-                        style: TextStyle(color: _bpsTextSecondary)),
+                        style: TextStyle(color: bpsTextSecondary)),
                   ],
                 ),
               ),
@@ -721,7 +695,7 @@ class _PendudukScreenState extends State<PendudukScreen>
     }
 
     return Scaffold(
-      backgroundColor: _bpsBackground,
+      backgroundColor: bpsBackground,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
@@ -763,10 +737,10 @@ class _PendudukScreenState extends State<PendudukScreen>
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsGreen,
+        color: bpsGreen,
         boxShadow: [
           BoxShadow(
-              color: _bpsGreen.withOpacity(0.2),
+              color: bpsGreen.withOpacity(0.2),
               blurRadius: 20,
               offset: const Offset(0, 4))
         ],
@@ -820,9 +794,9 @@ class _PendudukScreenState extends State<PendudukScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -839,12 +813,12 @@ class _PendudukScreenState extends State<PendudukScreen>
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsGreen.withOpacity(0.1),
+                  color: bpsGreen.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.calendar_today_rounded,
-                  color: _bpsGreen,
+                  color: bpsGreen,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -856,7 +830,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
             ],
@@ -868,7 +842,7 @@ class _PendudukScreenState extends State<PendudukScreen>
             children: availableYears.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsGreen : _bpsBackground,
+                color: isSelected ? bpsGreen : bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () => setState(() => selectedYear = year),
@@ -884,13 +858,13 @@ class _PendudukScreenState extends State<PendudukScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsGreen : _bpsBorder,
+                        color: isSelected ? bpsGreen : bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsGreen.withOpacity(0.3),
+                                color: bpsGreen.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -903,7 +877,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : _bpsTextSecondary,
+                        color: isSelected ? Colors.white : bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -924,9 +898,9 @@ class _PendudukScreenState extends State<PendudukScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -943,12 +917,12 @@ class _PendudukScreenState extends State<PendudukScreen>
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsGreen.withOpacity(0.1),
+                  color: bpsGreen.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.analytics_rounded,
-                  color: _bpsGreen,
+                  color: bpsGreen,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -961,7 +935,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -972,7 +946,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsGreen.withOpacity(0.1),
+                    color: bpsGreen.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -980,7 +954,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsGreen,
+                        color: bpsGreen,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -988,7 +962,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsGreen,
+                          color: bpsGreen,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1005,7 +979,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                 context: context,
                 value: '${data.populationInMillions} Jt',
                 label: 'Total Penduduk',
-                color: _bpsGreen,
+                color: bpsGreen,
                 icon: Icons.groups,
                 description:
                     'Total jumlah penduduk Kota Semarang berdasarkan data BPS tahun $selectedYear.',
@@ -1017,7 +991,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                 context: context,
                 value: '${data.densityFormatted}/km²',
                 label: 'Kepadatan',
-                color: _bpsOrange,
+                color: bpsOrange,
                 icon: Icons.location_city,
                 description:
                     'Kepadatan penduduk per kilometer persegi menunjukkan tingkat konsentrasi penduduk di wilayah Kota Semarang.',
@@ -1052,7 +1026,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                     ? NumberFormatUtils.formatPercentage(data.growthRate!)
                     : 'N/A',
                 label: 'Laju Pertumbuhan',
-                color: _bpsGreen,
+                color: bpsGreen,
                 icon: Icons.trending_up,
                 description:
                     'Laju pertumbuhan penduduk Kota Semarang per tahun.',
@@ -1107,7 +1081,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 13 : 14,
                     fontWeight: FontWeight.w600,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -1121,7 +1095,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -1148,7 +1122,7 @@ class _PendudukScreenState extends State<PendudukScreen>
       child: Divider(
         height: 1,
         thickness: 1,
-        color: _bpsBorder.withOpacity(0.5),
+        color: bpsBorder.withOpacity(0.5),
       ),
     );
   }
@@ -1270,7 +1244,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                                 'Nilai Indikator',
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 13 : 14,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1280,7 +1254,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -1291,7 +1265,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                         Container(
                           padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                           decoration: BoxDecoration(
-                            color: _bpsBackground,
+                            color: bpsBackground,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -1320,7 +1294,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                                       description,
                                       style: TextStyle(
                                         fontSize: isSmallScreen ? 13 : 14,
-                                        color: _bpsTextSecondary,
+                                        color: bpsTextSecondary,
                                         height: 1.5,
                                       ),
                                     ),
@@ -1382,7 +1356,7 @@ class _PendudukScreenState extends State<PendudukScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -1398,10 +1372,10 @@ class _PendudukScreenState extends State<PendudukScreen>
               Container(
                   padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                   decoration: BoxDecoration(
-                      color: _bpsGreen.withOpacity(0.1),
+                      color: bpsGreen.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10)),
                   child: Icon(Icons.show_chart,
-                      color: _bpsGreen, size: isSmallScreen ? 16 : 18)),
+                      color: bpsGreen, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
                   child: Column(
@@ -1411,11 +1385,11 @@ class _PendudukScreenState extends State<PendudukScreen>
                         style: TextStyle(
                             fontSize: isSmallScreen ? 14 : 16,
                             fontWeight: FontWeight.w700,
-                            color: _bpsTextPrimary)),
+                            color: bpsTextPrimary)),
                     Text('Kota Semarang',
                         style: TextStyle(
                             fontSize: isSmallScreen ? 11 : 12,
-                            color: _bpsTextSecondary))
+                            color: bpsTextSecondary))
                   ])),
             ],
           ),
@@ -1451,7 +1425,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 10 : 11,
                                   fontWeight: FontWeight.bold,
-                                  color: _bpsGreen,
+                                  color: bpsGreen,
                                 ),
                               ),
                             );
@@ -1496,14 +1470,14 @@ class _PendudukScreenState extends State<PendudukScreen>
                     LineChartBarData(
                       spots: spots,
                       isCurved: true,
-                      color: _bpsGreen,
+                      color: bpsGreen,
                       barWidth: 3,
                       dotData: FlDotData(
                         show: true,
                         getDotPainter: (spot, percent, bar, index) {
                           return FlDotCirclePainter(
                             radius: 6,
-                            color: _bpsGreen,
+                            color: bpsGreen,
                             strokeWidth: 2,
                             strokeColor: Colors.white,
                           );
@@ -1511,7 +1485,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                       ),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: _bpsGreen.withOpacity(0.1),
+                        color: bpsGreen.withOpacity(0.1),
                       ),
                     ),
                   ],
@@ -1531,7 +1505,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                           return LineTooltipItem(
                             '$year\n${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}%',
                             const TextStyle(
-                              color: _bpsGreen,
+                              color: bpsGreen,
                               fontWeight: FontWeight.bold,
                               fontSize: 13,
                             ),
@@ -1556,9 +1530,9 @@ class _PendudukScreenState extends State<PendudukScreen>
 
     final ageData = _ageDataByYear[selectedYear]!;
     final sections = [
-      _buildAgePieSection('usiaMuda', _bpsBlue, 0, isSmallScreen),
-      _buildAgePieSection('usiaProduktif', _bpsGreen, 1, isSmallScreen),
-      _buildAgePieSection('usiaTua', _bpsOrange, 2, isSmallScreen),
+      _buildAgePieSection('usiaMuda', bpsBlue, 0, isSmallScreen),
+      _buildAgePieSection('usiaProduktif', bpsGreen, 1, isSmallScreen),
+      _buildAgePieSection('usiaTua', bpsOrange, 2, isSmallScreen),
     ];
 
     return Container(
@@ -1566,7 +1540,7 @@ class _PendudukScreenState extends State<PendudukScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -1583,10 +1557,10 @@ class _PendudukScreenState extends State<PendudukScreen>
               Container(
                   padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                   decoration: BoxDecoration(
-                      color: _bpsOrange.withOpacity(0.1),
+                      color: bpsOrange.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10)),
                   child: Icon(Icons.pie_chart,
-                      color: _bpsOrange, size: isSmallScreen ? 16 : 18)),
+                      color: bpsOrange, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
                 child: Stack(
@@ -1605,7 +1579,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                             style: TextStyle(
                               fontSize: isSmallScreen ? 14 : 16,
                               fontWeight: FontWeight.w700,
-                              color: _bpsTextPrimary,
+                              color: bpsTextPrimary,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -1613,7 +1587,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                             'Persentase Penduduk per Kelompok Umur',
                             style: TextStyle(
                               fontSize: isSmallScreen ? 11 : 12,
-                              color: _bpsTextSecondary,
+                              color: bpsTextSecondary,
                             ),
                           ),
                         ],
@@ -1636,7 +1610,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                               fontWeight: FontWeight.w700,
                               color: selectedAgeGroup != null
                                   ? _getAgeGroupColor(selectedAgeGroup!)
-                                  : _bpsTextPrimary,
+                                  : bpsTextPrimary,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -1644,7 +1618,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                             'Jumlah penduduk',
                             style: TextStyle(
                               fontSize: isSmallScreen ? 11 : 12,
-                              color: _bpsTextSecondary,
+                              color: bpsTextSecondary,
                             ),
                           ),
                         ],
@@ -1717,13 +1691,13 @@ class _PendudukScreenState extends State<PendudukScreen>
           const SizedBox(height: 16),
           Column(
             children: [
-              _buildAgeLegendItem('Usia Muda (0-14)', _bpsBlue,
+              _buildAgeLegendItem('Usia Muda (0-14)', bpsBlue,
                   ageData['usiaMuda']['total'], isSmallScreen),
               const SizedBox(height: 8),
-              _buildAgeLegendItem('Usia Produktif (15-64)', _bpsGreen,
+              _buildAgeLegendItem('Usia Produktif (15-64)', bpsGreen,
                   ageData['usiaProduktif']['total'], isSmallScreen),
               const SizedBox(height: 8),
-              _buildAgeLegendItem('Usia Tua (65+)', _bpsOrange,
+              _buildAgeLegendItem('Usia Tua (65+)', bpsOrange,
                   ageData['usiaTua']['total'], isSmallScreen),
             ],
           ),
@@ -1776,13 +1750,13 @@ class _PendudukScreenState extends State<PendudukScreen>
         Expanded(
           child: Text(title,
               style: TextStyle(
-                  fontSize: isSmallScreen ? 12 : 14, color: _bpsTextPrimary)),
+                  fontSize: isSmallScreen ? 12 : 14, color: bpsTextPrimary)),
         ),
         Text(
           _formatCompactNumber(value),
           style: TextStyle(
             fontSize: isSmallScreen ? 11 : 12,
-            color: _bpsTextSecondary,
+            color: bpsTextSecondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -1790,30 +1764,15 @@ class _PendudukScreenState extends State<PendudukScreen>
     );
   }
 
-  Widget _buildLegendItem(String title, Color color, bool isSmallScreen) {
-    return Row(
-      children: [
-        Container(
-            width: 14,
-            height: 14,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-        const SizedBox(width: 8),
-        Text(title,
-            style: TextStyle(
-                fontSize: isSmallScreen ? 12 : 14, color: _bpsTextPrimary)),
-      ],
-    );
-  }
-
   Color _getAgeGroupColor(String ageGroup) {
     if (ageGroup.contains('Muda')) {
-      return _bpsBlue;
+      return bpsBlue;
     } else if (ageGroup.contains('Produktif')) {
-      return _bpsGreen;
+      return bpsGreen;
     } else if (ageGroup.contains('Tua')) {
-      return _bpsOrange;
+      return bpsOrange;
     }
-    return _bpsTextPrimary;
+    return bpsTextPrimary;
   }
 
   Widget _buildAdministrativeData(ResponsiveSizing sizing, bool isSmallScreen) {
@@ -1823,7 +1782,7 @@ class _PendudukScreenState extends State<PendudukScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -1839,16 +1798,16 @@ class _PendudukScreenState extends State<PendudukScreen>
               Container(
                   padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                   decoration: BoxDecoration(
-                      color: _bpsGreen.withOpacity(0.1),
+                      color: bpsGreen.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10)),
                   child: Icon(Icons.account_balance,
-                      color: _bpsGreen, size: isSmallScreen ? 16 : 18)),
+                      color: bpsGreen, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
               Text('Data Administrasi',
                   style: TextStyle(
                       fontSize: isSmallScreen ? 14 : 16,
                       fontWeight: FontWeight.w700,
-                      color: _bpsTextPrimary)),
+                      color: bpsTextPrimary)),
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
@@ -1856,11 +1815,11 @@ class _PendudukScreenState extends State<PendudukScreen>
             children: [
               Expanded(
                   child: _buildAdminCard('${data.districts}', 'Kecamatan',
-                      Icons.account_balance, _bpsGreen, isSmallScreen)),
+                      Icons.account_balance, bpsGreen, isSmallScreen)),
               const SizedBox(width: 12),
               Expanded(
                   child: _buildAdminCard('${data.villages}', 'Kelurahan',
-                      Icons.location_on, _bpsGreen, isSmallScreen)),
+                      Icons.location_on, bpsGreen, isSmallScreen)),
               const SizedBox(width: 12),
               Expanded(
                   child: _buildAdminCard(
@@ -1870,7 +1829,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                           : 'N/A',
                       'km² Luas',
                       Icons.square_foot,
-                      _bpsOrange,
+                      bpsOrange,
                       isSmallScreen)),
             ],
           ),
@@ -1897,7 +1856,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                   color: color)),
           Text(label,
               style: TextStyle(
-                  fontSize: isSmallScreen ? 10 : 11, color: _bpsTextSecondary)),
+                  fontSize: isSmallScreen ? 10 : 11, color: bpsTextSecondary)),
         ],
       ),
     );
@@ -1911,7 +1870,7 @@ class _PendudukScreenState extends State<PendudukScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -1927,16 +1886,16 @@ class _PendudukScreenState extends State<PendudukScreen>
               Container(
                   padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                   decoration: BoxDecoration(
-                      color: _bpsRed.withOpacity(0.1),
+                      color: bpsRed.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10)),
                   child: Icon(Icons.leaderboard,
-                      color: _bpsRed, size: isSmallScreen ? 16 : 18)),
+                      color: bpsRed, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
               Text('5 Kecamatan Terpadat',
                   style: TextStyle(
                       fontSize: isSmallScreen ? 14 : 16,
                       fontWeight: FontWeight.w700,
-                      color: _bpsTextPrimary)),
+                      color: bpsTextPrimary)),
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
@@ -1978,11 +1937,11 @@ class _PendudukScreenState extends State<PendudukScreen>
                               style: TextStyle(
                                   fontSize: isSmallScreen ? 13 : 14,
                                   fontWeight: FontWeight.w600,
-                                  color: _bpsTextPrimary)),
+                                  color: bpsTextPrimary)),
                           Text('${district.populationFormatted} Ribu',
                               style: TextStyle(
                                   fontSize: isSmallScreen ? 10 : 11,
-                                  color: _bpsTextSecondary)),
+                                  color: bpsTextSecondary)),
                         ],
                       ),
                     ),
@@ -1999,7 +1958,7 @@ class _PendudukScreenState extends State<PendudukScreen>
             Center(
                 child: Text('Data tidak tersedia',
                     style: TextStyle(
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                         fontSize: isSmallScreen ? 12 : 14))),
           ],
         ],

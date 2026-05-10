@@ -4,20 +4,7 @@ import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
 import 'services/github_data_service.dart';
-
-// BPS Color Palette (matching kemiskinana_screen.dart)
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsTextLabel = Color(0xFFA0A0A0);
-const Color _bpsBorder = Color(0xFFE0E0E0);
-const Color _bpsPurple = Color(0xFF9B59B6);
-const Color _bpsTeal = Color(0xFF1ABC9C);
+import 'app_theme.dart';
 
 class InflasiScreen extends StatefulWidget {
   const InflasiScreen({super.key});
@@ -1043,10 +1030,10 @@ class _InflasiScreenState extends State<InflasiScreen>
 
   Color get inflationColor {
     final value = currentInflationValue;
-    if (value > 0.5) return _bpsRed;
-    if (value > 0.2) return _bpsOrange;
-    if (value >= 0) return _bpsGreen;
-    return _bpsBlue;
+    if (value > 0.5) return bpsRed;
+    if (value > 0.2) return bpsOrange;
+    if (value >= 0) return bpsGreen;
+    return bpsBlue;
   }
 
   @override
@@ -1056,7 +1043,7 @@ class _InflasiScreenState extends State<InflasiScreen>
 
     if (availableYears.isEmpty) {
       return Scaffold(
-        backgroundColor: _bpsBackground,
+        backgroundColor: bpsBackground,
         body: Column(
           children: [
             _buildHeader(context, sizing, isSmallScreen),
@@ -1070,7 +1057,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                       Icon(
                         Icons.inbox_outlined,
                         size: isSmallScreen ? 48 : 64,
-                        color: _bpsTextLabel,
+                        color: bpsTextLabel,
                       ),
                       SizedBox(height: sizing.sectionSpacing - 8),
                       Text(
@@ -1078,7 +1065,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         style: TextStyle(
                           fontSize: sizing.sectionTitleSize,
                           fontWeight: FontWeight.bold,
-                          color: _bpsTextPrimary,
+                          color: bpsTextPrimary,
                         ),
                       ),
                       SizedBox(height: sizing.itemSpacing),
@@ -1087,7 +1074,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: sizing.categoryLabelFontSize,
-                          color: _bpsTextSecondary,
+                          color: bpsTextSecondary,
                         ),
                       ),
                     ],
@@ -1101,7 +1088,7 @@ class _InflasiScreenState extends State<InflasiScreen>
     }
 
     return Scaffold(
-      backgroundColor: _bpsBackground,
+      backgroundColor: bpsBackground,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
@@ -1143,10 +1130,10 @@ class _InflasiScreenState extends State<InflasiScreen>
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsBlue,
+        color: bpsBlue,
         boxShadow: [
           BoxShadow(
-            color: _bpsBlue.withOpacity(0.2),
+            color: bpsBlue.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -1204,9 +1191,9 @@ class _InflasiScreenState extends State<InflasiScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1222,7 +1209,7 @@ class _InflasiScreenState extends State<InflasiScreen>
             children: [
               Icon(
                 Icons.calendar_today_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1233,7 +1220,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
             ],
@@ -1245,7 +1232,7 @@ class _InflasiScreenState extends State<InflasiScreen>
             children: availableYears.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsBlue : _bpsBackground,
+                color: isSelected ? bpsBlue : bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () {
@@ -1267,13 +1254,13 @@ class _InflasiScreenState extends State<InflasiScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsBlue : _bpsBorder,
+                        color: isSelected ? bpsBlue : bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsBlue.withOpacity(0.3),
+                                color: bpsBlue.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -1286,7 +1273,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : _bpsTextSecondary,
+                        color: isSelected ? Colors.white : bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -1306,9 +1293,9 @@ class _InflasiScreenState extends State<InflasiScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1324,7 +1311,7 @@ class _InflasiScreenState extends State<InflasiScreen>
             children: [
               Icon(
                 Icons.calendar_month_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1335,13 +1322,13 @@ class _InflasiScreenState extends State<InflasiScreen>
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
               const Spacer(),
               if (selectedMonth != null)
                 Material(
-                  color: _bpsOrange.withOpacity(0.1),
+                  color: bpsOrange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                   child: InkWell(
                     onTap: () => setState(() => selectedMonth = null),
@@ -1355,7 +1342,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         'Reset',
                         style: TextStyle(
                           fontSize: sizing.bottomNavLabelSize,
-                          color: _bpsOrange,
+                          color: bpsOrange,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1376,7 +1363,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                   return Padding(
                     padding: EdgeInsets.only(right: sizing.itemSpacing),
                     child: Material(
-                      color: isSelected ? _bpsOrange : _bpsBackground,
+                      color: isSelected ? bpsOrange : bpsBackground,
                       borderRadius: BorderRadius.circular(10),
                       child: InkWell(
                         onTap: () {
@@ -1396,7 +1383,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: isSelected ? _bpsOrange : _bpsBorder,
+                              color: isSelected ? bpsOrange : bpsBorder,
                               width: isSelected ? 2 : 1.5,
                             ),
                           ),
@@ -1408,7 +1395,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                                   ? FontWeight.w700
                                   : FontWeight.w600,
                               color:
-                                  isSelected ? Colors.white : _bpsTextSecondary,
+                                  isSelected ? Colors.white : bpsTextSecondary,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -1434,9 +1421,9 @@ class _InflasiScreenState extends State<InflasiScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1452,7 +1439,7 @@ class _InflasiScreenState extends State<InflasiScreen>
             children: [
               Icon(
                 Icons.analytics_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1464,7 +1451,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -1475,7 +1462,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsBlue.withOpacity(0.1),
+                    color: bpsBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -1483,7 +1470,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsBlue,
+                        color: bpsBlue,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -1491,7 +1478,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsBlue,
+                          color: bpsBlue,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1508,7 +1495,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                 context: context,
                 value: NumberFormatUtils.formatPercentage(yearInflation),
                 label: 'Inflasi Tahunan',
-                color: _bpsBlue,
+                color: bpsBlue,
                 icon: Icons.trending_up_rounded,
                 description:
                     'Inflasi tahunan (Year-on-Year) mengukur perubahan harga barang dan jasa secara umum selama satu tahun. Angka ini menjadi acuan utama kebijakan moneter.',
@@ -1532,7 +1519,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                 context: context,
                 value: NumberFormatUtils.formatDecimal(ihk, decimalPlaces: 2),
                 label: 'Indeks Harga Konsumen',
-                color: _bpsPurple,
+                color: bpsPurple,
                 icon: Icons.assessment_rounded,
                 description:
                     'Indeks Harga Konsumen (IHK) mengukur rata-rata perubahan harga dari suatu paket barang dan jasa yang dikonsumsi oleh rumah tangga. Basis perhitungan 2018=100.',
@@ -1594,7 +1581,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 13 : 14,
                     fontWeight: FontWeight.w600,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -1608,7 +1595,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -1635,7 +1622,7 @@ class _InflasiScreenState extends State<InflasiScreen>
       child: Divider(
         height: 1,
         thickness: 1,
-        color: _bpsBorder.withOpacity(0.5),
+        color: bpsBorder.withOpacity(0.5),
       ),
     );
   }
@@ -1750,7 +1737,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                                 'Nilai Indikator',
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 13 : 14,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1760,7 +1747,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -1771,7 +1758,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         Container(
                           padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                           decoration: BoxDecoration(
-                            color: _bpsBackground,
+                            color: bpsBackground,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -1800,7 +1787,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                                       description,
                                       style: TextStyle(
                                         fontSize: isSmallScreen ? 13 : 14,
-                                        color: _bpsTextSecondary,
+                                        color: bpsTextSecondary,
                                         height: 1.5,
                                       ),
                                     ),
@@ -1839,9 +1826,9 @@ class _InflasiScreenState extends State<InflasiScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1857,7 +1844,7 @@ class _InflasiScreenState extends State<InflasiScreen>
             children: [
               Icon(
                 Icons.show_chart_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1872,7 +1859,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                             ? sizing.groupTitleSize - 2
                             : sizing.groupTitleSize,
                         fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary,
+                        color: bpsTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -1880,7 +1867,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                       'Persentase Year-on-Year (${years.first}-${years.last})',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 13,
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                       ),
                     ),
                   ],
@@ -1899,7 +1886,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                   horizontalInterval: 1,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: _bpsBorder,
+                      color: bpsBorder,
                       strokeWidth: 0.5,
                     );
                   },
@@ -1915,7 +1902,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                           NumberFormatUtils.formatPercentage(value),
                           style: TextStyle(
                             fontSize: isSmallScreen ? 10 : 12,
-                            color: _bpsTextSecondary,
+                            color: bpsTextSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         );
@@ -1936,7 +1923,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                               years[index].toString(),
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 10 : 12,
-                                color: _bpsTextPrimary,
+                                color: bpsTextPrimary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -1962,7 +1949,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                   LineChartBarData(
                     spots: spots,
                     isCurved: true,
-                    color: _bpsBlue,
+                    color: bpsBlue,
                     barWidth: isSmallScreen ? 2.5 : 3.5,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
@@ -1970,7 +1957,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: isSmallScreen ? 3 : 5,
-                          color: _bpsBlue,
+                          color: bpsBlue,
                           strokeWidth: isSmallScreen ? 1.5 : 2.5,
                           strokeColor: Colors.white,
                         );
@@ -1980,8 +1967,8 @@ class _InflasiScreenState extends State<InflasiScreen>
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          _bpsBlue.withOpacity(0.2),
-                          _bpsBlue.withOpacity(0.02),
+                          bpsBlue.withOpacity(0.2),
+                          bpsBlue.withOpacity(0.02),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -2003,20 +1990,20 @@ class _InflasiScreenState extends State<InflasiScreen>
       return Container(
         padding: EdgeInsets.all(sizing.statsCardPadding),
         decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: _bpsBorder, width: 1.5),
+          border: Border.all(color: bpsBorder, width: 1.5),
         ),
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.info_outline_rounded, size: 40, color: _bpsTextLabel),
+              Icon(Icons.info_outline_rounded, size: 40, color: bpsTextLabel),
               SizedBox(height: sizing.itemSpacing),
               Text(
                 'Data tidak tersedia',
                 style: TextStyle(
                   fontSize: sizing.categoryLabelFontSize,
-                  color: _bpsTextSecondary,
+                  color: bpsTextSecondary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -2035,9 +2022,9 @@ class _InflasiScreenState extends State<InflasiScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -2053,7 +2040,7 @@ class _InflasiScreenState extends State<InflasiScreen>
             children: [
               Icon(
                 Icons.bar_chart_rounded,
-                color: _bpsGreen,
+                color: bpsGreen,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -2070,7 +2057,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                             ? sizing.groupTitleSize - 2
                             : sizing.groupTitleSize,
                         fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary,
+                        color: bpsTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -2078,7 +2065,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                       'Persentase Month-to-Month',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 13,
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                       ),
                     ),
                   ],
@@ -2090,9 +2077,9 @@ class _InflasiScreenState extends State<InflasiScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildLegendItem('Positif', _bpsBlue, isSmallScreen),
+              _buildLegendItem('Positif', bpsBlue, isSmallScreen),
               SizedBox(width: sizing.horizontalPadding),
-              _buildLegendItem('Negatif (Deflasi)', _bpsRed, isSmallScreen),
+              _buildLegendItem('Negatif (Deflasi)', bpsRed, isSmallScreen),
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
@@ -2113,7 +2100,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                           NumberFormatUtils.formatPercentage(value),
                           style: TextStyle(
                             fontSize: isSmallScreen ? 10 : 12,
-                            color: _bpsTextSecondary,
+                            color: bpsTextSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         );
@@ -2131,7 +2118,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                               months[selectedMonth!],
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 10 : 12,
-                                color: _bpsTextPrimary,
+                                color: bpsTextPrimary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -2145,7 +2132,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                                 months[idx],
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 10 : 12,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -2164,7 +2151,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                 borderData: FlBorderData(show: false),
                 barGroups: List.generate(monthlyData.length, (index) {
                   final value = monthlyData[index];
-                  final color = value >= 0 ? _bpsBlue : _bpsRed;
+                  final color = value >= 0 ? bpsBlue : bpsRed;
 
                   return BarChartGroupData(
                     x: index,
@@ -2199,9 +2186,9 @@ class _InflasiScreenState extends State<InflasiScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -2217,7 +2204,7 @@ class _InflasiScreenState extends State<InflasiScreen>
             children: [
               Icon(
                 Icons.category_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -2229,7 +2216,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -2265,9 +2252,9 @@ class _InflasiScreenState extends State<InflasiScreen>
               child: Container(
                 padding: EdgeInsets.all(isSmallScreen ? 12 : 14),
                 decoration: BoxDecoration(
-                  color: _bpsBackground,
+                  color: bpsBackground,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: _bpsBorder),
+                  border: Border.all(color: bpsBorder),
                 ),
                 child: Row(
                   children: [
@@ -2290,7 +2277,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 14,
                           fontWeight: FontWeight.w600,
-                          color: _bpsTextPrimary,
+                          color: bpsTextPrimary,
                         ),
                       ),
                     ),
@@ -2345,7 +2332,7 @@ class _InflasiScreenState extends State<InflasiScreen>
           children: [
             Icon(
               Icons.calendar_month_rounded,
-              color: _bpsTeal,
+              color: bpsTeal,
               size: isSmallScreen ? 14 : 16,
             ),
             SizedBox(width: sizing.itemSpacing - 4),
@@ -2356,13 +2343,13 @@ class _InflasiScreenState extends State<InflasiScreen>
               style: TextStyle(
                 fontSize: isSmallScreen ? 12 : 13,
                 fontWeight: FontWeight.w600,
-                color: _bpsTextSecondary,
+                color: bpsTextSecondary,
               ),
             ),
             const Spacer(),
             if (selectedComponentMonth != null)
               Material(
-                color: _bpsTeal.withOpacity(0.1),
+                color: bpsTeal.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(6),
                 child: InkWell(
                   onTap: () => setState(() => selectedComponentMonth = null),
@@ -2376,7 +2363,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                       'Tahunan',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 10 : 11,
-                        color: _bpsTeal,
+                        color: bpsTeal,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -2395,7 +2382,7 @@ class _InflasiScreenState extends State<InflasiScreen>
               return Padding(
                 padding: EdgeInsets.only(right: sizing.itemSpacing - 4),
                 child: Material(
-                  color: isSelected ? _bpsTeal : _bpsBackground,
+                  color: isSelected ? bpsTeal : bpsBackground,
                   borderRadius: BorderRadius.circular(8),
                   child: InkWell(
                     onTap: () {
@@ -2415,7 +2402,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: isSelected ? _bpsTeal : _bpsBorder,
+                          color: isSelected ? bpsTeal : bpsBorder,
                           width: isSelected ? 2 : 1,
                         ),
                       ),
@@ -2425,7 +2412,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                           fontSize: isSmallScreen ? 11 : 12,
                           fontWeight:
                               isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? Colors.white : _bpsTextSecondary,
+                          color: isSelected ? Colors.white : bpsTextSecondary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -2482,21 +2469,21 @@ class _InflasiScreenState extends State<InflasiScreen>
   Color _getComponentColor(String component) {
     switch (component) {
       case 'Makanan, Minuman & Tembakau':
-        return _bpsOrange;
+        return bpsOrange;
       case 'Pakaian & Alas Kaki':
-        return _bpsPurple;
+        return bpsPurple;
       case 'Perumahan & Fasilitas':
-        return _bpsBlue;
+        return bpsBlue;
       case 'Perlengkapan Rumah Tangga':
         return const Color(0xFF795548);
       case 'Kesehatan':
-        return _bpsRed;
+        return bpsRed;
       case 'Transportasi':
-        return _bpsGreen;
+        return bpsGreen;
       case 'Komunikasi & Keuangan':
         return const Color(0xFF3F51B5);
       case 'Rekreasi & Olahraga':
-        return _bpsTeal;
+        return bpsTeal;
       case 'Pendidikan':
         return const Color(0xFFFF9800);
       case 'Restoran':
@@ -2504,7 +2491,7 @@ class _InflasiScreenState extends State<InflasiScreen>
       case 'Perawatan Pribadi':
         return const Color(0xFF9C27B0);
       default:
-        return _bpsTextSecondary;
+        return bpsTextSecondary;
     }
   }
 

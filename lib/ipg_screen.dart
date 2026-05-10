@@ -4,23 +4,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
-import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
 import 'services/github_data_service.dart';
-
-// BPS Color Palette (matching kemiskinana_screen.dart)
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsPurple = Color(0xFF7B1FA2);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsTextLabel = Color(0xFFA0A0A0);
-const Color _bpsBorder = Color(0xFFE0E0E0);
-const Color _bpsTeal = Color(0xFF1ABC9C);
+import 'app_theme.dart';
 
 class IPGData {
   final int year;
@@ -352,7 +338,7 @@ class _IPGScreenState extends State<IPGScreen>
     final isSmallScreen = sizing.isVerySmall || sizing.isSmall;
 
     return Scaffold(
-      backgroundColor: _bpsBackground,
+      backgroundColor: bpsBackground,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
@@ -362,13 +348,13 @@ class _IPGScreenState extends State<IPGScreen>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const CircularProgressIndicator(color: _bpsOrange),
+                        const CircularProgressIndicator(color: bpsOrange),
                         SizedBox(height: sizing.sectionSpacing - 8),
                         Text(
                           'Memuat data IPG...',
                           style: TextStyle(
                             fontSize: sizing.categoryLabelFontSize,
-                            color: _bpsTextSecondary,
+                            color: bpsTextSecondary,
                           ),
                         ),
                       ],
@@ -384,7 +370,7 @@ class _IPGScreenState extends State<IPGScreen>
                               Icon(
                                 Icons.inbox_outlined,
                                 size: isSmallScreen ? 48 : 64,
-                                color: _bpsTextLabel,
+                                color: bpsTextLabel,
                               ),
                               SizedBox(height: sizing.sectionSpacing - 8),
                               Text(
@@ -392,7 +378,7 @@ class _IPGScreenState extends State<IPGScreen>
                                 style: TextStyle(
                                   fontSize: sizing.sectionTitleSize,
                                   fontWeight: FontWeight.bold,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                 ),
                               ),
                               SizedBox(height: sizing.itemSpacing),
@@ -401,7 +387,7 @@ class _IPGScreenState extends State<IPGScreen>
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: sizing.categoryLabelFontSize,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                 ),
                               ),
                             ],
@@ -482,10 +468,10 @@ class _IPGScreenState extends State<IPGScreen>
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsOrange,
+        color: bpsOrange,
         boxShadow: [
           BoxShadow(
-            color: _bpsOrange.withOpacity(0.2),
+            color: bpsOrange.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -543,9 +529,9 @@ class _IPGScreenState extends State<IPGScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -561,7 +547,7 @@ class _IPGScreenState extends State<IPGScreen>
             children: [
               Icon(
                 Icons.calendar_today_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -572,7 +558,7 @@ class _IPGScreenState extends State<IPGScreen>
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
             ],
@@ -584,7 +570,7 @@ class _IPGScreenState extends State<IPGScreen>
             children: availableYears.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsOrange : _bpsBackground,
+                color: isSelected ? bpsOrange : bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () => setState(() => selectedYear = year),
@@ -600,13 +586,13 @@ class _IPGScreenState extends State<IPGScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsOrange : _bpsBorder,
+                        color: isSelected ? bpsOrange : bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsOrange.withOpacity(0.3),
+                                color: bpsOrange.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -619,7 +605,7 @@ class _IPGScreenState extends State<IPGScreen>
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : _bpsTextSecondary,
+                        color: isSelected ? Colors.white : bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -641,9 +627,9 @@ class _IPGScreenState extends State<IPGScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -659,7 +645,7 @@ class _IPGScreenState extends State<IPGScreen>
             children: [
               Icon(
                 Icons.analytics_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -671,7 +657,7 @@ class _IPGScreenState extends State<IPGScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -682,7 +668,7 @@ class _IPGScreenState extends State<IPGScreen>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsOrange.withOpacity(0.1),
+                    color: bpsOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -690,7 +676,7 @@ class _IPGScreenState extends State<IPGScreen>
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsOrange,
+                        color: bpsOrange,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -698,7 +684,7 @@ class _IPGScreenState extends State<IPGScreen>
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsOrange,
+                          color: bpsOrange,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -715,7 +701,7 @@ class _IPGScreenState extends State<IPGScreen>
                 context: context,
                 value: data.ipgFormatted,
                 label: 'IPG',
-                color: _bpsPurple,
+                color: bpsPurple,
                 icon: Icons.balance,
                 description:
                     'Indeks Pembangunan Gender (IPG) mengukur pencapaian dalam dimensi dan variabel yang sama dengan IPM, dengan memperhatikan disparitas antara laki-laki dan perempuan.',
@@ -727,7 +713,7 @@ class _IPGScreenState extends State<IPGScreen>
                 context: context,
                 value: '${data.ikgFormatted}%',
                 label: 'IKG',
-                color: _bpsBlue,
+                color: bpsBlue,
                 icon: Icons.equalizer,
                 description:
                     'Indeks Ketimpangan Gender (IKG) mengukur kerugian akibat ketidaksetaraan gender dari 3 dimensi: kesehatan reproduksi, pemberdayaan, dan pasar tenaga kerja.',
@@ -777,9 +763,9 @@ class _IPGScreenState extends State<IPGScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -795,7 +781,7 @@ class _IPGScreenState extends State<IPGScreen>
             children: [
               Icon(
                 Icons.analytics_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -807,7 +793,7 @@ class _IPGScreenState extends State<IPGScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -818,7 +804,7 @@ class _IPGScreenState extends State<IPGScreen>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsOrange.withOpacity(0.1),
+                    color: bpsOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -826,7 +812,7 @@ class _IPGScreenState extends State<IPGScreen>
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsOrange,
+                        color: bpsOrange,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -834,7 +820,7 @@ class _IPGScreenState extends State<IPGScreen>
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsOrange,
+                          color: bpsOrange,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -987,9 +973,9 @@ class _IPGScreenState extends State<IPGScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1005,7 +991,7 @@ class _IPGScreenState extends State<IPGScreen>
             children: [
               Icon(
                 Icons.show_chart_rounded,
-                color: _bpsPurple,
+                color: bpsPurple,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1020,7 +1006,7 @@ class _IPGScreenState extends State<IPGScreen>
                             ? sizing.groupTitleSize - 2
                             : sizing.groupTitleSize,
                         fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary,
+                        color: bpsTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -1028,7 +1014,7 @@ class _IPGScreenState extends State<IPGScreen>
                       'Indeks Pembangunan Gender per tahun',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 13,
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1044,7 +1030,7 @@ class _IPGScreenState extends State<IPGScreen>
               runSpacing: isSmallScreen ? 8 : 12,
               alignment: WrapAlignment.center,
               children: [
-                _buildLegendItem('IPG', _bpsPurple, isSmallScreen),
+                _buildLegendItem('IPG', bpsPurple, isSmallScreen),
               ],
             ),
           SizedBox(height: isSmallScreen ? 12 : 16),
@@ -1085,7 +1071,7 @@ class _IPGScreenState extends State<IPGScreen>
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                color: _bpsPurple,
+                                color: bpsPurple,
                               ),
                             );
                           }
@@ -1126,14 +1112,14 @@ class _IPGScreenState extends State<IPGScreen>
                     LineChartBarData(
                       spots: ipgSpots,
                       isCurved: true,
-                      color: _bpsPurple,
+                      color: bpsPurple,
                       barWidth: 3,
                       dotData: FlDotData(
                         show: true,
                         getDotPainter: (spot, percent, bar, index) {
                           return FlDotCirclePainter(
                             radius: 6,
-                            color: _bpsPurple,
+                            color: bpsPurple,
                             strokeWidth: 2,
                             strokeColor: Colors.white,
                           );
@@ -1141,7 +1127,7 @@ class _IPGScreenState extends State<IPGScreen>
                       ),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: _bpsPurple.withOpacity(0.1),
+                        color: bpsPurple.withOpacity(0.1),
                       ),
                     ),
                   ],
@@ -1162,7 +1148,7 @@ class _IPGScreenState extends State<IPGScreen>
                             return LineTooltipItem(
                               '$year\nIPG: ${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}',
                               const TextStyle(
-                                color: _bpsPurple,
+                                color: bpsPurple,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
                               ),
@@ -1180,7 +1166,7 @@ class _IPGScreenState extends State<IPGScreen>
             const Center(
               child: Text(
                 'Data tidak tersedia',
-                style: TextStyle(color: _bpsTextSecondary),
+                style: TextStyle(color: bpsTextSecondary),
               ),
             ),
         ],
@@ -1203,7 +1189,7 @@ class _IPGScreenState extends State<IPGScreen>
             barRods: [
               BarChartRodData(
                 toY: yearData!.ikg!,
-                color: _bpsBlue,
+                color: bpsBlue,
                 width: isSmallScreen ? 28 : 36,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(6),
@@ -1212,7 +1198,7 @@ class _IPGScreenState extends State<IPGScreen>
                 backDrawRodData: BackgroundBarChartRodData(
                   show: true,
                   toY: 0.06,
-                  color: _bpsBlue.withOpacity(0.06),
+                  color: bpsBlue.withOpacity(0.06),
                 ),
               ),
             ],
@@ -1230,9 +1216,9 @@ class _IPGScreenState extends State<IPGScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1248,7 +1234,7 @@ class _IPGScreenState extends State<IPGScreen>
             children: [
               Icon(
                 Icons.bar_chart_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1263,7 +1249,7 @@ class _IPGScreenState extends State<IPGScreen>
                             ? sizing.groupTitleSize - 2
                             : sizing.groupTitleSize,
                         fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary,
+                        color: bpsTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -1271,7 +1257,7 @@ class _IPGScreenState extends State<IPGScreen>
                       'Indeks Ketimpangan Gender — nilai lebih rendah = lebih baik',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 13,
-                        color: _bpsOrange,
+                        color: bpsOrange,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1287,7 +1273,7 @@ class _IPGScreenState extends State<IPGScreen>
               runSpacing: isSmallScreen ? 8 : 12,
               alignment: WrapAlignment.center,
               children: [
-                _buildLegendItem('IKG', _bpsBlue, isSmallScreen),
+                _buildLegendItem('IKG', bpsBlue, isSmallScreen),
               ],
             ),
           SizedBox(height: isSmallScreen ? 12 : 16),
@@ -1304,7 +1290,7 @@ class _IPGScreenState extends State<IPGScreen>
                           drawVerticalLine: false,
                           horizontalInterval: 0.01,
                           getDrawingHorizontalLine: (value) => FlLine(
-                            color: _bpsBorder,
+                            color: bpsBorder,
                             strokeWidth: 0.5,
                           ),
                         ),
@@ -1319,7 +1305,7 @@ class _IPGScreenState extends State<IPGScreen>
                                     decimalPlaces: 3),
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 10 : 12,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -1340,7 +1326,7 @@ class _IPGScreenState extends State<IPGScreen>
                                       yearLabels[index],
                                       style: TextStyle(
                                         fontSize: isSmallScreen ? 10 : 12,
-                                        color: _bpsTextPrimary,
+                                        color: bpsTextPrimary,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -1365,7 +1351,7 @@ class _IPGScreenState extends State<IPGScreen>
                                 BorderSide(color: Colors.grey[300]!, width: 1),
                             tooltipPadding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 8),
-                            getTooltipColor: (group) => _bpsCardBg,
+                            getTooltipColor: (group) => bpsCardBg,
                             getTooltipItem: (group, groupIndex, rod, rodIndex) {
                               final index = group.x;
                               if (index >= 0 &&
@@ -1373,7 +1359,7 @@ class _IPGScreenState extends State<IPGScreen>
                                 return BarTooltipItem(
                                   '${yearLabels[index]}\nIKG: ${NumberFormatUtils.formatDecimal(rod.toY, decimalPlaces: 3)}',
                                   TextStyle(
-                                    color: _bpsBlue,
+                                    color: bpsBlue,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 11,
                                   ),
@@ -1388,7 +1374,7 @@ class _IPGScreenState extends State<IPGScreen>
                   : Center(
                       child: Text(
                         'Data tidak tersedia',
-                        style: TextStyle(color: _bpsTextSecondary),
+                        style: TextStyle(color: bpsTextSecondary),
                       ),
                     ),
             ),
@@ -1404,9 +1390,9 @@ class _IPGScreenState extends State<IPGScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsBackground,
+        color: bpsBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1415,7 +1401,7 @@ class _IPGScreenState extends State<IPGScreen>
             children: [
               Icon(
                 Icons.info_outline_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1427,7 +1413,7 @@ class _IPGScreenState extends State<IPGScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w800,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -1438,7 +1424,7 @@ class _IPGScreenState extends State<IPGScreen>
             'Indeks Pembangunan Gender (IPG) dan Indeks Ketimpangan Gender (IKG) merupakan indikator yang digunakan untuk mengukur kesetaraan gender dalam pembangunan manusia.',
             style: TextStyle(
               fontSize: sizing.categoryLabelFontSize,
-              color: _bpsTextPrimary,
+              color: bpsTextPrimary,
               height: 1.5,
             ),
           ),
@@ -1446,7 +1432,7 @@ class _IPGScreenState extends State<IPGScreen>
           Container(
             padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
             decoration: BoxDecoration(
-              color: _bpsCardBg,
+              color: bpsCardBg,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -1456,7 +1442,7 @@ class _IPGScreenState extends State<IPGScreen>
                   children: [
                     Icon(
                       Icons.balance_rounded,
-                      color: _bpsPurple,
+                      color: bpsPurple,
                       size: isSmallScreen ? 18 : 20,
                     ),
                     SizedBox(width: sizing.itemSpacing - 4),
@@ -1466,7 +1452,7 @@ class _IPGScreenState extends State<IPGScreen>
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 14,
                           fontWeight: FontWeight.w700,
-                          color: _bpsPurple,
+                          color: bpsPurple,
                         ),
                       ),
                     ),
@@ -1477,7 +1463,7 @@ class _IPGScreenState extends State<IPGScreen>
                   'Mengukur pencapaian dalam dimensi dan variabel yang sama dengan IPM, dengan memperhatikan disparitas antara laki-laki dan perempuan.',
                   style: TextStyle(
                     fontSize: isSmallScreen ? 12 : 13,
-                    color: _bpsTextSecondary,
+                    color: bpsTextSecondary,
                     height: 1.5,
                   ),
                 ),
@@ -1488,7 +1474,7 @@ class _IPGScreenState extends State<IPGScreen>
           Container(
             padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
             decoration: BoxDecoration(
-              color: _bpsCardBg,
+              color: bpsCardBg,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -1498,7 +1484,7 @@ class _IPGScreenState extends State<IPGScreen>
                   children: [
                     Icon(
                       Icons.equalizer_rounded,
-                      color: _bpsBlue,
+                      color: bpsBlue,
                       size: isSmallScreen ? 18 : 20,
                     ),
                     SizedBox(width: sizing.itemSpacing - 4),
@@ -1508,7 +1494,7 @@ class _IPGScreenState extends State<IPGScreen>
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 14,
                           fontWeight: FontWeight.w700,
-                          color: _bpsBlue,
+                          color: bpsBlue,
                         ),
                       ),
                     ),
@@ -1519,7 +1505,7 @@ class _IPGScreenState extends State<IPGScreen>
                   'Mengukur kerugian akibat ketidaksetaraan gender dari 3 dimensi: kesehatan reproduksi, pemberdayaan, dan pasar tenaga kerja.',
                   style: TextStyle(
                     fontSize: isSmallScreen ? 12 : 13,
-                    color: _bpsTextSecondary,
+                    color: bpsTextSecondary,
                     height: 1.5,
                   ),
                 ),
@@ -1554,7 +1540,7 @@ class _IPGScreenState extends State<IPGScreen>
           '• ',
           style: TextStyle(
             fontSize: sizing.categoryLabelFontSize,
-            color: _bpsOrange,
+            color: bpsOrange,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -1563,7 +1549,7 @@ class _IPGScreenState extends State<IPGScreen>
             text,
             style: TextStyle(
               fontSize: sizing.categoryLabelFontSize,
-              color: _bpsTextPrimary,
+              color: bpsTextPrimary,
               height: 1.5,
             ),
           ),
@@ -1613,7 +1599,7 @@ class _IPGScreenState extends State<IPGScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 13 : 14,
                     fontWeight: FontWeight.w600,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -1627,7 +1613,7 @@ class _IPGScreenState extends State<IPGScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -1654,7 +1640,7 @@ class _IPGScreenState extends State<IPGScreen>
       child: Divider(
         height: 1,
         thickness: 1,
-        color: _bpsBorder.withOpacity(0.5),
+        color: bpsBorder.withOpacity(0.5),
       ),
     );
   }
@@ -1808,7 +1794,7 @@ class _IPGScreenState extends State<IPGScreen>
                                 'Nilai Indikator',
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 13 : 14,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1818,7 +1804,7 @@ class _IPGScreenState extends State<IPGScreen>
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -1829,7 +1815,7 @@ class _IPGScreenState extends State<IPGScreen>
                         Container(
                           padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                           decoration: BoxDecoration(
-                            color: _bpsBackground,
+                            color: bpsBackground,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -1858,7 +1844,7 @@ class _IPGScreenState extends State<IPGScreen>
                                       description,
                                       style: TextStyle(
                                         fontSize: isSmallScreen ? 13 : 14,
-                                        color: _bpsTextSecondary,
+                                        color: bpsTextSecondary,
                                         height: 1.5,
                                       ),
                                     ),

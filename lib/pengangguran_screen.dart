@@ -5,19 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'services/github_data_service.dart';
 import 'responsive_sizing.dart';
-import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
-
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsTextLabel = Color(0xFFA0A0A0);
-const Color _bpsBorder = Color(0xFFE0E0E0);
+import 'app_theme.dart';
 
 class PengangguranData {
   final int year;
@@ -185,7 +174,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor: _bpsBackground,
+        backgroundColor: bpsBackground,
         body: Column(
           children: [
             _buildHeader(context, sizing, isSmallScreen),
@@ -194,13 +183,13 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const CircularProgressIndicator(color: _bpsBlue),
+                    const CircularProgressIndicator(color: bpsBlue),
                     SizedBox(height: sizing.sectionSpacing - 8),
                     Text(
                       'Memuat data pengangguran...',
                       style: TextStyle(
                         fontSize: sizing.categoryLabelFontSize,
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                       ),
                     ),
                   ],
@@ -214,7 +203,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
 
     if (errorMessage != null) {
       return Scaffold(
-        backgroundColor: _bpsBackground,
+        backgroundColor: bpsBackground,
         body: Column(
           children: [
             _buildHeader(context, sizing, isSmallScreen),
@@ -226,14 +215,14 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.error_outline_rounded,
-                          size: isSmallScreen ? 48 : 64, color: _bpsRed),
+                          size: isSmallScreen ? 48 : 64, color: bpsRed),
                       SizedBox(height: sizing.sectionSpacing - 8),
                       Text(
                         'Terjadi Kesalahan',
                         style: TextStyle(
                           fontSize: sizing.sectionTitleSize,
                           fontWeight: FontWeight.w700,
-                          color: _bpsTextPrimary,
+                          color: bpsTextPrimary,
                         ),
                       ),
                       SizedBox(height: sizing.itemSpacing),
@@ -242,7 +231,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: sizing.categoryLabelFontSize,
-                          color: _bpsTextSecondary,
+                          color: bpsTextSecondary,
                         ),
                       ),
                     ],
@@ -256,7 +245,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
     }
 
     return Scaffold(
-      backgroundColor: _bpsBackground,
+      backgroundColor: bpsBackground,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
@@ -295,10 +284,10 @@ class _PengangguranScreenState extends State<PengangguranScreen>
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsBlue,
+        color: bpsBlue,
         boxShadow: [
           BoxShadow(
-            color: _bpsBlue.withOpacity(0.2),
+            color: bpsBlue.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -360,9 +349,9 @@ class _PengangguranScreenState extends State<PengangguranScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -379,7 +368,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
             children: [
               Icon(
                 Icons.calendar_today_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -390,7 +379,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
             ],
@@ -403,7 +392,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
             children: availableYears.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsBlue : _bpsBackground,
+                color: isSelected ? bpsBlue : bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () => setState(() => selectedYear = year),
@@ -419,13 +408,13 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsBlue : _bpsBorder,
+                        color: isSelected ? bpsBlue : bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsBlue.withOpacity(0.3),
+                                color: bpsBlue.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -438,7 +427,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : _bpsTextSecondary,
+                        color: isSelected ? Colors.white : bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -465,17 +454,17 @@ class _PengangguranScreenState extends State<PengangguranScreen>
     final tpakChange =
         prevData != null ? data.tpakSemarang - prevData.tpakSemarang : 0.0;
 
-    final tptColor = tptChange < 0 ? _bpsGreen : _bpsRed;
-    final tpakColor = tpakChange > 0 ? _bpsGreen : _bpsOrange;
+    final tptColor = tptChange < 0 ? bpsGreen : bpsRed;
+    final tpakColor = tpakChange > 0 ? bpsGreen : bpsOrange;
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -492,7 +481,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
             children: [
               Icon(
                 Icons.analytics_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -504,7 +493,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -544,7 +533,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                 '${NumberFormatUtils.formatValue(data.tptJateng, decimalPlaces: 2)}%',
             subtitle: 'Perbandingan regional',
             icon: Icons.location_on_rounded,
-            color: _bpsOrange,
+            color: bpsOrange,
             isSmallScreen: isSmallScreen,
             sizing: sizing,
             isLast: true,
@@ -581,7 +570,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                         ? sizing.categoryLabelFontSize - 1
                         : sizing.categoryLabelFontSize,
                     fontWeight: FontWeight.w600,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -591,7 +580,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                     fontSize: isSmallScreen
                         ? sizing.statsLabelFontSize - 1
                         : sizing.statsLabelFontSize,
-                    color: _bpsTextSecondary,
+                    color: bpsTextSecondary,
                   ),
                 ),
               ],
@@ -613,7 +602,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
   }
 
   Widget _buildDivider() {
-    return const Divider(color: _bpsBorder, height: 1, thickness: 1);
+    return const Divider(color: bpsBorder, height: 1, thickness: 1);
   }
 
   // ── TPT CHART ─────────────────────────────────────────────────────────────
@@ -631,7 +620,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
 
     return _buildChartCard(
       icon: Icons.show_chart_rounded,
-      iconColor: _bpsBlue,
+      iconColor: bpsBlue,
       title: 'Tren Tingkat Pengangguran Terbuka (TPT)',
       sizing: sizing,
       isSmallScreen: isSmallScreen,
@@ -640,7 +629,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
       interval: 2,
       unit: '%',
       spots: [semarangSpots, jatengSpots],
-      colors: [_bpsBlue, _bpsOrange],
+      colors: [bpsBlue, bpsOrange],
       labels: ['Semarang', 'Jawa Tengah'],
     );
   }
@@ -660,7 +649,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
 
     return _buildChartCard(
       icon: Icons.people_alt_rounded,
-      iconColor: _bpsGreen,
+      iconColor: bpsGreen,
       title: 'Tren Tingkat Partisipasi Angkatan Kerja (TPAK)',
       sizing: sizing,
       isSmallScreen: isSmallScreen,
@@ -669,7 +658,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
       interval: 5,
       unit: '%',
       spots: [semarangSpots, jatengSpots],
-      colors: [_bpsBlue, _bpsOrange],
+      colors: [bpsBlue, bpsOrange],
       labels: ['Semarang', 'Jawa Tengah'],
     );
   }
@@ -693,9 +682,9 @@ class _PengangguranScreenState extends State<PengangguranScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -720,7 +709,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -737,7 +726,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                   drawVerticalLine: false,
                   horizontalInterval: interval,
                   getDrawingHorizontalLine: (value) =>
-                      FlLine(color: _bpsBorder, strokeWidth: 1),
+                      FlLine(color: bpsBorder, strokeWidth: 1),
                 ),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
@@ -748,7 +737,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                         '${value.toInt()}$unit',
                         style: TextStyle(
                           fontSize: sizing.statsLabelFontSize,
-                          color: _bpsTextSecondary,
+                          color: bpsTextSecondary,
                         ),
                       ),
                     ),
@@ -764,7 +753,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                             year.toString(),
                             style: TextStyle(
                               fontSize: sizing.statsLabelFontSize,
-                              color: _bpsTextSecondary,
+                              color: bpsTextSecondary,
                             ),
                           );
                         }
@@ -817,7 +806,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                 lineTouchData: LineTouchData(
                   touchTooltipData: LineTouchTooltipData(
                     getTooltipColor: (touchedSpot) =>
-                        _bpsTextPrimary.withOpacity(0.85),
+                        bpsTextPrimary.withOpacity(0.85),
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots.map((spot) {
                         return LineTooltipItem(
@@ -857,7 +846,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                     labels[i],
                     style: TextStyle(
                       fontSize: sizing.statsLabelFontSize,
-                      color: _bpsTextSecondary,
+                      color: bpsTextSecondary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

@@ -6,18 +6,7 @@ import 'services/github_data_service.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
-
-// BPS Color Palette (matching home_screen.dart)
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsTextLabel = Color(0xFFA0A0A0);
-const Color _bpsBorder = Color(0xFFE0E0E0);
+import 'app_theme.dart';
 
 // Poverty data model - Made immutable for better performance
 @immutable
@@ -207,7 +196,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
     final isSmallScreen = sizing.isVerySmall || sizing.isSmall;
 
     return Scaffold(
-      backgroundColor: _bpsBackground,
+      backgroundColor: bpsBackground,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
@@ -217,13 +206,13 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const CircularProgressIndicator(color: _bpsBlue),
+                        const CircularProgressIndicator(color: bpsBlue),
                         SizedBox(height: sizing.sectionSpacing - 8),
                         Text(
                           'Memuat data kemiskinan...',
                           style: TextStyle(
                             fontSize: sizing.categoryLabelFontSize,
-                            color: _bpsTextSecondary,
+                            color: bpsTextSecondary,
                           ),
                         ),
                       ],
@@ -239,7 +228,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                               Icon(
                                 Icons.error_outline,
                                 size: sizing.isVerySmall ? 48 : 64,
-                                color: _bpsRed,
+                                color: bpsRed,
                               ),
                               SizedBox(height: sizing.sectionSpacing - 8),
                               Text(
@@ -247,7 +236,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                                 style: TextStyle(
                                   fontSize: sizing.sectionTitleSize,
                                   fontWeight: FontWeight.bold,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                 ),
                               ),
                               SizedBox(height: sizing.itemSpacing),
@@ -256,7 +245,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: sizing.categoryLabelFontSize,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                 ),
                               ),
                               SizedBox(height: sizing.sectionSpacing),
@@ -265,8 +254,8 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                                 icon: const Icon(Icons.refresh),
                                 label: const Text('Coba Lagi'),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: _bpsBlue,
-                                  foregroundColor: _bpsCardBg,
+                                  backgroundColor: bpsBlue,
+                                  foregroundColor: bpsCardBg,
                                   padding: EdgeInsets.symmetric(
                                     horizontal: sizing.horizontalPadding,
                                     vertical: sizing.itemSpacing,
@@ -296,10 +285,10 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsBlue,
+        color: bpsBlue,
         boxShadow: [
           BoxShadow(
-            color: _bpsBlue.withOpacity(0.2),
+            color: bpsBlue.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -389,7 +378,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
               Icon(
                 Icons.inbox_outlined,
                 size: sizing.isVerySmall ? 48 : 64,
-                color: _bpsTextLabel,
+                color: bpsTextLabel,
               ),
               SizedBox(height: sizing.sectionSpacing - 8),
               Text(
@@ -397,7 +386,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 style: TextStyle(
                   fontSize: sizing.sectionTitleSize,
                   fontWeight: FontWeight.bold,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
               SizedBox(height: sizing.itemSpacing),
@@ -406,7 +395,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: sizing.categoryLabelFontSize,
-                  color: _bpsTextSecondary,
+                  color: bpsTextSecondary,
                 ),
               ),
             ],
@@ -440,7 +429,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 subtitle:
                     'Tren dari tahun ${cachedSortedYears.first} hingga ${cachedSortedYears.last}',
                 icon: Icons.people_outline,
-                accentColor: _bpsRed,
+                accentColor: bpsRed,
                 years: cachedSortedYears,
                 values: cachedSortedYears
                     .map((y) => yearlyData[y]!.pendudukMiskinValue)
@@ -465,7 +454,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 subtitle:
                     'Tren dari tahun ${cachedSortedYears.first} hingga ${cachedSortedYears.last}',
                 icon: Icons.percent,
-                accentColor: _bpsOrange,
+                accentColor: bpsOrange,
                 years: cachedSortedYears,
                 values: cachedSortedYears
                     .map((y) => yearlyData[y]!.persentaseValue)
@@ -536,9 +525,9 @@ class _KemiskinanScreenContent extends StatelessWidget {
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -555,12 +544,12 @@ class _KemiskinanScreenContent extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: bpsBlue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.analytics_rounded,
-                  color: _bpsBlue,
+                  color: bpsBlue,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -573,7 +562,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -584,7 +573,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsBlue.withOpacity(0.1),
+                    color: bpsBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -592,7 +581,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsBlue,
+                        color: bpsBlue,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -600,7 +589,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsBlue,
+                          color: bpsBlue,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -617,7 +606,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 context: context,
                 value: data.pendudukMiskinDisplay,
                 label: 'Penduduk Miskin',
-                color: _bpsRed,
+                color: bpsRed,
                 icon: Icons.people_outline,
                 description:
                     'Jumlah penduduk miskin adalah banyaknya penduduk yang memiliki rata-rata pengeluaran per kapita per bulan di bawah garis kemiskinan.',
@@ -628,7 +617,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 context: context,
                 value: data.garisMiskin,
                 label: 'Garis Kemiskinan',
-                color: _bpsOrange,
+                color: bpsOrange,
                 icon: Icons.attach_money,
                 description:
                     'Garis Kemiskinan merupakan penjumlahan dari Garis Kemiskinan Makanan (GKM) dan Garis Kemiskinan Bukan Makanan (GKBM). Penduduk dengan pengeluaran di bawah GK dikategorikan miskin.',
@@ -638,7 +627,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 context: context,
                 value: data.persentaseDisplay,
                 label: 'Persentase (P0)',
-                color: _bpsBlue,
+                color: bpsBlue,
                 icon: Icons.pie_chart,
                 description:
                     'Persentase Penduduk Miskin (P0) menunjukkan proporsi penduduk yang berada di bawah garis kemiskinan terhadap total penduduk.',
@@ -714,7 +703,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: isSmallScreen ? 13 : 14,
                     fontWeight: FontWeight.w600,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -731,7 +720,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -761,7 +750,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
       child: Divider(
         height: 1,
         thickness: 1,
-        color: _bpsBorder.withOpacity(0.5),
+        color: bpsBorder.withOpacity(0.5),
       ),
     );
   }
@@ -887,7 +876,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                                 'Nilai Indikator',
                                 style: TextStyle(
                                   fontSize: isDialogSmall ? 13 : 14,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -897,7 +886,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: isDialogSmall ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -911,7 +900,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.all(isDialogSmall ? 12 : 16),
                           decoration: BoxDecoration(
-                            color: _bpsBackground,
+                            color: bpsBackground,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -940,7 +929,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                                       description,
                                       style: TextStyle(
                                         fontSize: isDialogSmall ? 13 : 14,
-                                        color: _bpsTextSecondary,
+                                        color: bpsTextSecondary,
                                         height: 1.5,
                                       ),
                                     ),
@@ -986,9 +975,9 @@ class _YearSelector extends StatelessWidget {
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1005,12 +994,12 @@ class _YearSelector extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.1),
+                  color: bpsBlue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.calendar_today_rounded,
-                  color: _bpsBlue,
+                  color: bpsBlue,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -1022,7 +1011,7 @@ class _YearSelector extends StatelessWidget {
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
             ],
@@ -1034,7 +1023,7 @@ class _YearSelector extends StatelessWidget {
             children: years.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsBlue : _bpsBackground,
+                color: isSelected ? bpsBlue : bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () => onYearSelected(year),
@@ -1050,13 +1039,13 @@ class _YearSelector extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsBlue : _bpsBorder,
+                        color: isSelected ? bpsBlue : bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsBlue.withOpacity(0.3),
+                                color: bpsBlue.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -1069,7 +1058,7 @@ class _YearSelector extends StatelessWidget {
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : _bpsTextSecondary,
+                        color: isSelected ? Colors.white : bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -1134,7 +1123,7 @@ class _PovertyTrendChart extends StatelessWidget {
             'Tidak ada data untuk ditampilkan',
             style: TextStyle(
               fontSize: sizing.categoryLabelFontSize,
-              color: _bpsTextSecondary,
+              color: bpsTextSecondary,
             ),
           ),
         ),
@@ -1154,9 +1143,9 @@ class _PovertyTrendChart extends StatelessWidget {
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
@@ -1194,7 +1183,7 @@ class _PovertyTrendChart extends StatelessWidget {
                             ? sizing.groupTitleSize - 2
                             : sizing.groupTitleSize,
                         fontWeight: FontWeight.w800,
-                        color: _bpsTextPrimary,
+                        color: bpsTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -1202,7 +1191,7 @@ class _PovertyTrendChart extends StatelessWidget {
                       subtitle,
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 13,
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1223,7 +1212,7 @@ class _PovertyTrendChart extends StatelessWidget {
                     horizontalInterval: yInterval,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: _bpsBorder,
+                        color: bpsBorder,
                         strokeWidth: 0.5,
                       );
                     },
@@ -1243,7 +1232,7 @@ class _PovertyTrendChart extends StatelessWidget {
                                 : '${value.toInt()}$yAxisSuffix',
                             style: TextStyle(
                               fontSize: isSmallScreen ? 10 : 12,
-                              color: _bpsTextSecondary,
+                              color: bpsTextSecondary,
                               fontWeight: FontWeight.w500,
                             ),
                           );
@@ -1266,7 +1255,7 @@ class _PovertyTrendChart extends StatelessWidget {
                                 years[index].toString(),
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 10 : 12,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1285,7 +1274,7 @@ class _PovertyTrendChart extends StatelessWidget {
                   lineTouchData: LineTouchData(
                     enabled: true,
                     touchTooltipData: LineTouchTooltipData(
-                      getTooltipColor: (spot) => _bpsCardBg,
+                      getTooltipColor: (spot) => bpsCardBg,
                       tooltipRoundedRadius: 8,
                       tooltipBorder:
                           BorderSide(color: Colors.grey[300]!, width: 1),
@@ -1327,7 +1316,7 @@ class _PovertyTrendChart extends StatelessWidget {
                             radius: isSmallScreen ? 3 : 5,
                             color: accentColor,
                             strokeWidth: isSmallScreen ? 1.5 : 2.5,
-                            strokeColor: _bpsCardBg,
+                            strokeColor: bpsCardBg,
                           );
                         },
                       ),
@@ -1374,7 +1363,7 @@ class _PovertyTrendChart extends StatelessWidget {
                             : '${isPositive ? "Penurunan" : "Kenaikan"} (dari $baseYear)',
                         style: TextStyle(
                           fontSize: isSmallScreen ? 12 : 14,
-                          color: _bpsTextSecondary,
+                          color: bpsTextSecondary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1403,11 +1392,11 @@ class _PovertyTrendChart extends StatelessWidget {
                       vertical: isSmallScreen ? 6 : 8,
                     ),
                     decoration: BoxDecoration(
-                      color: isPositive ? _bpsGreen : _bpsRed,
+                      color: isPositive ? bpsGreen : bpsRed,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: (isPositive ? _bpsGreen : _bpsRed)
+                          color: (isPositive ? bpsGreen : bpsRed)
                               .withOpacity(0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
@@ -1462,9 +1451,9 @@ class _PovertyInformationPanel extends StatelessWidget {
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsBackground,
+        color: bpsBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1474,12 +1463,12 @@ class _PovertyInformationPanel extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: _bpsBlue.withOpacity(0.15),
+                  color: bpsBlue.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.info_outline_rounded,
-                  color: _bpsBlue,
+                  color: bpsBlue,
                   size: isSmallScreen ? 16 : 20,
                 ),
               ),
@@ -1492,7 +1481,7 @@ class _PovertyInformationPanel extends StatelessWidget {
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w800,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -1503,7 +1492,7 @@ class _PovertyInformationPanel extends StatelessWidget {
             'BPS mengukur kemiskinan menggunakan pendekatan kebutuhan dasar (basic need approach). Kemiskinan dipandang sebagai ketidakmampuan ekonomi seseorang dalam memenuhi kebutuhan dasar makanan maupun bukan makanan.',
             style: TextStyle(
               fontSize: sizing.categoryLabelFontSize,
-              color: _bpsTextPrimary,
+              color: bpsTextPrimary,
               height: 1.5,
             ),
           ),
@@ -1511,7 +1500,7 @@ class _PovertyInformationPanel extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
             decoration: BoxDecoration(
-              color: _bpsCardBg,
+              color: bpsCardBg,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -1521,7 +1510,7 @@ class _PovertyInformationPanel extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.restaurant_menu_rounded,
-                      color: _bpsGreen,
+                      color: bpsGreen,
                       size: isSmallScreen ? 18 : 20,
                     ),
                     SizedBox(width: sizing.itemSpacing - 4),
@@ -1531,7 +1520,7 @@ class _PovertyInformationPanel extends StatelessWidget {
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 14,
                           fontWeight: FontWeight.w700,
-                          color: _bpsGreen,
+                          color: bpsGreen,
                         ),
                       ),
                     ),
@@ -1542,7 +1531,7 @@ class _PovertyInformationPanel extends StatelessWidget {
                   'Mencerminkan nilai pengeluaran kebutuhan minimum makanan yang disetarakan dengan 2.100 kalori per kapita per hari.',
                   style: TextStyle(
                     fontSize: isSmallScreen ? 12 : 13,
-                    color: _bpsTextSecondary,
+                    color: bpsTextSecondary,
                     height: 1.5,
                   ),
                 ),
@@ -1553,7 +1542,7 @@ class _PovertyInformationPanel extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
             decoration: BoxDecoration(
-              color: _bpsCardBg,
+              color: bpsCardBg,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -1563,7 +1552,7 @@ class _PovertyInformationPanel extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.home_outlined,
-                      color: _bpsOrange,
+                      color: bpsOrange,
                       size: isSmallScreen ? 18 : 20,
                     ),
                     SizedBox(width: sizing.itemSpacing - 4),
@@ -1573,7 +1562,7 @@ class _PovertyInformationPanel extends StatelessWidget {
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 14,
                           fontWeight: FontWeight.w700,
-                          color: _bpsOrange,
+                          color: bpsOrange,
                         ),
                       ),
                     ),
@@ -1584,7 +1573,7 @@ class _PovertyInformationPanel extends StatelessWidget {
                   'Mencakup kebutuhan minimum untuk perumahan, sandang, pendidikan, dan kesehatan.',
                   style: TextStyle(
                     fontSize: isSmallScreen ? 12 : 13,
-                    color: _bpsTextSecondary,
+                    color: bpsTextSecondary,
                     height: 1.5,
                   ),
                 ),
@@ -1619,7 +1608,7 @@ class _PovertyInformationPanel extends StatelessWidget {
           '• ',
           style: TextStyle(
             fontSize: sizing.categoryLabelFontSize,
-            color: _bpsBlue,
+            color: bpsBlue,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -1628,7 +1617,7 @@ class _PovertyInformationPanel extends StatelessWidget {
             text,
             style: TextStyle(
               fontSize: sizing.categoryLabelFontSize,
-              color: _bpsTextPrimary,
+              color: bpsTextPrimary,
               height: 1.5,
             ),
           ),

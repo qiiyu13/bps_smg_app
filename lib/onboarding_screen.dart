@@ -107,7 +107,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       ElevatedButton(
                         onPressed: _currentPage == onboardingPages.length - 1
-                            ? () => _showRoleSelection()
+                            ? () => _finishAsUser()
                             : () => _nextPage(),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: onboardingPages[_currentPage].color,
@@ -150,107 +150,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _skipOnboarding() async {
-    _showRoleSelection();
-  }
-
-  void _showRoleSelection() {
-    showModalBottomSheet(
-      context: context,
-      isDismissible: false,
-      enableDrag: false,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Handle bar
-            Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-
-            // Icon dengan gradient background
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    const Color(0xFF42A5F5).withOpacity(0.15),
-                    const Color(0xFF2196F3).withOpacity(0.1),
-                  ],
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.person_outline_rounded,
-                size: 48,
-                color: Color(0xFF2196F3),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Title
-            const Text(
-              'Pilih Peran Anda',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1E3A5F),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // Subtitle
-            Text(
-              'Silakan pilih untuk melanjutkan',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 32),
-            // Admin Button
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: OutlinedButton.icon(
-                onPressed: () => _finishAsAdmin(),
-                icon: const Icon(Icons.admin_panel_settings_rounded, size: 24),
-                label: const Text(
-                  'Masuk sebagai Admin',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF2196F3),
-                  side: const BorderSide(
-                    color: Color(0xFF2196F3),
-                    width: 2,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
-    );
+    _finishAsUser();
   }
 
   Future<void> _finishAsUser() async {
@@ -264,20 +164,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       }
     } catch (e) {
       debugPrint('Error finishing as user: $e');
-    }
-  }
-
-  Future<void> _finishAsAdmin() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('first_time', false);
-
-      if (mounted) {
-        Navigator.of(context).pop(); // Close bottom sheet
-        Navigator.of(context).pushReplacementNamed('/login');
-      }
-    } catch (e) {
-      debugPrint('Error finishing as admin: $e');
     }
   }
 }

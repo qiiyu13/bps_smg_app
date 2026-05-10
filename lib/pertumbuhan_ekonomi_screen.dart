@@ -4,22 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'ekonomi_data.dart';
 import 'responsive_sizing.dart';
-import 'number_format_utils.dart';
 import 'models/pdrb_ranking.dart';
 import 'services/pdrb_ranking_service.dart';
 import 'kesimpulan_widget.dart';
-
-// BPS Color Palette (matching kemiskinana_screen.dart)
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsTextLabel = Color(0xFFA0A0A0);
-const Color _bpsBorder = Color(0xFFE0E0E0);
+import 'app_theme.dart';
 
 class PertumbuhanEkonomiScreen extends StatefulWidget {
   const PertumbuhanEkonomiScreen({super.key});
@@ -97,7 +85,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
 
     if (availableYears.isEmpty || currentData == null) {
       return Scaffold(
-        backgroundColor: _bpsBackground,
+        backgroundColor: bpsBackground,
         body: Column(
           children: [
             _buildHeader(context, sizing, isSmallScreen),
@@ -111,7 +99,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       Icon(
                         Icons.inbox_outlined,
                         size: isSmallScreen ? 48 : 64,
-                        color: _bpsTextLabel,
+                        color: bpsTextLabel,
                       ),
                       SizedBox(height: sizing.sectionSpacing - 8),
                       Text(
@@ -119,7 +107,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                         style: TextStyle(
                           fontSize: sizing.sectionTitleSize,
                           fontWeight: FontWeight.bold,
-                          color: _bpsTextPrimary,
+                          color: bpsTextPrimary,
                         ),
                       ),
                       SizedBox(height: sizing.itemSpacing),
@@ -128,7 +116,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: sizing.categoryLabelFontSize,
-                          color: _bpsTextSecondary,
+                          color: bpsTextSecondary,
                         ),
                       ),
                     ],
@@ -142,7 +130,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
     }
 
     return Scaffold(
-      backgroundColor: _bpsBackground,
+      backgroundColor: bpsBackground,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
@@ -182,10 +170,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsBlue,
+        color: bpsBlue,
         boxShadow: [
           BoxShadow(
-            color: _bpsBlue.withOpacity(0.2),
+            color: bpsBlue.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -243,9 +231,9 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -261,7 +249,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             children: [
               Icon(
                 Icons.calendar_today_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -272,7 +260,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
             ],
@@ -284,7 +272,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             children: availableYears.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsBlue : _bpsBackground,
+                color: isSelected ? bpsBlue : bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () => _changeYear(year),
@@ -300,13 +288,13 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsBlue : _bpsBorder,
+                        color: isSelected ? bpsBlue : bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsBlue.withOpacity(0.3),
+                                color: bpsBlue.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -319,7 +307,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : _bpsTextSecondary,
+                        color: isSelected ? Colors.white : bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -341,9 +329,9 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -359,7 +347,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             children: [
               Icon(
                 Icons.analytics_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -371,7 +359,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -382,7 +370,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsBlue.withOpacity(0.1),
+                    color: bpsBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -390,7 +378,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsBlue,
+                        color: bpsBlue,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -398,7 +386,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsBlue,
+                          color: bpsBlue,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -415,7 +403,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                 context: context,
                 value: data.pertumbuhanEkonomi,
                 label: 'Pertumbuhan Ekonomi',
-                color: _bpsBlue,
+                color: bpsBlue,
                 icon: Icons.trending_up_rounded,
                 description:
                     'Pertumbuhan ekonomi menunjukkan peningkatan aktivitas ekonomi dalam periode tertentu. Angka positif menandakan ekonomi sedang berkembang.',
@@ -426,7 +414,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                 context: context,
                 value: data.kontribusiPDRB,
                 label: 'Kontribusi PDRB',
-                color: _bpsGreen,
+                color: bpsGreen,
                 icon: Icons.pie_chart_rounded,
                 description:
                     'Kontribusi PDRB menunjukkan seberapa besar peran wilayah ini terhadap produk domestik regional bruto.',
@@ -436,7 +424,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                 context: context,
                 value: data.sektorIndustri,
                 label: 'Sektor Industri Pengolahan',
-                color: _bpsOrange,
+                color: bpsOrange,
                 icon: Icons.factory_rounded,
                 description:
                     'Sektor Industri Pengolahan merupakan sektor terbesar kontributor PDRB Kota Semarang.',
@@ -498,7 +486,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 13 : 14,
                     fontWeight: FontWeight.w600,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -512,7 +500,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -539,7 +527,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
       child: Divider(
         height: 1,
         thickness: 1,
-        color: _bpsBorder.withOpacity(0.5),
+        color: bpsBorder.withOpacity(0.5),
       ),
     );
   }
@@ -654,7 +642,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                                 'Nilai Indikator',
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 13 : 14,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -664,7 +652,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -675,7 +663,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                         Container(
                           padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                           decoration: BoxDecoration(
-                            color: _bpsBackground,
+                            color: bpsBackground,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -704,7 +692,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                                       description,
                                       style: TextStyle(
                                         fontSize: isSmallScreen ? 13 : 14,
-                                        color: _bpsTextSecondary,
+                                        color: bpsTextSecondary,
                                         height: 1.5,
                                       ),
                                     ),
@@ -734,9 +722,9 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -752,7 +740,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             children: [
               Icon(
                 Icons.account_balance_wallet_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -763,7 +751,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
             ],
@@ -773,11 +761,11 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             width: double.infinity,
             padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
             decoration: BoxDecoration(
-              color: _bpsBlue,
+              color: bpsBlue,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: _bpsBlue.withOpacity(0.2),
+                  color: bpsBlue.withOpacity(0.2),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -844,7 +832,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                   value: data.vsJawaTengah,
                   label: 'vs Jawa Tengah',
                   icon: Icons.compare_arrows_rounded,
-                  color: _bpsGreen,
+                  color: bpsGreen,
                   isSmallScreen: isSmallScreen,
                 ),
               ),
@@ -854,7 +842,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                   value: data.tpt,
                   label: 'TPT',
                   icon: Icons.work_off_rounded,
-                  color: _bpsOrange,
+                  color: bpsOrange,
                   isSmallScreen: isSmallScreen,
                 ),
               ),
@@ -896,7 +884,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             style: TextStyle(
               fontSize: isSmallScreen ? 18 : 20,
               fontWeight: FontWeight.w800,
-              color: _bpsTextPrimary,
+              color: bpsTextPrimary,
             ),
           ),
           SizedBox(height: isSmallScreen ? 4 : 6),
@@ -904,7 +892,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             label,
             style: TextStyle(
               fontSize: isSmallScreen ? 12 : 14,
-              color: _bpsTextSecondary,
+              color: bpsTextSecondary,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
@@ -923,9 +911,9 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -941,7 +929,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             children: [
               Icon(
                 Icons.show_chart_rounded,
-                color: _bpsBlue,
+                color: bpsBlue,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -956,7 +944,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                             ? sizing.groupTitleSize - 2
                             : sizing.groupTitleSize,
                         fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary,
+                        color: bpsTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -964,7 +952,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       'Tren Pertumbuhan Tahun 2020–2025 (%)',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 14,
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                       ),
                     ),
                   ],
@@ -978,8 +966,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             runSpacing: isSmallScreen ? 8 : 12,
             alignment: WrapAlignment.center,
             children: [
-              _buildLegendItem('Kota Semarang', _bpsBlue, isSmallScreen),
-              _buildLegendItem('Jawa Tengah', _bpsOrange, isSmallScreen),
+              _buildLegendItem('Kota Semarang', bpsBlue, isSmallScreen),
+              _buildLegendItem('Jawa Tengah', bpsOrange, isSmallScreen),
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
@@ -993,7 +981,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                   horizontalInterval: 1.0,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: _bpsBorder,
+                      color: bpsBorder,
                       strokeWidth: 0.5,
                     );
                   },
@@ -1011,7 +999,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                             '${NumberFormatUtils.formatValue(value, decimalPlaces: 1)}%',
                             style: TextStyle(
                               fontSize: isSmallScreen ? 9 : 10,
-                              color: _bpsTextSecondary,
+                              color: bpsTextSecondary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -1037,7 +1025,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                               label,
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 10 : 12,
-                                color: _bpsTextPrimary,
+                                color: bpsTextPrimary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -1066,7 +1054,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       return FlSpot(e.key.toDouble(), e.value.value);
                     }).toList(),
                     isCurved: true,
-                    color: _bpsBlue,
+                    color: bpsBlue,
                     barWidth: isSmallScreen ? 2.5 : 3.5,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
@@ -1074,7 +1062,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: isSmallScreen ? 3 : 4,
-                          color: _bpsBlue,
+                          color: bpsBlue,
                           strokeWidth: isSmallScreen ? 1.5 : 2.5,
                           strokeColor: Colors.white,
                         );
@@ -1084,8 +1072,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          _bpsBlue.withOpacity(0.15),
-                          _bpsBlue.withOpacity(0.01),
+                          bpsBlue.withOpacity(0.15),
+                          bpsBlue.withOpacity(0.01),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -1098,7 +1086,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       return FlSpot(e.key.toDouble(), e.value.value);
                     }).toList(),
                     isCurved: true,
-                    color: _bpsOrange,
+                    color: bpsOrange,
                     barWidth: isSmallScreen ? 2.5 : 3.5,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
@@ -1106,7 +1094,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: isSmallScreen ? 3 : 4,
-                          color: _bpsOrange,
+                          color: bpsOrange,
                           strokeWidth: isSmallScreen ? 1.5 : 2.5,
                           strokeColor: Colors.white,
                         );
@@ -1172,9 +1160,9 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             ? sizing.statsCardPadding - 4
             : sizing.statsCardPadding),
         decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: _bpsBorder, width: 1.5),
+          border: Border.all(color: bpsBorder, width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.04),
@@ -1189,7 +1177,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
               children: [
                 Icon(
                   Icons.emoji_events_rounded,
-                  color: _bpsOrange,
+                  color: bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
                 SizedBox(width: sizing.itemSpacing),
@@ -1201,7 +1189,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                           ? sizing.groupTitleSize - 2
                           : sizing.groupTitleSize,
                       fontWeight: FontWeight.w700,
-                      color: _bpsTextPrimary,
+                      color: bpsTextPrimary,
                     ),
                   ),
                 ),
@@ -1209,14 +1197,14 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             ),
             SizedBox(height: isSmallScreen ? 20 : 30),
             CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(_bpsBlue),
+              valueColor: AlwaysStoppedAnimation<Color>(bpsBlue),
             ),
             SizedBox(height: isSmallScreen ? 12 : 16),
             Text(
               'Memuat data ranking...',
               style: TextStyle(
                 fontSize: isSmallScreen ? 12 : 14,
-                color: _bpsTextSecondary,
+                color: bpsTextSecondary,
               ),
             ),
           ],
@@ -1234,9 +1222,9 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             ? sizing.statsCardPadding - 4
             : sizing.statsCardPadding),
         decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: _bpsBorder, width: 1.5),
+          border: Border.all(color: bpsBorder, width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.04),
@@ -1251,7 +1239,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
               children: [
                 Icon(
                   Icons.emoji_events_rounded,
-                  color: _bpsOrange,
+                  color: bpsOrange,
                   size: isSmallScreen ? 16 : 20,
                 ),
                 SizedBox(width: sizing.itemSpacing),
@@ -1263,7 +1251,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                           ? sizing.groupTitleSize - 2
                           : sizing.groupTitleSize,
                       fontWeight: FontWeight.w700,
-                      color: _bpsTextPrimary,
+                      color: bpsTextPrimary,
                     ),
                   ),
                 ),
@@ -1272,7 +1260,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             SizedBox(height: isSmallScreen ? 20 : 30),
             Icon(
               Icons.error_outline_rounded,
-              color: _bpsRed,
+              color: bpsRed,
               size: isSmallScreen ? 40 : 48,
             ),
             SizedBox(height: isSmallScreen ? 12 : 16),
@@ -1281,7 +1269,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
               style: TextStyle(
                 fontSize: isSmallScreen ? 14 : 16,
                 fontWeight: FontWeight.w600,
-                color: _bpsTextPrimary,
+                color: bpsTextPrimary,
               ),
             ),
             SizedBox(height: isSmallScreen ? 4 : 8),
@@ -1289,7 +1277,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
               'Gagal memuat data ranking dari CSV',
               style: TextStyle(
                 fontSize: isSmallScreen ? 12 : 14,
-                color: _bpsTextSecondary,
+                color: bpsTextSecondary,
               ),
             ),
           ],
@@ -1302,9 +1290,9 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1320,7 +1308,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             children: [
               Icon(
                 Icons.emoji_events_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1335,7 +1323,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                             ? sizing.groupTitleSize - 2
                             : sizing.groupTitleSize,
                         fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary,
+                        color: bpsTextPrimary,
                       ),
                     ),
                     SizedBox(height: isSmallScreen ? 2 : 4),
@@ -1343,7 +1331,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       'Top 10 Kota/Kabupaten 2024',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 14,
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                       ),
                     ),
                   ],
@@ -1360,7 +1348,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
               vertical: isSmallScreen ? 8 : 10,
             ),
             decoration: BoxDecoration(
-              color: _bpsBlue.withOpacity(0.08),
+              color: bpsBlue.withOpacity(0.08),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -1372,7 +1360,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     style: TextStyle(
                       fontSize: isSmallScreen ? 12 : 14,
                       fontWeight: FontWeight.w700,
-                      color: _bpsBlue,
+                      color: bpsBlue,
                     ),
                   ),
                 ),
@@ -1382,7 +1370,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     style: TextStyle(
                       fontSize: isSmallScreen ? 12 : 14,
                       fontWeight: FontWeight.w700,
-                      color: _bpsBlue,
+                      color: bpsBlue,
                     ),
                   ),
                 ),
@@ -1391,7 +1379,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 12 : 14,
                     fontWeight: FontWeight.w700,
-                    color: _bpsBlue,
+                    color: bpsBlue,
                   ),
                 ),
               ],
@@ -1411,10 +1399,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
               ),
               decoration: BoxDecoration(
                 color:
-                    isSemarang ? _bpsOrange.withOpacity(0.08) : _bpsBackground,
+                    isSemarang ? bpsOrange.withOpacity(0.08) : bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 border: isSemarang
-                    ? Border.all(color: _bpsOrange.withOpacity(0.4), width: 1.5)
+                    ? Border.all(color: bpsOrange.withOpacity(0.4), width: 1.5)
                     : null,
               ),
               child: Row(
@@ -1425,13 +1413,13 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     height: isSmallScreen ? 32 : 36,
                     decoration: BoxDecoration(
                       color: isSemarang
-                          ? _bpsOrange
+                          ? bpsOrange
                           : item.rank <= 3
-                              ? _bpsBlue.withOpacity(0.15)
-                              : _bpsBackground,
+                              ? bpsBlue.withOpacity(0.15)
+                              : bpsBackground,
                       borderRadius: BorderRadius.circular(8),
                       border: item.rank <= 3 && !isSemarang
-                          ? Border.all(color: _bpsBlue.withOpacity(0.3))
+                          ? Border.all(color: bpsBlue.withOpacity(0.3))
                           : null,
                     ),
                     child: Center(
@@ -1443,8 +1431,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                           color: isSemarang
                               ? Colors.white
                               : item.rank <= 3
-                                  ? _bpsBlue
-                                  : _bpsTextSecondary,
+                                  ? bpsBlue
+                                  : bpsTextSecondary,
                         ),
                       ),
                     ),
@@ -1458,7 +1446,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                         if (isSemarang) ...[
                           Icon(
                             Icons.star_rounded,
-                            color: _bpsOrange,
+                            color: bpsOrange,
                             size: isSmallScreen ? 14 : 16,
                           ),
                           SizedBox(width: isSmallScreen ? 4 : 6),
@@ -1471,7 +1459,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                               fontWeight: isSemarang
                                   ? FontWeight.w700
                                   : FontWeight.w600,
-                              color: isSemarang ? _bpsOrange : _bpsTextPrimary,
+                              color: isSemarang ? bpsOrange : bpsTextPrimary,
                             ),
                           ),
                         ),
@@ -1485,7 +1473,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     style: TextStyle(
                       fontSize: isSmallScreen ? 12 : 14,
                       fontWeight: FontWeight.w700,
-                      color: isSemarang ? _bpsOrange : _bpsTextPrimary,
+                      color: isSemarang ? bpsOrange : bpsTextPrimary,
                     ),
                   ),
                 ],
@@ -1499,14 +1487,14 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
           Container(
             padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
             decoration: BoxDecoration(
-              color: _bpsBlue.withOpacity(0.05),
+              color: bpsBlue.withOpacity(0.05),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.info_outline_rounded,
-                  color: _bpsBlue,
+                  color: bpsBlue,
                   size: isSmallScreen ? 14 : 16,
                 ),
                 SizedBox(width: isSmallScreen ? 6 : 8),
@@ -1515,7 +1503,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     'Semarang menempati peringkat #1 dari 35 kota/kabupaten di Jawa Tengah',
                     style: TextStyle(
                       fontSize: isSmallScreen ? 11 : 13,
-                      color: _bpsTextSecondary,
+                      color: bpsTextSecondary,
                     ),
                   ),
                 ),

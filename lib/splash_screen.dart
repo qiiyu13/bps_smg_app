@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'dart:ui';
 import 'dart:async';
 
 class SplashScreen extends StatefulWidget {
@@ -29,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _initializeAnimations();
     _initializeVideo();
-    // Safety net: ensure we navigate after max 8 seconds no matter what
+    _precacheImages();
     _maxDurationTimer = Timer(const Duration(seconds: 8), () {
       if (!_hasNavigated && !_isDisposed) {
         print('Max splash duration reached, forcing navigation');
@@ -50,6 +49,11 @@ class _SplashScreenState extends State<SplashScreen>
       parent: _fadeController,
       curve: Curves.easeInOut,
     ));
+  }
+
+  void _precacheImages() {
+    precacheImage(const AssetImage('assets/images/logo.png'), context);
+    precacheImage(const AssetImage('assets/images/logo_white.png'), context);
   }
 
   void _initializeVideo() async {
@@ -150,14 +154,6 @@ class _SplashScreenState extends State<SplashScreen>
     _fadeController.forward();
 
     Timer(const Duration(seconds: 3), () {
-      if (!_hasNavigated) {
-        _navigateToHome();
-      }
-    });
-  }
-
-  void _setNavigationTimeout() {
-    Timer(const Duration(seconds: 6), () {
       if (!_hasNavigated) {
         _navigateToHome();
       }
@@ -291,152 +287,5 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 
-  Widget _buildHeader() {
-    return Column(
-      children: [
-        // Logo dengan shadow biru
-        Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(22),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF3B82F6).withOpacity(0.2),
-                blurRadius: 25,
-                offset: const Offset(0, 8),
-              ),
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 15,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Image.asset(
-              'assets/images/logo.png',
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return Image.network(
-                  'https://semarangkota.bps.go.id/images/logo-bps.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) {
-                    return const Icon(
-                      Icons.analytics_outlined,
-                      size: 50,
-                      color: Color(0xFF2563EB),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        const Text(
-          'BPS Kota Semarang',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1E40AF),
-            letterSpacing: -0.5,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: const Color(0xFF3B82F6).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: const Color(0xFF3B82F6).withOpacity(0.2),
-              width: 1,
-            ),
-          ),
-          child: const Text(
-            'Data Statistik Terpercaya',
-            style: TextStyle(
-              fontSize: 13,
-              color: Color(0xFF1E40AF),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBrandingText() {
-    return Column(
-      children: [
-        const Text(
-          'BPS Kota Semarang',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1E40AF),
-            letterSpacing: -0.5,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFF3B82F6).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: const Color(0xFF3B82F6).withOpacity(0.2),
-              width: 1,
-            ),
-          ),
-          child: const Text(
-            'Data Statistik Terpercaya',
-            style: TextStyle(
-              fontSize: 16,
-              color: Color(0xFF1E40AF),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLoadingIndicator() {
-    return Column(
-      children: [
-        Container(
-          width: 60,
-          height: 60,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: const Color(0xFF3B82F6).withOpacity(0.1),
-            border: Border.all(
-              color: const Color(0xFF3B82F6).withOpacity(0.3),
-              width: 2,
-            ),
-          ),
-          child: CircularProgressIndicator(
-            strokeWidth: 3,
-            valueColor: AlwaysStoppedAnimation<Color>(
-              const Color(0xFF3B82F6),
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        const Text(
-          'Memuat aplikasi...',
-          style: TextStyle(
-            fontSize: 16,
-            color: Color(0xFF1E40AF),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
 }
+

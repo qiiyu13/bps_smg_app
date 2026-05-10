@@ -43,6 +43,12 @@ const Color bpsTextLabel = Color(0xFFA0A0A0);
 /// Border color for cards and inputs
 const Color bpsBorder = Color(0xFFE0E0E0);
 
+/// Purple accent - Used for chart series, IPG, IDG indicators
+const Color bpsPurple = Color(0xFF7B1FA2);
+
+/// Teal accent - Used for chart series, alternate indicators
+const Color bpsTeal = Color(0xFF1ABC9C);
+
 // ============================================
 // GROUP-SPECIFIC COLORS
 // ============================================

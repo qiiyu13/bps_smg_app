@@ -1,26 +1,12 @@
 import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
-import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
 import 'services/github_data_service.dart';
-
-// BPS Color Palette
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsPurple = Color(0xFF7B1FA2);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsBorder = Color(0xFFE0E0E0);
-const Color _bpsTeal = Color(0xFF1ABC9C);
+import 'app_theme.dart';
 
 class IDGData {
   final int year;
@@ -229,13 +215,13 @@ class _IDGScreenState extends State<IDGScreen>
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor: _bpsBackground,
+        backgroundColor: bpsBackground,
         body: Column(
           children: [
             _buildHeader(context, sizing, isSmallScreen),
             const Expanded(
               child: Center(
-                child: CircularProgressIndicator(color: _bpsOrange),
+                child: CircularProgressIndicator(color: bpsOrange),
               ),
             ),
           ],
@@ -244,7 +230,7 @@ class _IDGScreenState extends State<IDGScreen>
     }
 
     return Scaffold(
-      backgroundColor: _bpsBackground,
+      backgroundColor: bpsBackground,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
@@ -321,10 +307,10 @@ class _IDGScreenState extends State<IDGScreen>
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsOrange,
+        color: bpsOrange,
         boxShadow: [
           BoxShadow(
-              color: _bpsOrange.withOpacity(0.2),
+              color: bpsOrange.withOpacity(0.2),
               blurRadius: 20,
               offset: const Offset(0, 4))
         ],
@@ -378,9 +364,9 @@ class _IDGScreenState extends State<IDGScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -396,7 +382,7 @@ class _IDGScreenState extends State<IDGScreen>
             children: [
               Icon(
                 Icons.calendar_today_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -407,7 +393,7 @@ class _IDGScreenState extends State<IDGScreen>
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
             ],
@@ -419,7 +405,7 @@ class _IDGScreenState extends State<IDGScreen>
             children: availableYears.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsOrange : _bpsBackground,
+                color: isSelected ? bpsOrange : bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () => setState(() => selectedYear = year),
@@ -435,13 +421,13 @@ class _IDGScreenState extends State<IDGScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsOrange : _bpsBorder,
+                        color: isSelected ? bpsOrange : bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsOrange.withOpacity(0.3),
+                                color: bpsOrange.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -454,7 +440,7 @@ class _IDGScreenState extends State<IDGScreen>
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : _bpsTextSecondary,
+                        color: isSelected ? Colors.white : bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -475,9 +461,9 @@ class _IDGScreenState extends State<IDGScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -493,7 +479,7 @@ class _IDGScreenState extends State<IDGScreen>
             children: [
               Icon(
                 Icons.analytics_rounded,
-                color: _bpsOrange,
+                color: bpsOrange,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -505,7 +491,7 @@ class _IDGScreenState extends State<IDGScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -516,7 +502,7 @@ class _IDGScreenState extends State<IDGScreen>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsOrange.withOpacity(0.1),
+                    color: bpsOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -524,7 +510,7 @@ class _IDGScreenState extends State<IDGScreen>
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsOrange,
+                        color: bpsOrange,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -532,7 +518,7 @@ class _IDGScreenState extends State<IDGScreen>
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsOrange,
+                          color: bpsOrange,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -549,7 +535,7 @@ class _IDGScreenState extends State<IDGScreen>
                 context: context,
                 value: data.idgFormatted,
                 label: 'IDG',
-                color: _bpsPurple,
+                color: bpsPurple,
                 icon: Icons.groups,
                 description:
                     'Indeks Pemberdayaan Gender (IDG) mengukur kesetaraan peran antara laki-laki dan perempuan dalam bidang ekonomi, politik, dan pengambilan keputusan.',
@@ -561,7 +547,7 @@ class _IDGScreenState extends State<IDGScreen>
                 context: context,
                 value: data.ikgFormatted,
                 label: 'IKG',
-                color: _bpsBlue,
+                color: bpsBlue,
                 icon: Icons.balance,
                 description:
                     'Indeks Ketimpangan Gender (IKG) mengukur ketidaksetaraan pencapaian antara laki-laki dan perempuan dalam kesehatan reproduksi, pemberdayaan, dan pasar tenaga kerja.',
@@ -572,7 +558,7 @@ class _IDGScreenState extends State<IDGScreen>
                 context: context,
                 value: '${data.sumbanganFormatted}%',
                 label: 'Sumbangan Pendapatan',
-                color: _bpsGreen,
+                color: bpsGreen,
                 icon: Icons.attach_money,
                 description:
                     'Sumbangan pendapatan perempuan menunjukkan kontribusi ekonomi perempuan terhadap total pendapatan rumah tangga.',
@@ -583,7 +569,7 @@ class _IDGScreenState extends State<IDGScreen>
                 context: context,
                 value: '${data.tenagaFormatted}%',
                 label: 'Tenaga Profesional',
-                color: _bpsOrange,
+                color: bpsOrange,
                 icon: Icons.business_center,
                 description:
                     'Persentase perempuan sebagai tenaga profesional menunjukkan partisipasi perempuan dalam pekerjaan profesional dan teknis.',
@@ -594,7 +580,7 @@ class _IDGScreenState extends State<IDGScreen>
                 context: context,
                 value: '${data.parlemenFormatted}%',
                 label: 'Keterlibatan Parlemen',
-                color: _bpsRed,
+                color: bpsRed,
                 icon: Icons.account_balance,
                 description:
                     'Keterlibatan perempuan di parlemen menunjukkan partisipasi politik perempuan dalam lembaga legislatif.',
@@ -649,7 +635,7 @@ class _IDGScreenState extends State<IDGScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 13 : 14,
                     fontWeight: FontWeight.w600,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -663,7 +649,7 @@ class _IDGScreenState extends State<IDGScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -690,7 +676,7 @@ class _IDGScreenState extends State<IDGScreen>
       child: Divider(
         height: 1,
         thickness: 1,
-        color: _bpsBorder.withOpacity(0.5),
+        color: bpsBorder.withOpacity(0.5),
       ),
     );
   }
@@ -805,7 +791,7 @@ class _IDGScreenState extends State<IDGScreen>
                                 'Nilai Indikator',
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 13 : 14,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -815,7 +801,7 @@ class _IDGScreenState extends State<IDGScreen>
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -826,7 +812,7 @@ class _IDGScreenState extends State<IDGScreen>
                         Container(
                           padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                           decoration: BoxDecoration(
-                            color: _bpsBackground,
+                            color: bpsBackground,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -855,7 +841,7 @@ class _IDGScreenState extends State<IDGScreen>
                                       description,
                                       style: TextStyle(
                                         fontSize: isSmallScreen ? 13 : 14,
-                                        color: _bpsTextSecondary,
+                                        color: bpsTextSecondary,
                                         height: 1.5,
                                       ),
                                     ),
@@ -921,7 +907,7 @@ class _IDGScreenState extends State<IDGScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -937,10 +923,10 @@ class _IDGScreenState extends State<IDGScreen>
               Container(
                   padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                   decoration: BoxDecoration(
-                      color: _bpsPurple.withOpacity(0.1),
+                      color: bpsPurple.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10)),
                   child: Icon(Icons.trending_up,
-                      color: _bpsPurple, size: isSmallScreen ? 16 : 18)),
+                      color: bpsPurple, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
                   child: Column(
@@ -950,11 +936,11 @@ class _IDGScreenState extends State<IDGScreen>
                         style: TextStyle(
                             fontSize: isSmallScreen ? 14 : 16,
                             fontWeight: FontWeight.w700,
-                            color: _bpsTextPrimary)),
+                            color: bpsTextPrimary)),
                     Text('Nilai lebih tinggi = lebih baik',
                         style: TextStyle(
                             fontSize: isSmallScreen ? 10 : 11,
-                            color: _bpsPurple))
+                            color: bpsPurple))
                   ])),
             ],
           ),
@@ -997,7 +983,7 @@ class _IDGScreenState extends State<IDGScreen>
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
-                                    color: _bpsPurple,
+                                    color: bpsPurple,
                                   ),
                                 );
                               }
@@ -1038,7 +1024,7 @@ class _IDGScreenState extends State<IDGScreen>
                         LineChartBarData(
                           spots: chartSpots,
                           isCurved: true,
-                          color: _bpsPurple,
+                          color: bpsPurple,
                           barWidth: 3,
                           dotData: FlDotData(
                             show: true,
@@ -1053,7 +1039,7 @@ class _IDGScreenState extends State<IDGScreen>
                               }
                               return FlDotCirclePainter(
                                 radius: 6,
-                                color: _bpsPurple,
+                                color: bpsPurple,
                                 strokeWidth: 2,
                                 strokeColor: Colors.white,
                               );
@@ -1061,7 +1047,7 @@ class _IDGScreenState extends State<IDGScreen>
                           ),
                           belowBarData: BarAreaData(
                             show: true,
-                            color: _bpsPurple.withOpacity(0.1),
+                            color: bpsPurple.withOpacity(0.1),
                           ),
                         ),
                       ],
@@ -1082,7 +1068,7 @@ class _IDGScreenState extends State<IDGScreen>
                               return LineTooltipItem(
                                 '$year\nIDG: ${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}',
                                 const TextStyle(
-                                  color: _bpsPurple,
+                                  color: bpsPurple,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 13,
                                 ),
@@ -1096,7 +1082,7 @@ class _IDGScreenState extends State<IDGScreen>
                 )
               : const Center(
                   child: Text('Data tidak tersedia',
-                      style: TextStyle(color: _bpsTextSecondary))),
+                      style: TextStyle(color: bpsTextSecondary))),
         ],
       ),
     );
@@ -1116,7 +1102,7 @@ class _IDGScreenState extends State<IDGScreen>
             barRods: [
               BarChartRodData(
                 toY: data!.ikg!,
-                color: _bpsBlue,
+                color: bpsBlue,
                 width: isSmallScreen ? 28 : 36,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(6),
@@ -1125,7 +1111,7 @@ class _IDGScreenState extends State<IDGScreen>
                 backDrawRodData: BackgroundBarChartRodData(
                   show: true,
                   toY: 0.30,
-                  color: _bpsBlue.withOpacity(0.06),
+                  color: bpsBlue.withOpacity(0.06),
                 ),
               ),
             ],
@@ -1140,7 +1126,7 @@ class _IDGScreenState extends State<IDGScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -1156,10 +1142,10 @@ class _IDGScreenState extends State<IDGScreen>
               Container(
                   padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                   decoration: BoxDecoration(
-                      color: _bpsOrange.withOpacity(0.1),
+                      color: bpsOrange.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10)),
                   child: Icon(Icons.trending_down,
-                      color: _bpsOrange, size: isSmallScreen ? 16 : 18)),
+                      color: bpsOrange, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
               Expanded(
                   child: Column(
@@ -1169,11 +1155,11 @@ class _IDGScreenState extends State<IDGScreen>
                         style: TextStyle(
                             fontSize: isSmallScreen ? 14 : 16,
                             fontWeight: FontWeight.w700,
-                            color: _bpsTextPrimary)),
+                            color: bpsTextPrimary)),
                     Text('Nilai lebih rendah = lebih baik',
                         style: TextStyle(
                             fontSize: isSmallScreen ? 10 : 11,
-                            color: _bpsOrange))
+                            color: bpsOrange))
                   ])),
             ],
           ),
@@ -1190,7 +1176,7 @@ class _IDGScreenState extends State<IDGScreen>
                         drawVerticalLine: false,
                         horizontalInterval: 0.05,
                         getDrawingHorizontalLine: (value) =>
-                            FlLine(color: _bpsBorder, strokeWidth: 0.5),
+                            FlLine(color: bpsBorder, strokeWidth: 0.5),
                       ),
                       titlesData: FlTitlesData(
                         leftTitles: AxisTitles(
@@ -1203,7 +1189,7 @@ class _IDGScreenState extends State<IDGScreen>
                                   decimalPlaces: 2),
                               style: TextStyle(
                                   fontSize: isSmallScreen ? 9 : 10,
-                                  color: _bpsTextSecondary),
+                                  color: bpsTextSecondary),
                             ),
                           ),
                         ),
@@ -1219,7 +1205,7 @@ class _IDGScreenState extends State<IDGScreen>
                                   child: Text(yearLabels[index],
                                       style: TextStyle(
                                           fontSize: isSmallScreen ? 9 : 10,
-                                          color: _bpsTextSecondary)),
+                                          color: bpsTextSecondary)),
                                 );
                               }
                               return const Text('');
@@ -1258,7 +1244,7 @@ class _IDGScreenState extends State<IDGScreen>
                   )
                 : Center(
                     child: Text('Data tidak tersedia',
-                        style: TextStyle(color: _bpsTextSecondary))),
+                        style: TextStyle(color: bpsTextSecondary))),
           ),
         ],
       ),
@@ -1271,7 +1257,7 @@ class _IDGScreenState extends State<IDGScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-          color: _bpsCardBg,
+          color: bpsCardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -1287,29 +1273,29 @@ class _IDGScreenState extends State<IDGScreen>
               Container(
                   padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                   decoration: BoxDecoration(
-                      color: _bpsGreen.withOpacity(0.1),
+                      color: bpsGreen.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10)),
                   child: Icon(Icons.info_outline_rounded,
-                      color: _bpsGreen, size: isSmallScreen ? 16 : 18)),
+                      color: bpsGreen, size: isSmallScreen ? 16 : 18)),
               SizedBox(width: sizing.itemSpacing),
               Text('Tentang IDG & IKG',
                   style: TextStyle(
                       fontSize: isSmallScreen ? 14 : 16,
                       fontWeight: FontWeight.w700,
-                      color: _bpsTextPrimary)),
+                      color: bpsTextPrimary)),
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
           _buildDescriptionItem(
               'IDG (Indeks Pemberdayaan Gender)',
               'Mengukur kesetaraan peran antara laki-laki dan perempuan dalam bidang ekonomi, politik, dan pengambilan keputusan.',
-              _bpsPurple,
+              bpsPurple,
               isSmallScreen),
           const SizedBox(height: 12),
           _buildDescriptionItem(
               'IKG (Indeks Ketimpangan Gender)',
               'Mengukur ketidaksetaraan pencapaian antara laki-laki dan perempuan dalam kesehatan reproduksi, pemberdayaan, dan pasar tenaga kerja.',
-              _bpsBlue,
+              bpsBlue,
               isSmallScreen),
         ],
       ),
@@ -1336,7 +1322,7 @@ class _IDGScreenState extends State<IDGScreen>
           Text(description,
               style: TextStyle(
                   fontSize: isSmallScreen ? 10 : 11,
-                  color: _bpsTextSecondary,
+                  color: bpsTextSecondary,
                   height: 1.4)),
         ],
       ),

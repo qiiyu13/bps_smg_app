@@ -6,14 +6,13 @@ import 'services/github_data_service.dart';
 import 'splash_screen.dart';
 import 'onboarding_screen.dart';
 import 'home_screen.dart';
-import 'login_admin.dart';
-import 'admin_home_screen.dart' as admin_home_screen;
 
 void main() {
-  // Performance optimizations for Flutter rendering
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Optimize for smooth animations
+  PaintingBinding.instance.imageCache.maximumSize = 50;
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 16 << 20;
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -52,9 +51,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/onboarding': (context) => const OnboardingScreen(),
         '/home': (context) => const HomeScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/admin-home': (context) => const admin_home_screen.AdminHomeScreen(),
-        '/admin': (context) => const admin_home_screen.AdminHomeScreen(),
       },
     );
   }

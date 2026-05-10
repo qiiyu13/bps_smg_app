@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:ui';
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'app_theme.dart';
 import 'profile_screen.dart';
 import 'ipm_screen.dart';
@@ -19,6 +17,7 @@ import 'idg_screen.dart';
 import 'sdgs_screen.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
+import 'home_snapshot_data.dart';
 
 // Category data model - Made immutable for better performance
 @immutable
@@ -198,23 +197,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController _animationController;
   late final PageController _statsPageController;
 
-  // FIX 1: Use ValueNotifier for page indicators to avoid setState on every scroll
   final ValueNotifier<int> _currentPageNotifier = ValueNotifier<int>(0);
+
+  final GlobalKey<_StatsCard1State> _card1Key = GlobalKey<_StatsCard1State>();
+  final GlobalKey<_StatsCard2State> _card2Key = GlobalKey<_StatsCard2State>();
+  final GlobalKey<_StatsCard3State> _card3Key = GlobalKey<_StatsCard3State>();
+  final GlobalKey<_StatsCard4State> _card4Key = GlobalKey<_StatsCard4State>();
 
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
   DateTime _lastUpdated = DateTime(2024, 12, 1);
 
-  // Debounce for search
   Timer? _searchDebounce;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -248,6 +251,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _animationController.dispose();
     _statsPageController.removeListener(_handlePageChange);
     _statsPageController.dispose();
@@ -255,6 +259,25 @@ class _HomeScreenState extends State<HomeScreen>
     _searchDebounce?.cancel();
     _currentPageNotifier.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _reloadAllCards();
+    }
+  }
+
+  void _reloadAllCards() {
+    _card1Key.currentState?.reloadData();
+    _card2Key.currentState?.reloadData();
+    _card3Key.currentState?.reloadData();
+    _card4Key.currentState?.reloadData();
   }
 
   // Optimized search handler with debouncing
@@ -275,22 +298,6 @@ class _HomeScreenState extends State<HomeScreen>
       setState(() {
         _searchQuery = '';
       });
-    }
-  }
-
-  Future<void> _refreshData() async {
-    // Simulate data refresh
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      setState(() {
-        _lastUpdated = DateTime.now();
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Data berhasil diperbarui'),
-          backgroundColor: bpsGreen,
-        ),
-      );
     }
   }
 
@@ -354,6 +361,10 @@ class _HomeScreenState extends State<HomeScreen>
         groupedCategories: _groupedCategories,
         sizing: sizing,
         lastUpdated: _formattedLastUpdated,
+        card1Key: _card1Key,
+        card2Key: _card2Key,
+        card3Key: _card3Key,
+        card4Key: _card4Key,
       ),
       bottomNavigationBar: _buildModernBottomNav(sizing),
     );
@@ -362,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen>
   void _navigateToProfile() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ProfileScreen()),
+      CupertinoPageRoute<void>(builder: (context) => const ProfileScreen()),
     );
   }
 
@@ -456,6 +467,10 @@ class _HomeScreenContent extends StatelessWidget {
   final Map<String, List<CategoryItem>> groupedCategories;
   final ResponsiveSizing sizing;
   final String lastUpdated;
+  final GlobalKey<_StatsCard1State> card1Key;
+  final GlobalKey<_StatsCard2State> card2Key;
+  final GlobalKey<_StatsCard3State> card3Key;
+  final GlobalKey<_StatsCard4State> card4Key;
 
   const _HomeScreenContent({
     required this.animationController,
@@ -469,6 +484,10 @@ class _HomeScreenContent extends StatelessWidget {
     required this.groupedCategories,
     required this.sizing,
     required this.lastUpdated,
+    required this.card1Key,
+    required this.card2Key,
+    required this.card3Key,
+    required this.card4Key,
   });
 
   @override
@@ -499,174 +518,127 @@ class _HomeScreenContent extends StatelessWidget {
 
   SliverToBoxAdapter _buildHeader() {
     return SliverToBoxAdapter(
-      child: FadeTransition(
-        opacity: animationController,
-        child: Container(
-          decoration: BoxDecoration(
-            color: bpsBlue,
-            boxShadow: [BPSShadows.headerShadow],
-          ),
-          child: SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                sizing.horizontalPadding,
-                sizing.horizontalPadding,
-                sizing.horizontalPadding,
-                sizing.horizontalPadding + 4,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Top bar with logo
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(sizing.headerLogoPadding),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.15),
-                            width: 1,
-                          ),
-                        ),
-                        child: Image.asset(
-                          'assets/images/logo_white.png',
-                          width: sizing.headerLogoSize,
-                          height: sizing.headerLogoSize,
-                          filterQuality: FilterQuality.medium,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.account_balance_rounded,
-                              color: Colors.white,
-                              size: sizing.headerLogoSize,
-                            );
-                          },
+      child: Container(
+        decoration: BoxDecoration(
+          color: bpsBlue,
+          boxShadow: [BPSShadows.headerShadow],
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              sizing.horizontalPadding,
+              sizing.horizontalPadding,
+              sizing.horizontalPadding,
+              sizing.horizontalPadding + 4,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Top bar with logo
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(sizing.headerLogoPadding),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.15),
+                          width: 1,
                         ),
                       ),
-                      SizedBox(width: sizing.itemSpacing),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'BPS KOTA SEMARANG',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: sizing.headerTitleSize,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.5,
-                              ),
+                      child: Image.asset(
+                        'assets/images/logo_white.png',
+                        width: sizing.headerLogoSize,
+                        height: sizing.headerLogoSize,
+                        filterQuality: FilterQuality.medium,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            Icons.account_balance_rounded,
+                            color: Colors.white,
+                            size: sizing.headerLogoSize,
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(width: sizing.itemSpacing),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'BPS KOTA SEMARANG',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: sizing.headerTitleSize,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Statistik Terpercaya',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: sizing.headerSubtitleSize,
-                                fontWeight: FontWeight.w400,
-                              ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Statistik Terpercaya',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: sizing.headerSubtitleSize,
+                              fontWeight: FontWeight.w400,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: sizing.horizontalPadding),
+                // Search bar
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  SizedBox(height: sizing.horizontalPadding),
-                  // Search bar
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: searchController,
-                      onChanged: onSearchChanged,
-                      decoration: InputDecoration(
-                        hintText: 'Cari kategori statistik...',
-                        hintStyle: TextStyle(
-                          color: bpsTextLabel,
-                          fontSize: sizing.searchFontSize,
-                        ),
-                        prefixIcon: Icon(
-                          Icons.search_rounded,
-                          color: bpsBlue,
-                          size: sizing.searchIconSize,
-                        ),
-                        suffixIcon: searchQuery.isNotEmpty
-                            ? IconButton(
-                                icon: Icon(
-                                  Icons.clear_rounded,
-                                  color: bpsTextSecondary,
-                                  size: sizing.searchClearIconSize,
-                                ),
-                                onPressed: onClearSearch,
-                              )
-                            : null,
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: sizing.searchPadding,
-                          vertical: sizing.searchPadding,
-                        ),
+                  child: TextField(
+                    controller: searchController,
+                    onChanged: onSearchChanged,
+                    decoration: InputDecoration(
+                      hintText: 'Cari kategori statistik...',
+                      hintStyle: TextStyle(
+                        color: bpsTextLabel,
+                        fontSize: sizing.searchFontSize,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search_rounded,
+                        color: bpsBlue,
+                        size: sizing.searchIconSize,
+                      ),
+                      suffixIcon: searchQuery.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.clear_rounded,
+                                color: bpsTextSecondary,
+                                size: sizing.searchClearIconSize,
+                              ),
+                              onPressed: onClearSearch,
+                            )
+                          : null,
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: sizing.searchPadding,
+                        vertical: sizing.searchPadding,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  SliverToBoxAdapter _buildLastUpdatedIndicator() {
-    return SliverToBoxAdapter(
-      child: Container(
-        margin: EdgeInsets.fromLTRB(
-          sizing.horizontalPadding,
-          sizing.itemSpacing,
-          sizing.horizontalPadding,
-          0,
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: sizing.itemSpacing,
-          vertical: 6,
-        ),
-        decoration: BoxDecoration(
-          color: bpsGreen.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: bpsGreen.withOpacity(0.2),
-            width: 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.update_rounded,
-              size: 14,
-              color: bpsGreen,
-            ),
-            const SizedBox(width: 6),
-            Text(
-              'Terakhir diperbarui: $lastUpdated',
-              style: TextStyle(
-                fontSize: 11,
-                color: bpsGreen,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -730,10 +702,10 @@ class _HomeScreenContent extends StatelessWidget {
                     padding: EdgeInsets.symmetric(
                         horizontal: sizing.horizontalPadding),
                     child: switch (index) {
-                      0 => const _StatsCard1(),
-                      1 => const _StatsCard2(),
-                      2 => const _StatsCard3(),
-                      3 => const _StatsCard4(),
+                      0 => _StatsCard1(key: card1Key),
+                      1 => _StatsCard2(key: card2Key),
+                      2 => _StatsCard3(key: card3Key),
+                      3 => _StatsCard4(key: card4Key),
                       _ => const SizedBox(),
                     },
                   );
@@ -1031,68 +1003,67 @@ class _PageIndicatorDot extends StatelessWidget {
 }
 
 // Extract individual stat cards to separate widgets for better performance
-// FIX 3: Cache chart spots with static const to avoid recreation
 class _StatsCard1 extends StatefulWidget {
-  const _StatsCard1();
+  const _StatsCard1({super.key});
 
   @override
   State<_StatsCard1> createState() => _StatsCard1State();
 }
 
 class _StatsCard1State extends State<_StatsCard1> {
-  static const List<double> _chartData = [1.68, 1.69, 1.69, 1.70, 1.71];
-  static final List<FlSpot> _spots = List.generate(
-    _chartData.length,
-    (index) => FlSpot(index.toDouble(), _chartData[index]),
-  );
-
+  double? _value;
+  double? _change;
+  List<FlSpot>? _chartSpots;
   DateTime? _latestDate;
 
   @override
   void initState() {
     super.initState();
-    _loadLatestDate();
+    _loadData();
   }
 
-  Future<void> _loadLatestDate() async {
+  Future<void> _loadData() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final savedData = prefs.getString('semarang_population_data');
-      if (savedData != null) {
-        final decoded = json.decode(savedData) as Map<String, dynamic>;
-        final years = decoded.keys.map(int.parse).toList()..sort();
-        if (years.isNotEmpty) {
-          final latestYear = years.last;
-          // Set date to December 31st of the latest year
-          setState(() {
-            _latestDate = DateTime(latestYear, 12, 31);
-          });
-        }
-      } else {
-        // Default to 2024 if no data
+      final data = await HomeSnapshotData.loadPendudukData();
+      if (data != null && mounted) {
         setState(() {
-          _latestDate = DateTime(2024, 12, 31);
+          _value = data['valueInMillions'] as double;
+          _change = data['change'] as double;
+          _chartSpots = data['spots'] as List<FlSpot>;
+          _latestDate = DateTime(data['latestYear'] as int, 12, 31);
         });
       }
     } catch (e) {
-      debugPrint('Error loading penduduk date: $e');
-      setState(() {
-        _latestDate = DateTime(2024, 12, 31);
-      });
+      debugPrint('Error loading penduduk snapshot: $e');
     }
+  }
+
+  Future<void> reloadData() => _loadData();
+
+  String _formatValue(double value) {
+    return NumberFormatUtils.formatDecimal(value, decimalPlaces: 2);
+  }
+
+  String _formatChange(double change) {
+    final sign = change >= 0 ? '+' : '';
+    return '${sign}${NumberFormatUtils.formatDecimal(change, decimalPlaces: 2)}%';
   }
 
   @override
   Widget build(BuildContext context) {
+    final value = _value != null ? _formatValue(_value!) : '—';
+    final change = _change != null ? _formatChange(_change!) : '—';
+    final spots = _chartSpots ?? [];
+
     return _GlassStatsCard(
       label: 'Penduduk',
-      value: '1,65',
+      value: value,
       unit: 'Jt',
-      change: '+1,2%',
-      isPositive: true,
+      change: change,
+      isPositive: _change != null ? _change! >= 0 : true,
       accentColor: bpsBlue,
       icon: Icons.people_rounded,
-      chartSpots: _spots,
+      chartSpots: spots,
       screen: const PendudukScreen(),
       latestDate: _latestDate,
     );
@@ -1100,64 +1071,66 @@ class _StatsCard1State extends State<_StatsCard1> {
 }
 
 class _StatsCard2 extends StatefulWidget {
-  const _StatsCard2();
+  const _StatsCard2({super.key});
 
   @override
   State<_StatsCard2> createState() => _StatsCard2State();
 }
 
 class _StatsCard2State extends State<_StatsCard2> {
-  static const List<double> _chartData = [83.05, 83.55, 84.08, 84.43, 85.24];
-  static final List<FlSpot> _spots = List.generate(
-    _chartData.length,
-    (index) => FlSpot(index.toDouble(), _chartData[index]),
-  );
-
+  double? _value;
+  double? _change;
+  List<FlSpot>? _chartSpots;
   DateTime? _latestDate;
 
   @override
   void initState() {
     super.initState();
-    _loadLatestDate();
+    _loadData();
   }
 
-  Future<void> _loadLatestDate() async {
+  Future<void> _loadData() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final savedData = prefs.getString('ipm_data');
-      if (savedData != null) {
-        final decoded = json.decode(savedData) as Map<String, dynamic>;
-        final years = decoded.keys.map(int.parse).toList()..sort();
-        if (years.isNotEmpty) {
-          final latestYear = years.last;
-          setState(() {
-            _latestDate = DateTime(latestYear, 12, 31);
-          });
-        }
-      } else {
+      final data = await HomeSnapshotData.loadIPMData();
+      if (data != null && mounted) {
         setState(() {
-          _latestDate = DateTime(2024, 12, 31);
+          _value = data['value'] as double;
+          _change = data['change'] as double;
+          _chartSpots = data['spots'] as List<FlSpot>;
+          _latestDate = DateTime(data['latestYear'] as int, 12, 31);
         });
       }
     } catch (e) {
-      debugPrint('Error loading IPM date: $e');
-      setState(() {
-        _latestDate = DateTime(2024, 12, 31);
-      });
+      debugPrint('Error loading IPM snapshot: $e');
     }
+  }
+
+  Future<void> reloadData() => _loadData();
+
+  String _formatValue(double value) {
+    return NumberFormatUtils.formatDecimal(value, decimalPlaces: 2);
+  }
+
+  String _formatChange(double change) {
+    final sign = change >= 0 ? '+' : '';
+    return '${sign}${NumberFormatUtils.formatDecimal(change, decimalPlaces: 2)}%';
   }
 
   @override
   Widget build(BuildContext context) {
+    final value = _value != null ? _formatValue(_value!) : '—';
+    final change = _change != null ? _formatChange(_change!) : '—';
+    final spots = _chartSpots ?? [];
+
     return _GlassStatsCard(
       label: 'IPM',
-      value: '85,24',
+      value: value,
       unit: '',
-      change: '+2,3%',
-      isPositive: true,
+      change: change,
+      isPositive: _change != null ? _change! >= 0 : true,
       accentColor: bpsBlue,
       icon: Icons.trending_up_rounded,
-      chartSpots: _spots,
+      chartSpots: spots,
       screen: const IpmScreen(),
       latestDate: _latestDate,
     );
@@ -1165,65 +1138,67 @@ class _StatsCard2State extends State<_StatsCard2> {
 }
 
 class _StatsCard3 extends StatefulWidget {
-  const _StatsCard3();
+  const _StatsCard3({super.key});
 
   @override
   State<_StatsCard3> createState() => _StatsCard3State();
 }
 
 class _StatsCard3State extends State<_StatsCard3> {
-  static const List<double> _chartData = [4.5, 4.3, 4.2, 4.1, 4.0];
-  static final List<FlSpot> _spots = List.generate(
-    _chartData.length,
-    (index) => FlSpot(index.toDouble(), _chartData[index]),
-  );
-
+  double? _value;
+  double? _change;
+  List<FlSpot>? _chartSpots;
   DateTime? _latestDate;
 
   @override
   void initState() {
     super.initState();
-    _loadLatestDate();
+    _loadData();
   }
 
-  Future<void> _loadLatestDate() async {
+  Future<void> _loadData() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final savedData = prefs.getString('kemiskinan_data');
-      if (savedData != null) {
-        final decoded = json.decode(savedData) as Map<String, dynamic>;
-        final years = decoded.keys.map(int.parse).toList()..sort();
-        if (years.isNotEmpty) {
-          final latestYear = years.last;
-          setState(() {
-            _latestDate = DateTime(latestYear, 12, 31);
-          });
-        }
-      } else {
+      final data = await HomeSnapshotData.loadKemiskinanData();
+      if (data != null && mounted) {
         setState(() {
-          _latestDate = DateTime(2024, 12, 31);
+          _value = data['value'] as double;
+          _change = data['change'] as double;
+          _chartSpots = data['spots'] as List<FlSpot>;
+          _latestDate = DateTime(data['latestYear'] as int, 12, 31);
         });
       }
     } catch (e) {
-      debugPrint('Error loading kemiskinan date: $e');
-      setState(() {
-        _latestDate = DateTime(2024, 12, 31);
-      });
+      debugPrint('Error loading kemiskinan snapshot: $e');
     }
+  }
+
+  Future<void> reloadData() => _loadData();
+
+  String _formatValue(double value) {
+    return NumberFormatUtils.formatDecimal(value, decimalPlaces: 2);
+  }
+
+  String _formatChange(double change) {
+    final sign = change >= 0 ? '+' : '';
+    return '${sign}${NumberFormatUtils.formatDecimal(change, decimalPlaces: 2)}%';
   }
 
   @override
   Widget build(BuildContext context) {
+    final value = _value != null ? _formatValue(_value!) : '—';
+    final change = _change != null ? _formatChange(_change!) : '—';
+    final spots = _chartSpots ?? [];
+
     return _GlassStatsCard(
       label: 'Kemiskinan',
-      value: '4,03',
+      value: value,
       unit: '%',
-      change: '-0,87%',
-      isPositive: false,
-      invertedLogic: true, // Lower poverty is good
+      change: change,
+      isPositive: _change != null ? _change! >= 0 : false,
+      invertedLogic: true,
       accentColor: bpsBlue,
       icon: Icons.volunteer_activism_rounded,
-      chartSpots: _spots,
+      chartSpots: spots,
       screen: const KemiskinanScreen(),
       latestDate: _latestDate,
     );
@@ -1231,66 +1206,68 @@ class _StatsCard3State extends State<_StatsCard3> {
 }
 
 class _StatsCard4 extends StatefulWidget {
-  const _StatsCard4();
+  const _StatsCard4({super.key});
 
   @override
   State<_StatsCard4> createState() => _StatsCard4State();
 }
 
 class _StatsCard4State extends State<_StatsCard4> {
-  static const List<double> _chartData = [1.68, 1.87, 4.21, 2.61, 2.89];
-  static final List<FlSpot> _spots = List.generate(
-    _chartData.length,
-    (index) => FlSpot(index.toDouble(), _chartData[index]),
-  );
-
-  DateTime? _latestDate;
+  double? _value;
+  double? _change;
+  List<FlSpot>? _chartSpots;
+  String? _dateLabel;
 
   @override
   void initState() {
     super.initState();
-    _loadLatestDate();
+    _loadData();
   }
 
-  Future<void> _loadLatestDate() async {
+  Future<void> _loadData() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final savedData = prefs.getString('inflasi_yearly_data');
-      if (savedData != null) {
-        final decoded = json.decode(savedData) as Map<String, dynamic>;
-        final years = decoded.keys.map(int.parse).toList()..sort();
-        if (years.isNotEmpty) {
-          final latestYear = years.last;
-          setState(() {
-            _latestDate = DateTime(latestYear, 12, 31);
-          });
-        }
-      } else {
+      final data = await HomeSnapshotData.loadInflasiData();
+      if (data != null && mounted) {
         setState(() {
-          _latestDate = DateTime(2024, 12, 31);
+          _value = data['value'] as double;
+          _change = data['change'] as double;
+          _chartSpots = data['spots'] as List<FlSpot>;
+          _dateLabel = data['dateLabel'] as String?;
         });
       }
     } catch (e) {
-      debugPrint('Error loading inflasi date: $e');
-      setState(() {
-        _latestDate = DateTime(2024, 12, 31);
-      });
+      debugPrint('Error loading inflasi snapshot: $e');
     }
+  }
+
+  Future<void> reloadData() => _loadData();
+
+  String _formatValue(double value) {
+    return NumberFormatUtils.formatDecimal(value, decimalPlaces: 2);
+  }
+
+  String _formatChange(double change) {
+    final sign = change >= 0 ? '+' : '';
+    return '${sign}${NumberFormatUtils.formatDecimal(change, decimalPlaces: 2)}%';
   }
 
   @override
   Widget build(BuildContext context) {
+    final value = _value != null ? _formatValue(_value!) : '—';
+    final change = _change != null ? _formatChange(_change!) : '—';
+    final spots = _chartSpots ?? [];
+
     return _GlassStatsCard(
       label: 'Inflasi',
-      value: '2,89',
+      value: value,
       unit: '%',
-      change: '+0,39%',
-      isPositive: true,
+      change: change,
+      isPositive: _change != null ? _change! >= 0 : true,
       accentColor: bpsBlue,
       icon: Icons.payments_rounded,
-      chartSpots: _spots,
+      chartSpots: spots,
       screen: const InflasiScreen(),
-      latestDate: _latestDate,
+      dateLabel: _dateLabel,
     );
   }
 }
@@ -1307,6 +1284,7 @@ class _GlassStatsCard extends StatefulWidget {
   final List<FlSpot> chartSpots;
   final Widget screen;
   final DateTime? latestDate;
+  final String? dateLabel;
   final bool invertedLogic;
 
   const _GlassStatsCard({
@@ -1320,6 +1298,7 @@ class _GlassStatsCard extends StatefulWidget {
     required this.chartSpots,
     required this.screen,
     this.latestDate,
+    this.dateLabel,
     this.invertedLogic = false,
   });
 
@@ -1366,15 +1345,6 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
   }
 
   // Determine delta color based on metric type and direction
-  Color _getDeltaColor() {
-    // Inverted logic: for metrics where increase is bad (e.g., Kemiskinan)
-    if (widget.invertedLogic) {
-      return widget.isPositive ? bpsRed : bpsGreen;
-    }
-    // Normal logic: for metrics where increase is good
-    return widget.isPositive ? bpsGreen : bpsRed;
-  }
-
   IconData _getDeltaIcon() {
     return widget.isPositive
         ? Icons.trending_up_rounded
@@ -1407,7 +1377,7 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => widget.screen),
+          CupertinoPageRoute<void>(builder: (context) => widget.screen),
         );
       },
       child: AnimatedBuilder(
@@ -1444,7 +1414,8 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => widget.screen),
+                    CupertinoPageRoute<void>(
+                        builder: (context) => widget.screen),
                   );
                 },
                 borderRadius: BorderRadius.circular(20),
@@ -1478,7 +1449,17 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
                               ],
                             ),
                             // Date
-                            if (widget.latestDate != null) ...[
+                            if (widget.dateLabel != null) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                widget.dateLabel!,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white.withOpacity(0.75),
+                                ),
+                              ),
+                            ] else if (widget.latestDate != null) ...[
                               const SizedBox(height: 2),
                               Text(
                                 _formatFullDate(widget.latestDate!),
@@ -1631,85 +1612,6 @@ class _MiniChart extends StatelessWidget {
   }
 }
 
-// Glass morphism mini chart with end dot (static, no animation)
-class _GlassMiniChart extends StatelessWidget {
-  final List<FlSpot> spots;
-  final Color color;
-
-  const _GlassMiniChart({
-    required this.spots,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (spots.isEmpty) return const SizedBox();
-
-    // Use tighter Y-axis padding to make line use more vertical space
-    final minY = spots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
-    final maxY = spots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
-    final range = maxY - minY;
-
-    // Only add small padding if values are very close
-    final yPadding = range < 0.5 ? 0.1 : range * 0.05;
-
-    return RepaintBoundary(
-      child: SizedBox(
-        width: 80,
-        height: 50, // Increased from 40 to 50
-        child: LineChart(
-          LineChartData(
-            minY: minY - yPadding,
-            maxY: maxY + yPadding,
-            minX: 0,
-            maxX: (spots.length - 1).toDouble(),
-            gridData: const FlGridData(show: false),
-            titlesData: const FlTitlesData(show: false),
-            borderData: FlBorderData(show: false),
-            lineBarsData: [
-              LineChartBarData(
-                spots: spots,
-                isCurved: true,
-                curveSmoothness: 0.4,
-                color: color,
-                barWidth: 3, // Thicker line (was 2.5)
-                dotData: FlDotData(
-                  show: true,
-                  getDotPainter: (spot, percent, bar, index) {
-                    // Only show dot on the last data point
-                    if (index == spots.length - 1) {
-                      return FlDotCirclePainter(
-                        radius: 4, // Slightly larger dot
-                        color: color,
-                        strokeWidth: 0,
-                        strokeColor: Colors.transparent,
-                      );
-                    }
-                    // Hide all other dots
-                    return FlDotCirclePainter(radius: 0);
-                  },
-                ),
-                belowBarData: BarAreaData(
-                  show: true,
-                  gradient: LinearGradient(
-                    colors: [
-                      color.withOpacity(0.5), // More visible gradient
-                      color.withOpacity(0.05),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-              ),
-            ],
-            lineTouchData: const LineTouchData(enabled: false),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _CategoryCard extends StatelessWidget {
   final CategoryItem category;
   final ResponsiveSizing sizing;
@@ -1745,7 +1647,7 @@ class _CategoryCard extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => category.screen),
+              CupertinoPageRoute<void>(builder: (context) => category.screen),
             );
           },
           borderRadius: BorderRadius.circular(16),

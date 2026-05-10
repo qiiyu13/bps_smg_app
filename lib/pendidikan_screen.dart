@@ -6,20 +6,7 @@ import 'services/github_data_service.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
-
-// BPS Color Palette (matching other screens)
-const Color _bpsBlue = Color(0xFF2E99D6);
-const Color _bpsOrange = Color(0xFFE88D34);
-const Color _bpsGreen = Color(0xFF7DBD42);
-const Color _bpsRed = Color(0xFFEF4444);
-const Color _bpsBackground = Color(0xFFF5F5F5);
-const Color _bpsCardBg = Color(0xFFFFFFFF);
-const Color _bpsTextPrimary = Color(0xFF333333);
-const Color _bpsTextSecondary = Color(0xFF808080);
-const Color _bpsTextLabel = Color(0xFFA0A0A0);
-const Color _bpsBorder = Color(0xFFE0E0E0);
-const Color _bpsPurple = Color(0xFF7B1FA2);
-const Color _bpsTeal = Color(0xFF1ABC9C);
+import 'app_theme.dart';
 
 class PendidikanScreen extends StatefulWidget {
   const PendidikanScreen({super.key});
@@ -73,7 +60,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 Container(
                   padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
                   decoration: BoxDecoration(
-                    color: _bpsRed,
+                    color: bpsRed,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
@@ -120,10 +107,10 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                       Container(
                         padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                         decoration: BoxDecoration(
-                          color: _bpsRed.withOpacity(0.08),
+                          color: bpsRed.withOpacity(0.08),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: _bpsRed.withOpacity(0.3),
+                            color: bpsRed.withOpacity(0.3),
                             width: 1.5,
                           ),
                         ),
@@ -132,7 +119,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                           children: [
                             Icon(
                               Icons.info_outline_rounded,
-                              color: _bpsRed,
+                              color: bpsRed,
                               size: isSmallScreen ? 18 : 20,
                             ),
                             SizedBox(width: isSmallScreen ? 8 : 10),
@@ -142,7 +129,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 14 : 16,
                                   fontWeight: FontWeight.w700,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                 ),
                               ),
                             ),
@@ -154,7 +141,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         'Data tahun 2024 menggunakan data dari tahun 2023 untuk jenjang pendidikan RA, MI, MTs, dan MA karena keterbatasan ketersediaan data semester ganjil 2024/2025.',
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 14,
-                          color: _bpsTextSecondary,
+                          color: bpsTextSecondary,
                           height: 1.6,
                         ),
                       ),
@@ -163,7 +150,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         'Data yang ditampilkan adalah estimasi berdasarkan data tahun ajaran 2023/2024.',
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 14,
-                          color: _bpsTextSecondary,
+                          color: bpsTextSecondary,
                           height: 1.6,
                         ),
                       ),
@@ -173,7 +160,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         child: ElevatedButton(
                           onPressed: () => Navigator.pop(dialogContext),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: _bpsRed,
+                            backgroundColor: bpsRed,
                             foregroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(
                               vertical: isSmallScreen ? 12 : 14,
@@ -545,7 +532,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
     final isSmallScreen = sizing.isVerySmall || sizing.isSmall;
 
     return Scaffold(
-      backgroundColor: _bpsBackground,
+      backgroundColor: bpsBackground,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
@@ -555,13 +542,13 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const CircularProgressIndicator(color: _bpsGreen),
+                        const CircularProgressIndicator(color: bpsGreen),
                         SizedBox(height: sizing.sectionSpacing - 8),
                         Text(
                           'Memuat data pendidikan...',
                           style: TextStyle(
                             fontSize: sizing.categoryLabelFontSize,
-                            color: _bpsTextSecondary,
+                            color: bpsTextSecondary,
                           ),
                         ),
                       ],
@@ -577,7 +564,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                               Icon(
                                 Icons.inbox_outlined,
                                 size: isSmallScreen ? 48 : 64,
-                                color: _bpsTextLabel,
+                                color: bpsTextLabel,
                               ),
                               SizedBox(height: sizing.sectionSpacing - 8),
                               Text(
@@ -585,7 +572,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                                 style: TextStyle(
                                   fontSize: sizing.sectionTitleSize,
                                   fontWeight: FontWeight.bold,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                 ),
                               ),
                               SizedBox(height: sizing.itemSpacing),
@@ -594,7 +581,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: sizing.categoryLabelFontSize,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                 ),
                               ),
                             ],
@@ -639,10 +626,10 @@ class _PendidikanScreenState extends State<PendidikanScreen>
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
     return Container(
       decoration: BoxDecoration(
-        color: _bpsGreen,
+        color: bpsGreen,
         boxShadow: [
           BoxShadow(
-            color: _bpsGreen.withOpacity(0.2),
+            color: bpsGreen.withOpacity(0.2),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -700,9 +687,9 @@ class _PendidikanScreenState extends State<PendidikanScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -718,7 +705,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
             children: [
               Icon(
                 Icons.calendar_today_rounded,
-                color: _bpsGreen,
+                color: bpsGreen,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -729,7 +716,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                       ? sizing.groupTitleSize - 2
                       : sizing.groupTitleSize,
                   fontWeight: FontWeight.w700,
-                  color: _bpsTextPrimary,
+                  color: bpsTextPrimary,
                 ),
               ),
             ],
@@ -741,7 +728,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
             children: years.map((year) {
               final isSelected = year == selectedYear;
               return Material(
-                color: isSelected ? _bpsGreen : _bpsBackground,
+                color: isSelected ? bpsGreen : bpsBackground,
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () {
@@ -764,13 +751,13 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? _bpsGreen : _bpsBorder,
+                        color: isSelected ? bpsGreen : bpsBorder,
                         width: isSelected ? 2 : 1.5,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: _bpsGreen.withOpacity(0.3),
+                                color: bpsGreen.withOpacity(0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -783,7 +770,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         fontSize: isSmallScreen ? 14 : 16,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : _bpsTextSecondary,
+                        color: isSelected ? Colors.white : bpsTextSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -803,9 +790,9 @@ class _PendidikanScreenState extends State<PendidikanScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -821,7 +808,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
             children: [
               Icon(
                 Icons.analytics_rounded,
-                color: _bpsGreen,
+                color: bpsGreen,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -833,7 +820,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -844,7 +831,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsGreen.withOpacity(0.1),
+                    color: bpsGreen.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -852,7 +839,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsGreen,
+                        color: bpsGreen,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -860,7 +847,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsGreen,
+                          color: bpsGreen,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -878,7 +865,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 value:
                     '${NumberFormatUtils.formatCompact(getTotalMurid(selectedYear))}',
                 label: 'Total Murid',
-                color: _bpsGreen,
+                color: bpsGreen,
                 icon: Icons.groups,
                 description:
                     'Total jumlah murid di seluruh jenjang pendidikan di Kota Semarang, mencakup TK, RA, SD, MI, SMP, MTs, SMA, SMK, dan MA.',
@@ -889,7 +876,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 context: context,
                 value: '${currentData['angkaMelekHuruf']}%',
                 label: 'Angka Melek Huruf',
-                color: _bpsGreen,
+                color: bpsGreen,
                 icon: Icons.menu_book,
                 description:
                     'Angka Melek Huruf (AMH) menunjukkan persentase penduduk usia 15 tahun ke atas yang mampu membaca dan menulis huruf latin atau huruf lainnya.',
@@ -899,7 +886,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 context: context,
                 value: '${currentData['rataRataLamaSekolah']} th',
                 label: 'Rata-rata Lama Sekolah',
-                color: _bpsOrange,
+                color: bpsOrange,
                 icon: Icons.timer,
                 description:
                     'Rata-rata Lama Sekolah (RLS) menunjukkan jumlah tahun rata-rata yang dihabiskan oleh penduduk usia 25 tahun ke atas untuk menempuh pendidikan formal.',
@@ -954,7 +941,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 13 : 14,
                     fontWeight: FontWeight.w600,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -968,7 +955,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                   style: TextStyle(
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                     letterSpacing: -0.3,
                   ),
                   textAlign: TextAlign.right,
@@ -995,7 +982,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
       child: Divider(
         height: 1,
         thickness: 1,
-        color: _bpsBorder.withOpacity(0.5),
+        color: bpsBorder.withOpacity(0.5),
       ),
     );
   }
@@ -1110,7 +1097,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                                 'Nilai Indikator',
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 13 : 14,
-                                  color: _bpsTextSecondary,
+                                  color: bpsTextSecondary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1120,7 +1107,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
-                                  color: _bpsTextPrimary,
+                                  color: bpsTextPrimary,
                                   letterSpacing: -1,
                                 ),
                               ),
@@ -1131,7 +1118,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         Container(
                           padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                           decoration: BoxDecoration(
-                            color: _bpsBackground,
+                            color: bpsBackground,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -1160,7 +1147,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                                       description,
                                       style: TextStyle(
                                         fontSize: isSmallScreen ? 13 : 14,
-                                        color: _bpsTextSecondary,
+                                        color: bpsTextSecondary,
                                         height: 1.5,
                                       ),
                                     ),
@@ -1186,15 +1173,15 @@ class _PendidikanScreenState extends State<PendidikanScreen>
       ResponsiveSizing sizing, bool isSmallScreen) {
     final data = currentData['jenjangPendidikan'] as List;
     final colors = [
-      _bpsBlue,
-      _bpsBlue.withOpacity(0.7),
-      _bpsGreen,
-      _bpsGreen.withOpacity(0.7),
-      _bpsOrange,
-      _bpsOrange.withOpacity(0.7),
-      _bpsRed,
-      _bpsRed.withOpacity(0.7),
-      _bpsBlue.withOpacity(0.5),
+      bpsBlue,
+      bpsBlue.withOpacity(0.7),
+      bpsGreen,
+      bpsGreen.withOpacity(0.7),
+      bpsOrange,
+      bpsOrange.withOpacity(0.7),
+      bpsRed,
+      bpsRed.withOpacity(0.7),
+      bpsBlue.withOpacity(0.5),
     ];
 
     return Container(
@@ -1202,9 +1189,9 @@ class _PendidikanScreenState extends State<PendidikanScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1220,7 +1207,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
             children: [
               Icon(
                 Icons.bar_chart,
-                color: _bpsGreen,
+                color: bpsGreen,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1235,7 +1222,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                             ? sizing.groupTitleSize - 2
                             : sizing.groupTitleSize,
                         fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary,
+                        color: bpsTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -1243,7 +1230,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                       'Tahun $selectedYear',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 13,
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1292,7 +1279,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 9 : 10,
                                 fontWeight: FontWeight.w600,
-                                color: _bpsTextPrimary,
+                                color: bpsTextPrimary,
                               ),
                             ),
                           );
@@ -1311,7 +1298,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                           '${(value / 1000).toInt()}k',
                           style: TextStyle(
                             fontSize: isSmallScreen ? 9 : 10,
-                            color: _bpsTextSecondary,
+                            color: bpsTextSecondary,
                           ),
                         );
                       },
@@ -1327,7 +1314,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                   drawVerticalLine: false,
                   horizontalInterval: 40000,
                   getDrawingHorizontalLine: (value) {
-                    return FlLine(color: _bpsBorder, strokeWidth: 1);
+                    return FlLine(color: bpsBorder, strokeWidth: 1);
                   },
                 ),
                 borderData: FlBorderData(show: false),
@@ -1381,9 +1368,9 @@ class _PendidikanScreenState extends State<PendidikanScreen>
               ? sizing.statsCardPadding - 4
               : sizing.statsCardPadding),
           decoration: BoxDecoration(
-            color: _bpsCardBg,
+            color: bpsCardBg,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: _bpsBorder, width: 1.5),
+            border: Border.all(color: bpsBorder, width: 1.5),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.04),
@@ -1399,7 +1386,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 children: [
                   Icon(
                     Icons.bar_chart,
-                    color: _bpsOrange,
+                    color: bpsOrange,
                     size: isSmallScreen ? 16 : 20,
                   ),
                   SizedBox(width: sizing.itemSpacing),
@@ -1414,7 +1401,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                                 ? sizing.groupTitleSize - 2
                                 : sizing.groupTitleSize,
                             fontWeight: FontWeight.w700,
-                            color: _bpsTextPrimary,
+                            color: bpsTextPrimary,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -1424,7 +1411,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                           'Tahun $selectedYear',
                           style: TextStyle(
                             fontSize: isSmallScreen ? 12 : 13,
-                            color: _bpsTextSecondary,
+                            color: bpsTextSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -1479,7 +1466,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                                   style: TextStyle(
                                     fontSize: isSmallScreen ? 9 : 10,
                                     fontWeight: FontWeight.w600,
-                                    color: _bpsTextPrimary,
+                                    color: bpsTextPrimary,
                                   ),
                                 ),
                               );
@@ -1498,7 +1485,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                               '${value.toInt()}',
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 9 : 10,
-                                color: _bpsTextSecondary,
+                                color: bpsTextSecondary,
                               ),
                             );
                           },
@@ -1514,7 +1501,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                       drawVerticalLine: false,
                       horizontalInterval: 100,
                       getDrawingHorizontalLine: (value) {
-                        return FlLine(color: _bpsBorder, strokeWidth: 1);
+                        return FlLine(color: bpsBorder, strokeWidth: 1);
                       },
                     ),
                     borderData: FlBorderData(show: false),
@@ -1533,7 +1520,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         barRods: [
                           BarChartRodData(
                             toY: rasioSekolah,
-                            color: _bpsOrange,
+                            color: bpsOrange,
                             width: isSmallScreen ? 20 : 28,
                             borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(4)),
@@ -1554,9 +1541,9 @@ class _PendidikanScreenState extends State<PendidikanScreen>
               ? sizing.statsCardPadding - 4
               : sizing.statsCardPadding),
           decoration: BoxDecoration(
-            color: _bpsCardBg,
+            color: bpsCardBg,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: _bpsBorder, width: 1.5),
+            border: Border.all(color: bpsBorder, width: 1.5),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.04),
@@ -1572,7 +1559,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 children: [
                   Icon(
                     Icons.people,
-                    color: _bpsGreen,
+                    color: bpsGreen,
                     size: isSmallScreen ? 16 : 20,
                   ),
                   SizedBox(width: sizing.itemSpacing),
@@ -1587,7 +1574,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                                 ? sizing.groupTitleSize - 2
                                 : sizing.groupTitleSize,
                             fontWeight: FontWeight.w700,
-                            color: _bpsTextPrimary,
+                            color: bpsTextPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -1595,7 +1582,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                           'Tahun $selectedYear',
                           style: TextStyle(
                             fontSize: isSmallScreen ? 12 : 13,
-                            color: _bpsTextSecondary,
+                            color: bpsTextSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -1624,7 +1611,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         child: Divider(
                           height: 1,
                           thickness: 1,
-                          color: _bpsBorder.withOpacity(0.5),
+                          color: bpsBorder.withOpacity(0.5),
                         ),
                       ),
                     Padding(
@@ -1638,7 +1625,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                             width: isSmallScreen ? 10 : 12,
                             height: isSmallScreen ? 10 : 12,
                             decoration: const BoxDecoration(
-                              color: _bpsGreen,
+                              color: bpsGreen,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -1649,7 +1636,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 13 : 14,
                                 fontWeight: FontWeight.w600,
-                                color: _bpsTextPrimary,
+                                color: bpsTextPrimary,
                               ),
                             ),
                           ),
@@ -1658,7 +1645,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                             style: TextStyle(
                               fontSize: isSmallScreen ? 15 : 17,
                               fontWeight: FontWeight.w800,
-                              color: _bpsTextPrimary,
+                              color: bpsTextPrimary,
                               letterSpacing: -0.3,
                             ),
                           ),
@@ -1683,9 +1670,9 @@ class _PendidikanScreenState extends State<PendidikanScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1701,7 +1688,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
             children: [
               Icon(
                 Icons.bar_chart,
-                color: _bpsGreen,
+                color: bpsGreen,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1716,7 +1703,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                             ? sizing.groupTitleSize - 2
                             : sizing.groupTitleSize,
                         fontWeight: FontWeight.w700,
-                        color: _bpsTextPrimary,
+                        color: bpsTextPrimary,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -1726,7 +1713,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                       'Tahun $selectedYear',
                       style: TextStyle(
                         fontSize: isSmallScreen ? 12 : 13,
-                        color: _bpsTextSecondary,
+                        color: bpsTextSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1741,8 +1728,8 @@ class _PendidikanScreenState extends State<PendidikanScreen>
             runSpacing: isSmallScreen ? 8 : 12,
             alignment: WrapAlignment.center,
             children: [
-              _buildLegendItem('APM', _bpsGreen, isSmallScreen),
-              _buildLegendItem('APK', _bpsBlue, isSmallScreen),
+              _buildLegendItem('APM', bpsGreen, isSmallScreen),
+              _buildLegendItem('APK', bpsBlue, isSmallScreen),
             ],
           ),
           SizedBox(height: isSmallScreen ? 16 : 20),
@@ -1797,7 +1784,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 8 : 9,
                                 fontWeight: FontWeight.w600,
-                                color: _bpsTextPrimary,
+                                color: bpsTextPrimary,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -1817,7 +1804,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                           '${value.toInt()}%',
                           style: TextStyle(
                             fontSize: isSmallScreen ? 9 : 10,
-                            color: _bpsTextSecondary,
+                            color: bpsTextSecondary,
                           ),
                         );
                       },
@@ -1833,7 +1820,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                   drawVerticalLine: false,
                   horizontalInterval: 20,
                   getDrawingHorizontalLine: (value) {
-                    return FlLine(color: _bpsBorder, strokeWidth: 1);
+                    return FlLine(color: bpsBorder, strokeWidth: 1);
                   },
                 ),
                 borderData: FlBorderData(show: false),
@@ -1859,14 +1846,14 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     barRods: [
                       BarChartRodData(
                         toY: apm,
-                        color: _bpsGreen,
+                        color: bpsGreen,
                         width: isSmallScreen ? 14 : 18,
                         borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(4)),
                       ),
                       BarChartRodData(
                         toY: apk,
-                        color: _bpsBlue,
+                        color: bpsBlue,
                         width: isSmallScreen ? 14 : 18,
                         borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(4)),
@@ -1888,9 +1875,9 @@ class _PendidikanScreenState extends State<PendidikanScreen>
           ? sizing.statsCardPadding - 4
           : sizing.statsCardPadding),
       decoration: BoxDecoration(
-        color: _bpsCardBg,
+        color: bpsCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _bpsBorder, width: 1.5),
+        border: Border.all(color: bpsBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -1906,7 +1893,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
             children: [
               Icon(
                 Icons.analytics_rounded,
-                color: _bpsGreen,
+                color: bpsGreen,
                 size: isSmallScreen ? 16 : 20,
               ),
               SizedBox(width: sizing.itemSpacing),
@@ -1918,7 +1905,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         ? sizing.groupTitleSize - 2
                         : sizing.groupTitleSize,
                     fontWeight: FontWeight.w700,
-                    color: _bpsTextPrimary,
+                    color: bpsTextPrimary,
                   ),
                 ),
               ),
@@ -1929,7 +1916,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: _bpsGreen.withOpacity(0.1),
+                    color: bpsGreen.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -1937,7 +1924,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     children: [
                       Icon(
                         Icons.touch_app_rounded,
-                        color: _bpsGreen,
+                        color: bpsGreen,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -1945,7 +1932,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         'Tap untuk detail',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _bpsGreen,
+                          color: bpsGreen,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1962,7 +1949,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 context: context,
                 value: '1:${currentData['rasioGuruMurid']}',
                 label: 'Rasio Guru:Murid',
-                color: _bpsGreen,
+                color: bpsGreen,
                 icon: Icons.people,
                 description:
                     'Rasio Guru terhadap Murid menunjukkan perbandingan jumlah guru dengan jumlah murid di seluruh jenjang pendidikan. Semakin kecil rasio, semakin ideal kondisi pembelajaran.',
@@ -1973,7 +1960,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 context: context,
                 value: '${currentData['harapanLamaSekolah']} tahun',
                 label: 'Harapan Lama Sekolah',
-                color: _bpsGreen,
+                color: bpsGreen,
                 icon: Icons.school,
                 description:
                     'Harapan Lama Sekolah (HLS) menunjukkan lamanya sekolah (dalam tahun) yang diharapkan akan dirasakan oleh anak pada umur tertentu di masa mendatang.',
