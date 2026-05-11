@@ -268,13 +268,8 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis),
               ),
-              Container(
-                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                  decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Icon(Icons.public_rounded,
-                      color: Colors.white, size: isSmallScreen ? 20 : 24)),
+              Icon(Icons.public_rounded,
+                  color: Colors.white, size: isSmallScreen ? 20 : 24),
             ],
           ),
         ),
@@ -1033,13 +1028,8 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           ]),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Container(
-              padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-              decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(10)),
-              child: Icon(Icons.eco,
-                  color: Colors.white, size: isSmallScreen ? 20 : 24)),
+          Icon(Icons.eco,
+              color: Colors.white, size: isSmallScreen ? 20 : 24),
           SizedBox(width: sizing.itemSpacing),
           Text('Tentang TPB/SDGs',
               style: TextStyle(

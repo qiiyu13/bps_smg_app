@@ -773,14 +773,8 @@ class _PendudukScreenState extends State<PendudukScreen>
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis),
               ),
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(12)),
-                child: Icon(Icons.groups_rounded,
-                    color: Colors.white, size: isSmallScreen ? 20 : 24),
-              ),
+              Icon(Icons.groups_rounded,
+                  color: Colors.white, size: isSmallScreen ? 20 : 24),
             ],
           ),
         ),
@@ -1168,17 +1162,10 @@ class _PendudukScreenState extends State<PendudukScreen>
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          icon,
-                          color: Colors.white,
-                          size: isSmallScreen ? 20 : 24,
-                        ),
+                      Icon(
+                        icon,
+                        color: Colors.white,
+                        size: isSmallScreen ? 20 : 24,
                       ),
                       SizedBox(width: isSmallScreen ? 8 : 12),
                       Expanded(

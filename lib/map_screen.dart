@@ -791,19 +791,12 @@ class ProvinceDetailScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.location_on,
-                          color: Colors.white,
-                          size: 32,
-                        ),
-                      ),
+                  children: [
+                    const Icon(
+                      Icons.location_on,
+                      color: Colors.white,
+                      size: 32,
+                    ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(

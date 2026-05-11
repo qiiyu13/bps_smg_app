@@ -328,17 +328,10 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.volunteer_activism_rounded,
-                  color: Colors.white,
-                  size: isSmallScreen ? 20 : 24,
-                ),
+              Icon(
+                Icons.volunteer_activism_rounded,
+                color: Colors.white,
+                size: isSmallScreen ? 20 : 24,
               ),
             ],
           ),
