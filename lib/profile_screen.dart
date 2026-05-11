@@ -80,7 +80,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                         SizedBox(height: sizing.sectionSpacing - 8),
                         _buildSectionHeader(
                           sizing: sizing,
-                          icon: Icons.contact_mail_rounded,
                           title: 'Kontak Kami',
                         ),
                         SizedBox(height: sizing.itemSpacing),
@@ -176,17 +175,19 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   Widget _buildSectionHeader({
     required ResponsiveSizing sizing,
-    required IconData icon,
+    IconData? icon,
     required String title,
   }) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color: bpsBlue,
-          size: sizing.sectionIconSize,
-        ),
-        SizedBox(width: sizing.itemSpacing),
+        if (icon != null) ...[
+          Icon(
+            icon,
+            color: bpsBlue,
+            size: sizing.sectionIconSize,
+          ),
+          SizedBox(width: sizing.itemSpacing),
+        ],
         Text(
           title,
           style: TextStyle(
@@ -272,18 +273,10 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
           child: Row(
             children: [
-              Container(
-                padding:
-                    EdgeInsets.all(sizing.categoryIconContainerPadding - 2),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: sizing.categoryIconSize,
-                ),
+              Icon(
+                icon,
+                color: color,
+                size: sizing.categoryIconSize,
               ),
               SizedBox(width: sizing.itemSpacing + 2),
               Expanded(

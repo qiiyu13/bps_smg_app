@@ -1630,93 +1630,57 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: category.groupColor.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: category.groupColor.withOpacity(0.12),
-          width: 1.0,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: category.groupColor.withOpacity(0.10),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-            spreadRadius: -4,
-          ),
-          BoxShadow(
-            color: category.groupColor.withOpacity(0.06),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              CupertinoPageRoute<void>(builder: (context) => category.screen),
-            );
-          },
-          borderRadius: BorderRadius.circular(16),
-          highlightColor: category.groupColor.withOpacity(0.05),
-          splashColor: category.groupColor.withOpacity(0.1),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                height: 4,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      category.groupColor,
-                      category.groupColor.withOpacity(0.3),
-                    ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
-                ),
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  category.groupColor.withOpacity(0.3),
+                  category.groupColor,
+                ],
               ),
-              Expanded(
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Padding(
+            padding: const EdgeInsets.only(right: 3, bottom: 6),
+            child: Container(
+              color: Colors.white,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute<void>(
+                        builder: (context) => category.screen),
+                  );
+                },
+                highlightColor: category.groupColor.withOpacity(0.05),
+                splashColor: category.groupColor.withOpacity(0.1),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: sizing.categoryCardPadding,
-                    vertical: 8,
-                  ),
+                  padding: EdgeInsets.all(sizing.categoryCardPadding + 2),
                   child: Row(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(sizing.isVerySmall ? 6 : 8),
-                        decoration: BoxDecoration(
-                          color: category.groupColor.withOpacity(0.12),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          category.icon,
-                          color: category.groupColor,
-                          size: sizing.isVerySmall ? 16 : 18,
-                        ),
+                      Icon(
+                        category.icon,
+                        color: category.groupColor,
+                        size: sizing.categoryIconSize,
                       ),
                       SizedBox(width: sizing.itemSpacing),
                       Expanded(
                         child: Text(
                           category.shortLabel,
                           style: TextStyle(
-                            fontSize: sizing.isVerySmall
-                                ? sizing.categoryLabelFontSize - 2
-                                : sizing.categoryLabelFontSize - 1,
+                            fontSize: sizing.categoryLabelFontSize - 1,
                             fontWeight: FontWeight.w600,
                             color: bpsTextPrimary,
-                            height: 1.2,
+                            height: 1.25,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -1726,10 +1690,11 @@ class _CategoryCard extends StatelessWidget {
                   ),
                 ),
               ),
-            ],
+            ),
+          ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
