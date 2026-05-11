@@ -1633,18 +1633,24 @@ class _CategoryCard extends StatelessWidget {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: category.groupColor.withOpacity(0.05),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: category.groupColor.withOpacity(0.15),
+          color: category.groupColor.withOpacity(0.12),
           width: 1.0,
         ),
         boxShadow: [
           BoxShadow(
+            color: category.groupColor.withOpacity(0.10),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+            spreadRadius: -4,
+          ),
+          BoxShadow(
             color: category.groupColor.withOpacity(0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-            spreadRadius: -2,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+            spreadRadius: 0,
           ),
         ],
       ),
@@ -1660,26 +1666,45 @@ class _CategoryCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           highlightColor: category.groupColor.withOpacity(0.05),
           splashColor: category.groupColor.withOpacity(0.1),
-          child: Row(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Subtle colored strip indicator on the left
               Container(
-                width: 4,
-                color: category.groupColor,
+                height: 4,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      category.groupColor,
+                      category.groupColor.withOpacity(0.3),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
               ),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: sizing.categoryCardPadding,
-                    vertical: 6,
+                    vertical: 8,
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        category.icon,
-                        color: category.groupColor,
-                        size: sizing.isVerySmall ? 20 : 24,
+                      Container(
+                        padding: EdgeInsets.all(sizing.isVerySmall ? 6 : 8),
+                        decoration: BoxDecoration(
+                          color: category.groupColor.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          category.icon,
+                          color: category.groupColor,
+                          size: sizing.isVerySmall ? 16 : 18,
+                        ),
                       ),
                       SizedBox(width: sizing.itemSpacing),
                       Expanded(
