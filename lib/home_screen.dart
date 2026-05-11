@@ -492,10 +492,12 @@ class _HomeScreenContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      physics:
-          const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-      slivers: [
+    return ScrollConfiguration(
+      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+      child: CustomScrollView(
+        physics:
+            const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        slivers: [
         // Header with search
         _buildHeader(),
 
@@ -512,7 +514,8 @@ class _HomeScreenContent extends StatelessWidget {
         const SliverToBoxAdapter(
           child: SizedBox(height: 32),
         ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -522,6 +525,10 @@ class _HomeScreenContent extends StatelessWidget {
         decoration: BoxDecoration(
           color: bpsBlue,
           boxShadow: [BPSShadows.headerShadow],
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          ),
         ),
         child: SafeArea(
           bottom: false,
