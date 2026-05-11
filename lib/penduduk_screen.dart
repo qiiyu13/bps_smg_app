@@ -1949,7 +1949,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                         style: TextStyle(
                             fontSize: isSmallScreen ? 13 : 14,
                             fontWeight: FontWeight.w600,
-                            color: circleColor)),
+                            color: bpsTextPrimary)),
                   ],
                 ),
               );

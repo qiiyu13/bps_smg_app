@@ -593,7 +593,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                   ? sizing.sectionTitleSize - 2
                   : sizing.sectionTitleSize,
               fontWeight: FontWeight.w800,
-              color: color,
+              color: bpsTextPrimary,
             ),
           ),
         ],
@@ -805,8 +805,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                 }),
                 lineTouchData: LineTouchData(
                   touchTooltipData: LineTouchTooltipData(
-                    getTooltipColor: (touchedSpot) =>
-                        bpsTextPrimary.withOpacity(0.85),
+                    getTooltipColor: (touchedSpot) => Colors.white,
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots.map((spot) {
                         return LineTooltipItem(

@@ -1222,6 +1222,7 @@ class _IDGScreenState extends State<IDGScreen>
                       barTouchData: BarTouchData(
                         enabled: true,
                         touchTooltipData: BarTouchTooltipData(
+                          getTooltipColor: (group) => Colors.white,
                           tooltipRoundedRadius: 8,
                           tooltipPadding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 8),
@@ -1231,7 +1232,7 @@ class _IDGScreenState extends State<IDGScreen>
                               return BarTooltipItem(
                                 '${yearLabels[index]}\nIKG: ${NumberFormatUtils.formatDecimal(rod.toY, decimalPlaces: 3)}',
                                 const TextStyle(
-                                    color: Colors.white,
+                                    color: bpsTextPrimary,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 11),
                               );

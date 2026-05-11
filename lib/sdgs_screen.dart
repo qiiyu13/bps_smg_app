@@ -744,6 +744,33 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           SizedBox(
               height: 240,
               child: BarChart(BarChartData(
+                  barTouchData: BarTouchData(
+                    touchTooltipData: BarTouchTooltipData(
+                      getTooltipColor: (group) => Colors.white,
+                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                        final label = _getIndicatorLabel(groupIndex);
+                        return BarTooltipItem(
+                          label.replaceAll('\n', ' '),
+                          const TextStyle(
+                            color: bpsTextSecondary,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                          ),
+                          children: [
+                            const TextSpan(text: '\n'),
+                            TextSpan(
+                              text: '${rod.toY.round()}%',
+                              style: TextStyle(
+                                color: _getIndicatorColor(groupIndex),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
                   barGroups: _getBarChartData(),
                   borderData: FlBorderData(show: false),
                   gridData: FlGridData(
@@ -871,6 +898,33 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                 child: BarChart(BarChartData(
                   alignment: BarChartAlignment.spaceEvenly,
                   maxY: highest + 10,
+                  barTouchData: BarTouchData(
+                    touchTooltipData: BarTouchTooltipData(
+                      getTooltipColor: (group) => Colors.white,
+                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                        final name = groupIndex < sortedNames.length ? sortedNames[groupIndex] : '';
+                        return BarTooltipItem(
+                          name,
+                          const TextStyle(
+                            color: bpsTextSecondary,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                          ),
+                          children: [
+                            const TextSpan(text: '\n'),
+                            TextSpan(
+                              text: '${rod.toY.round()}%',
+                              style: const TextStyle(
+                                color: bpsOrange,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
                   barGroups: List.generate(sortedNames.length, (index) {
                     final isSelected = sortedNames[index] == selectedKota;
                     return BarChartGroupData(x: index, barRods: [

@@ -1042,6 +1042,38 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     sideTitles: SideTitles(showTitles: false),
                   ),
                 ),
+                lineTouchData: LineTouchData(
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipColor: (touchedSpot) => Colors.white,
+                    getTooltipItems: (touchedSpots) {
+                      return touchedSpots.map((spot) {
+                        final label = spot.barIndex == 0 ? 'Semarang' : 'Jawa Tengah';
+                        final yearData = spot.barIndex == 0
+                            ? data.semarangData[spot.x.toInt()]
+                            : data.jatengData[spot.x.toInt()];
+                        return LineTooltipItem(
+                          '$label (${yearData.year})',
+                          const TextStyle(
+                            color: bpsTextSecondary,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                          ),
+                          children: [
+                            const TextSpan(text: '\n'),
+                            TextSpan(
+                              text: '${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}%',
+                              style: TextStyle(
+                                color: spot.barIndex == 0 ? bpsBlue : bpsOrange,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList();
+                    },
+                  ),
+                ),
                 borderData: FlBorderData(show: false),
                 minX: 0,
                 maxX: (data.semarangData.length - 1).toDouble(),

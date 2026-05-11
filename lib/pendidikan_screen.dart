@@ -1249,6 +1249,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
+                    getTooltipColor: (group) => Colors.white,
                     tooltipRoundedRadius: 8,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       String jenjang =
@@ -1257,7 +1258,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                       return BarTooltipItem(
                         '$jenjang\n$jumlah ribu murid',
                         const TextStyle(
-                          color: Colors.white,
+                          color: bpsTextPrimary,
                           fontWeight: FontWeight.bold,
                           fontSize: 11,
                         ),
@@ -1431,6 +1432,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     barTouchData: BarTouchData(
                       enabled: true,
                       touchTooltipData: BarTouchTooltipData(
+                        getTooltipColor: (group) => Colors.white,
                         tooltipRoundedRadius: 8,
                         getTooltipItem: (group, groupIndex, rod, rodIndex) {
                           if (groupIndex >= rasioData.length) return null;
@@ -1443,7 +1445,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                           return BarTooltipItem(
                             '$jenjang\n$rasio murid/sekolah',
                             const TextStyle(
-                              color: Colors.white,
+                              color: bpsTextPrimary,
                               fontWeight: FontWeight.bold,
                               fontSize: 11,
                             ),
@@ -1743,6 +1745,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
+                    getTooltipColor: (group) => Colors.white,
                     tooltipRoundedRadius: 8,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       if (groupIndex >= partisipasiData.length) return null;
@@ -1755,7 +1758,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                       return BarTooltipItem(
                         '$jenjang\n$label: $nilai%',
                         const TextStyle(
-                          color: Colors.white,
+                          color: bpsTextPrimary,
                           fontWeight: FontWeight.bold,
                           fontSize: 10,
                         ),

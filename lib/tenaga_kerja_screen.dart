@@ -1163,6 +1163,36 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     sideTitles: SideTitles(showTitles: false),
                   ),
                 ),
+                lineTouchData: LineTouchData(
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipColor: (touchedSpot) => Colors.white,
+                    getTooltipItems: (touchedSpots) {
+                      return touchedSpots.map((spot) {
+                        final year = availableYears[spot.x.toInt()];
+                        final label = spot.barIndex == 0 ? 'Semarang' : 'Jawa Tengah';
+                        return LineTooltipItem(
+                          '$label ($year)',
+                          const TextStyle(
+                            color: bpsTextSecondary,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                          ),
+                          children: [
+                            const TextSpan(text: '\n'),
+                            TextSpan(
+                              text: '${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}%',
+                              style: TextStyle(
+                                color: spot.barIndex == 0 ? bpsBlue : bpsGreen,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList();
+                    },
+                  ),
+                ),
                 borderData: FlBorderData(show: false),
                 minX: 0,
                 maxX: (availableYears.length - 1).toDouble(),
@@ -1387,25 +1417,24 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     });
                   },
                   touchTooltipData: BarTouchTooltipData(
+                    getTooltipColor: (group) => Colors.white,
                     tooltipRoundedRadius: 8,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       final sectorName = data.keys.toList()[groupIndex];
                       final percentage = data.values.toList()[groupIndex];
-                      final realValue =
-                          (totalWorkers * percentage / 100).round();
+                      final realValue = (totalWorkers * percentage / 100).round();
                       return BarTooltipItem(
                         '$sectorName\n',
                         TextStyle(
-                          color: Colors.white,
+                          color: bpsTextPrimary,
                           fontWeight: FontWeight.w700,
                           fontSize: isSmallScreen ? 12 : 14,
                         ),
                         children: [
                           TextSpan(
-                            text:
-                                '${NumberFormatUtils.formatValue(percentage, decimalPlaces: 1)}%\n',
+                            text: '${NumberFormatUtils.formatValue(percentage, decimalPlaces: 1)}%\n',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: bpsTextPrimary,
                               fontWeight: FontWeight.w800,
                               fontSize: isSmallScreen ? 14 : 16,
                             ),
@@ -1413,7 +1442,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                           TextSpan(
                             text: _formatCompactNumber(realValue),
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: bpsTextSecondary,
                               fontWeight: FontWeight.w600,
                               fontSize: isSmallScreen ? 10 : 12,
                             ),

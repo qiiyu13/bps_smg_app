@@ -1940,6 +1940,35 @@ class _InflasiScreenState extends State<InflasiScreen>
                     sideTitles: SideTitles(showTitles: false),
                   ),
                 ),
+                lineTouchData: LineTouchData(
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipColor: (touchedSpot) => Colors.white,
+                    getTooltipItems: (touchedSpots) {
+                      return touchedSpots.map((spot) {
+                        final year = years[spot.x.toInt()];
+                        return LineTooltipItem(
+                          '$year',
+                          const TextStyle(
+                            color: bpsTextSecondary,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                          ),
+                          children: [
+                            const TextSpan(text: '\n'),
+                            TextSpan(
+                              text: '${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}%',
+                              style: const TextStyle(
+                                color: bpsBlue,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList();
+                    },
+                  ),
+                ),
                 borderData: FlBorderData(show: false),
                 minX: 0,
                 maxX: (years.length - 1).toDouble(),
@@ -2147,6 +2176,35 @@ class _InflasiScreenState extends State<InflasiScreen>
                       sideTitles: SideTitles(showTitles: false)),
                   topTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false)),
+                ),
+                barTouchData: BarTouchData(
+                  touchTooltipData: BarTouchTooltipData(
+                    getTooltipColor: (group) => Colors.white,
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      final monthLabel = groupIndex < months.length ? months[groupIndex] : '';
+                      final value = rod.toY;
+                      final displayValue = NumberFormatUtils.formatPercentage(value);
+                      return BarTooltipItem(
+                        '$monthLabel',
+                        const TextStyle(
+                          color: bpsTextSecondary,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 11,
+                        ),
+                        children: [
+                          const TextSpan(text: '\n'),
+                          TextSpan(
+                            text: displayValue,
+                            style: TextStyle(
+                              color: value >= 0 ? bpsBlue : bpsRed,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
                 borderData: FlBorderData(show: false),
                 barGroups: List.generate(monthlyData.length, (index) {
