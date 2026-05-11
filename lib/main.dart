@@ -35,13 +35,6 @@ class MyApp extends StatelessWidget {
         primaryColor: const Color(0xFF1976D2),
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'PlusJakartaSans',
-        // Performance: Use platform-specific page transitions
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: {
-            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-          },
-        ),
       ),
 
       // Halaman awal

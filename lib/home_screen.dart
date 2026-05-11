@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'app_theme.dart';
 import 'profile_screen.dart';
@@ -373,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen>
   void _navigateToProfile() {
     Navigator.push(
       context,
-      CupertinoPageRoute<void>(builder: (context) => const ProfileScreen()),
+      MaterialPageRoute<void>(builder: (context) => const ProfileScreen()),
     );
   }
 
@@ -1384,7 +1383,7 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
       onTap: () {
         Navigator.push(
           context,
-          CupertinoPageRoute<void>(builder: (context) => widget.screen),
+          MaterialPageRoute<void>(builder: (context) => widget.screen),
         );
       },
       child: AnimatedBuilder(
@@ -1421,7 +1420,7 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
                 onTap: () {
                   Navigator.push(
                     context,
-                    CupertinoPageRoute<void>(
+                    MaterialPageRoute<void>(
                         builder: (context) => widget.screen),
                   );
                 },
@@ -1648,7 +1647,7 @@ class _CategoryCard extends StatelessWidget {
         ),
         Positioned.fill(
           child: Padding(
-            padding: const EdgeInsets.only(right: 3, bottom: 6),
+            padding: const EdgeInsets.fromLTRB(0.5, 0.5, 3, 6),
             child: Container(
               color: Colors.white,
             child: Material(
@@ -1657,7 +1656,7 @@ class _CategoryCard extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    CupertinoPageRoute<void>(
+                    MaterialPageRoute<void>(
                         builder: (context) => category.screen),
                   );
                 },
