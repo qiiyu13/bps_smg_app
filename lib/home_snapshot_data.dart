@@ -346,6 +346,90 @@ class HomeSnapshotData {
     }
   }
 
+  static double _parseGrowth(String s) =>
+      double.tryParse(
+          s.replaceAll('%', '').replaceAll(',', '.').trim()) ??
+          0.0;
+
+  static Future<Map<String, dynamic>?> loadEkonomiData() async {
+    try {
+      final githubData = GitHubDataService.getData('ekonomi');
+      if (githubData != null) {
+        final ekonomiList = githubData['ekonomiData'] as List<dynamic>?;
+        if (ekonomiList != null && ekonomiList.length >= 2) {
+          final latest = ekonomiList[0] as Map<String, dynamic>;
+          final prev = ekonomiList[1] as Map<String, dynamic>;
+          final latestVal = _parseGrowth(latest['pertumbuhanEkonomi']?.toString() ?? '0');
+          final prevVal = _parseGrowth(prev['pertumbuhanEkonomi']?.toString() ?? '0');
+          final change = latestVal - prevVal;
+          final latestYear = int.tryParse(latest['tahun']?.toString() ?? '') ?? 0;
+
+          final semarangData = latest['semarangData'] as List<dynamic>?;
+          List<FlSpot> spots = [];
+          if (semarangData != null) {
+            final sorted = semarangData
+                .map((e) => e as Map<String, dynamic>)
+                .toList()
+              ..sort((a, b) =>
+                  (a['year'] as int).compareTo(b['year'] as int));
+            final firstYear = sorted.first['year'] as int;
+            spots = sorted
+                .map((e) => FlSpot(
+                      ((e['year'] as int) - firstYear).toDouble(),
+                      (e['value'] as num).toDouble(),
+                    ))
+                .toList();
+          }
+          return {'value': latestVal, 'change': change, 'latestYear': latestYear, 'spots': spots.isEmpty ? _defaultEkonomiSpots : spots};
+        }
+      }
+      return {'value': 6.49, 'change': 6.49 - 5.68, 'latestYear': 2025, 'spots': _defaultEkonomiSpots};
+    } catch (e) {
+      debugPrint('Error loading ekonomi snapshot: $e');
+      return null;
+    }
+  }
+
+  static Future<Map<String, dynamic>?> loadTPTData() async {
+    try {
+      final githubData = GitHubDataService.getData('tenaga_kerja');
+      if (githubData != null) {
+        final section = githubData['pengangguranData'] as Map<String, dynamic>?;
+        if (section != null) {
+          final decoded = section.map((key, value) =>
+              MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+          final years = decoded.keys.toList()..sort();
+          if (years.length >= 2) {
+            final latestYear = years.last;
+            final prevYear = years[years.length - 2];
+            final latestTPT = (decoded[latestYear]!['tptSemarang'] as num).toDouble();
+            final prevTPT = (decoded[prevYear]!['tptSemarang'] as num).toDouble();
+            final change = latestTPT - prevTPT;
+            final spots = years.map((y) {
+              final tpt = (decoded[y]!['tptSemarang'] as num).toDouble();
+              return FlSpot((y - years.first).toDouble(), tpt);
+            }).toList();
+            return {'value': latestTPT, 'change': change, 'latestYear': latestYear, 'spots': spots};
+          }
+        }
+      }
+      return {'value': 5.65, 'change': 5.65 - 5.82, 'latestYear': 2025, 'spots': _defaultTPTSpots};
+    } catch (e) {
+      debugPrint('Error loading TPT snapshot: $e');
+      return null;
+    }
+  }
+
+  static final List<FlSpot> _defaultEkonomiSpots = [
+    FlSpot(0, -1.85), FlSpot(1, 5.16), FlSpot(2, 5.73),
+    FlSpot(3, 5.77), FlSpot(4, 5.68), FlSpot(5, 6.49),
+  ];
+
+  static final List<FlSpot> _defaultTPTSpots = [
+    FlSpot(0, 9.57), FlSpot(1, 9.54), FlSpot(2, 7.60),
+    FlSpot(3, 5.99), FlSpot(4, 5.82), FlSpot(5, 5.65),
+  ];
+
   // Default data matching what individual screens use
   static const Map<int, Map<String, dynamic>> _defaultPendudukData = {
     2020: {

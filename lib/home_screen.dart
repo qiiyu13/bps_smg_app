@@ -1,192 +1,22 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'app_theme.dart';
 import 'profile_screen.dart';
+import 'statistik_screen.dart';
 import 'ipm_screen.dart';
 import 'kemiskinana_screen.dart';
 import 'inflasi_screen.dart';
 import 'penduduk_screen.dart';
-import 'pendidikan_screen.dart';
-import 'tenaga_kerja_screen.dart';
-import 'pengangguran_screen.dart';
 import 'pertumbuhan_ekonomi_screen.dart';
-import 'ipg_screen.dart';
-import 'idg_screen.dart';
-import 'sdgs_screen.dart';
+import 'pengangguran_screen.dart';
+import 'categories_data.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'home_snapshot_data.dart';
 
-// Category data model - Made immutable for better performance
-@immutable
-class CategoryItem {
-  final String label;
-  final String shortLabel;
-  final IconData icon;
-  final Widget screen;
-  final String group;
-  final Color groupColor;
-
-  const CategoryItem({
-    required this.label,
-    required this.shortLabel,
-    required this.icon,
-    required this.screen,
-    required this.group,
-    required this.groupColor,
-  });
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is CategoryItem &&
-          runtimeType == other.runtimeType &&
-          label == other.label &&
-          group == other.group;
-
-  @override
-  int get hashCode => label.hashCode ^ group.hashCode;
-
-  CategoryItem copyWith({
-    String? label,
-    String? shortLabel,
-    IconData? icon,
-    Widget? screen,
-    String? group,
-    Color? groupColor,
-  }) {
-    return CategoryItem(
-      label: label ?? this.label,
-      shortLabel: shortLabel ?? this.shortLabel,
-      icon: icon ?? this.icon,
-      screen: screen ?? this.screen,
-      group: group ?? this.group,
-      groupColor: groupColor ?? this.groupColor,
-    );
-  }
-}
-
-// Cache frequently used values
-class _HomeScreenCache {
-  static final List<CategoryItem> _allCategories = [
-    // Economic Indicators Group
-    const CategoryItem(
-      label: 'Pertumbuhan Ekonomi',
-      shortLabel: 'Ekonomi',
-      icon: Icons.show_chart_rounded,
-      screen: PertumbuhanEkonomiScreen(),
-      group: 'Economic',
-      groupColor: bpsEconomicColor,
-    ),
-    const CategoryItem(
-      label: 'Inflasi',
-      shortLabel: 'Inflasi',
-      icon: Icons.payments_rounded,
-      screen: InflasiScreen(),
-      group: 'Economic',
-      groupColor: bpsEconomicColor,
-    ),
-    const CategoryItem(
-      label: 'Tenaga Kerja',
-      shortLabel: 'Tenaga Kerja',
-      icon: Icons.work_rounded,
-      screen: TenagaKerjaScreen(),
-      group: 'Economic',
-      groupColor: bpsEconomicColor,
-    ),
-    const CategoryItem(
-      label: 'Kemiskinan',
-      shortLabel: 'Kemiskinan',
-      icon: Icons.volunteer_activism_rounded,
-      screen: KemiskinanScreen(),
-      group: 'Economic',
-      groupColor: bpsEconomicColor,
-    ),
-    const CategoryItem(
-      label: 'Pengangguran',
-      shortLabel: 'Pengangguran',
-      icon: Icons.work_off_rounded,
-      screen: PengangguranScreen(),
-      group: 'Economic',
-      groupColor: bpsEconomicColor,
-    ),
-
-    // Social Indicators Group
-    const CategoryItem(
-      label: 'Penduduk',
-      shortLabel: 'Penduduk',
-      icon: Icons.people_rounded,
-      screen: PendudukScreen(),
-      group: 'Social',
-      groupColor: bpsSocialColor,
-    ),
-    const CategoryItem(
-      label: 'Pendidikan',
-      shortLabel: 'Pendidikan',
-      icon: Icons.school_rounded,
-      screen: PendidikanScreen(),
-      group: 'Social',
-      groupColor: bpsSocialColor,
-    ),
-
-    // Development Indices Group
-    const CategoryItem(
-      label: 'Indeks Pembangunan Manusia',
-      shortLabel: 'IPM',
-      icon: Icons.trending_up_rounded,
-      screen: IpmScreen(),
-      group: 'Development',
-      groupColor: bpsDevelopmentColor,
-    ),
-    const CategoryItem(
-      label: 'Indeks Pembangunan Gender',
-      shortLabel: 'IPG',
-      icon: Icons.balance_rounded,
-      screen: IPGScreen(),
-      group: 'Development',
-      groupColor: bpsDevelopmentColor,
-    ),
-    const CategoryItem(
-      label: 'Indeks Ketimpangan Gender',
-      shortLabel: 'IDG',
-      icon: Icons.bar_chart_rounded,
-      screen: IDGScreen(),
-      group: 'Development',
-      groupColor: bpsDevelopmentColor,
-    ),
-    const CategoryItem(
-      label: 'Sustainable Development Goals',
-      shortLabel: 'SDGs',
-      icon: Icons.public_rounded,
-      screen: UserSDGsScreen(),
-      group: 'Development',
-      groupColor: bpsDevelopmentColor,
-    ),
-  ];
-
-  static List<CategoryItem> get allCategories => _allCategories;
-
-  static final Map<String, Map<String, dynamic>> _groupInfo = {
-    'Economic': {
-      'title': 'Indikator Ekonomi',
-      'icon': Icons.monetization_on_rounded,
-      'color': bpsEconomicColor,
-    },
-    'Social': {
-      'title': 'Indikator Sosial',
-      'icon': Icons.groups_rounded,
-      'color': bpsSocialColor,
-    },
-    'Development': {
-      'title': 'Indeks Pembangunan',
-      'icon': Icons.rocket_launch_rounded,
-      'color': bpsDevelopmentColor,
-    },
-  };
-
-  static Map<String, Map<String, dynamic>> get groupInfo => _groupInfo;
-}
+export 'categories_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -198,20 +28,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController _animationController;
-  late final PageController _statsPageController;
 
-  final ValueNotifier<int> _currentPageNotifier = ValueNotifier<int>(0);
+  final GlobalKey<_BentoTile1State> _tile1Key = GlobalKey<_BentoTile1State>();
+  final GlobalKey<_BentoTile2State> _tile2Key = GlobalKey<_BentoTile2State>();
+  final GlobalKey<_BentoTile3State> _tile3Key = GlobalKey<_BentoTile3State>();
+  final GlobalKey<_BentoTile4State> _tile4Key = GlobalKey<_BentoTile4State>();
+  final GlobalKey<_BentoTile5State> _tile5Key = GlobalKey<_BentoTile5State>();
+  final GlobalKey<_BentoTile6State> _tile6Key = GlobalKey<_BentoTile6State>();
 
-  final GlobalKey<_StatsCard1State> _card1Key = GlobalKey<_StatsCard1State>();
-  final GlobalKey<_StatsCard2State> _card2Key = GlobalKey<_StatsCard2State>();
-  final GlobalKey<_StatsCard3State> _card3Key = GlobalKey<_StatsCard3State>();
-  final GlobalKey<_StatsCard4State> _card4Key = GlobalKey<_StatsCard4State>();
-
-  String _searchQuery = '';
-  final TextEditingController _searchController = TextEditingController();
-  DateTime _lastUpdated = DateTime(2024, 12, 1);
-
-  Timer? _searchDebounce;
+  int _navIndex = 0;
 
   @override
   void initState() {
@@ -221,125 +46,36 @@ class _HomeScreenState extends State<HomeScreen>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     )..forward();
-
-    _statsPageController = PageController(
-      viewportFraction: 1.0,
-      keepPage: true,
-    );
-
-    _statsPageController.addListener(_handlePageChange);
-  }
-
-  // FIX 5: Immediate page change with threshold for stability
-  void _handlePageChange() {
-    if (!mounted) return;
-
-    final page = _statsPageController.page;
-    if (page == null) return;
-
-    final newPage = page.round();
-
-    // Only update when we've crossed the page threshold (page is close to integer)
-    // This prevents flickering during mid-swipe while still being responsive
-    final distanceFromPage = (page - newPage).abs();
-
-    if (distanceFromPage < 0.3 && _currentPageNotifier.value != newPage) {
-      _currentPageNotifier.value = newPage;
-    }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _animationController.dispose();
-    _statsPageController.removeListener(_handlePageChange);
-    _statsPageController.dispose();
-    _searchController.dispose();
-    _searchDebounce?.cancel();
-    _currentPageNotifier.dispose();
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _reloadAllCards();
+      _tile1Key.currentState?.reloadData();
+      _tile2Key.currentState?.reloadData();
+      _tile3Key.currentState?.reloadData();
+      _tile4Key.currentState?.reloadData();
+      _tile5Key.currentState?.reloadData();
+      _tile6Key.currentState?.reloadData();
     }
   }
 
-  void _reloadAllCards() {
-    _card1Key.currentState?.reloadData();
-    _card2Key.currentState?.reloadData();
-    _card3Key.currentState?.reloadData();
-    _card4Key.currentState?.reloadData();
-  }
-
-  // Optimized search handler with debouncing
-  void _handleSearch(String value) {
-    _searchDebounce?.cancel();
-    _searchDebounce = Timer(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        setState(() {
-          _searchQuery = value;
-        });
-      }
-    });
-  }
-
-  void _clearSearch() {
-    _searchController.clear();
-    if (mounted) {
-      setState(() {
-        _searchQuery = '';
-      });
-    }
-  }
-
-  // Optimized filtered categories getter
-  List<CategoryItem> get _filteredCategories {
-    if (_searchQuery.isEmpty) return _HomeScreenCache.allCategories;
-
-    final query = _searchQuery.toLowerCase();
-    return _HomeScreenCache.allCategories.where((cat) {
-      return cat.label.toLowerCase().contains(query) ||
-          cat.shortLabel.toLowerCase().contains(query);
-    }).toList();
-  }
-
-  // Optimized grouped categories with caching
-  Map<String, List<CategoryItem>> get _groupedCategories {
-    final result = <String, List<CategoryItem>>{
-      'Economic': [],
-      'Social': [],
-      'Development': [],
-    };
-
-    for (final cat in _filteredCategories) {
-      result[cat.group]!.add(cat);
-    }
-
-    return result;
-  }
-
-  String get _formattedLastUpdated {
-    final now = DateTime.now();
-    final difference = now.difference(_lastUpdated);
-
-    if (difference.inDays == 0) {
-      if (difference.inHours == 0) {
-        return '${difference.inMinutes} menit yang lalu';
-      }
-      return '${difference.inHours} jam yang lalu';
-    } else if (difference.inDays == 1) {
-      return 'Kemarin';
-    } else {
-      return '${_lastUpdated.day}/${_lastUpdated.month}/${_lastUpdated.year}';
-    }
+  void _navigateToProfile() {
+    Navigator.push(
+      context,
+      PageRouteBuilder<void>(
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+        pageBuilder: (_, __, ___) => const ProfileScreen(),
+      ),
+    );
   }
 
   @override
@@ -347,36 +83,28 @@ class _HomeScreenState extends State<HomeScreen>
     final sizing = ResponsiveSizing(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: _HomeScreenContent(
-        animationController: _animationController,
-        statsPageController: _statsPageController,
-        currentPageNotifier: _currentPageNotifier,
-        searchController: _searchController,
-        searchQuery: _searchQuery,
-        onSearchChanged: _handleSearch,
-        onClearSearch: _clearSearch,
-        filteredCategories: _filteredCategories,
-        groupedCategories: _groupedCategories,
-        sizing: sizing,
-        lastUpdated: _formattedLastUpdated,
-        card1Key: _card1Key,
-        card2Key: _card2Key,
-        card3Key: _card3Key,
-        card4Key: _card4Key,
+      backgroundColor: bpsBackground,
+      body: IndexedStack(
+        index: _navIndex,
+        children: [
+          _HomeBody(
+            animationController: _animationController,
+            tile1Key: _tile1Key,
+            tile2Key: _tile2Key,
+            tile3Key: _tile3Key,
+            tile4Key: _tile4Key,
+            tile5Key: _tile5Key,
+            tile6Key: _tile6Key,
+            onExploreAll: () => setState(() => _navIndex = 1),
+          ),
+          const StatistikScreen(),
+        ],
       ),
-      bottomNavigationBar: _buildModernBottomNav(sizing),
+      bottomNavigationBar: _buildBottomNav(sizing),
     );
   }
 
-  void _navigateToProfile() {
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(builder: (context) => const ProfileScreen()),
-    );
-  }
-
-  Widget _buildModernBottomNav(ResponsiveSizing sizing) {
+  Widget _buildBottomNav(ResponsiveSizing sizing) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -395,9 +123,17 @@ class _HomeScreenState extends State<HomeScreen>
             children: [
               _buildNavItem(
                 icon: Icons.home_rounded,
-                label: 'Home',
-                isSelected: true,
+                label: 'Beranda',
+                isSelected: _navIndex == 0,
                 sizing: sizing,
+                onTap: () => setState(() => _navIndex = 0),
+              ),
+              _buildNavItem(
+                icon: Icons.bar_chart_rounded,
+                label: 'Statistik',
+                isSelected: _navIndex == 1,
+                sizing: sizing,
+                onTap: () => setState(() => _navIndex = 1),
               ),
               _buildNavItem(
                 icon: Icons.info_rounded,
@@ -453,77 +189,61 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
-// Extract heavy content to a separate widget to minimize rebuilds
-class _HomeScreenContent extends StatelessWidget {
-  final AnimationController animationController;
-  final PageController statsPageController;
-  final ValueNotifier<int> currentPageNotifier;
-  final TextEditingController searchController;
-  final String searchQuery;
-  final ValueChanged<String> onSearchChanged;
-  final VoidCallback onClearSearch;
-  final List<CategoryItem> filteredCategories;
-  final Map<String, List<CategoryItem>> groupedCategories;
-  final ResponsiveSizing sizing;
-  final String lastUpdated;
-  final GlobalKey<_StatsCard1State> card1Key;
-  final GlobalKey<_StatsCard2State> card2Key;
-  final GlobalKey<_StatsCard3State> card3Key;
-  final GlobalKey<_StatsCard4State> card4Key;
+// ─── Home Body ────────────────────────────────────────────────────────────────
 
-  const _HomeScreenContent({
+class _HomeBody extends StatelessWidget {
+  final AnimationController animationController;
+  final GlobalKey<_BentoTile1State> tile1Key;
+  final GlobalKey<_BentoTile2State> tile2Key;
+  final GlobalKey<_BentoTile3State> tile3Key;
+  final GlobalKey<_BentoTile4State> tile4Key;
+  final GlobalKey<_BentoTile5State> tile5Key;
+  final GlobalKey<_BentoTile6State> tile6Key;
+  final VoidCallback onExploreAll;
+
+  const _HomeBody({
     required this.animationController,
-    required this.statsPageController,
-    required this.currentPageNotifier,
-    required this.searchController,
-    required this.searchQuery,
-    required this.onSearchChanged,
-    required this.onClearSearch,
-    required this.filteredCategories,
-    required this.groupedCategories,
-    required this.sizing,
-    required this.lastUpdated,
-    required this.card1Key,
-    required this.card2Key,
-    required this.card3Key,
-    required this.card4Key,
+    required this.tile1Key,
+    required this.tile2Key,
+    required this.tile3Key,
+    required this.tile4Key,
+    required this.tile5Key,
+    required this.tile6Key,
+    required this.onExploreAll,
   });
 
   @override
   Widget build(BuildContext context) {
+    final sizing = ResponsiveSizing(context);
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
       child: CustomScrollView(
-        physics:
-            const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        physics: const ClampingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics()),
         slivers: [
-        // Header with search
-        _buildHeader(),
-
-        // Stats snapshot section
-        _buildStatsSection(context),
-
-        // Categories header
-        _buildCategoriesHeader(),
-
-        // Category groups
-        ..._buildCategoryGroups(context),
-
-        // Footer spacing
-        const SliverToBoxAdapter(
-          child: SizedBox(height: 32),
-        ),
+          _buildHeader(sizing),
+          _buildBentoSection(sizing),
+          const SliverToBoxAdapter(child: SizedBox(height: 32)),
         ],
       ),
     );
   }
 
-  SliverToBoxAdapter _buildHeader() {
+  SliverToBoxAdapter _buildHeader(ResponsiveSizing sizing) {
     return SliverToBoxAdapter(
       child: Container(
         decoration: BoxDecoration(
-          color: bpsBlue,
-          boxShadow: [BPSShadows.headerShadow],
+          color: Colors.white,
+          border: const Border(
+            bottom: BorderSide(color: bpsBlue, width: 3),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 2),
+            ),
+          ],
           borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(20),
             bottomRight: Radius.circular(20),
@@ -536,110 +256,44 @@ class _HomeScreenContent extends StatelessWidget {
               sizing.horizontalPadding,
               sizing.horizontalPadding,
               sizing.horizontalPadding,
-              sizing.horizontalPadding + 4,
+              sizing.horizontalPadding,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                // Top bar with logo
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(sizing.headerLogoPadding),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.15),
-                          width: 1,
+                SvgPicture.asset(
+                  'assets/images/logo-bps.svg',
+                  width: sizing.headerLogoSize * 2.0,
+                  fit: BoxFit.contain,
+                  placeholderBuilder: (context) => Icon(
+                    Icons.account_balance_rounded,
+                    color: bpsBlue,
+                    size: sizing.headerLogoSize,
+                  ),
+                ),
+                SizedBox(width: sizing.itemSpacing),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'BPS KOTA SEMARANG',
+                        style: TextStyle(
+                          color: bpsTextPrimary,
+                          fontSize: sizing.headerTitleSize,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
                         ),
                       ),
-                      child: Image.asset(
-                        'assets/images/logo_white.png',
-                        width: sizing.headerLogoSize,
-                        height: sizing.headerLogoSize,
-                        filterQuality: FilterQuality.medium,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.account_balance_rounded,
-                            color: Colors.white,
-                            size: sizing.headerLogoSize,
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(width: sizing.itemSpacing),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'BPS KOTA SEMARANG',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: sizing.headerTitleSize,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'Statistik Terpercaya',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: sizing.headerSubtitleSize,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: sizing.horizontalPadding),
-                // Search bar
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Statistik Terpercaya',
+                        style: TextStyle(
+                          color: bpsTextSecondary,
+                          fontSize: sizing.headerSubtitleSize,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ],
-                  ),
-                  child: TextField(
-                    controller: searchController,
-                    onChanged: onSearchChanged,
-                    decoration: InputDecoration(
-                      hintText: 'Cari kategori statistik...',
-                      hintStyle: TextStyle(
-                        color: bpsTextLabel,
-                        fontSize: sizing.searchFontSize,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.search_rounded,
-                        color: bpsBlue,
-                        size: sizing.searchIconSize,
-                      ),
-                      suffixIcon: searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.clear_rounded,
-                                color: bpsTextSecondary,
-                                size: sizing.searchClearIconSize,
-                              ),
-                              onPressed: onClearSearch,
-                            )
-                          : null,
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: sizing.searchPadding,
-                        vertical: sizing.searchPadding,
-                      ),
-                    ),
                   ),
                 ),
               ],
@@ -650,7 +304,7 @@ class _HomeScreenContent extends StatelessWidget {
     );
   }
 
-  SliverToBoxAdapter _buildStatsSection(BuildContext context) {
+  SliverToBoxAdapter _buildBentoSection(ResponsiveSizing sizing) {
     return SliverToBoxAdapter(
       child: SlideTransition(
         position: Tween<Offset>(
@@ -660,26 +314,29 @@ class _HomeScreenContent extends StatelessWidget {
           parent: animationController,
           curve: Curves.easeOutCubic,
         )),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                sizing.horizontalPadding,
-                sizing.sectionSpacing - 8,
-                sizing.horizontalPadding,
-                sizing.horizontalPadding - 4,
-              ),
-              child: Row(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            sizing.horizontalPadding,
+            sizing.sectionSpacing - 8,
+            sizing.horizontalPadding,
+            0,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Icon(
-                    Icons.analytics_rounded,
-                    color: bpsBlue,
-                    size: sizing.sectionIconSize,
+                  Container(
+                    width: 3,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: bpsBlue,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                   SizedBox(width: sizing.itemSpacing - 2),
                   Text(
-                    'Snapshot Indikator Utama',
+                    'Snapshot Data',
                     style: TextStyle(
                       fontSize: sizing.sectionTitleSize,
                       fontWeight: FontWeight.w700,
@@ -688,319 +345,18 @@ class _HomeScreenContent extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-            // Stats cards section
-            SizedBox(
-              height: sizing.statsCardHeight,
-              // Removed fixed white background, border radius, and strict clipping
-              // so the cards feel like they are floating freely rather than being inside a frame.
-              child: PageView.builder(
-                controller: statsPageController,
-                itemCount: 4,
-                physics:
-                    const BouncingScrollPhysics(), // Softer bounce effect when swiping
-                allowImplicitScrolling: true,
-                clipBehavior:
-                    Clip.none, // Allow shadows of the floating cards to show
-                itemBuilder: (context, index) {
-                  return Padding(
-                    // Add the horizontal margin back here so the individual cards don't touch the edges
-                    padding: EdgeInsets.symmetric(
-                        horizontal: sizing.horizontalPadding),
-                    child: switch (index) {
-                      0 => _StatsCard1(key: card1Key),
-                      1 => _StatsCard2(key: card2Key),
-                      2 => _StatsCard3(key: card3Key),
-                      3 => _StatsCard4(key: card4Key),
-                      _ => const SizedBox(),
-                    },
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: sizing.itemSpacing),
-            // FIX 1: Use ValueListenableBuilder to isolate page indicator rebuilds
-            ValueListenableBuilder<int>(
-              valueListenable: currentPageNotifier,
-              builder: (context, currentPage, child) {
-                return _PageIndicators(
-                  currentPage: currentPage,
-                  pageController: statsPageController,
-                  sizing: sizing,
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  SliverToBoxAdapter _buildCategoriesHeader() {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(
-          sizing.horizontalPadding,
-          sizing.sectionSpacing,
-          sizing.horizontalPadding,
-          sizing.horizontalPadding - 4,
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.grid_view_rounded,
-              color: bpsBlue,
-              size: sizing.sectionIconSize,
-            ),
-            SizedBox(width: sizing.itemSpacing - 2),
-            Text(
-              'Jelajahi Statistik',
-              style: TextStyle(
-                fontSize: sizing.sectionTitleSize,
-                fontWeight: FontWeight.w700,
-                color: bpsTextPrimary,
-              ),
-            ),
-            const Spacer(),
-            if (searchQuery.isNotEmpty)
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: sizing.itemSpacing,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${filteredCategories.length} hasil',
-                  style: TextStyle(
-                    fontSize: sizing.bottomNavLabelSize,
-                    fontWeight: FontWeight.w600,
-                    color: bpsBlue,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _buildCategoryGroups(BuildContext context) {
-    final widgets = <Widget>[];
-    final screenWidth = MediaQuery.of(context).size.width;
-    final crossAxisCount = screenWidth < 600 ? 2 : 3;
-
-    groupedCategories.forEach((groupKey, categories) {
-      if (categories.isEmpty) return;
-
-      final info = _HomeScreenCache.groupInfo[groupKey]!;
-      final groupColor = info['color'] as Color;
-
-      // Group header
-      widgets.add(
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              sizing.horizontalPadding,
-              sizing.horizontalPadding,
-              sizing.horizontalPadding,
-              sizing.itemSpacing,
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(sizing.groupIconPadding),
-                  decoration:
-                      BPSDecorations.groupIconContainerDecoration(groupColor),
-                  child: Icon(
-                    info['icon'] as IconData,
-                    color: groupColor,
-                    size: sizing.groupIconSize,
-                  ),
-                ),
-                SizedBox(width: sizing.itemSpacing),
-                Text(
-                  info['title'] as String,
-                  style: TextStyle(
-                    fontSize: sizing.groupTitleSize,
-                    fontWeight: FontWeight.w700,
-                    color: bpsTextPrimary,
-                  ),
-                ),
-                SizedBox(width: sizing.itemSpacing - 2),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: sizing.itemSpacing - 2,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: groupColor.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    '${categories.length}',
-                    style: TextStyle(
-                      fontSize: sizing.bottomNavLabelSize,
-                      fontWeight: FontWeight.w600,
-                      color: groupColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-
-      // Category grid
-      widgets.add(
-        SliverPadding(
-          padding: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
-          sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              childAspectRatio: sizing.categoryAspectRatio,
-              crossAxisSpacing: sizing.gridSpacing,
-              mainAxisSpacing: sizing.gridSpacing,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => _CategoryCard(
-                category: categories[index],
+              SizedBox(height: sizing.itemSpacing + 2),
+              _BentoGrid(
                 sizing: sizing,
+                tile1Key: tile1Key,
+                tile2Key: tile2Key,
+                tile3Key: tile3Key,
+                tile4Key: tile4Key,
+                tile5Key: tile5Key,
+                tile6Key: tile6Key,
+                onExploreAll: onExploreAll,
               ),
-              childCount: categories.length,
-              addAutomaticKeepAlives: true,
-            ),
-          ),
-        ),
-      );
-    });
-
-    // Empty state
-    if (filteredCategories.isEmpty) {
-      widgets.add(
-        SliverToBoxAdapter(
-          child: Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: sizing.horizontalPadding,
-              vertical: sizing.sectionSpacing + 8,
-            ),
-            padding: EdgeInsets.all(sizing.sectionSpacing),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.search_off_rounded,
-                  size: sizing.isVerySmall ? 48 : 64,
-                  color: bpsTextLabel,
-                ),
-                SizedBox(height: sizing.horizontalPadding - 4),
-                Text(
-                  'Tidak ada hasil',
-                  style: TextStyle(
-                    fontSize: sizing.sectionTitleSize - 2,
-                    fontWeight: FontWeight.w600,
-                    color: bpsTextSecondary,
-                  ),
-                ),
-                SizedBox(height: sizing.itemSpacing - 2),
-                Text(
-                  'Coba kata kunci lain',
-                  style: TextStyle(
-                    fontSize: sizing.categoryLabelFontSize - 1,
-                    color: bpsTextLabel,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    return widgets;
-  }
-}
-
-// FIX 1: Extracted page indicators to separate widget for better performance
-class _PageIndicators extends StatelessWidget {
-  final int currentPage;
-  final PageController pageController;
-  final ResponsiveSizing sizing;
-
-  const _PageIndicators({
-    required this.currentPage,
-    required this.pageController,
-    required this.sizing,
-  });
-
-  void _animateToPage(int index) {
-    final currentPage = this.currentPage;
-    final distance = (index - currentPage).abs();
-
-    if (distance <= 2) {
-      pageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 350),
-        curve: Curves.easeOutCubic,
-      );
-    } else {
-      pageController.jumpToPage(index);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(4, (index) {
-          final isActive = currentPage == index;
-          return _PageIndicatorDot(
-            isActive: isActive,
-            onTap: () => _animateToPage(index),
-            sizing: sizing,
-          );
-        }),
-      ),
-    );
-  }
-}
-
-// FIX 2: Individual page indicator dot for granular rebuilds
-class _PageIndicatorDot extends StatelessWidget {
-  final bool isActive;
-  final VoidCallback onTap;
-  final ResponsiveSizing sizing;
-
-  const _PageIndicatorDot({
-    required this.isActive,
-    required this.onTap,
-    required this.sizing,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          width: isActive
-              ? sizing.pageIndicatorActiveWidth
-              : sizing.pageIndicatorHeight,
-          height: sizing.pageIndicatorHeight,
-          decoration: BoxDecoration(
-            color: isActive ? bpsBlue : bpsBorder,
-            borderRadius: BorderRadius.circular(4),
+            ],
           ),
         ),
       ),
@@ -1008,19 +364,96 @@ class _PageIndicatorDot extends StatelessWidget {
   }
 }
 
-// Extract individual stat cards to separate widgets for better performance
-class _StatsCard1 extends StatefulWidget {
-  const _StatsCard1({super.key});
+// ─── Bento Grid ───────────────────────────────────────────────────────────────
+
+class _BentoGrid extends StatelessWidget {
+  final ResponsiveSizing sizing;
+  final GlobalKey<_BentoTile1State> tile1Key;
+  final GlobalKey<_BentoTile2State> tile2Key;
+  final GlobalKey<_BentoTile3State> tile3Key;
+  final GlobalKey<_BentoTile4State> tile4Key;
+  final GlobalKey<_BentoTile5State> tile5Key;
+  final GlobalKey<_BentoTile6State> tile6Key;
+  final VoidCallback onExploreAll;
+
+  const _BentoGrid({
+    required this.sizing,
+    required this.tile1Key,
+    required this.tile2Key,
+    required this.tile3Key,
+    required this.tile4Key,
+    required this.tile5Key,
+    required this.tile6Key,
+    required this.onExploreAll,
+  });
 
   @override
-  State<_StatsCard1> createState() => _StatsCard1State();
+  Widget build(BuildContext context) {
+    final rowHeight = sizing.isVerySmall ? 118.0 : sizing.isSmall ? 128.0 : 138.0;
+    const spacing = 10.0;
+
+    return Column(
+      children: [
+        // Row 1: Penduduk (wide) | IPM (compact)
+        SizedBox(
+          height: rowHeight,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(flex: 2, child: _BentoTile1(key: tile1Key)),
+              const SizedBox(width: spacing),
+              Expanded(flex: 1, child: _BentoTile2(key: tile2Key)),
+            ],
+          ),
+        ),
+        const SizedBox(height: spacing),
+        // Row 2: Kemiskinan (compact) | Inflasi (wide)
+        SizedBox(
+          height: rowHeight,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(flex: 1, child: _BentoTile3(key: tile3Key)),
+              const SizedBox(width: spacing),
+              Expanded(flex: 2, child: _BentoTile4(key: tile4Key)),
+            ],
+          ),
+        ),
+        const SizedBox(height: spacing),
+        // Row 3: Pertumbuhan Ekonomi (wide) | TPT (compact)
+        SizedBox(
+          height: rowHeight,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(flex: 2, child: _BentoTile5(key: tile5Key)),
+              const SizedBox(width: spacing),
+              Expanded(flex: 1, child: _BentoTile6(key: tile6Key)),
+            ],
+          ),
+        ),
+        const SizedBox(height: spacing),
+        // CTA tile
+        _CTATile(onTap: onExploreAll, sizing: sizing),
+      ],
+    );
+  }
 }
 
-class _StatsCard1State extends State<_StatsCard1> {
+// ─── Bento Tile Data Loaders ──────────────────────────────────────────────────
+
+class _BentoTile1 extends StatefulWidget {
+  const _BentoTile1({super.key});
+
+  @override
+  State<_BentoTile1> createState() => _BentoTile1State();
+}
+
+class _BentoTile1State extends State<_BentoTile1> {
   double? _value;
   double? _change;
-  List<FlSpot>? _chartSpots;
-  DateTime? _latestDate;
+  List<FlSpot>? _spots;
+  DateTime? _date;
 
   @override
   void initState() {
@@ -1035,59 +468,51 @@ class _StatsCard1State extends State<_StatsCard1> {
         setState(() {
           _value = data['valueInMillions'] as double;
           _change = data['change'] as double;
-          _chartSpots = data['spots'] as List<FlSpot>;
-          _latestDate = DateTime(data['latestYear'] as int, 12, 31);
+          _spots = data['spots'] as List<FlSpot>;
+          _date = DateTime(data['latestYear'] as int, 12, 31);
         });
       }
     } catch (e) {
-      debugPrint('Error loading penduduk snapshot: $e');
+      debugPrint('BentoTile1 error: $e');
     }
   }
 
   Future<void> reloadData() => _loadData();
 
-  String _formatValue(double value) {
-    return NumberFormatUtils.formatDecimal(value, decimalPlaces: 2);
-  }
-
-  String _formatChange(double change) {
-    final sign = change >= 0 ? '+' : '';
-    return '${sign}${NumberFormatUtils.formatDecimal(change, decimalPlaces: 2)}%';
-  }
-
   @override
   Widget build(BuildContext context) {
-    final value = _value != null ? _formatValue(_value!) : '—';
-    final change = _change != null ? _formatChange(_change!) : '—';
-    final spots = _chartSpots ?? [];
-
-    return _GlassStatsCard(
+    return _BentoCellWidget(
       label: 'Penduduk',
-      value: value,
+      value: _value != null
+          ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
+          : '—',
       unit: 'Jt',
-      change: change,
+      change: _change != null
+          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
+          : '—',
       isPositive: _change != null ? _change! >= 0 : true,
-      accentColor: bpsBlue,
+      color: const Color(0xFF4CAF82),
       icon: Icons.people_rounded,
-      chartSpots: spots,
+      spots: _spots ?? [],
+      date: _date,
+      isWide: true,
       screen: const PendudukScreen(),
-      latestDate: _latestDate,
     );
   }
 }
 
-class _StatsCard2 extends StatefulWidget {
-  const _StatsCard2({super.key});
+class _BentoTile2 extends StatefulWidget {
+  const _BentoTile2({super.key});
 
   @override
-  State<_StatsCard2> createState() => _StatsCard2State();
+  State<_BentoTile2> createState() => _BentoTile2State();
 }
 
-class _StatsCard2State extends State<_StatsCard2> {
+class _BentoTile2State extends State<_BentoTile2> {
   double? _value;
   double? _change;
-  List<FlSpot>? _chartSpots;
-  DateTime? _latestDate;
+  List<FlSpot>? _spots;
+  DateTime? _date;
 
   @override
   void initState() {
@@ -1102,59 +527,51 @@ class _StatsCard2State extends State<_StatsCard2> {
         setState(() {
           _value = data['value'] as double;
           _change = data['change'] as double;
-          _chartSpots = data['spots'] as List<FlSpot>;
-          _latestDate = DateTime(data['latestYear'] as int, 12, 31);
+          _spots = data['spots'] as List<FlSpot>;
+          _date = DateTime(data['latestYear'] as int, 12, 31);
         });
       }
     } catch (e) {
-      debugPrint('Error loading IPM snapshot: $e');
+      debugPrint('BentoTile2 error: $e');
     }
   }
 
   Future<void> reloadData() => _loadData();
 
-  String _formatValue(double value) {
-    return NumberFormatUtils.formatDecimal(value, decimalPlaces: 2);
-  }
-
-  String _formatChange(double change) {
-    final sign = change >= 0 ? '+' : '';
-    return '${sign}${NumberFormatUtils.formatDecimal(change, decimalPlaces: 2)}%';
-  }
-
   @override
   Widget build(BuildContext context) {
-    final value = _value != null ? _formatValue(_value!) : '—';
-    final change = _change != null ? _formatChange(_change!) : '—';
-    final spots = _chartSpots ?? [];
-
-    return _GlassStatsCard(
+    return _BentoCellWidget(
       label: 'IPM',
-      value: value,
+      value: _value != null
+          ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
+          : '—',
       unit: '',
-      change: change,
+      change: _change != null
+          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
+          : '—',
       isPositive: _change != null ? _change! >= 0 : true,
-      accentColor: bpsBlue,
+      color: bpsDevelopmentColor,
       icon: Icons.trending_up_rounded,
-      chartSpots: spots,
+      spots: _spots ?? [],
+      date: _date,
+      isWide: false,
       screen: const IpmScreen(),
-      latestDate: _latestDate,
     );
   }
 }
 
-class _StatsCard3 extends StatefulWidget {
-  const _StatsCard3({super.key});
+class _BentoTile3 extends StatefulWidget {
+  const _BentoTile3({super.key});
 
   @override
-  State<_StatsCard3> createState() => _StatsCard3State();
+  State<_BentoTile3> createState() => _BentoTile3State();
 }
 
-class _StatsCard3State extends State<_StatsCard3> {
+class _BentoTile3State extends State<_BentoTile3> {
   double? _value;
   double? _change;
-  List<FlSpot>? _chartSpots;
-  DateTime? _latestDate;
+  List<FlSpot>? _spots;
+  DateTime? _date;
 
   @override
   void initState() {
@@ -1169,59 +586,50 @@ class _StatsCard3State extends State<_StatsCard3> {
         setState(() {
           _value = data['value'] as double;
           _change = data['change'] as double;
-          _chartSpots = data['spots'] as List<FlSpot>;
-          _latestDate = DateTime(data['latestYear'] as int, 12, 31);
+          _spots = data['spots'] as List<FlSpot>;
+          _date = DateTime(data['latestYear'] as int, 12, 31);
         });
       }
     } catch (e) {
-      debugPrint('Error loading kemiskinan snapshot: $e');
+      debugPrint('BentoTile3 error: $e');
     }
   }
 
   Future<void> reloadData() => _loadData();
 
-  String _formatValue(double value) {
-    return NumberFormatUtils.formatDecimal(value, decimalPlaces: 2);
-  }
-
-  String _formatChange(double change) {
-    final sign = change >= 0 ? '+' : '';
-    return '${sign}${NumberFormatUtils.formatDecimal(change, decimalPlaces: 2)}%';
-  }
-
   @override
   Widget build(BuildContext context) {
-    final value = _value != null ? _formatValue(_value!) : '—';
-    final change = _change != null ? _formatChange(_change!) : '—';
-    final spots = _chartSpots ?? [];
-
-    return _GlassStatsCard(
+    return _BentoCellWidget(
       label: 'Kemiskinan',
-      value: value,
+      value: _value != null
+          ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
+          : '—',
       unit: '%',
-      change: change,
-      isPositive: _change != null ? _change! >= 0 : false,
-      invertedLogic: true,
-      accentColor: bpsBlue,
+      change: _change != null
+          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
+          : '—',
+      isPositive: _change != null ? _change! < 0 : false,
+      color: const Color(0xFFE05555),
       icon: Icons.volunteer_activism_rounded,
-      chartSpots: spots,
+      spots: _spots ?? [],
+      date: _date,
+      isWide: false,
       screen: const KemiskinanScreen(),
-      latestDate: _latestDate,
     );
   }
 }
 
-class _StatsCard4 extends StatefulWidget {
-  const _StatsCard4({super.key});
+class _BentoTile4 extends StatefulWidget {
+  const _BentoTile4({super.key});
 
   @override
-  State<_StatsCard4> createState() => _StatsCard4State();
+  State<_BentoTile4> createState() => _BentoTile4State();
 }
 
-class _StatsCard4State extends State<_StatsCard4> {
+class _BentoTile4State extends State<_BentoTile4> {
   double? _value;
   double? _change;
-  List<FlSpot>? _chartSpots;
+  List<FlSpot>? _spots;
   String? _dateLabel;
 
   @override
@@ -1237,90 +645,200 @@ class _StatsCard4State extends State<_StatsCard4> {
         setState(() {
           _value = data['value'] as double;
           _change = data['change'] as double;
-          _chartSpots = data['spots'] as List<FlSpot>;
+          _spots = data['spots'] as List<FlSpot>;
           _dateLabel = data['dateLabel'] as String?;
         });
       }
     } catch (e) {
-      debugPrint('Error loading inflasi snapshot: $e');
+      debugPrint('BentoTile4 error: $e');
     }
   }
 
   Future<void> reloadData() => _loadData();
 
-  String _formatValue(double value) {
-    return NumberFormatUtils.formatDecimal(value, decimalPlaces: 2);
-  }
-
-  String _formatChange(double change) {
-    final sign = change >= 0 ? '+' : '';
-    return '${sign}${NumberFormatUtils.formatDecimal(change, decimalPlaces: 2)}%';
-  }
-
   @override
   Widget build(BuildContext context) {
-    final value = _value != null ? _formatValue(_value!) : '—';
-    final change = _change != null ? _formatChange(_change!) : '—';
-    final spots = _chartSpots ?? [];
-
-    return _GlassStatsCard(
+    return _BentoCellWidget(
       label: 'Inflasi',
-      value: value,
+      value: _value != null
+          ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
+          : '—',
       unit: '%',
-      change: change,
+      change: _change != null
+          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
+          : '—',
       isPositive: _change != null ? _change! >= 0 : true,
-      accentColor: bpsBlue,
+      color: bpsBlue,
       icon: Icons.payments_rounded,
-      chartSpots: spots,
-      screen: const InflasiScreen(),
+      spots: _spots ?? [],
       dateLabel: _dateLabel,
+      isWide: true,
+      screen: const InflasiScreen(),
     );
   }
 }
 
-// Enhanced Glassmorphism Card with improved visual hierarchy
-class _GlassStatsCard extends StatefulWidget {
+class _BentoTile5 extends StatefulWidget {
+  const _BentoTile5({super.key});
+
+  @override
+  State<_BentoTile5> createState() => _BentoTile5State();
+}
+
+class _BentoTile5State extends State<_BentoTile5> {
+  double? _value;
+  double? _change;
+  List<FlSpot>? _spots;
+  int? _latestYear;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final data = await HomeSnapshotData.loadEkonomiData();
+      if (data != null && mounted) {
+        setState(() {
+          _value = data['value'] as double;
+          _change = data['change'] as double;
+          _spots = data['spots'] as List<FlSpot>;
+          _latestYear = data['latestYear'] as int;
+        });
+      }
+    } catch (e) {
+      debugPrint('BentoTile5 error: $e');
+    }
+  }
+
+  Future<void> reloadData() => _loadData();
+
+  @override
+  Widget build(BuildContext context) {
+    return _BentoCellWidget(
+      label: 'Pertumbuhan Ekonomi',
+      value: _value != null
+          ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
+          : '—',
+      unit: '%',
+      change: _change != null
+          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
+          : '—',
+      isPositive: _change != null ? _change! >= 0 : true,
+      color: const Color(0xFF7B5EA7),
+      icon: Icons.show_chart_rounded,
+      spots: _spots ?? [],
+      date: _latestYear != null ? DateTime(_latestYear!, 12, 31) : null,
+      isWide: true,
+      screen: const PertumbuhanEkonomiScreen(),
+    );
+  }
+}
+
+class _BentoTile6 extends StatefulWidget {
+  const _BentoTile6({super.key});
+
+  @override
+  State<_BentoTile6> createState() => _BentoTile6State();
+}
+
+class _BentoTile6State extends State<_BentoTile6> {
+  double? _value;
+  double? _change;
+  List<FlSpot>? _spots;
+  int? _latestYear;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final data = await HomeSnapshotData.loadTPTData();
+      if (data != null && mounted) {
+        setState(() {
+          _value = data['value'] as double;
+          _change = data['change'] as double;
+          _spots = data['spots'] as List<FlSpot>;
+          _latestYear = data['latestYear'] as int;
+        });
+      }
+    } catch (e) {
+      debugPrint('BentoTile6 error: $e');
+    }
+  }
+
+  Future<void> reloadData() => _loadData();
+
+  @override
+  Widget build(BuildContext context) {
+    return _BentoCellWidget(
+      label: 'TPT',
+      value: _value != null
+          ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
+          : '—',
+      unit: '%',
+      change: _change != null
+          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
+          : '—',
+      isPositive: _change != null ? _change! < 0 : false,
+      color: const Color(0xFF1ABC9C),
+      icon: Icons.work_off_rounded,
+      spots: _spots ?? [],
+      date: _latestYear != null ? DateTime(_latestYear!, 12, 31) : null,
+      isWide: false,
+      screen: const PengangguranScreen(),
+    );
+  }
+}
+
+// ─── Bento Cell Display Widget ────────────────────────────────────────────────
+
+class _BentoCellWidget extends StatefulWidget {
   final String label;
   final String value;
   final String unit;
   final String change;
   final bool isPositive;
-  final Color accentColor;
+  final Color color;
   final IconData icon;
-  final List<FlSpot> chartSpots;
-  final Widget screen;
-  final DateTime? latestDate;
+  final List<FlSpot> spots;
+  final DateTime? date;
   final String? dateLabel;
-  final bool invertedLogic;
+  final bool isWide;
+  final Widget screen;
 
-  const _GlassStatsCard({
+  const _BentoCellWidget({
     required this.label,
     required this.value,
-    this.unit = '',
+    required this.unit,
     required this.change,
     required this.isPositive,
-    required this.accentColor,
+    required this.color,
     required this.icon,
-    required this.chartSpots,
+    required this.spots,
+    required this.isWide,
     required this.screen,
-    this.latestDate,
+    this.date,
     this.dateLabel,
-    this.invertedLogic = false,
   });
 
   @override
-  State<_GlassStatsCard> createState() => _GlassStatsCardState();
+  State<_BentoCellWidget> createState() => _BentoCellWidgetState();
 }
 
-class _GlassStatsCardState extends State<_GlassStatsCard>
+class _BentoCellWidgetState extends State<_BentoCellWidget>
     with SingleTickerProviderStateMixin {
-  late AnimationController _scaleController;
-  bool _isPressed = false;
+  late AnimationController _pressController;
 
   @override
   void initState() {
     super.initState();
-    _scaleController = AnimationController(
+    _pressController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 100),
     );
@@ -1328,233 +846,70 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
 
   @override
   void dispose() {
-    _scaleController.dispose();
+    _pressController.dispose();
     super.dispose();
-  }
-
-  String _formatFullDate(DateTime date) {
-    final months = [
-      'Januari',
-      'Februari',
-      'Maret',
-      'April',
-      'Mei',
-      'Juni',
-      'Juli',
-      'Agustus',
-      'September',
-      'Oktober',
-      'November',
-      'Desember'
-    ];
-    return '${date.day} ${months[date.month - 1]} ${date.year}';
-  }
-
-  // Determine delta color based on metric type and direction
-  IconData _getDeltaIcon() {
-    return widget.isPositive
-        ? Icons.trending_up_rounded
-        : Icons.trending_down_rounded;
-  }
-
-  void _handleTapDown(TapDownDetails details) {
-    setState(() => _isPressed = true);
-    _scaleController.forward();
-  }
-
-  void _handleTapUp(TapUpDetails details) {
-    setState(() => _isPressed = false);
-    _scaleController.reverse();
-  }
-
-  void _handleTapCancel() {
-    setState(() => _isPressed = false);
-    _scaleController.reverse();
   }
 
   @override
   Widget build(BuildContext context) {
-    final sizing = ResponsiveSizing(context);
-
-    return GestureDetector(
-      onTapDown: _handleTapDown,
-      onTapUp: _handleTapUp,
-      onTapCancel: _handleTapCancel,
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute<void>(builder: (context) => widget.screen),
-        );
+    return AnimatedBuilder(
+      animation: _pressController,
+      builder: (context, child) {
+        final scale = 1.0 - (_pressController.value * 0.025);
+        return Transform.scale(scale: scale, child: child);
       },
-      child: AnimatedBuilder(
-        animation: _scaleController,
-        builder: (context, child) {
-          final scale = 1.0 - (_scaleController.value * 0.02);
-          return Transform.scale(
-            scale: scale,
-            child: child,
+      child: GestureDetector(
+        onTapDown: (_) => _pressController.forward(),
+        onTapUp: (_) {
+          _pressController.reverse();
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(builder: (_) => widget.screen),
           );
         },
+        onTapCancel: () => _pressController.reverse(),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: widget.accentColor,
-            border: Border.all(
-              color: Colors.white.withOpacity(_isPressed ? 0.3 : 0.15),
-              width: 1.2,
+            borderRadius: BorderRadius.circular(18),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                widget.color,
+                Color.lerp(widget.color, Colors.black, 0.18)!,
+              ],
             ),
             boxShadow: [
               BoxShadow(
-                color: widget.accentColor.withOpacity(_isPressed ? 0.4 : 0.3),
-                blurRadius: _isPressed ? 16 : 12,
+                color: widget.color.withOpacity(0.3),
+                blurRadius: 12,
                 offset: const Offset(0, 4),
-                spreadRadius: -2,
+                spreadRadius: -3,
               ),
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                        builder: (context) => widget.screen),
-                  );
-                },
-                borderRadius: BorderRadius.circular(20),
-                splashColor: Colors.white.withOpacity(0.1),
-                highlightColor: Colors.white.withOpacity(0.05),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: sizing.statsCardPadding + 6,
-                    vertical: sizing.statsCardPadding - 2,
-                  ),
-                  child: Row(
-                    children: [
-                      // Data
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Label row
-                            Row(
-                              children: [
-                                Text(
-                                  widget.label,
-                                  style: TextStyle(
-                                    fontSize: sizing.statsLabelFontSize + 4,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                    letterSpacing: 0.3,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            // Date
-                            if (widget.dateLabel != null) ...[
-                              const SizedBox(height: 2),
-                              Text(
-                                widget.dateLabel!,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white.withOpacity(0.75),
-                                ),
-                              ),
-                            ] else if (widget.latestDate != null) ...[
-                              const SizedBox(height: 2),
-                              Text(
-                                _formatFullDate(widget.latestDate!),
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white.withOpacity(0.75),
-                                ),
-                              ),
-                            ],
-                            const SizedBox(height: 8),
-                            // Big number with superscript unit
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(
-                                  widget.value,
-                                  style: TextStyle(
-                                    fontSize: sizing.statsValueFontSize + 4,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                    height: 1,
-                                    letterSpacing: -0.5,
-                                  ),
-                                ),
-                                if (widget.unit.isNotEmpty) ...[
-                                  const SizedBox(width: 3),
-                                  Baseline(
-                                    baseline: sizing.statsValueFontSize + 4,
-                                    baselineType: TextBaseline.alphabetic,
-                                    child: Text(
-                                      widget.unit,
-                                      style: TextStyle(
-                                        fontSize:
-                                            (sizing.statsValueFontSize + 4) *
-                                                0.55,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white.withOpacity(0.85),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Chart and delta indicator column
-                      SizedBox(
-                        width: sizing.statsMiniChartWidth + 40,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            // Delta indicator
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  _getDeltaIcon(),
-                                  size: 20,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  widget.change,
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                    letterSpacing: 0.2,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            // Sparkline chart
-                            _MiniChart(
-                              spots: widget.chartSpots,
-                              color: Colors.white.withOpacity(0.9),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+            borderRadius: BorderRadius.circular(18),
+            child: Stack(
+              children: [
+                // Decorative background icon
+                Positioned(
+                  right: -12,
+                  bottom: -12,
+                  child: Icon(
+                    widget.icon,
+                    size: widget.isWide ? 90 : 70,
+                    color: Colors.white.withOpacity(0.1),
                   ),
                 ),
-              ),
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: widget.isWide
+                      ? _WideLayout(widget: widget)
+                      : _CompactLayout(widget: widget),
+                ),
+              ],
             ),
           ),
         ),
@@ -1563,14 +918,247 @@ class _GlassStatsCardState extends State<_GlassStatsCard>
   }
 }
 
+class _WideLayout extends StatelessWidget {
+  final _BentoCellWidget widget;
+  const _WideLayout({required this.widget});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Label + date
+        Text(
+          widget.label,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            letterSpacing: 0.2,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          widget.dateLabel ??
+              (widget.date != null
+                  ? '${widget.date!.day.toString().padLeft(2, '0')}/${widget.date!.month.toString().padLeft(2, '0')}/${widget.date!.year}'
+                  : '—'),
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+            color: Colors.white.withOpacity(0.7),
+          ),
+        ),
+        const Spacer(),
+        // Value row
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Text(
+              widget.value,
+              style: const TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+                height: 1,
+                letterSpacing: -0.5,
+              ),
+            ),
+            if (widget.unit.isNotEmpty) ...[
+              const SizedBox(width: 3),
+              Text(
+                widget.unit,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withOpacity(0.85),
+                ),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 6),
+        // Change + sparkline
+        Row(
+          children: [
+            Icon(
+              widget.isPositive
+                  ? Icons.trending_up_rounded
+                  : Icons.trending_down_rounded,
+              color: Colors.white,
+              size: 14,
+            ),
+            const SizedBox(width: 3),
+            Text(
+              widget.change,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+            const Spacer(),
+            if (widget.spots.isNotEmpty)
+              _MiniChart(spots: widget.spots, color: Colors.white),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _CompactLayout extends StatelessWidget {
+  final _BentoCellWidget widget;
+  const _CompactLayout({required this.widget});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Label
+        Text(
+          widget.label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            letterSpacing: 0.2,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 2),
+        Text(
+          widget.dateLabel ??
+              (widget.date != null
+                  ? '${widget.date!.year}'
+                  : '—'),
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w400,
+            color: Colors.white.withOpacity(0.65),
+          ),
+        ),
+        const Spacer(),
+        // Value
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Flexible(
+              child: Text(
+                widget.value,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  height: 1,
+                  letterSpacing: -0.5,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (widget.unit.isNotEmpty) ...[
+              const SizedBox(width: 2),
+              Text(
+                widget.unit,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withOpacity(0.85),
+                ),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 5),
+        // Change
+        Row(
+          children: [
+            Icon(
+              widget.isPositive
+                  ? Icons.trending_up_rounded
+                  : Icons.trending_down_rounded,
+              color: Colors.white,
+              size: 12,
+            ),
+            const SizedBox(width: 2),
+            Flexible(
+              child: Text(
+                widget.change,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+// ─── CTA Tile ─────────────────────────────────────────────────────────────────
+
+class _CTATile extends StatelessWidget {
+  final VoidCallback onTap;
+  final ResponsiveSizing sizing;
+
+  const _CTATile({required this.onTap, required this.sizing});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          height: 54,
+          decoration: BoxDecoration(
+            color: bpsBlue.withOpacity(0.07),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: bpsBlue.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
+          child: Row(
+            children: [
+              Icon(Icons.grid_view_rounded, color: bpsBlue, size: 20),
+              SizedBox(width: sizing.itemSpacing),
+              Expanded(
+                child: Text(
+                  'Jelajahi ${HomeScreenCategories.allCategories.length} Kategori Statistik',
+                  style: TextStyle(
+                    fontSize: sizing.bottomNavLabelSize + 1,
+                    fontWeight: FontWeight.w600,
+                    color: bpsBlue,
+                  ),
+                ),
+              ),
+              Icon(Icons.arrow_forward_rounded, color: bpsBlue, size: 16),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Mini Sparkline Chart ─────────────────────────────────────────────────────
+
 class _MiniChart extends StatelessWidget {
   final List<FlSpot> spots;
   final Color color;
 
-  const _MiniChart({
-    required this.spots,
-    required this.color,
-  });
+  const _MiniChart({required this.spots, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -1578,8 +1166,8 @@ class _MiniChart extends StatelessWidget {
 
     return RepaintBoundary(
       child: SizedBox(
-        width: 80,
-        height: 40,
+        width: 72,
+        height: 32,
         child: LineChart(
           LineChartData(
             minY: spots.map((s) => s.y).reduce((a, b) => a < b ? a : b) * 0.95,
@@ -1614,86 +1202,6 @@ class _MiniChart extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _CategoryCard extends StatelessWidget {
-  final CategoryItem category;
-  final ResponsiveSizing sizing;
-
-  const _CategoryCard({
-    required this.category,
-    required this.sizing,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  category.groupColor.withOpacity(0.3),
-                  category.groupColor,
-                ],
-              ),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0.5, 0.5, 3, 6),
-            child: Container(
-              color: Colors.white,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                        builder: (context) => category.screen),
-                  );
-                },
-                highlightColor: category.groupColor.withOpacity(0.05),
-                splashColor: category.groupColor.withOpacity(0.1),
-                child: Padding(
-                  padding: EdgeInsets.all(sizing.categoryCardPadding + 2),
-                  child: Row(
-                    children: [
-                      Icon(
-                        category.icon,
-                        color: category.groupColor,
-                        size: sizing.categoryIconSize,
-                      ),
-                      SizedBox(width: sizing.itemSpacing),
-                      Expanded(
-                        child: Text(
-                          category.shortLabel,
-                          style: TextStyle(
-                            fontSize: sizing.categoryLabelFontSize - 1,
-                            fontWeight: FontWeight.w600,
-                            color: bpsTextPrimary,
-                            height: 1.25,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          ),
-        ),
-      ],
     );
   }
 }
