@@ -601,7 +601,7 @@ class _BentoTile1State extends State<_BentoTile1> {
           ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
           : '—',
       isPositive: _change != null ? _change! >= 0 : true,
-      color: const Color(0xFF4CAF82),
+      color: bpsSocialColor,
       icon: Icons.people_rounded,
       spots: _spots ?? [],
       date: _date,
@@ -717,7 +717,7 @@ class _BentoTile3State extends State<_BentoTile3> {
           ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
           : '—',
       isPositive: _change != null ? _change! < 0 : false,
-      color: const Color(0xFFE05555),
+      color: bpsSocialColor,
       icon: Icons.volunteer_activism_rounded,
       spots: _spots ?? [],
       date: _date,
@@ -837,7 +837,7 @@ class _BentoTile5State extends State<_BentoTile5> {
           ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
           : '—',
       isPositive: _change != null ? _change! >= 0 : true,
-      color: const Color(0xFF7B5EA7),
+      color: bpsEconomicColor,
       icon: Icons.show_chart_rounded,
       spots: _spots ?? [],
       latestYear: _latestYear,
@@ -897,7 +897,7 @@ class _BentoTile6State extends State<_BentoTile6> {
           ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
           : '—',
       isPositive: _change != null ? _change! < 0 : false,
-      color: const Color(0xFF1ABC9C),
+      color: bpsSocialColor,
       icon: Icons.work_off_rounded,
       spots: _spots ?? [],
       date: _latestYear != null ? DateTime(_latestYear!, 12, 31) : null,
