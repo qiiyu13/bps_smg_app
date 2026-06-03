@@ -28,7 +28,9 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _initializeAnimations();
     _initializeVideo();
-    _precacheImages();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _precacheImages();
+    });
     _maxDurationTimer = Timer(const Duration(seconds: 8), () {
       if (!_hasNavigated && !_isDisposed) {
         print('Max splash duration reached, forcing navigation');

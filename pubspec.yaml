@@ -1,7 +1,7 @@
 name: lawang
 description: Aplikasi Statistik Indonesia - Data terpercaya dan komprehensif.
 publish_to: 'none' # Mencegah publikasi yang tidak disengaja
-version: 0.13.0+3
+version: 1.0.0+1
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -13,7 +13,6 @@ dependencies:
   flutter:
     sdk: flutter
   csv: ^5.1.1
-  device_preview: ^1.2.0
   fl_chart: ^0.68.0
   http: ^1.2.1
   package_info_plus: ^4.2.0
@@ -21,11 +20,13 @@ dependencies:
   shared_preferences: ^2.2.2
   url_launcher: ^6.2.4
   video_player: ^2.8.13
+  flutter_svg: ^2.3.0
 
 # =================== DEV DEPENDENCIES ===================
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  device_preview: ^1.2.0
   flutter_lints: ^3.0.0
   flutter_launcher_icons: ^0.13.1
 
@@ -36,6 +37,7 @@ flutter:
   # Aset gambar, video, dan animasi
   assets:
     - assets/images/logo.png
+    - assets/images/logo-bps.svg
     - assets/images/logo_white.png
     - assets/animations/ringan.mp4
     - assets/data/ranking_pdrb_jateng.csv

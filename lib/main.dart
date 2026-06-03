@@ -6,6 +6,7 @@ import 'services/github_data_service.dart';
 import 'splash_screen.dart';
 import 'onboarding_screen.dart';
 import 'home_screen.dart';
+import 'app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,12 @@ class MyApp extends StatelessWidget {
         primaryColor: const Color(0xFF1976D2),
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'PlusJakartaSans',
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: ParallaxPageTransitionsBuilder(),
+            TargetPlatform.iOS: ParallaxPageTransitionsBuilder(),
+          },
+        ),
       ),
 
       // Halaman awal

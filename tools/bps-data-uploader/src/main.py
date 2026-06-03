@@ -401,7 +401,7 @@ class BPSDataUploader(QMainWindow):
         selected = []
         for cat_key, checkbox in self.category_checkboxes.items():
             if checkbox.isChecked():
-                selected.append(cat_key)
+                selected.append(cat_key.lower())
         return selected
     
     def validate_data(self):

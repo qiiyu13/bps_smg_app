@@ -12,31 +12,13 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
-    with SingleTickerProviderStateMixin {
+class _ProfileScreenState extends State<ProfileScreen> {
   String appVersion = '1.1.0';
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
     _loadAppInfo();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-    _fadeAnimation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    );
-    _animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
   }
 
   Future<void> _loadAppInfo() async {
@@ -52,10 +34,6 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
   }
 
-  void _navigateToHome() {
-    Navigator.of(context).pop();
-  }
-
   @override
   Widget build(BuildContext context) {
     final sizing = ResponsiveSizing(context);
@@ -69,9 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           SliverPadding(
             padding: EdgeInsets.symmetric(horizontal: sizing.horizontalPadding),
             sliver: SliverToBoxAdapter(
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: Center(
+              child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 800),
                     child: Column(
@@ -89,12 +65,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                   ),
                 ),
-              ),
             ),
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNav(sizing),
     );
   }
 
@@ -122,19 +96,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                   (sizing.searchPadding * 2 + 20),
               child: Stack(
                 children: [
-                  // Back button at top left
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back_rounded,
-                          color: Colors.white),
-                      onPressed: () => Navigator.of(context).pop(),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      iconSize: 20,
-                    ),
-                  ),
                   // Logo centered vertically and horizontally
                   Center(
                     child: Image.asset(
@@ -352,79 +313,4 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
   }
 
-  Widget _buildBottomNav(ResponsiveSizing sizing) {
-    return Container(
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        boxShadow: [BPSShadows.bottomNavShadow],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Container(
-          height: sizing.bottomNavHeight,
-          padding: EdgeInsets.symmetric(
-            horizontal: sizing.bottomNavPadding,
-            vertical: 8,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(
-                icon: Icons.home_rounded,
-                label: 'Home',
-                isSelected: false,
-                sizing: sizing,
-                onTap: _navigateToHome,
-              ),
-              _buildNavItem(
-                icon: Icons.info_rounded,
-                label: 'About Us',
-                isSelected: true,
-                sizing: sizing,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem({
-    required IconData icon,
-    required String label,
-    required bool isSelected,
-    required ResponsiveSizing sizing,
-    VoidCallback? onTap,
-  }) {
-    return Expanded(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          highlightColor: bpsBlue.withOpacity(0.1),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                color: isSelected ? bpsBlue : bpsTextLabel,
-                size: sizing.bottomNavIconSize,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: sizing.bottomNavLabelSize,
-                  color: isSelected ? bpsBlue : bpsTextLabel,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }

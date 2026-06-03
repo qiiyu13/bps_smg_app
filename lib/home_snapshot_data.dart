@@ -380,10 +380,25 @@ class HomeSnapshotData {
                     ))
                 .toList();
           }
-          return {'value': latestVal, 'change': change, 'latestYear': latestYear, 'spots': spots.isEmpty ? _defaultEkonomiSpots : spots};
+          final prevYear = int.tryParse(prev['tahun']?.toString() ?? '') ?? 0;
+          return {
+            'value': latestVal,
+            'change': change,
+            'latestYear': latestYear,
+            'prevVal': prevVal,
+            'prevYear': prevYear,
+            'spots': spots.isEmpty ? _defaultEkonomiSpots : spots,
+          };
         }
       }
-      return {'value': 6.49, 'change': 6.49 - 5.68, 'latestYear': 2025, 'spots': _defaultEkonomiSpots};
+      return {
+        'value': 6.49,
+        'change': 6.49 - 5.68,
+        'latestYear': 2025,
+        'prevVal': 5.68,
+        'prevYear': 2024,
+        'spots': _defaultEkonomiSpots,
+      };
     } catch (e) {
       debugPrint('Error loading ekonomi snapshot: $e');
       return null;

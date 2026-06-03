@@ -5,6 +5,7 @@ import 'dart:math';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
+import 'dart:async';
 import 'app_theme.dart';
 
 class UserSDGsScreen extends StatefulWidget {
@@ -28,6 +29,8 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
   bool isLoading = true;
 
   final List<int> availableYears = [2024, 2023, 2022, 2021, 2020, 2019];
+  late Timer _debounceTimer;
+  final ScrollController _yearScrollController = ScrollController();
 
   @override
   bool get wantKeepAlive => true;
@@ -35,8 +38,37 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
   @override
   void initState() {
     super.initState();
+    _debounceTimer = Timer(const Duration(milliseconds: 100), () {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_yearScrollController.hasClients) {
+        _yearScrollController.jumpTo(
+          _yearScrollController.position.maxScrollExtent,
+        );
+      }
+    });
     _initializeAnimations();
     _loadData();
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer.cancel();
+    _yearScrollController.dispose();
+    _cardController.dispose();
+    super.dispose();
+  }
+
+  void _changeYear(int year) {
+    _debounceTimer.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 50), () {
+      if (mounted) {
+        setState(() {
+          selectedYear = year;
+        });
+        _cardController.reset();
+        _cardController.forward();
+      }
+    });
   }
 
   void _initializeAnimations() {
@@ -46,12 +78,6 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
         CurvedAnimation(parent: _cardController, curve: Curves.easeOutBack);
     Future.delayed(
         const Duration(milliseconds: 300), () => _cardController.forward());
-  }
-
-  @override
-  void dispose() {
-    _cardController.dispose();
-    super.dispose();
   }
 
   Future<void> _loadData() async {
@@ -325,59 +351,58 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
-          Wrap(
-            spacing: isSmallScreen ? 8 : 12,
-            runSpacing: isSmallScreen ? 8 : 12,
-            children: availableYears.map((year) {
-              final isSelected = year == selectedYear;
-              return Material(
-                color: isSelected ? bpsOrange : bpsBackground,
-                borderRadius: BorderRadius.circular(10),
-                child: InkWell(
-                  onTap: () {
-                    setState(() => selectedYear = year);
-                    _cardController.reset();
-                    _cardController.forward();
-                  },
+          SizedBox(
+            height: isSmallScreen ? 38 : 42,
+            child: ListView.separated(
+              controller: _yearScrollController,
+              scrollDirection: Axis.horizontal,
+              itemCount: availableYears.length,
+              separatorBuilder: (_, __) =>
+                  SizedBox(width: isSmallScreen ? 6 : 8),
+              itemBuilder: (_, i) {
+                final year = availableYears[i];
+                final isSelected = year == selectedYear;
+                return Material(
+                  color: isSelected ? bpsOrange : bpsBackground,
                   borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    constraints: BoxConstraints(
-                      minWidth: isSmallScreen ? 60 : 70,
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isSmallScreen ? 12 : 16,
-                      vertical: isSmallScreen ? 8 : 10,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: isSelected ? bpsOrange : bpsBorder,
-                        width: isSelected ? 2 : 1.5,
+                  child: InkWell(
+                    onTap: () => _changeYear(year),
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 16 : 20,
+                        vertical: isSmallScreen ? 8 : 10,
                       ),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: bpsOrange.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Text(
-                      year.toString(),
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : bpsTextSecondary,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: isSelected ? bpsOrange : bpsBorder,
+                          width: isSelected ? 2 : 1.5,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: bpsOrange.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
                       ),
-                      textAlign: TextAlign.center,
+                      child: Text(
+                        year.toString(),
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 14 : 16,
+                          fontWeight:
+                              isSelected ? FontWeight.w700 : FontWeight.w600,
+                          color: isSelected ? Colors.white : bpsTextSecondary,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              );
-            }).toList(),
+                );
+              },
+            ),
           ),
         ],
       ),

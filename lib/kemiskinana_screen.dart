@@ -6,6 +6,7 @@ import 'services/github_data_service.dart';
 import 'responsive_sizing.dart';
 import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
+import 'dart:async';
 import 'app_theme.dart';
 
 // Poverty data model - Made immutable for better performance
@@ -71,6 +72,8 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
   bool isLoading = true;
   String? errorMessage;
   List<int> _cachedSortedYears = [];
+  late Timer _debounceTimer;
+  final ScrollController _yearScrollController = ScrollController();
 
   @override
   bool get wantKeepAlive => true;
@@ -78,7 +81,31 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
   @override
   void initState() {
     super.initState();
+    _debounceTimer = Timer(const Duration(milliseconds: 100), () {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_yearScrollController.hasClients) {
+        _yearScrollController.jumpTo(
+          _yearScrollController.position.maxScrollExtent,
+        );
+      }
+    });
     _loadData();
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer.cancel();
+    _yearScrollController.dispose();
+    super.dispose();
+  }
+
+  void _changeYear(int year) {
+    _debounceTimer.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 50), () {
+      if (mounted) {
+        setState(() => selectedYear = year);
+      }
+    });
   }
 
   Future<void> _loadData() async {
@@ -270,8 +297,8 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
                         selectedYear: selectedYear,
                         yearlyData: yearlyData,
                         cachedSortedYears: _cachedSortedYears,
-                        onYearSelected: (year) =>
-                            setState(() => selectedYear = year),
+                        onYearSelected: _changeYear,
+                        yearScrollController: _yearScrollController,
                         sizing: sizing,
                         isSmallScreen: isSmallScreen,
                       ),
@@ -347,6 +374,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
   final Map<int, PovertyData> yearlyData;
   final List<int> cachedSortedYears;
   final ValueChanged<int> onYearSelected;
+  final ScrollController yearScrollController;
   final ResponsiveSizing sizing;
   final bool isSmallScreen;
 
@@ -355,6 +383,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
     required this.yearlyData,
     required this.cachedSortedYears,
     required this.onYearSelected,
+    required this.yearScrollController,
     required this.sizing,
     required this.isSmallScreen,
   });
@@ -407,13 +436,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
           padding: EdgeInsets.all(sizing.horizontalPadding),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              _YearSelector(
-                years: cachedSortedYears,
-                selectedYear: selectedYear,
-                onYearSelected: onYearSelected,
-                sizing: sizing,
-                isSmallScreen: isSmallScreen,
-              ),
+              _buildYearSelector(),
               SizedBox(height: sizing.sectionSpacing),
               _buildPovertyStatsGrid(context, currentData),
               SizedBox(height: sizing.sectionSpacing),
@@ -509,6 +532,105 @@ class _KemiskinanScreenContent extends StatelessWidget {
       additionalPoints: (conclusionData['additionalPoints'] as List<dynamic>?)
           ?.map((e) => e.toString())
           .toList(),
+    );
+  }
+
+  Widget _buildYearSelector() {
+    return Container(
+      padding: EdgeInsets.all(isSmallScreen
+          ? sizing.statsCardPadding - 4
+          : sizing.statsCardPadding),
+      decoration: BoxDecoration(
+        color: bpsCardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: bpsBorder, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.calendar_today_rounded,
+                color: bpsBlue,
+                size: isSmallScreen ? 16 : 20,
+              ),
+              SizedBox(width: sizing.itemSpacing),
+              Text(
+                'Pilih Tahun Data',
+                style: TextStyle(
+                  fontSize: isSmallScreen
+                      ? sizing.groupTitleSize - 2
+                      : sizing.groupTitleSize,
+                  fontWeight: FontWeight.w700,
+                  color: bpsTextPrimary,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: isSmallScreen ? 12 : 16),
+          SizedBox(
+            height: isSmallScreen ? 38 : 42,
+            child: ListView.separated(
+              controller: yearScrollController,
+              scrollDirection: Axis.horizontal,
+              itemCount: cachedSortedYears.length,
+              separatorBuilder: (_, __) =>
+                  SizedBox(width: isSmallScreen ? 6 : 8),
+              itemBuilder: (_, i) {
+                final year = cachedSortedYears[i];
+                final isSelected = year == selectedYear;
+                return Material(
+                  color: isSelected ? bpsBlue : bpsBackground,
+                  borderRadius: BorderRadius.circular(10),
+                  child: InkWell(
+                    onTap: () => onYearSelected(year),
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 16 : 20,
+                        vertical: isSmallScreen ? 8 : 10,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: isSelected ? bpsBlue : bpsBorder,
+                          width: isSelected ? 2 : 1.5,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: bpsBlue.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: Text(
+                        year.toString(),
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 14 : 16,
+                          fontWeight:
+                              isSelected ? FontWeight.w700 : FontWeight.w600,
+                          color: isSelected ? Colors.white : bpsTextSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -946,126 +1068,6 @@ class _KemiskinanScreenContent extends StatelessWidget {
 }
 
 // Year selector widget
-class _YearSelector extends StatelessWidget {
-  final List<int> years;
-  final int selectedYear;
-  final ValueChanged<int> onYearSelected;
-  final ResponsiveSizing sizing;
-  final bool isSmallScreen;
-
-  const _YearSelector({
-    required this.years,
-    required this.selectedYear,
-    required this.onYearSelected,
-    required this.sizing,
-    required this.isSmallScreen,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.calendar_today_rounded,
-                  color: bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Text(
-                'Pilih Tahun Data',
-                style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? sizing.groupTitleSize - 2
-                      : sizing.groupTitleSize,
-                  fontWeight: FontWeight.w700,
-                  color: bpsTextPrimary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          Wrap(
-            spacing: isSmallScreen ? 8 : 12,
-            runSpacing: isSmallScreen ? 8 : 12,
-            children: years.map((year) {
-              final isSelected = year == selectedYear;
-              return Material(
-                color: isSelected ? bpsBlue : bpsBackground,
-                borderRadius: BorderRadius.circular(10),
-                child: InkWell(
-                  onTap: () => onYearSelected(year),
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    constraints: BoxConstraints(
-                      minWidth: isSmallScreen ? 60 : 70,
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isSmallScreen ? 12 : 16,
-                      vertical: isSmallScreen ? 8 : 10,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: isSelected ? bpsBlue : bpsBorder,
-                        width: isSelected ? 2 : 1.5,
-                      ),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: bpsBlue.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Text(
-                      year.toString(),
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : bpsTextSecondary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // Unified poverty trend chart widget - eliminates 400+ lines of duplication
 class _PovertyTrendChart extends StatelessWidget {
   final String title;

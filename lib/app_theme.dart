@@ -351,3 +351,83 @@ class BPSDecorations {
         borderRadius: BorderRadius.circular(8),
       );
 }
+
+/// Slide-based page transition with parallax depth.
+///
+/// New page slides in from the right; the page beneath shifts slightly left,
+/// creating a layered depth effect. No fade.
+class ParallaxPageTransitionsBuilder extends PageTransitionsBuilder {
+  const ParallaxPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final foregroundSlide = Tween<Offset>(
+      begin: const Offset(1.0, 0.0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: animation,
+      curve: Curves.fastOutSlowIn,
+      reverseCurve: Curves.fastOutSlowIn,
+    ));
+
+    final backgroundSlide = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(-0.3, 0.0),
+    ).animate(CurvedAnimation(
+      parent: secondaryAnimation,
+      curve: Curves.fastOutSlowIn,
+      reverseCurve: Curves.fastOutSlowIn,
+    ));
+
+    // Scrim: dim this page as it recedes behind a pushed page.
+    final scrim = Tween<double>(begin: 0.0, end: 0.18).animate(CurvedAnimation(
+      parent: secondaryAnimation,
+      curve: Curves.fastOutSlowIn,
+      reverseCurve: Curves.fastOutSlowIn,
+    ));
+
+    return SlideTransition(
+      position: backgroundSlide,
+      child: SlideTransition(
+        position: foregroundSlide,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // Leading-edge shadow — glued just left of the page. Off-screen at
+            // rest (offset 0), only visible while the page slides over the one below.
+            Positioned(
+              top: 0,
+              bottom: 0,
+              left: -10,
+              width: 10,
+              child: const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [Colors.transparent, Color(0x33000000)],
+                  ),
+                ),
+              ),
+            ),
+            child,
+            Positioned.fill(
+              child: IgnorePointer(
+                child: FadeTransition(
+                  opacity: scrim,
+                  child: const ColoredBox(color: Colors.black),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

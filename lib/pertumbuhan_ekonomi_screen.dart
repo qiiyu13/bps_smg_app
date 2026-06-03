@@ -23,6 +23,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
   late int selectedYear;
   late List<int> availableYears;
   late Timer _debounceTimer;
+  final ScrollController _yearScrollController = ScrollController();
   List<PDRBRanking> _rankings = [];
   bool _isLoadingRankings = true;
 
@@ -37,6 +38,13 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
       ..sort((a, b) => a.compareTo(b));
     selectedYear = availableYears.isNotEmpty ? availableYears.last : 2024;
     _debounceTimer = Timer(const Duration(milliseconds: 100), () {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_yearScrollController.hasClients) {
+        _yearScrollController.jumpTo(
+          _yearScrollController.position.maxScrollExtent,
+        );
+      }
+    });
     _loadRankings();
   }
 
@@ -61,6 +69,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
   @override
   void dispose() {
     _debounceTimer.cancel();
+    _yearScrollController.dispose();
     super.dispose();
   }
 
@@ -266,55 +275,58 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             ],
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
-          Wrap(
-            spacing: isSmallScreen ? 8 : 12,
-            runSpacing: isSmallScreen ? 8 : 12,
-            children: availableYears.map((year) {
-              final isSelected = year == selectedYear;
-              return Material(
-                color: isSelected ? bpsBlue : bpsBackground,
-                borderRadius: BorderRadius.circular(10),
-                child: InkWell(
-                  onTap: () => _changeYear(year),
+          SizedBox(
+            height: isSmallScreen ? 38 : 42,
+            child: ListView.separated(
+              controller: _yearScrollController,
+              scrollDirection: Axis.horizontal,
+              itemCount: availableYears.length,
+              separatorBuilder: (_, __) =>
+                  SizedBox(width: isSmallScreen ? 6 : 8),
+              itemBuilder: (_, i) {
+                final year = availableYears[i];
+                final isSelected = year == selectedYear;
+                return Material(
+                  color: isSelected ? bpsBlue : bpsBackground,
                   borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    constraints: BoxConstraints(
-                      minWidth: isSmallScreen ? 60 : 70,
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isSmallScreen ? 12 : 16,
-                      vertical: isSmallScreen ? 8 : 10,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: isSelected ? bpsBlue : bpsBorder,
-                        width: isSelected ? 2 : 1.5,
+                  child: InkWell(
+                    onTap: () => _changeYear(year),
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 16 : 20,
+                        vertical: isSmallScreen ? 8 : 10,
                       ),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: bpsBlue.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Text(
-                      year.toString(),
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : bpsTextSecondary,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: isSelected ? bpsBlue : bpsBorder,
+                          width: isSelected ? 2 : 1.5,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: bpsBlue.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
                       ),
-                      textAlign: TextAlign.center,
+                      child: Text(
+                        year.toString(),
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 14 : 16,
+                          fontWeight:
+                              isSelected ? FontWeight.w700 : FontWeight.w600,
+                          color: isSelected ? Colors.white : bpsTextSecondary,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              );
-            }).toList(),
+                );
+              },
+            ),
           ),
         ],
       ),
