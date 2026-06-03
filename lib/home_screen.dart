@@ -276,56 +276,12 @@ class _HomeBody extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 3),
-                    Row(
-                      children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: bpsGreen,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          'Statistik Terpercaya',
-                          style: TextStyle(
-                            color: bpsTextSecondary,
-                            fontSize: sizing.headerSubtitleSize,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 7,
-                ),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      bpsBlue.withOpacity(0.12),
-                      bpsBlue.withOpacity(0.06),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: bpsBlue.withOpacity(0.18)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.place_rounded, color: bpsBlue, size: 14),
-                    const SizedBox(width: 3),
                     Text(
-                      'Semarang',
+                      'Statistik Terpercaya',
                       style: TextStyle(
-                        color: bpsBlue,
+                        color: bpsTextSecondary,
                         fontSize: sizing.headerSubtitleSize,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
