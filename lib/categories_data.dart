@@ -20,6 +20,7 @@ class CategoryItem {
   final Widget screen;
   final String group;
   final Color groupColor;
+  final String? illustration;
 
   const CategoryItem({
     required this.label,
@@ -28,6 +29,7 @@ class CategoryItem {
     required this.screen,
     required this.group,
     required this.groupColor,
+    this.illustration,
   });
 
   @override
@@ -55,6 +57,7 @@ class HomeScreenCategories {
       screen: PertumbuhanEkonomiScreen(),
       group: 'Economic',
       groupColor: bpsEconomicColor,
+      illustration: 'assets/new-illust-svg/Pertumbuhan_ekonomi.svg',
     ),
     const CategoryItem(
       label: 'Inflasi',
@@ -63,6 +66,7 @@ class HomeScreenCategories {
       screen: InflasiScreen(),
       group: 'Economic',
       groupColor: bpsEconomicColor,
+      illustration: 'assets/new-illust-svg/Inflasi.svg',
     ),
     // Social
     const CategoryItem(
@@ -72,6 +76,7 @@ class HomeScreenCategories {
       screen: PendudukScreen(),
       group: 'Social',
       groupColor: bpsSocialColor,
+      illustration: 'assets/new-illust-svg/Penduduk.svg',
     ),
     const CategoryItem(
       label: 'Pendidikan',
@@ -80,6 +85,7 @@ class HomeScreenCategories {
       screen: PendidikanScreen(),
       group: 'Social',
       groupColor: bpsSocialColor,
+      illustration: 'assets/new-illust-svg/pendidikan.svg',
     ),
     const CategoryItem(
       label: 'Tenaga Kerja',
@@ -88,6 +94,7 @@ class HomeScreenCategories {
       screen: TenagaKerjaScreen(),
       group: 'Social',
       groupColor: bpsSocialColor,
+      illustration: 'assets/new-illust-svg/tenaga-kerja.svg',
     ),
     const CategoryItem(
       label: 'Kemiskinan',
@@ -96,6 +103,7 @@ class HomeScreenCategories {
       screen: KemiskinanScreen(),
       group: 'Social',
       groupColor: bpsSocialColor,
+      illustration: 'assets/new-illust-svg/Kemiskinan.svg',
     ),
     const CategoryItem(
       label: 'Pengangguran',
@@ -104,6 +112,7 @@ class HomeScreenCategories {
       screen: PengangguranScreen(),
       group: 'Social',
       groupColor: bpsSocialColor,
+      illustration: 'assets/new-illust-svg/Pengangguran.svg',
     ),
     // Development
     const CategoryItem(
@@ -113,6 +122,7 @@ class HomeScreenCategories {
       screen: IpmScreen(),
       group: 'Development',
       groupColor: bpsDevelopmentColor,
+      illustration: 'assets/new-illust-svg/IPM.svg',
     ),
     const CategoryItem(
       label: 'Indeks Pembangunan Gender',
@@ -121,6 +131,7 @@ class HomeScreenCategories {
       screen: IPGScreen(),
       group: 'Development',
       groupColor: bpsDevelopmentColor,
+      illustration: 'assets/new-illust-svg/indeks-pembangunan-gender.svg',
     ),
     const CategoryItem(
       label: 'Indeks Ketimpangan Gender',
@@ -129,6 +140,7 @@ class HomeScreenCategories {
       screen: IDGScreen(),
       group: 'Development',
       groupColor: bpsDevelopmentColor,
+      illustration: 'assets/new-illust-svg/indeks-ketimpangan-gender.svg',
     ),
     const CategoryItem(
       label: 'Sustainable Development Goals',
@@ -137,6 +149,7 @@ class HomeScreenCategories {
       screen: UserSDGsScreen(),
       group: 'Development',
       groupColor: bpsDevelopmentColor,
+      illustration: 'assets/new-illust-svg/sdgs.svg',
     ),
   ];
 

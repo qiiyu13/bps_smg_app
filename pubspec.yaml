@@ -41,6 +41,7 @@ flutter:
     - assets/images/logo_white.png
     - assets/animations/ringan.mp4
     - assets/data/ranking_pdrb_jateng.csv
+    - assets/new-illust-svg/
   
   # Konfigurasi Font
   fonts:

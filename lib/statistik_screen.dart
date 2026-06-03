@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'app_theme.dart';
 import 'categories_data.dart';
 import 'responsive_sizing.dart';
@@ -19,6 +20,17 @@ class _StatistikScreenState extends State<StatistikScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _warmSvgCache();
+  }
+
+  // Parse + cache every category illustration up front so the first tab swipe
+  // never blocks the main thread decoding a heavy SVG mid-gesture.
+  void _warmSvgCache() {
+    for (final c in HomeScreenCategories.allCategories) {
+      if (c.illustration == null) continue;
+      final loader = SvgAssetLoader(c.illustration!);
+      svg.cache.putIfAbsent(loader.cacheKey(null), () => loader.loadBytes(null));
+    }
   }
 
   @override
@@ -127,10 +139,19 @@ class _StatistikHeader extends StatelessWidget {
                 final count = HomeScreenCategories.allCategories
                     .where((c) => c.group == groupKey)
                     .length;
+                final animation = tabController.animation ?? tabController;
                 return AnimatedBuilder(
-                  animation: tabController,
+                  animation: animation,
                   builder: (context, child) {
-                    final isActive = tabController.index == idx;
+                    // Continuous position (0..length-1) tracks the swipe in
+                    // real time, so the label interpolates with the finger
+                    // instead of snapping late on the index threshold.
+                    final value = tabController.animation?.value ??
+                        tabController.index.toDouble();
+                    final t = (1.0 - (value - idx).abs()).clamp(0.0, 1.0);
+                    // Front-load the saturation so the color lights up early in
+                    // the swipe, in sync with the indicator, not at the very end.
+                    final lit = Curves.easeOutCubic.transform(t);
                     return Tab(
                       child: Container(
                         alignment: Alignment.center,
@@ -138,8 +159,9 @@ class _StatistikHeader extends StatelessWidget {
                           '${HomeScreenCategories.tabLabels[idx]} ($count)',
                           style: TextStyle(
                             fontSize: sizing.bottomNavLabelSize + 1,
-                            fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-                            color: isActive ? color : bpsTextLabel,
+                            fontWeight:
+                                t > 0.3 ? FontWeight.w700 : FontWeight.w500,
+                            color: Color.lerp(bpsTextLabel, color, lit),
                           ),
                         ),
                       ),
@@ -155,7 +177,7 @@ class _StatistikHeader extends StatelessWidget {
   }
 }
 
-class _CategoryList extends StatelessWidget {
+class _CategoryList extends StatefulWidget {
   final List<CategoryItem> categories;
   final ResponsiveSizing sizing;
 
@@ -165,7 +187,19 @@ class _CategoryList extends StatelessWidget {
   });
 
   @override
+  State<_CategoryList> createState() => _CategoryListState();
+}
+
+class _CategoryListState extends State<_CategoryList>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+    final categories = widget.categories;
+    final sizing = widget.sizing;
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
       child: ListView.builder(
@@ -271,14 +305,29 @@ class _CategoryCardState extends State<_CategoryCard>
               borderRadius: BorderRadius.circular(18),
               child: Stack(
                 children: [
-                  // Large decorative background icon (illustration placeholder)
+                  // Large decorative illustration watermark (recolored flat white)
                   Positioned(
-                    right: -18,
-                    bottom: -18,
-                    child: Icon(
-                      widget.category.icon,
-                      size: 120,
-                      color: Colors.white.withOpacity(0.12),
+                    right: -14,
+                    bottom: -16,
+                    child: IgnorePointer(
+                      child: RepaintBoundary(
+                        child: widget.category.illustration != null
+                            ? SvgPicture.asset(
+                                widget.category.illustration!,
+                                width: 118,
+                                height: 118,
+                                fit: BoxFit.contain,
+                                colorFilter: ColorFilter.mode(
+                                  Colors.white.withOpacity(0.4),
+                                  BlendMode.srcIn,
+                                ),
+                              )
+                            : Icon(
+                                widget.category.icon,
+                                size: 120,
+                                color: Colors.white.withOpacity(0.12),
+                              ),
+                      ),
                     ),
                   ),
                   // Content

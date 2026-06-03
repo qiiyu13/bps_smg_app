@@ -67,17 +67,6 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  void _navigateToProfile() {
-    Navigator.push(
-      context,
-      PageRouteBuilder<void>(
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-        pageBuilder: (_, __, ___) => const ProfileScreen(),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final sizing = ResponsiveSizing(context);
@@ -98,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen>
             onExploreAll: () => setState(() => _navIndex = 1),
           ),
           const StatistikScreen(),
+          const ProfileScreen(),
         ],
       ),
       bottomNavigationBar: _buildBottomNav(sizing),
@@ -138,9 +128,9 @@ class _HomeScreenState extends State<HomeScreen>
               _buildNavItem(
                 icon: Icons.info_rounded,
                 label: 'About Us',
-                isSelected: false,
+                isSelected: _navIndex == 2,
                 sizing: sizing,
-                onTap: _navigateToProfile,
+                onTap: () => setState(() => _navIndex = 2),
               ),
             ],
           ),
@@ -162,7 +152,9 @@ class _HomeScreenState extends State<HomeScreen>
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
-          highlightColor: bpsBlue.withOpacity(0.1),
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          hoverColor: Colors.transparent,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -561,6 +553,10 @@ class _BentoTile1State extends State<_BentoTile1> {
       icon: Icons.people_rounded,
       spots: _spots ?? [],
       date: _date,
+      illustration: 'assets/new-illust-svg/Penduduk.svg',
+      watermarkSize: 110,
+      watermarkRight: -16,
+      watermarkBottom: -18,
       screen: const PendudukScreen(),
     );
   }
@@ -619,6 +615,7 @@ class _BentoTile2State extends State<_BentoTile2> {
       icon: Icons.trending_up_rounded,
       spots: _spots ?? [],
       date: _date,
+      illustration: 'assets/new-illust-svg/IPM.svg',
       screen: const IpmScreen(),
     );
   }
@@ -677,6 +674,10 @@ class _BentoTile3State extends State<_BentoTile3> {
       icon: Icons.volunteer_activism_rounded,
       spots: _spots ?? [],
       date: _date,
+      illustration: 'assets/new-illust-svg/Kemiskinan.svg',
+      watermarkSize: 110,
+      watermarkRight: -16,
+      watermarkBottom: -18,
       screen: const KemiskinanScreen(),
     );
   }
@@ -735,6 +736,7 @@ class _BentoTile4State extends State<_BentoTile4> {
       icon: Icons.payments_rounded,
       spots: _spots ?? [],
       dateLabel: _dateLabel,
+      illustration: 'assets/new-illust-svg/Inflasi.svg',
       screen: const InflasiScreen(),
     );
   }
@@ -799,6 +801,7 @@ class _BentoTile5State extends State<_BentoTile5> {
       latestYear: _latestYear,
       prevVal: _prevVal,
       prevYear: _prevYear,
+      illustration: 'assets/new-illust-svg/Pertumbuhan_ekonomi.svg',
       screen: const PertumbuhanEkonomiScreen(),
     );
   }
@@ -844,7 +847,7 @@ class _BentoTile6State extends State<_BentoTile6> {
   @override
   Widget build(BuildContext context) {
     return _BentoCellWidget(
-      label: 'TPT',
+      label: 'Pengangguran',
       value: _value != null
           ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
           : '—',
@@ -857,6 +860,7 @@ class _BentoTile6State extends State<_BentoTile6> {
       icon: Icons.work_off_rounded,
       spots: _spots ?? [],
       date: _latestYear != null ? DateTime(_latestYear!, 12, 31) : null,
+      illustration: 'assets/new-illust-svg/Pengangguran.svg',
       screen: const PengangguranScreen(),
     );
   }
@@ -877,6 +881,7 @@ class _HeroCellWidget extends StatefulWidget {
   final double? prevVal;
   final int? prevYear;
   final Widget screen;
+  final String? illustration;
 
   const _HeroCellWidget({
     required this.label,
@@ -891,6 +896,7 @@ class _HeroCellWidget extends StatefulWidget {
     this.latestYear,
     this.prevVal,
     this.prevYear,
+    this.illustration,
   });
 
   @override
@@ -1011,33 +1017,31 @@ class _HeroCellWidgetState extends State<_HeroCellWidget>
                     ),
                   ),
                 ),
+                // Illustration watermark
+                if (widget.illustration != null)
+                  _TileWatermark(
+                    asset: widget.illustration!,
+                    size: 188,
+                    opacity: 0.5,
+                    right: -16,
+                    bottom: -18,
+                  ),
                 Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    widget.label,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                      letterSpacing: 0.2,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                _IconChip(icon: widget.icon, size: 28),
-                              ],
+                            Text(
+                              widget.label,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                letterSpacing: 0.2,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const Spacer(),
                             Row(
@@ -1089,17 +1093,6 @@ class _HeroCellWidgetState extends State<_HeroCellWidget>
                                 ),
                               ),
                             ],
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: widget.spots.isNotEmpty
-                            ? RepaintBoundary(
-                                child: LineChart(_heroChartData()),
-                              )
-                            : const SizedBox(),
-                      ),
                     ],
                   ),
                 ),
@@ -1108,50 +1101,6 @@ class _HeroCellWidgetState extends State<_HeroCellWidget>
           ),
         ),
       ),
-    );
-  }
-
-  LineChartData _heroChartData() {
-    final spots = widget.spots;
-    return LineChartData(
-      minY: spots.map((s) => s.y).reduce((a, b) => a < b ? a : b) * 0.92,
-      maxY: spots.map((s) => s.y).reduce((a, b) => a > b ? a : b) * 1.08,
-      minX: 0,
-      maxX: (spots.length - 1).toDouble(),
-      gridData: const FlGridData(show: false),
-      titlesData: const FlTitlesData(show: false),
-      borderData: FlBorderData(show: false),
-      lineBarsData: [
-        LineChartBarData(
-          spots: spots,
-          isCurved: true,
-          curveSmoothness: 0.4,
-          color: Colors.white,
-          barWidth: 2.5,
-          dotData: FlDotData(
-            show: true,
-            checkToShowDot: (spot, bar) => spot.x == spots.last.x,
-            getDotPainter: (spot, pct, bar, idx) => FlDotCirclePainter(
-              radius: 3,
-              color: Colors.white,
-              strokeWidth: 2,
-              strokeColor: widget.color.withOpacity(0.55),
-            ),
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: [
-                Colors.white.withOpacity(0.28),
-                Colors.white.withOpacity(0.0),
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-        ),
-      ],
-      lineTouchData: const LineTouchData(enabled: false),
     );
   }
 }
@@ -1170,6 +1119,10 @@ class _BentoCellWidget extends StatefulWidget {
   final DateTime? date;
   final String? dateLabel;
   final Widget screen;
+  final String? illustration;
+  final double watermarkSize;
+  final double watermarkRight;
+  final double watermarkBottom;
 
   const _BentoCellWidget({
     required this.label,
@@ -1183,6 +1136,10 @@ class _BentoCellWidget extends StatefulWidget {
     required this.screen,
     this.date,
     this.dateLabel,
+    this.illustration,
+    this.watermarkSize = 96,
+    this.watermarkRight = -14,
+    this.watermarkBottom = -16,
   });
 
   @override
@@ -1291,16 +1248,14 @@ class _BentoCellWidgetState extends State<_BentoCellWidget>
                     ),
                   ),
                 ),
-                // Backdrop sparkline — data texture, no layout cost
-                if (widget.spots.isNotEmpty)
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    height: 38,
-                    child: IgnorePointer(
-                      child: _CellSparkline(spots: widget.spots),
-                    ),
+                // Illustration watermark
+                if (widget.illustration != null)
+                  _TileWatermark(
+                    asset: widget.illustration!,
+                    size: widget.watermarkSize,
+                    opacity: 0.46,
+                    right: widget.watermarkRight,
+                    bottom: widget.watermarkBottom,
                   ),
                 // Content
                 Padding(
@@ -1325,40 +1280,27 @@ class _CompactLayout extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Label + icon chip
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.label,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      letterSpacing: 0.2,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    widget.dateLabel ??
-                        (widget.date != null ? '${widget.date!.year}' : '—'),
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white.withOpacity(0.65),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            _IconChip(icon: widget.icon, size: 22),
-          ],
+        // Label
+        Text(
+          widget.label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            letterSpacing: 0.2,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 2),
+        Text(
+          widget.dateLabel ??
+              (widget.date != null ? '${widget.date!.year}' : '—'),
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w400,
+            color: Colors.white.withOpacity(0.65),
+          ),
         ),
         const Spacer(),
         // Value
@@ -1500,28 +1442,46 @@ class _CTATile extends StatelessWidget {
   }
 }
 
-// ─── Frosted Icon Chip ────────────────────────────────────────────────────────
+// ─── Tile Illustration Watermark ──────────────────────────────────────────────
+//
+// Recolors a metric illustration to flat white via srcIn and drops it into the
+// bottom-right of a bento tile at low opacity — decorative texture, no layout
+// cost, never intercepts taps.
 
-class _IconChip extends StatelessWidget {
-  final IconData icon;
+class _TileWatermark extends StatelessWidget {
+  final String asset;
   final double size;
+  final double opacity;
+  final double right;
+  final double bottom;
 
-  const _IconChip({required this.icon, required this.size});
+  const _TileWatermark({
+    required this.asset,
+    required this.size,
+    this.opacity = 0.14,
+    this.right = -14,
+    this.bottom = -16,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.16),
-        borderRadius: BorderRadius.circular(size * 0.32),
-        border: Border.all(color: Colors.white.withOpacity(0.22), width: 0.8),
-      ),
-      child: Icon(
-        icon,
-        color: Colors.white.withOpacity(0.92),
-        size: size * 0.56,
+    return Positioned(
+      right: right,
+      bottom: bottom,
+      child: IgnorePointer(
+        child: Opacity(
+          opacity: opacity,
+          child: SvgPicture.asset(
+            asset,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+            colorFilter: const ColorFilter.mode(
+              Colors.white,
+              BlendMode.srcIn,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -1603,67 +1563,3 @@ class _DotGridPainter extends CustomPainter {
       oldDelegate.color != color;
 }
 
-// ─── Backdrop Sparkline ───────────────────────────────────────────────────────
-//
-// Fills the bottom strip of a bento cell behind the content — gives every card a
-// sense of trend/data without consuming vertical layout space.
-
-class _CellSparkline extends StatelessWidget {
-  final List<FlSpot> spots;
-
-  const _CellSparkline({required this.spots});
-
-  @override
-  Widget build(BuildContext context) {
-    if (spots.isEmpty) return const SizedBox();
-
-    final lo = spots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
-    final hi = spots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
-    final pad = (hi - lo) * 0.15 + 0.001;
-
-    return RepaintBoundary(
-      child: LineChart(
-        LineChartData(
-          minY: lo - pad,
-          maxY: hi + pad,
-          minX: 0,
-          maxX: (spots.length - 1).toDouble(),
-          gridData: const FlGridData(show: false),
-          titlesData: const FlTitlesData(show: false),
-          borderData: FlBorderData(show: false),
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              isCurved: true,
-              curveSmoothness: 0.4,
-              color: Colors.white.withOpacity(0.5),
-              barWidth: 1.8,
-              dotData: FlDotData(
-                show: true,
-                checkToShowDot: (spot, bar) => spot.x == spots.last.x,
-                getDotPainter: (spot, pct, bar, idx) => FlDotCirclePainter(
-                  radius: 2.2,
-                  color: Colors.white,
-                  strokeWidth: 0,
-                  strokeColor: Colors.transparent,
-                ),
-              ),
-              belowBarData: BarAreaData(
-                show: true,
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.white.withOpacity(0.20),
-                    Colors.white.withOpacity(0.0),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
-            ),
-          ],
-          lineTouchData: const LineTouchData(enabled: false),
-        ),
-      ),
-    );
-  }
-}
