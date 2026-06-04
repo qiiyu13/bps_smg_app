@@ -113,6 +113,7 @@ final Map<String, Color> bpsContactColors = {
 /// Main app theme
 final ThemeData bpsTheme = ThemeData(
   useMaterial3: true,
+  fontFamily: 'Inter',
   primaryColor: bpsBlue,
   scaffoldBackgroundColor: bpsBackground,
   colorScheme: ColorScheme.light(
@@ -127,12 +128,24 @@ final ThemeData bpsTheme = ThemeData(
     onBackground: bpsTextPrimary,
     onError: Colors.white,
   ),
+  textTheme: const TextTheme(
+    displayLarge: TextStyle(fontFamily: 'PlusJakartaSans'),
+    displayMedium: TextStyle(fontFamily: 'PlusJakartaSans'),
+    displaySmall: TextStyle(fontFamily: 'PlusJakartaSans'),
+    headlineLarge: TextStyle(fontFamily: 'PlusJakartaSans'),
+    headlineMedium: TextStyle(fontFamily: 'PlusJakartaSans'),
+    headlineSmall: TextStyle(fontFamily: 'PlusJakartaSans'),
+    titleLarge: TextStyle(fontFamily: 'PlusJakartaSans'),
+    titleMedium: TextStyle(fontFamily: 'PlusJakartaSans'),
+    titleSmall: TextStyle(fontFamily: 'PlusJakartaSans'),
+  ),
   appBarTheme: const AppBarTheme(
     backgroundColor: bpsBlue,
     foregroundColor: Colors.white,
     elevation: 0,
     centerTitle: true,
     titleTextStyle: TextStyle(
+      fontFamily: 'PlusJakartaSans',
       fontSize: 18,
       fontWeight: FontWeight.w700,
       color: Colors.white,
@@ -180,6 +193,7 @@ final ThemeData bpsTheme = ThemeData(
         borderRadius: BorderRadius.circular(10),
       ),
       textStyle: const TextStyle(
+        fontFamily: 'PlusJakartaSans',
         fontWeight: FontWeight.w600,
         fontSize: 15,
       ),
@@ -189,6 +203,7 @@ final ThemeData bpsTheme = ThemeData(
     style: TextButton.styleFrom(
       foregroundColor: bpsBlue,
       textStyle: const TextStyle(
+        fontFamily: 'PlusJakartaSans',
         fontWeight: FontWeight.w600,
       ),
     ),
@@ -224,6 +239,7 @@ final ThemeData bpsTheme = ThemeData(
 
 class BPSTextStyles {
   static const TextStyle headerTitle = TextStyle(
+    fontFamily: 'PlusJakartaSans',
     fontSize: 16,
     fontWeight: FontWeight.w700,
     color: Colors.white,
@@ -237,12 +253,14 @@ class BPSTextStyles {
   );
 
   static const TextStyle sectionTitle = TextStyle(
+    fontFamily: 'PlusJakartaSans',
     fontSize: 18,
     fontWeight: FontWeight.w700,
     color: bpsTextPrimary,
   );
 
   static const TextStyle cardTitle = TextStyle(
+    fontFamily: 'PlusJakartaSans',
     fontSize: 15,
     fontWeight: FontWeight.w700,
     color: bpsTextPrimary,
@@ -254,6 +272,7 @@ class BPSTextStyles {
   );
 
   static const TextStyle statValue = TextStyle(
+    fontFamily: 'PlusJakartaSans',
     fontSize: 28,
     fontWeight: FontWeight.w800,
     color: bpsTextPrimary,

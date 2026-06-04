@@ -127,9 +127,10 @@ class _StatistikHeader extends StatelessWidget {
             TabBar(
               controller: tabController,
               labelPadding: EdgeInsets.zero,
-              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorSize: TabBarIndicatorSize.label,
               indicator: const UnderlineTabIndicator(
                 borderSide: BorderSide(color: bpsBlue, width: 3),
+                insets: EdgeInsets.symmetric(horizontal: 24),
               ),
               dividerColor: Colors.transparent,
               tabs: HomeScreenCategories.tabGroups.asMap().entries.map((entry) {
@@ -333,67 +334,29 @@ class _CategoryCardState extends State<_CategoryCard>
                   // Content
                   Padding(
                     padding: EdgeInsets.all(widget.sizing.horizontalPadding),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Icon container
-                        Container(
-                          width: 46,
-                          height: 46,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(13),
-                          ),
-                          child: Icon(
-                            widget.category.icon,
+                        Text(
+                          widget.category.label,
+                          style: TextStyle(
+                            fontSize: widget.sizing.categoryLabelFontSize,
+                            fontWeight: FontWeight.w700,
                             color: Colors.white,
-                            size: 24,
+                            height: 1.2,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(width: widget.sizing.itemSpacing + 2),
-                        // Text
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                widget.category.label,
-                                style: TextStyle(
-                                  fontSize: widget.sizing.categoryLabelFontSize,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                  height: 1.2,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 5),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 3,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.18),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  groupTitle,
-                                  style: TextStyle(
-                                    fontSize: widget.sizing.headerSubtitleSize,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white.withOpacity(0.9),
-                                  ),
-                                ),
-                              ),
-                            ],
+                        const SizedBox(height: 4),
+                        Text(
+                          groupTitle,
+                          style: TextStyle(
+                            fontSize: widget.sizing.headerSubtitleSize,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white.withOpacity(0.8),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          color: Colors.white.withOpacity(0.7),
-                          size: 14,
                         ),
                       ],
                     ),

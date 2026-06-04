@@ -761,7 +761,8 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                             color: bpsTextSecondary))
                   ])))
         else
-          SizedBox(
+          RepaintBoundary(
+            child: SizedBox(
               height: 240,
               child: BarChart(BarChartData(
                   barTouchData: BarTouchData(
@@ -803,11 +804,12 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                       bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
                               showTitles: true,
+                              reservedSize: 38,
                               getTitlesWidget: (value, meta) => Padding(
                                   padding: const EdgeInsets.only(top: 8),
                                   child: Text(_getIndicatorLabel(value.toInt()),
                                       style: TextStyle(
-                                          fontSize: isSmallScreen ? 9 : 10,
+                                          fontSize: isSmallScreen ? 10 : 11,
                                           fontWeight: FontWeight.w500,
                                           color: bpsTextSecondary),
                                       textAlign: TextAlign.center)))),
@@ -819,7 +821,8 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                                   Text('${value.toInt()}%', style: TextStyle(fontSize: isSmallScreen ? 9 : 10, color: bpsTextSecondary)))),
                       topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                       rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false))),
-                  maxY: 110))),
+                  maxY: 105))),
+        ),
       ]),
     );
   }
@@ -908,14 +911,15 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
         ),
         SizedBox(height: isSmallScreen ? 12 : 16),
         SizedBox(
-          height: 260,
+          height: 280,
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
               SizedBox(
                 width: max(MediaQuery.of(context).size.width - 60,
-                    sortedNames.length * 35.0),
-                child: BarChart(BarChartData(
+                    sortedNames.length * 38.0),
+                child: RepaintBoundary(
+                  child: BarChart(BarChartData(
                   alignment: BarChartAlignment.spaceEvenly,
                   maxY: highest + 10,
                   barTouchData: BarTouchData(
@@ -928,7 +932,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                           const TextStyle(
                             color: bpsTextSecondary,
                             fontWeight: FontWeight.w500,
-                            fontSize: 11,
+                            fontSize: 12,
                           ),
                           children: [
                             const TextSpan(text: '\n'),
@@ -937,7 +941,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                               style: const TextStyle(
                                 color: bpsOrange,
                                 fontWeight: FontWeight.w700,
-                                fontSize: 14,
+                                fontSize: 13,
                               ),
                             ),
                           ],
@@ -969,30 +973,31 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                     bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                             showTitles: true,
-                            reservedSize: 50,
+                            reservedSize: 60,
                             getTitlesWidget: (value, meta) {
                               if (value.toInt() >= sortedNames.length)
                                 return const SizedBox();
                               final nama = sortedNames[value.toInt()];
                               final isSelected = nama == selectedKota;
+                              final truncated = nama.length > 14
+                                  ? '${nama.substring(0, 12)}\u2026'
+                                  : nama;
                               return SideTitleWidget(
-                                  axisSide: meta.axisSide,
-                                  child: Padding(
-                                      padding: const EdgeInsets.only(top: 8),
-                                      child: RotatedBox(
-                                          quarterTurns: 1,
-                                          child: Text(
-                                              nama.length > 12
-                                                  ? '${nama.substring(0, 10)}..'
-                                                  : nama,
-                                              style: TextStyle(
-                                                  fontSize: 8,
-                                                  fontWeight: isSelected
-                                                      ? FontWeight.bold
-                                                      : FontWeight.w500,
-                                                  color: isSelected
-                                                      ? bpsOrange
-                                                      : bpsTextSecondary)))));
+                                axisSide: meta.axisSide,
+                                angle: -0.6,
+                                child: Text(
+                                  truncated,
+                                  style: TextStyle(
+                                    fontSize: isSmallScreen ? 9 : 10,
+                                    fontWeight: isSelected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                    color: isSelected
+                                        ? bpsOrange
+                                        : bpsTextSecondary,
+                                  ),
+                                ),
+                              );
                             })),
                     leftTitles: AxisTitles(
                         sideTitles: SideTitles(
@@ -1008,10 +1013,11 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                         sideTitles: SideTitles(showTitles: false)),
                   ),
                 )),
+                ),
               ),
-            ],
+              ],
+            ),
           ),
-        ),
       ]),
     );
   }
