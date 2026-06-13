@@ -672,10 +672,12 @@ class _BentoTile3State extends State<_BentoTile3> {
       icon: Icons.volunteer_activism_rounded,
       spots: _spots ?? [],
       date: _date,
-      illustration: 'assets/new-illust-svg/Kemiskinan.svg',
-      watermarkSize: 110,
-      watermarkRight: -16,
-      watermarkBottom: -18,
+      illustration: 'assets/new-illust-svg/Kemiskinan_2_outline.svg',
+      // Square 1000×1000 viewBox renders small at default size — bump + push
+      // further off-edge so the subject reads at the same scale as siblings.
+      watermarkSize: 142,
+      watermarkRight: -24,
+      watermarkBottom: -26,
       screen: const KemiskinanScreen(),
     );
   }

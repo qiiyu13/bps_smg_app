@@ -315,8 +315,8 @@ class _CategoryCardState extends State<_CategoryCard>
                         child: widget.category.illustration != null
                             ? SvgPicture.asset(
                                 widget.category.illustration!,
-                                width: 118,
-                                height: 118,
+                                width: 118 * widget.category.illustrationScale,
+                                height: 118 * widget.category.illustrationScale,
                                 colorFilter: ColorFilter.mode(
                                   Colors.white.withOpacity(0.4),
                                   BlendMode.srcIn,

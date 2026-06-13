@@ -22,6 +22,11 @@ class CategoryItem {
   final Color groupColor;
   final String? illustration;
 
+  /// Multiplier on the card's base watermark size. Square-viewBox illustrations
+  /// (e.g. Kemiskinan, 1000×1000) carry internal padding and render visually
+  /// smaller than edge-bleeding art at the same box size — bump those above 1.0.
+  final double illustrationScale;
+
   const CategoryItem({
     required this.label,
     required this.shortLabel,
@@ -30,6 +35,7 @@ class CategoryItem {
     required this.group,
     required this.groupColor,
     this.illustration,
+    this.illustrationScale = 1.0,
   });
 
   @override
@@ -103,7 +109,8 @@ class HomeScreenCategories {
       screen: KemiskinanScreen(),
       group: 'Social',
       groupColor: bpsSocialColor,
-      illustration: 'assets/new-illust-svg/Kemiskinan.svg',
+      illustration: 'assets/new-illust-svg/Kemiskinan_2_outline.svg',
+      illustrationScale: 1.3,
     ),
     const CategoryItem(
       label: 'Pengangguran',
@@ -131,7 +138,7 @@ class HomeScreenCategories {
       screen: IPGScreen(),
       group: 'Development',
       groupColor: bpsDevelopmentColor,
-      illustration: 'assets/new-illust-svg/indeks-pembangunan-gender.svg',
+      illustration: 'assets/new-illust-svg/IPG_2_outline.svg',
     ),
     const CategoryItem(
       label: 'Indeks Ketimpangan Gender',
@@ -140,7 +147,7 @@ class HomeScreenCategories {
       screen: IDGScreen(),
       group: 'Development',
       groupColor: bpsDevelopmentColor,
-      illustration: 'assets/new-illust-svg/indeks-ketimpangan-gender.svg',
+      illustration: 'assets/new-illust-svg/IKG_2_outline.svg',
     ),
     const CategoryItem(
       label: 'Sustainable Development Goals',
