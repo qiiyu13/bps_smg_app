@@ -8,6 +8,7 @@ import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
 import 'dart:async';
 import 'app_theme.dart';
+import 'models/ipm_data.dart';
 
 class IpmScreen extends StatefulWidget {
   const IpmScreen({super.key});
@@ -19,8 +20,8 @@ class IpmScreen extends StatefulWidget {
 class _IpmScreenState extends State<IpmScreen>
     with AutomaticKeepAliveClientMixin {
   int selectedYear = 2024;
-  Map<int, Map<String, dynamic>> ipmData = {};
-  Map<int, Map<String, dynamic>> komponenData = {};
+  Map<int, IpmYear> ipmData = {};
+  Map<int, IpmKomponen> komponenData = {};
   bool isLoading = true;
   String? errorMessage;
   List<int> _cachedSortedYears = [];
@@ -67,17 +68,15 @@ class _IpmScreenState extends State<IpmScreen>
 
       final ipmSection = githubData?['ipmData'] as Map<String, dynamic>?;
       if (ipmSection != null) {
-        ipmData = ipmSection.map((key, value) =>
-            MapEntry(int.parse(key), (value as Map<String, dynamic>).map(
-              (k, v) => MapEntry(k, (v as num).toDouble()),
-            )));
+        ipmData = ipmSection.map((key, value) => MapEntry(
+            int.parse(key), IpmYear.fromJson(value as Map<String, dynamic>)));
         await prefs.setString('ipm_data', json.encode(ipmSection));
       } else {
         final savedIpmData = prefs.getString('ipm_data');
         if (savedIpmData != null) {
           final decoded = json.decode(savedIpmData) as Map<String, dynamic>;
-          ipmData = decoded.map((key, value) =>
-              MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+          ipmData = decoded.map((key, value) => MapEntry(
+              int.parse(key), IpmYear.fromJson(value as Map<String, dynamic>)));
         } else {
           _initializeDefaultIpmData();
         }
@@ -85,17 +84,15 @@ class _IpmScreenState extends State<IpmScreen>
 
       final komponenSection = githubData?['komponenData'] as Map<String, dynamic>?;
       if (komponenSection != null) {
-        komponenData = komponenSection.map((key, value) =>
-            MapEntry(int.parse(key), (value as Map<String, dynamic>).map(
-              (k, v) => MapEntry(k, (v as num).toDouble()),
-            )));
+        komponenData = komponenSection.map((key, value) => MapEntry(int.parse(key),
+            IpmKomponen.fromJson(value as Map<String, dynamic>)));
         await prefs.setString('ipm_komponen_data', json.encode(komponenSection));
       } else {
         final savedKomponenData = prefs.getString('ipm_komponen_data');
         if (savedKomponenData != null) {
           final decoded = json.decode(savedKomponenData) as Map<String, dynamic>;
-          komponenData = decoded.map((key, value) =>
-              MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+          komponenData = decoded.map((key, value) => MapEntry(int.parse(key),
+              IpmKomponen.fromJson(value as Map<String, dynamic>)));
         } else {
           _initializeDefaultKomponenData();
         }
@@ -132,59 +129,35 @@ class _IpmScreenState extends State<IpmScreen>
 
   void _initializeDefaultIpmData() {
     ipmData = {
-      2020: {
-        'uhh': 77.34,
-        'rls': 10.53,
-        'hls': 15.52,
-        'pengeluaran': 15243.00,
-        'ipm': 83.05
-      },
-      2021: {
-        'uhh': 77.51,
-        'rls': 10.78,
-        'hls': 15.53,
-        'pengeluaran': 15425.00,
-        'ipm': 83.55
-      },
-      2022: {
-        'uhh': 77.69,
-        'rls': 10.80,
-        'hls': 15.54,
-        'pengeluaran': 16047.00,
-        'ipm': 84.08
-      },
-      2023: {
-        'uhh': 77.90,
-        'rls': 10.81,
-        'hls': 15.55,
-        'pengeluaran': 16420.00,
-        'ipm': 84.43
-      },
-      2024: {
-        'uhh': 78.23,
-        'rls': 11.05,
-        'hls': 15.57,
-        'pengeluaran': 16990.00,
-        'ipm': 85.24
-      },
-      2025: {
-        'uhh': 78.72,
-        'rls': 11.11,
-        'hls': 15.58,
-        'pengeluaran': 17402.00,
-        'ipm': 85.80
-      },
+      2020: const IpmYear(
+          uhh: 77.34, rls: 10.53, hls: 15.52, pengeluaran: 15243.00, ipm: 83.05),
+      2021: const IpmYear(
+          uhh: 77.51, rls: 10.78, hls: 15.53, pengeluaran: 15425.00, ipm: 83.55),
+      2022: const IpmYear(
+          uhh: 77.69, rls: 10.80, hls: 15.54, pengeluaran: 16047.00, ipm: 84.08),
+      2023: const IpmYear(
+          uhh: 77.90, rls: 10.81, hls: 15.55, pengeluaran: 16420.00, ipm: 84.43),
+      2024: const IpmYear(
+          uhh: 78.23, rls: 11.05, hls: 15.57, pengeluaran: 16990.00, ipm: 85.24),
+      2025: const IpmYear(
+          uhh: 78.72, rls: 11.11, hls: 15.58, pengeluaran: 17402.00, ipm: 85.80),
     };
   }
 
   void _initializeDefaultKomponenData() {
     komponenData = {
-      2020: {'ipmNasional': 72.81, 'ipmJateng': 71.88, 'ipmSemarang': 83.05},
-      2021: {'ipmNasional': 73.16, 'ipmJateng': 72.17, 'ipmSemarang': 83.55},
-      2022: {'ipmNasional': 73.77, 'ipmJateng': 72.80, 'ipmSemarang': 84.08},
-      2023: {'ipmNasional': 74.39, 'ipmJateng': 73.39, 'ipmSemarang': 84.43},
-      2024: {'ipmNasional': 75.02, 'ipmJateng': 73.87, 'ipmSemarang': 85.24},
-      2025: {'ipmNasional': 75.90, 'ipmJateng': 74.77, 'ipmSemarang': 85.80},
+      2020: const IpmKomponen(
+          ipmNasional: 72.81, ipmJateng: 71.88, ipmSemarang: 83.05),
+      2021: const IpmKomponen(
+          ipmNasional: 73.16, ipmJateng: 72.17, ipmSemarang: 83.55),
+      2022: const IpmKomponen(
+          ipmNasional: 73.77, ipmJateng: 72.80, ipmSemarang: 84.08),
+      2023: const IpmKomponen(
+          ipmNasional: 74.39, ipmJateng: 73.39, ipmSemarang: 84.43),
+      2024: const IpmKomponen(
+          ipmNasional: 75.02, ipmJateng: 73.87, ipmSemarang: 85.24),
+      2025: const IpmKomponen(
+          ipmNasional: 75.90, ipmJateng: 74.77, ipmSemarang: 85.80),
     };
   }
 
@@ -348,8 +321,8 @@ class _IpmScreenState extends State<IpmScreen>
 // Extracted content widget for better performance
 class _IpmScreenContent extends StatelessWidget {
   final int selectedYear;
-  final Map<int, Map<String, dynamic>> ipmData;
-  final Map<int, Map<String, dynamic>> komponenData;
+  final Map<int, IpmYear> ipmData;
+  final Map<int, IpmKomponen> komponenData;
   final List<int> cachedSortedYears;
   final ValueChanged<int> onYearSelected;
   final ScrollController yearScrollController;
@@ -455,10 +428,10 @@ class _IpmScreenContent extends StatelessWidget {
     final conclusionData = KesimpulanGenerator.generateIPMConclusion(
       latestYear: latestYear,
       firstYear: firstYear,
-      latestIPM: latestData['ipm'] as double,
-      firstIPM: firstData['ipm'] as double,
-      nationalAverage: latestKomponen?['ipmNasional'] as double?,
-      provincialAverage: latestKomponen?['ipmJateng'] as double?,
+      latestIPM: latestData.ipm,
+      firstIPM: firstData.ipm,
+      nationalAverage: latestKomponen?.ipmNasional,
+      provincialAverage: latestKomponen?.ipmJateng,
     );
 
     return KesimpulanWidget(
@@ -572,7 +545,7 @@ class _IpmScreenContent extends StatelessWidget {
     );
   }
 
-  Widget _buildIndicatorsCard(BuildContext context, Map<String, dynamic> data) {
+  Widget _buildIndicatorsCard(BuildContext context, IpmYear data) {
     return Container(
       padding: EdgeInsets.all(isSmallScreen
           ? sizing.statsCardPadding - 4
@@ -650,7 +623,7 @@ class _IpmScreenContent extends StatelessWidget {
             children: [
               _buildCompactIndicatorRow(
                 context: context,
-                value: NumberFormatUtils.formatDecimal(data['ipm'] as double),
+                value: NumberFormatUtils.formatDecimal(data.ipm),
                 label: 'IPM',
                 color: bpsGreen,
                 icon: Icons.trending_up_rounded,
@@ -662,7 +635,7 @@ class _IpmScreenContent extends StatelessWidget {
               _buildCompactIndicatorRow(
                 context: context,
                 value:
-                    '${NumberFormatUtils.formatDecimal(data['uhh'] as double)} Tahun',
+                    '${NumberFormatUtils.formatDecimal(data.uhh)} Tahun',
                 label: 'UHH',
                 color: bpsRed,
                 icon: Icons.favorite,
@@ -673,7 +646,7 @@ class _IpmScreenContent extends StatelessWidget {
               _buildCompactIndicatorRow(
                 context: context,
                 value:
-                    '${NumberFormatUtils.formatDecimal(data['hls'] as double)} Tahun',
+                    '${NumberFormatUtils.formatDecimal(data.hls)} Tahun',
                 label: 'HLS',
                 color: bpsBlue,
                 icon: Icons.school,
@@ -684,7 +657,7 @@ class _IpmScreenContent extends StatelessWidget {
               _buildCompactIndicatorRow(
                 context: context,
                 value:
-                    '${NumberFormatUtils.formatDecimal(data['rls'] as double)} Tahun',
+                    '${NumberFormatUtils.formatDecimal(data.rls)} Tahun',
                 label: 'RLS',
                 color: bpsGreen,
                 icon: Icons.auto_stories,
@@ -694,7 +667,7 @@ class _IpmScreenContent extends StatelessWidget {
               _buildIndicatorDivider(),
               _buildCompactIndicatorRow(
                 context: context,
-                value: formatNumber((data['pengeluaran'] as num?)?.toDouble() ?? 0.0),
+                value: formatNumber(data.pengeluaran),
                 label: 'Pengeluaran per Kapita',
                 color: bpsOrange,
                 icon: Icons.monetization_on,
@@ -986,7 +959,7 @@ class _IpmScreenContent extends StatelessWidget {
 
 // IPM Comparison Chart widget
 class _IpmComparisonChart extends StatelessWidget {
-  final Map<int, Map<String, dynamic>> komponenData;
+  final Map<int, IpmKomponen> komponenData;
   final List<int> cachedSortedYears;
   final ResponsiveSizing sizing;
   final bool isSmallScreen;
@@ -1011,12 +984,9 @@ class _IpmComparisonChart extends StatelessWidget {
       final year = cachedSortedYears[i];
       if (!komponenData.containsKey(year)) continue;
       final data = komponenData[year]!;
-      nasionalSpots
-          .add(FlSpot(i.toDouble(), (data['ipmNasional'] as num).toDouble()));
-      jatengSpots
-          .add(FlSpot(i.toDouble(), (data['ipmJateng'] as num).toDouble()));
-      semarangSpots
-          .add(FlSpot(i.toDouble(), (data['ipmSemarang'] as num).toDouble()));
+      nasionalSpots.add(FlSpot(i.toDouble(), data.ipmNasional));
+      jatengSpots.add(FlSpot(i.toDouble(), data.ipmJateng));
+      semarangSpots.add(FlSpot(i.toDouble(), data.ipmSemarang));
       yearLabels.add(year.toString());
     }
 
