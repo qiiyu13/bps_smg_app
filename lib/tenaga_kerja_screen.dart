@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'services/github_data_service.dart';
 import 'responsive_sizing.dart';
 import 'kesimpulan_widget.dart';
+import 'models/tenaga_kerja_data.dart';
 import 'dart:async';
 import 'app_theme.dart';
 
@@ -23,10 +24,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
   int touchedIndex = -1;
   bool isLoading = true;
 
-  Map<int, Map<String, dynamic>> yearData = {};
-  Map<int, Map<String, dynamic>> indikatorData = {};
+  Map<int, LaborYear> yearData = {};
+  Map<int, LaborIndikator> indikatorData = {};
   Map<int, Map<String, double>> distribusiData = {};
-  Map<int, Map<String, dynamic>> jatengData = {};
+  Map<int, LaborJateng> jatengData = {};
 
   int? touchedPieIndex;
   bool showRealValues = false;
@@ -76,15 +77,15 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
       // --- Year data ---
       final yearSection = githubData?['yearData'] as Map<String, dynamic>?;
       if (yearSection != null) {
-        yearData = yearSection.map((key, value) =>
-            MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+        yearData = yearSection.map((key, value) => MapEntry(
+            int.parse(key), LaborYear.fromJson(Map<String, dynamic>.from(value as Map))));
         await prefs.setString('tenaga_kerja_year_data', json.encode(yearSection));
       } else {
         final String? savedYearData = prefs.getString('tenaga_kerja_year_data');
         if (savedYearData != null) {
           final decoded = json.decode(savedYearData) as Map<String, dynamic>;
-          yearData = decoded.map((key, value) =>
-              MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+          yearData = decoded.map((key, value) => MapEntry(
+              int.parse(key), LaborYear.fromJson(Map<String, dynamic>.from(value as Map))));
         } else {
           _initializeDefaultYearData();
         }
@@ -93,15 +94,15 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
       // --- Indikator data ---
       final indikatorSection = githubData?['indikatorData'] as Map<String, dynamic>?;
       if (indikatorSection != null) {
-        indikatorData = indikatorSection.map((key, value) =>
-            MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+        indikatorData = indikatorSection.map((key, value) => MapEntry(
+            int.parse(key), LaborIndikator.fromJson(Map<String, dynamic>.from(value as Map))));
         await prefs.setString('tenaga_kerja_indikator_data', json.encode(indikatorSection));
       } else {
         final String? savedIndikatorData = prefs.getString('tenaga_kerja_indikator_data');
         if (savedIndikatorData != null) {
           final decoded = json.decode(savedIndikatorData) as Map<String, dynamic>;
-          indikatorData = decoded.map((key, value) =>
-              MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+          indikatorData = decoded.map((key, value) => MapEntry(
+              int.parse(key), LaborIndikator.fromJson(Map<String, dynamic>.from(value as Map))));
         } else {
           _initializeDefaultIndikatorData();
         }
@@ -129,15 +130,15 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
       // --- Jateng data ---
       final jatengSection = githubData?['jatengData'] as Map<String, dynamic>?;
       if (jatengSection != null) {
-        jatengData = jatengSection.map((key, value) =>
-            MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+        jatengData = jatengSection.map((key, value) => MapEntry(
+            int.parse(key), LaborJateng.fromJson(Map<String, dynamic>.from(value as Map))));
         await prefs.setString('tenaga_kerja_jateng_data', json.encode(jatengSection));
       } else {
         final String? savedJatengData = prefs.getString('tenaga_kerja_jateng_data');
         if (savedJatengData != null) {
           final decoded = json.decode(savedJatengData) as Map<String, dynamic>;
-          jatengData = decoded.map((key, value) =>
-              MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
+          jatengData = decoded.map((key, value) => MapEntry(
+              int.parse(key), LaborJateng.fromJson(Map<String, dynamic>.from(value as Map))));
         } else {
           _initializeDefaultJatengData();
         }
@@ -168,77 +169,23 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
 
   void _initializeDefaultYearData() {
     yearData = {
-      2020: {
-        'tpt': 9.57,
-        'tingkatPartisipasi': 69.89,
-        'bekerja': 856123,
-        'pengangguran': 78956
-      },
-      2021: {
-        'tpt': 9.54,
-        'tingkatPartisipasi': 69.41,
-        'bekerja': 871245,
-        'pengangguran': 75234
-      },
-      2022: {
-        'tpt': 7.60,
-        'tingkatPartisipasi': 70.96,
-        'bekerja': 889567,
-        'pengangguran': 68432
-      },
-      2023: {
-        'tpt': 5.99,
-        'tingkatPartisipasi': 69.42,
-        'bekerja': 905678,
-        'pengangguran': 62789
-      },
-      2024: {
-        'tpt': 5.82,
-        'tingkatPartisipasi': 69.88,
-        'bekerja': 922345,
-        'pengangguran': 57123
-      },
-      2025: {
-        'tpt': 5.65,
-        'tingkatPartisipasi': 72.60,
-        'bekerja': 938766,
-        'pengangguran': 56228
-      },
+      2020: const LaborYear(tpt: 9.57, tingkatPartisipasi: 69.89, bekerja: 856123, pengangguran: 78956),
+      2021: const LaborYear(tpt: 9.54, tingkatPartisipasi: 69.41, bekerja: 871245, pengangguran: 75234),
+      2022: const LaborYear(tpt: 7.60, tingkatPartisipasi: 70.96, bekerja: 889567, pengangguran: 68432),
+      2023: const LaborYear(tpt: 5.99, tingkatPartisipasi: 69.42, bekerja: 905678, pengangguran: 62789),
+      2024: const LaborYear(tpt: 5.82, tingkatPartisipasi: 69.88, bekerja: 922345, pengangguran: 57123),
+      2025: const LaborYear(tpt: 5.65, tingkatPartisipasi: 72.60, bekerja: 938766, pengangguran: 56228),
     };
   }
 
   void _initializeDefaultIndikatorData() {
     indikatorData = {
-      2020: {
-        'angkatanKerja': 935079,
-        'bkbk': 421567,
-        'tingkatKesempatan': 91.55
-      },
-      2021: {
-        'angkatanKerja': 946479,
-        'bkbk': 418234,
-        'tingkatKesempatan': 92.08
-      },
-      2022: {
-        'angkatanKerja': 957999,
-        'bkbk': 415678,
-        'tingkatKesempatan': 92.85
-      },
-      2023: {
-        'angkatanKerja': 968467,
-        'bkbk': 412345,
-        'tingkatKesempatan': 93.52
-      },
-      2024: {
-        'angkatanKerja': 979468,
-        'bkbk': 408912,
-        'tingkatKesempatan': 94.18
-      },
-      2025: {
-        'angkatanKerja': 994994,
-        'bkbk': 938766,
-        'tingkatKesempatan': 94.35
-      },
+      2020: const LaborIndikator(angkatanKerja: 935079, bkbk: 421567, tingkatKesempatan: 91.55),
+      2021: const LaborIndikator(angkatanKerja: 946479, bkbk: 418234, tingkatKesempatan: 92.08),
+      2022: const LaborIndikator(angkatanKerja: 957999, bkbk: 415678, tingkatKesempatan: 92.85),
+      2023: const LaborIndikator(angkatanKerja: 968467, bkbk: 412345, tingkatKesempatan: 93.52),
+      2024: const LaborIndikator(angkatanKerja: 979468, bkbk: 408912, tingkatKesempatan: 94.18),
+      2025: const LaborIndikator(angkatanKerja: 994994, bkbk: 938766, tingkatKesempatan: 94.35),
     };
   }
 
@@ -255,12 +202,12 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
 
   void _initializeDefaultJatengData() {
     jatengData = {
-      2020: {'tpt': 6.48, 'tingkatPartisipasi': 68.5},
-      2021: {'tpt': 5.95, 'tingkatPartisipasi': 69.1},
-      2022: {'tpt': 5.57, 'tingkatPartisipasi': 69.7},
-      2023: {'tpt': 5.13, 'tingkatPartisipasi': 70.3},
-      2024: {'tpt': 4.78, 'tingkatPartisipasi': 70.9},
-      2025: {'tpt': 4.76, 'tingkatPartisipasi': 71.5},
+      2020: const LaborJateng(tpt: 6.48, tingkatPartisipasi: 68.5),
+      2021: const LaborJateng(tpt: 5.95, tingkatPartisipasi: 69.1),
+      2022: const LaborJateng(tpt: 5.57, tingkatPartisipasi: 69.7),
+      2023: const LaborJateng(tpt: 5.13, tingkatPartisipasi: 70.3),
+      2024: const LaborJateng(tpt: 4.78, tingkatPartisipasi: 70.9),
+      2025: const LaborJateng(tpt: 4.76, tingkatPartisipasi: 71.5),
     };
   }
 
@@ -523,11 +470,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
     final data = yearData[selectedYear];
     if (data == null) return const SizedBox.shrink();
 
-    final double tpt = (data['tpt'] as num?)?.toDouble() ?? 0.0;
-    final double tingkatPartisipasi =
-        (data['tingkatPartisipasi'] as num?)?.toDouble() ?? 0.0;
-    final int bekerja = (data['bekerja'] as num?)?.toInt() ?? 0;
-    final int pengangguran = (data['pengangguran'] as num?)?.toInt() ?? 0;
+    final double tpt = data.tpt;
+    final double tingkatPartisipasi = data.tingkatPartisipasi;
+    final int bekerja = data.bekerja;
+    final int pengangguran = data.pengangguran;
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -656,10 +602,9 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
     final data = indikatorData[selectedYear];
     if (data == null) return const SizedBox.shrink();
 
-    final int angkatanKerja = (data['angkatanKerja'] as num?)?.toInt() ?? 0;
-    final int bkbk = (data['bkbk'] as num?)?.toInt() ?? 0;
-    final double tingkatKesempatan =
-        (data['tingkatKesempatan'] as num?)?.toDouble() ?? 0.0;
+    final int angkatanKerja = data.angkatanKerja;
+    final int bkbk = data.bkbk;
+    final double tingkatKesempatan = data.tingkatKesempatan;
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -1053,12 +998,12 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
   Widget _buildTPTChart(ResponsiveSizing sizing, bool isSmallScreen) {
     final tptData = availableYears.map((year) {
       final data = yearData[year];
-      return (data?['tpt'] as num?)?.toDouble() ?? 0.0;
+      return data?.tpt ?? 0.0;
     }).toList();
 
     final jatengTPTData = availableYears.map((year) {
       final data = jatengData[year];
-      return (data?['tpt'] as num?)?.toDouble() ?? 0.0;
+      return data?.tpt ?? 0.0;
     }).toList();
 
     final maxY =
@@ -1304,7 +1249,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
 
     // Get total workers for the selected year to calculate real values
     final yearInfo = yearData[selectedYear];
-    final int totalWorkers = (yearInfo?['bekerja'] as num?)?.toInt() ?? 0;
+    final int totalWorkers = yearInfo?.bekerja ?? 0;
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -1667,12 +1612,12 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
     }
 
     // Get TPT (Tingkat Pengangguran Terbuka) values
-    final latestTPT = (latestIndikator['tpt'] as num?)?.toDouble() ?? 0.0;
-    final firstTPT = (firstIndikator['tpt'] as num?)?.toDouble() ?? 0.0;
+    final latestTPT = latestIndikator.tpt;
+    final firstTPT = firstIndikator.tpt;
 
     // Get participation rate
     final latestParticipation =
-        (latestIndikator['partisipasi'] as num?)?.toDouble() ?? 0.0;
+        latestIndikator.partisipasi;
 
     final conclusionData = KesimpulanGenerator.generateTenagaKerjaConclusion(
       latestYear: latestYear,
