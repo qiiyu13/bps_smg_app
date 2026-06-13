@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({Key? key}) : super(key: key);
+  const OnboardingScreen({super.key});
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -93,7 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       TextButton(
                         onPressed: _currentPage == onboardingPages.length - 1
                             ? null
-                            : () => _skipOnboarding(),
+                            : _skipOnboarding,
                         child: Text(
                           'Lewati',
                           style: TextStyle(
@@ -107,8 +107,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       ElevatedButton(
                         onPressed: _currentPage == onboardingPages.length - 1
-                            ? () => _finishAsUser()
-                            : () => _nextPage(),
+                            ? _finishAsUser
+                            : _nextPage,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: onboardingPages[_currentPage].color,
                           foregroundColor: Colors.white,
@@ -155,7 +155,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _finishAsUser() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool('first_time', false);
 
       if (mounted) {
@@ -185,7 +185,7 @@ class OnboardingData {
 class OnboardingPage extends StatelessWidget {
   final OnboardingData data;
 
-  const OnboardingPage({Key? key, required this.data}) : super(key: key);
+  const OnboardingPage({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {

@@ -9,7 +9,7 @@ import 'dart:async';
 import 'app_theme.dart';
 
 class UserSDGsScreen extends StatefulWidget {
-  const UserSDGsScreen({Key? key}) : super(key: key);
+  const UserSDGsScreen({super.key});
 
   @override
   State<UserSDGsScreen> createState() => _UserSDGsScreenState();
@@ -88,8 +88,9 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
         setState(() {
           kotaDataList = data;
           filteredList = data;
-          if (data.isNotEmpty && selectedKota.isEmpty)
+          if (data.isNotEmpty && selectedKota.isEmpty) {
             selectedKota = data.first.nama;
+          }
           isLoading = false;
         });
       }
@@ -120,9 +121,10 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
 
   KotaData? _getSelectedKotaData() {
     try {
-      if (_searchedKotaList.any((kota) => kota.nama == selectedKota))
+      if (_searchedKotaList.any((kota) => kota.nama == selectedKota)) {
         return _searchedKotaList
             .firstWhere((kota) => kota.nama == selectedKota);
+      }
       return kotaDataList.firstWhere((kota) => kota.nama == selectedKota);
     } catch (e) {
       return _searchedKotaList.isNotEmpty ? _searchedKotaList.first : null;
@@ -261,7 +263,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(color: bpsOrange, boxShadow: [
         BoxShadow(
             color: bpsOrange.withOpacity(0.2),
@@ -440,7 +442,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                   color: bpsTextPrimary))
         ]),
         SizedBox(height: isSmallScreen ? 12 : 16),
-        Container(
+        DecoratedBox(
           decoration: BoxDecoration(
               color: bpsBackground,
               borderRadius: BorderRadius.circular(12),
@@ -535,7 +537,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
 
   Widget _buildIndicatorCards(ResponsiveSizing sizing, bool isSmallScreen) {
     final kotaData = _getSelectedKotaData();
-    if (kotaData == null)
+    if (kotaData == null) {
       return Container(
           padding: EdgeInsets.all(sizing.statsCardPadding),
           decoration: BoxDecoration(
@@ -543,6 +545,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
           child: const Center(
               child: Text('Tidak ada data untuk kota yang dipilih',
                   style: TextStyle(color: bpsTextSecondary))));
+    }
 
     final stats = [
       {
@@ -752,7 +755,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                    Icon(Icons.info_outline,
+                    const Icon(Icons.info_outline,
                         size: 36, color: bpsTextSecondary),
                     const SizedBox(height: 8),
                     Text('Data tidak tersedia untuk tahun ini',
@@ -795,11 +798,10 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                   barGroups: _getBarChartData(),
                   borderData: FlBorderData(show: false),
                   gridData: FlGridData(
-                      show: true,
                       drawVerticalLine: false,
                       horizontalInterval: 20,
                       getDrawingHorizontalLine: (value) =>
-                          FlLine(color: bpsBorder, strokeWidth: 0.5)),
+                          const FlLine(color: bpsBorder, strokeWidth: 0.5)),
                   titlesData: FlTitlesData(
                       bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
@@ -819,8 +821,8 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                               interval: 20,
                               getTitlesWidget: (value, meta) =>
                                   Text('${value.toInt()}%', style: TextStyle(fontSize: isSmallScreen ? 9 : 10, color: bpsTextSecondary)))),
-                      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false))),
+                      topTitles: const AxisTitles(),
+                      rightTitles: const AxisTitles()),
                   maxY: 105))),
         ),
       ]),
@@ -964,19 +966,19 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                   }),
                   borderData: FlBorderData(show: false),
                   gridData: FlGridData(
-                      show: true,
                       drawVerticalLine: false,
                       horizontalInterval: 20,
                       getDrawingHorizontalLine: (value) =>
-                          FlLine(color: bpsBorder, strokeWidth: 0.5)),
+                          const FlLine(color: bpsBorder, strokeWidth: 0.5)),
                   titlesData: FlTitlesData(
                     bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                             showTitles: true,
                             reservedSize: 60,
                             getTitlesWidget: (value, meta) {
-                              if (value.toInt() >= sortedNames.length)
+                              if (value.toInt() >= sortedNames.length) {
                                 return const SizedBox();
+                              }
                               final nama = sortedNames[value.toInt()];
                               final isSelected = nama == selectedKota;
                               final truncated = nama.length > 14
@@ -1005,12 +1007,12 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                             interval: 20,
                             getTitlesWidget: (value, meta) => Text(
                                 '${value.toInt()}%',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 9, color: bpsTextSecondary)))),
                     topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                        ),
                     rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                        ),
                   ),
                 )),
                 ),
@@ -1160,7 +1162,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
         semarangData.apk[year],
       ].where((v) => v != null).toList();
 
-      if (values.isEmpty) return 0.0;
+      if (values.isEmpty) return 0;
       return values.reduce((a, b) => a! + b!)! / values.length;
     }
 

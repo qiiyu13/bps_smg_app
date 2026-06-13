@@ -23,7 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadAppInfo() async {
     try {
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      final PackageInfo packageInfo = await PackageInfo.fromPlatform();
       if (mounted) {
         setState(() {
           appVersion = '${packageInfo.version} (${packageInfo.buildNumber})';
@@ -74,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildHeader(ResponsiveSizing sizing) {
     return SliverToBoxAdapter(
-      child: Container(
+      child: DecoratedBox(
         decoration: BoxDecoration(
           color: bpsBlue,
           boxShadow: [BPSShadows.headerShadow],
@@ -102,7 +102,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       'assets/images/logo_white.png',
                       width: (sizing.headerLogoSize * 2) + 8,
                       height: (sizing.headerLogoSize * 2) + 8,
-                      filterQuality: FilterQuality.medium,
                       errorBuilder: (context, error, stackTrace) {
                         return Icon(
                           Icons.account_balance_rounded,
@@ -228,7 +227,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: bpsBorder,
-              width: 1,
             ),
             boxShadow: [BPSShadows.cardShadow],
           ),

@@ -25,5 +25,5 @@ class PDRBRanking {
   bool get isKotaSemarang => nama == 'Kota Semarang';
   bool get isTop3 => rank <= 3;
   String get formattedPdrb =>
-      'Rp ${NumberFormatUtils.formatDecimal(pdrb, decimalPlaces: 2)} Milyar';
+      'Rp ${NumberFormatUtils.formatDecimal(pdrb)} Milyar';
 }

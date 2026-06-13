@@ -74,11 +74,11 @@ class _StatistikHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.white,
         border: const Border(
-          bottom: BorderSide(color: bpsBorder, width: 1),
+          bottom: BorderSide(color: bpsBorder),
         ),
         boxShadow: [
           BoxShadow(
@@ -317,7 +317,6 @@ class _CategoryCardState extends State<_CategoryCard>
                                 widget.category.illustration!,
                                 width: 118,
                                 height: 118,
-                                fit: BoxFit.contain,
                                 colorFilter: ColorFilter.mode(
                                   Colors.white.withOpacity(0.4),
                                   BlendMode.srcIn,

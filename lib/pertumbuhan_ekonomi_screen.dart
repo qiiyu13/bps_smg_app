@@ -177,7 +177,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: bpsBlue,
         boxShadow: [
@@ -385,7 +385,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     color: bpsBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -393,7 +393,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                         color: bpsBlue,
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Tap untuk detail',
                         style: TextStyle(
@@ -557,7 +557,6 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
 
     showDialog(
       context: context,
-      barrierDismissible: true,
       builder: (dialogContext) {
         return Dialog(
           insetPadding: EdgeInsets.all(isSmallScreen ? 12 : 20),
@@ -988,11 +987,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
-                  show: true,
                   drawVerticalLine: false,
-                  horizontalInterval: 1.0,
+                  horizontalInterval: 1,
                   getDrawingHorizontalLine: (value) {
-                    return FlLine(
+                    return const FlLine(
                       color: bpsBorder,
                       strokeWidth: 0.5,
                     );
@@ -1003,7 +1001,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: isSmallScreen ? 35 : 40,
-                      interval: 1.0,
+                      interval: 1,
                       getTitlesWidget: (value, meta) {
                         return Padding(
                           padding: const EdgeInsets.only(right: 4),
@@ -1048,10 +1046,10 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     ),
                   ),
                   rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    
                   ),
                   topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    
                   ),
                 ),
                 lineTouchData: LineTouchData(
@@ -1089,8 +1087,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                 borderData: FlBorderData(show: false),
                 minX: 0,
                 maxX: (data.semarangData.length - 1).toDouble(),
-                minY: -3.0,
-                maxY: 7.0,
+                minY: -3,
+                maxY: 7,
                 lineBarsData: [
                   // Kota Semarang Line
                   LineChartBarData(
@@ -1102,7 +1100,6 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     barWidth: isSmallScreen ? 2.5 : 3.5,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
-                      show: true,
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: isSmallScreen ? 3 : 4,
@@ -1134,7 +1131,6 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                     barWidth: isSmallScreen ? 2.5 : 3.5,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
-                      show: true,
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: isSmallScreen ? 3 : 4,
@@ -1145,7 +1141,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       },
                     ),
                     belowBarData: BarAreaData(
-                      show: false,
+                      
                     ),
                   ),
                 ],
@@ -1240,7 +1236,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
               ],
             ),
             SizedBox(height: isSmallScreen ? 20 : 30),
-            CircularProgressIndicator(
+            const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(bpsBlue),
             ),
             SizedBox(height: isSmallScreen ? 12 : 16),
@@ -1523,7 +1519,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                 ],
               ),
             );
-          }).toList(),
+          }),
 
           SizedBox(height: isSmallScreen ? 8 : 10),
 
@@ -1591,7 +1587,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
       totalGrowth += dataPoint.value;
       count++;
     }
-    final averageGrowth = count > 0 ? (totalGrowth / count).toDouble() : 0.0;
+    final averageGrowth = count > 0 ? (totalGrowth / count) : 0.0;
 
     final conclusionData = KesimpulanGenerator.generateEkonomiConclusion(
       latestYear: latestYear,

@@ -71,7 +71,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
   Future<void> _loadData() async {
     try {
       final githubData = GitHubDataService.getData('tenaga_kerja');
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
 
       // --- Year data ---
       final yearSection = githubData?['yearData'] as Map<String, dynamic>?;
@@ -80,7 +80,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
             MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
         await prefs.setString('tenaga_kerja_year_data', json.encode(yearSection));
       } else {
-        String? savedYearData = prefs.getString('tenaga_kerja_year_data');
+        final String? savedYearData = prefs.getString('tenaga_kerja_year_data');
         if (savedYearData != null) {
           final decoded = json.decode(savedYearData) as Map<String, dynamic>;
           yearData = decoded.map((key, value) =>
@@ -97,7 +97,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
             MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
         await prefs.setString('tenaga_kerja_indikator_data', json.encode(indikatorSection));
       } else {
-        String? savedIndikatorData = prefs.getString('tenaga_kerja_indikator_data');
+        final String? savedIndikatorData = prefs.getString('tenaga_kerja_indikator_data');
         if (savedIndikatorData != null) {
           final decoded = json.decode(savedIndikatorData) as Map<String, dynamic>;
           indikatorData = decoded.map((key, value) =>
@@ -116,7 +116,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
             )));
         await prefs.setString('tenaga_kerja_distribusi_data', json.encode(distribusiSection));
       } else {
-        String? savedDistribusiData = prefs.getString('tenaga_kerja_distribusi_data');
+        final String? savedDistribusiData = prefs.getString('tenaga_kerja_distribusi_data');
         if (savedDistribusiData != null) {
           final decoded = json.decode(savedDistribusiData) as Map<String, dynamic>;
           distribusiData = decoded.map((key, value) =>
@@ -133,7 +133,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
             MapEntry(int.parse(key), Map<String, dynamic>.from(value as Map)));
         await prefs.setString('tenaga_kerja_jateng_data', json.encode(jatengSection));
       } else {
-        String? savedJatengData = prefs.getString('tenaga_kerja_jateng_data');
+        final String? savedJatengData = prefs.getString('tenaga_kerja_jateng_data');
         if (savedJatengData != null) {
           final decoded = json.decode(savedJatengData) as Map<String, dynamic>;
           jatengData = decoded.map((key, value) =>
@@ -270,7 +270,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
     final isSmallScreen = sizing.isVerySmall || sizing.isSmall;
 
     if (isLoading) {
-      return Scaffold(
+      return const Scaffold(
         backgroundColor: bpsBackground,
         body: Center(
           child: CircularProgressIndicator(color: bpsBlue),
@@ -363,7 +363,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: bpsBlue,
         boxShadow: [
@@ -523,10 +523,11 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
     final data = yearData[selectedYear];
     if (data == null) return const SizedBox.shrink();
 
-    final tpt = data['tpt'] ?? 0.0;
-    final tingkatPartisipasi = data['tingkatPartisipasi'] ?? 0.0;
-    final bekerja = data['bekerja'] ?? 0;
-    final pengangguran = data['pengangguran'] ?? 0;
+    final double tpt = (data['tpt'] as num?)?.toDouble() ?? 0.0;
+    final double tingkatPartisipasi =
+        (data['tingkatPartisipasi'] as num?)?.toDouble() ?? 0.0;
+    final int bekerja = (data['bekerja'] as num?)?.toInt() ?? 0;
+    final int pengangguran = (data['pengangguran'] as num?)?.toInt() ?? 0;
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -577,7 +578,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     color: bpsBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -585,7 +586,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         color: bpsBlue,
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Tap untuk detail',
                         style: TextStyle(
@@ -655,9 +656,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
     final data = indikatorData[selectedYear];
     if (data == null) return const SizedBox.shrink();
 
-    final angkatanKerja = data['angkatanKerja'] ?? 0;
-    final bkbk = data['bkbk'] ?? 0;
-    final tingkatKesempatan = data['tingkatKesempatan'] ?? 0.0;
+    final int angkatanKerja = (data['angkatanKerja'] as num?)?.toInt() ?? 0;
+    final int bkbk = (data['bkbk'] as num?)?.toInt() ?? 0;
+    final double tingkatKesempatan =
+        (data['tingkatKesempatan'] as num?)?.toDouble() ?? 0.0;
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -708,7 +710,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     color: bpsBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -716,7 +718,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                         color: bpsBlue,
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Tap untuk detail',
                         style: TextStyle(
@@ -880,7 +882,6 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
 
     showDialog(
       context: context,
-      barrierDismissible: true,
       builder: (dialogContext) {
         return Dialog(
           insetPadding: EdgeInsets.all(isSmallScreen ? 12 : 20),
@@ -1052,12 +1053,12 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
   Widget _buildTPTChart(ResponsiveSizing sizing, bool isSmallScreen) {
     final tptData = availableYears.map((year) {
       final data = yearData[year];
-      return data?['tpt'] ?? 0.0;
+      return (data?['tpt'] as num?)?.toDouble() ?? 0.0;
     }).toList();
 
     final jatengTPTData = availableYears.map((year) {
       final data = jatengData[year];
-      return data?['tpt'] ?? 0.0;
+      return (data?['tpt'] as num?)?.toDouble() ?? 0.0;
     }).toList();
 
     final maxY =
@@ -1134,11 +1135,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
-                  show: true,
                   drawVerticalLine: false,
                   horizontalInterval: 1,
                   getDrawingHorizontalLine: (value) {
-                    return FlLine(
+                    return const FlLine(
                       color: bpsBorder,
                       strokeWidth: 0.5,
                     );
@@ -1187,10 +1187,10 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     ),
                   ),
                   rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    
                   ),
                   topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    
                   ),
                 ),
                 lineTouchData: LineTouchData(
@@ -1238,7 +1238,6 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     barWidth: isSmallScreen ? 2.5 : 3.5,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
-                      show: true,
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: isSmallScreen ? 3 : 4,
@@ -1269,7 +1268,6 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     barWidth: isSmallScreen ? 2.5 : 3.5,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
-                      show: true,
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: isSmallScreen ? 3 : 4,
@@ -1306,7 +1304,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
 
     // Get total workers for the selected year to calculate real values
     final yearInfo = yearData[selectedYear];
-    final totalWorkers = yearInfo?['bekerja'] ?? 0;
+    final int totalWorkers = (yearInfo?['bekerja'] as num?)?.toInt() ?? 0;
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -1435,7 +1433,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                           barTouchResponse.spot!.touchedBarGroupIndex;
                       if (sectorIndex >= 0 && sectorIndex < data.length) {
                         final sectorName = data.keys.toList()[sectorIndex];
-                        final percentage = data.values.toList()[sectorIndex];
+                        final num percentage =
+                            (data.values.toList()[sectorIndex] as num?) ?? 0;
                         final realValue =
                             (totalWorkers * percentage / 100).round();
                         selectedSector = sectorName;
@@ -1451,7 +1450,8 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     tooltipRoundedRadius: 8,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       final sectorName = data.keys.toList()[groupIndex];
-                      final percentage = data.values.toList()[groupIndex];
+                      final num percentage =
+                          (data.values.toList()[groupIndex] as num?) ?? 0;
                       final realValue = (totalWorkers * percentage / 100).round();
                       return BarTooltipItem(
                         '$sectorName\n',
@@ -1483,7 +1483,6 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                   ),
                 ),
                 titlesData: FlTitlesData(
-                  show: true,
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -1526,18 +1525,17 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
                     ),
                   ),
                   rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    
                   ),
                   topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    
                   ),
                 ),
                 gridData: FlGridData(
-                  show: true,
                   drawVerticalLine: false,
                   horizontalInterval: 25,
                   getDrawingHorizontalLine: (value) {
-                    return FlLine(
+                    return const FlLine(
                       color: bpsBorder,
                       strokeWidth: 1,
                     );

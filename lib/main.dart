@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
 import 'package:device_preview/device_preview.dart';
 import 'services/github_data_service.dart';
 import 'splash_screen.dart';
@@ -19,12 +18,12 @@ void main() {
     DeviceOrientation.portraitDown,
   ]).then((_) {
     runApp(DevicePreview(
-        enabled: kDebugMode, builder: (context) => const MyApp()));
+        builder: (context) => const MyApp()));
   });
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +56,7 @@ class MyApp extends StatelessWidget {
 }
 
 class AppInitializer extends StatefulWidget {
-  const AppInitializer({Key? key}) : super(key: key);
+  const AppInitializer({super.key});
 
   @override
   State<AppInitializer> createState() => _AppInitializerState();
@@ -71,15 +70,14 @@ class _AppInitializerState extends State<AppInitializer> {
   }
 
   Future<void> _initializeApp() async {
+    // SplashScreen owns navigation to '/home' (via its own timers/fallbacks).
+    // We only warm the data cache here; failure is non-fatal and must NOT
+    // trigger a second navigation, which would race the splash.
     try {
       await GitHubDataService.init();
     } catch (e, s) {
-      print("❌ Error saat inisialisasi: $e");
-      print(s);
-      // Fallback ke home jika terjadi error
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, '/home');
-      }
+      debugPrint("❌ Error saat inisialisasi: $e");
+      debugPrint(s.toString());
     }
   }
 

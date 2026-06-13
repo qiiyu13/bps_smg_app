@@ -1040,13 +1040,13 @@ class _InflasiScreenState extends State<InflasiScreen>
   double get currentInflationValue {
     final data = monthlyInflationData[selectedYear];
     if (selectedMonth == null) {
-      if (data == null) return 0.0;
+      if (data == null) return 0;
       for (int i = data.length - 1; i >= 0; i--) {
         if (data[i] != null) return data[i]!;
       }
-      return 0.0;
+      return 0;
     } else {
-      if (data == null || selectedMonth! >= data.length) return 0.0;
+      if (data == null || selectedMonth! >= data.length) return 0;
       return data[selectedMonth!] ?? 0.0;
     }
   }
@@ -1159,7 +1159,7 @@ class _InflasiScreenState extends State<InflasiScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: bpsBlue,
         boxShadow: [
@@ -1493,7 +1493,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                     color: bpsBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -1501,7 +1501,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         color: bpsBlue,
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Tap untuk detail',
                         style: TextStyle(
@@ -1545,7 +1545,7 @@ class _InflasiScreenState extends State<InflasiScreen>
               _buildIndicatorDivider(isSmallScreen),
               _buildCompactIndicatorRow(
                 context: context,
-                value: NumberFormatUtils.formatDecimal(ihk, decimalPlaces: 2),
+                value: NumberFormatUtils.formatDecimal(ihk),
                 label: 'Indeks Harga Konsumen',
                 color: bpsPurple,
                 icon: Icons.assessment_rounded,
@@ -1668,7 +1668,6 @@ class _InflasiScreenState extends State<InflasiScreen>
 
     showDialog(
       context: context,
-      barrierDismissible: true,
       builder: (dialogContext) {
         return Dialog(
           insetPadding: EdgeInsets.all(isSmallScreen ? 12 : 20),
@@ -1909,11 +1908,10 @@ class _InflasiScreenState extends State<InflasiScreen>
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
-                  show: true,
                   drawVerticalLine: false,
                   horizontalInterval: 1,
                   getDrawingHorizontalLine: (value) {
-                    return FlLine(
+                    return const FlLine(
                       color: bpsBorder,
                       strokeWidth: 0.5,
                     );
@@ -1962,10 +1960,10 @@ class _InflasiScreenState extends State<InflasiScreen>
                     ),
                   ),
                   rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    
                   ),
                   topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    
                   ),
                 ),
                 lineTouchData: LineTouchData(
@@ -2010,7 +2008,6 @@ class _InflasiScreenState extends State<InflasiScreen>
                     barWidth: isSmallScreen ? 2.5 : 3.5,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
-                      show: true,
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
                           radius: isSmallScreen ? 3 : 5,
@@ -2054,7 +2051,7 @@ class _InflasiScreenState extends State<InflasiScreen>
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.info_outline_rounded, size: 40, color: bpsTextLabel),
+              const Icon(Icons.info_outline_rounded, size: 40, color: bpsTextLabel),
               SizedBox(height: sizing.itemSpacing),
               Text(
                 'Data tidak tersedia',
@@ -2201,9 +2198,9 @@ class _InflasiScreenState extends State<InflasiScreen>
                     ),
                   ),
                   rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                      ),
                   topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                      ),
                 ),
                 barTouchData: BarTouchData(
                   touchTooltipData: BarTouchTooltipData(
@@ -2213,7 +2210,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                       final value = rod.toY;
                       final displayValue = NumberFormatUtils.formatPercentage(value);
                       return BarTooltipItem(
-                        '$monthLabel',
+                        monthLabel,
                         const TextStyle(
                           color: bpsTextSecondary,
                           fontWeight: FontWeight.w500,
@@ -2632,7 +2629,7 @@ class _InflasiScreenState extends State<InflasiScreen>
     // Calculate average inflation for each year
     double calculateAverage(List<double?> values) {
       final filtered = values.whereType<double>().toList();
-      if (filtered.isEmpty) return 0.0;
+      if (filtered.isEmpty) return 0;
       return filtered.reduce((a, b) => a + b) / filtered.length;
     }
 

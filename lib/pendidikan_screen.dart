@@ -61,9 +61,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
       if (mounted) {
         setState(() => selectedYear = year);
         if (year == 2024) {
-          Future.delayed(const Duration(milliseconds: 100), () {
-            _show2024DataNotice();
-          });
+          Future.delayed(const Duration(milliseconds: 100), _show2024DataNotice);
         }
       }
     });
@@ -79,7 +77,6 @@ class _PendidikanScreenState extends State<PendidikanScreen>
 
     showDialog(
       context: context,
-      barrierDismissible: true,
       builder: (dialogContext) {
         return Dialog(
           insetPadding: EdgeInsets.all(isSmallScreen ? 16 : 24),
@@ -97,9 +94,9 @@ class _PendidikanScreenState extends State<PendidikanScreen>
               children: [
                 Container(
                   padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: bpsRed,
-                    borderRadius: const BorderRadius.only(
+                    borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
                     ),
@@ -230,8 +227,8 @@ class _PendidikanScreenState extends State<PendidikanScreen>
   int getTotalMurid(int year) {
     final jenjangData = educationData[year]!['jenjangPendidikan'] as List;
     int total = 0;
-    for (var item in jenjangData) {
-      total += (item['murid'] as int);
+    for (final item in jenjangData) {
+      total += item['murid'] as int;
     }
     return total;
   }
@@ -656,7 +653,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: bpsGreen,
         boxShadow: [
@@ -862,7 +859,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     color: bpsGreen.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -870,7 +867,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         color: bpsGreen,
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Tap untuk detail',
                         style: TextStyle(
@@ -891,7 +888,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
               _buildCompactIndicatorRow(
                 context: context,
                 value:
-                    '${NumberFormatUtils.formatCompact(getTotalMurid(selectedYear))}',
+                    NumberFormatUtils.formatCompact(getTotalMurid(selectedYear)),
                 label: 'Total Murid',
                 color: bpsGreen,
                 icon: Icons.groups,
@@ -1028,7 +1025,6 @@ class _PendidikanScreenState extends State<PendidikanScreen>
 
     showDialog(
       context: context,
-      barrierDismissible: true,
       builder: (dialogContext) {
         return Dialog(
           insetPadding: EdgeInsets.all(isSmallScreen ? 12 : 20),
@@ -1280,9 +1276,9 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     getTooltipColor: (group) => Colors.white,
                     tooltipRoundedRadius: 8,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                      String jenjang =
+                      final String jenjang =
                           data[groupIndex]['jenjang']?.toString() ?? '';
-                      String jumlah = NumberFormatUtils.formatCompact(rod.toY);
+                      final String jumlah = NumberFormatUtils.formatCompact(rod.toY);
                       return BarTooltipItem(
                         '$jenjang\n$jumlah ribu murid',
                         const TextStyle(
@@ -1295,7 +1291,6 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                   ),
                 ),
                 titlesData: FlTitlesData(
-                  show: true,
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -1334,16 +1329,15 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     ),
                   ),
                   topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                      ),
                   rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                      ),
                 ),
                 gridData: FlGridData(
-                  show: true,
                   drawVerticalLine: false,
                   horizontalInterval: 40000,
                   getDrawingHorizontalLine: (value) {
-                    return FlLine(color: bpsBorder, strokeWidth: 1);
+                    return const FlLine(color: bpsBorder, strokeWidth: 1);
                   },
                 ),
                 borderData: FlBorderData(show: false),
@@ -1381,7 +1375,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
 
     // Find max school-to-student ratio for appropriate Y-axis
     double maxRasioSekolah = 0;
-    for (var item in rasioData) {
+    for (final item in rasioData) {
       final val = item['rasioSekolahMurid'];
       if (val is num && val.toDouble() > maxRasioSekolah) {
         maxRasioSekolah = val.toDouble();
@@ -1464,10 +1458,10 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         tooltipRoundedRadius: 8,
                         getTooltipItem: (group, groupIndex, rod, rodIndex) {
                           if (groupIndex >= rasioData.length) return null;
-                          String jenjang =
+                          final String jenjang =
                               rasioData[groupIndex]['jenjang']?.toString() ??
                                   '';
-                          String rasio = NumberFormatUtils.formatDecimal(
+                          final String rasio = NumberFormatUtils.formatDecimal(
                               rod.toY,
                               decimalPlaces: 1);
                           return BarTooltipItem(
@@ -1482,7 +1476,6 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                       ),
                     ),
                     titlesData: FlTitlesData(
-                      show: true,
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
@@ -1522,16 +1515,15 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         ),
                       ),
                       topTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
+                          ),
                       rightTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
+                          ),
                     ),
                     gridData: FlGridData(
-                      show: true,
                       drawVerticalLine: false,
                       horizontalInterval: 100,
                       getDrawingHorizontalLine: (value) {
-                        return FlLine(color: bpsBorder, strokeWidth: 1);
+                        return const FlLine(color: bpsBorder, strokeWidth: 1);
                       },
                     ),
                     borderData: FlBorderData(show: false),
@@ -1540,7 +1532,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                       final data = entry.value;
 
                       final rasioSekolahValue = data['rasioSekolahMurid'];
-                      double rasioSekolah = 0.0;
+                      double rasioSekolah = 0;
                       if (rasioSekolahValue is num) {
                         rasioSekolah = rasioSekolahValue.toDouble();
                       }
@@ -1627,7 +1619,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                 final data = entry.value;
                 final jenjang = data['jenjang']?.toString() ?? '';
                 final rasioGuruValue = data['rasioGuruMurid'];
-                double rasioGuru = 0.0;
+                double rasioGuru = 0;
                 if (rasioGuruValue is num) {
                   rasioGuru = rasioGuruValue.toDouble();
                 }
@@ -1777,12 +1769,11 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     tooltipRoundedRadius: 8,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       if (groupIndex >= partisipasiData.length) return null;
-                      String jenjang =
+                      final String jenjang =
                           partisipasiData[groupIndex]['jenjang']?.toString() ??
                               '';
-                      String label = rodIndex == 0 ? 'APM' : 'APK';
-                      String nilai = NumberFormatUtils.formatDecimal(rod.toY,
-                          decimalPlaces: 2);
+                      final String label = rodIndex == 0 ? 'APM' : 'APK';
+                      final String nilai = NumberFormatUtils.formatDecimal(rod.toY);
                       return BarTooltipItem(
                         '$jenjang\n$label: $nilai%',
                         const TextStyle(
@@ -1795,7 +1786,6 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                   ),
                 ),
                 titlesData: FlTitlesData(
-                  show: true,
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -1842,16 +1832,15 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     ),
                   ),
                   topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                      ),
                   rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                      ),
                 ),
                 gridData: FlGridData(
-                  show: true,
                   drawVerticalLine: false,
                   horizontalInterval: 20,
                   getDrawingHorizontalLine: (value) {
-                    return FlLine(color: bpsBorder, strokeWidth: 1);
+                    return const FlLine(color: bpsBorder, strokeWidth: 1);
                   },
                 ),
                 borderData: FlBorderData(show: false),
@@ -1860,13 +1849,13 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                   final data = entry.value;
 
                   final apmValue = data['apm'];
-                  double apm = 0.0;
+                  double apm = 0;
                   if (apmValue is num) {
                     apm = apmValue.toDouble();
                   }
 
                   final apkValue = data['apk'];
-                  double apk = 0.0;
+                  double apk = 0;
                   if (apkValue is num) {
                     apk = apkValue.toDouble();
                   }
@@ -1950,7 +1939,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                     color: bpsGreen.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -1958,7 +1947,7 @@ class _PendidikanScreenState extends State<PendidikanScreen>
                         color: bpsGreen,
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Tap untuk detail',
                         style: TextStyle(

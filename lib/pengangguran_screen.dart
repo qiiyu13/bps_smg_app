@@ -139,7 +139,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
       debugPrint('Error loading data: $e');
       if (mounted) {
         setState(() {
-          errorMessage = 'Gagal memuat data: ${e.toString()}';
+          errorMessage = 'Gagal memuat data: $e';
           isLoading = false;
         });
       }
@@ -309,7 +309,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
   // ── HEADER ────────────────────────────────────────────────────────────────
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: bpsBlue,
         boxShadow: [
@@ -751,11 +751,10 @@ class _PengangguranScreenState extends State<PengangguranScreen>
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
-                  show: true,
                   drawVerticalLine: false,
                   horizontalInterval: interval,
                   getDrawingHorizontalLine: (value) =>
-                      FlLine(color: bpsBorder, strokeWidth: 1),
+                      const FlLine(color: bpsBorder, strokeWidth: 1),
                 ),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
@@ -791,9 +790,9 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                     ),
                   ),
                   rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                      ),
                   topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                      ),
                 ),
                 borderData: FlBorderData(show: false),
                 minX: availableYears.last.toDouble(),
@@ -804,11 +803,9 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                   return LineChartBarData(
                     spots: spots[i],
                     isCurved: true,
-                    curveSmoothness: 0.35,
                     color: colors[i],
                     barWidth: i == 0 ? 3 : 2,
                     dotData: FlDotData(
-                      show: true,
                       getDotPainter: (spot, percent, bar, index) =>
                           FlDotCirclePainter(
                         radius: i == 0 ? 4 : 3,
@@ -823,13 +820,13 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                             gradient: LinearGradient(
                               colors: [
                                 colors[0].withOpacity(0.15),
-                                colors[0].withOpacity(0.0),
+                                colors[0].withOpacity(0),
                               ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                             ),
                           )
-                        : BarAreaData(show: false),
+                        : BarAreaData(),
                   );
                 }),
                 lineTouchData: LineTouchData(

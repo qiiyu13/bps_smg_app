@@ -33,7 +33,7 @@ class SDGsGitHubRepository {
         return remoteVersion != cachedVersion;
       }
     } catch (e) {
-      if (kDebugMode) print('Error checking for updates: $e');
+      if (kDebugMode) debugPrint('Error checking for updates: $e');
     }
     return false;
   }
@@ -42,7 +42,7 @@ class SDGsGitHubRepository {
   /// Returns null if fetch fails (use getCachedData() for fallback)
   static Future<Map<String, dynamic>?> fetchLatestData() async {
     try {
-      if (kDebugMode) print('Fetching SDGs data from GitHub...');
+      if (kDebugMode) debugPrint('Fetching SDGs data from GitHub...');
 
       final response = await http.get(Uri.parse(_dataUrl)).timeout(_timeout);
 
@@ -52,14 +52,14 @@ class SDGsGitHubRepository {
         // Cache the data locally
         await _cacheData(data);
 
-        if (kDebugMode) print('SDGs data fetched and cached successfully');
+        if (kDebugMode) debugPrint('SDGs data fetched and cached successfully');
         return data;
       } else {
-        if (kDebugMode) print('GitHub returned status ${response.statusCode}');
+        if (kDebugMode) debugPrint('GitHub returned status ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      if (kDebugMode) print('Error fetching data from GitHub: $e');
+      if (kDebugMode) debugPrint('Error fetching data from GitHub: $e');
       return null;
     }
   }
@@ -74,7 +74,7 @@ class SDGsGitHubRepository {
         return jsonDecode(cachedJson) as Map<String, dynamic>;
       }
     } catch (e) {
-      if (kDebugMode) print('Error reading cached data: $e');
+      if (kDebugMode) debugPrint('Error reading cached data: $e');
     }
     return null;
   }
@@ -88,7 +88,7 @@ class SDGsGitHubRepository {
           _cachedVersionKey, data['version']?.toString() ?? '1.0.0');
       await prefs.setString(_lastUpdatedKey, DateTime.now().toIso8601String());
     } catch (e) {
-      if (kDebugMode) print('Error caching data: $e');
+      if (kDebugMode) debugPrint('Error caching data: $e');
     }
   }
 
@@ -101,7 +101,7 @@ class SDGsGitHubRepository {
         return DateTime.parse(lastUpdated);
       }
     } catch (e) {
-      if (kDebugMode) print('Error reading last updated: $e');
+      if (kDebugMode) debugPrint('Error reading last updated: $e');
     }
     return null;
   }
@@ -113,15 +113,15 @@ class SDGsGitHubRepository {
       await prefs.remove(_cachedDataKey);
       await prefs.remove(_cachedVersionKey);
       await prefs.remove(_lastUpdatedKey);
-      if (kDebugMode) print('SDGs cache cleared');
+      if (kDebugMode) debugPrint('SDGs cache cleared');
     } catch (e) {
-      if (kDebugMode) print('Error clearing cache: $e');
+      if (kDebugMode) debugPrint('Error clearing cache: $e');
     }
   }
 
   /// Force refresh - always fetch from GitHub
   static Future<Map<String, dynamic>?> forceRefresh() async {
     await clearCache();
-    return await fetchLatestData();
+    return fetchLatestData();
   }
 }

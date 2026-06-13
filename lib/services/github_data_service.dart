@@ -22,7 +22,7 @@ class GitHubDataService {
   ];
 
   static SharedPreferences? _prefs;
-  static Map<String, Map<String, dynamic>> _memoryCache = {};
+  static final Map<String, Map<String, dynamic>> _memoryCache = {};
   static bool _initialized = false;
 
   static Future<void> init() async {
@@ -35,20 +35,20 @@ class GitHubDataService {
   static Future<void> _syncFromGitHub() async {
     final remoteVersion = await GitHubDataRepository.fetchVersion();
     if (remoteVersion == null) {
-      if (kDebugMode) print('GitHub unavailable, using cache');
+      if (kDebugMode) debugPrint('GitHub unavailable, using cache');
       _loadAllFromLocalCache();
       return;
     }
 
     final cachedVersion = _prefs?.getString(_versionKey) ?? '';
     if (remoteVersion == cachedVersion && _hasAllLocalCache()) {
-      if (kDebugMode) print('Version unchanged ($remoteVersion), using cache');
+      if (kDebugMode) debugPrint('Version unchanged ($remoteVersion), using cache');
       _loadAllFromLocalCache();
       return;
     }
 
     if (kDebugMode) {
-      print('New version detected: $cachedVersion -> $remoteVersion, fetching...');
+      debugPrint('New version detected: $cachedVersion -> $remoteVersion, fetching...');
     }
     int fetched = 0;
     for (final category in categories) {
@@ -64,7 +64,7 @@ class GitHubDataService {
       await _prefs?.setString(_versionKey, remoteVersion);
       await _prefs?.setString(
           _lastSyncKey, DateTime.now().toIso8601String());
-      if (kDebugMode) print('Fetched $fetched/${categories.length} categories');
+      if (kDebugMode) debugPrint('Fetched $fetched/${categories.length} categories');
     }
 
     _loadAllFromLocalCache();
@@ -86,7 +86,7 @@ class GitHubDataService {
           _memoryCache[category] =
               jsonDecode(json) as Map<String, dynamic>;
         } catch (e) {
-          if (kDebugMode) print('Error parsing cached $category: $e');
+          if (kDebugMode) debugPrint('Error parsing cached $category: $e');
         }
       }
     }

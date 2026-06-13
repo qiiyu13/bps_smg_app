@@ -14,7 +14,7 @@ class GitHubDataRepository {
           await http.get(Uri.parse(_versionUrl)).timeout(_timeout);
       if (response.statusCode == 200) return response.body.trim();
     } catch (e) {
-      if (kDebugMode) print('Error fetching version: $e');
+      if (kDebugMode) debugPrint('Error fetching version: $e');
     }
     return null;
   }
@@ -27,10 +27,10 @@ class GitHubDataRepository {
         return jsonDecode(response.body) as Map<String, dynamic>;
       }
       if (kDebugMode) {
-        print('GitHub returned ${response.statusCode} for $category');
+        debugPrint('GitHub returned ${response.statusCode} for $category');
       }
     } catch (e) {
-      if (kDebugMode) print('Error fetching $category: $e');
+      if (kDebugMode) debugPrint('Error fetching $category: $e');
     }
     return null;
   }

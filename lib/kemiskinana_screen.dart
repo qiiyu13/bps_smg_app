@@ -135,7 +135,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
           );
         } else {
           yearlyData = {
-            2020: PovertyData.fromMap(2020, {
+            2020: PovertyData.fromMap(2020, const {
               'pendudukMiskin': '79,58 Ribu',
               'pendudukMiskinValue': 79.58,
               'persentase': '4,34%',
@@ -144,7 +144,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
               'indeksKedalaman': '0,68',
               'indeksKeparahan': '0,16',
             }),
-            2021: PovertyData.fromMap(2021, {
+            2021: PovertyData.fromMap(2021, const {
               'pendudukMiskin': '84,45 Ribu',
               'pendudukMiskinValue': 84.45,
               'persentase': '4,56%',
@@ -153,7 +153,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
               'indeksKedalaman': '0,67',
               'indeksKeparahan': '0,14',
             }),
-            2022: PovertyData.fromMap(2022, {
+            2022: PovertyData.fromMap(2022, const {
               'pendudukMiskin': '79,87 Ribu',
               'pendudukMiskinValue': 79.87,
               'persentase': '4,25%',
@@ -162,7 +162,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
               'indeksKedalaman': '0,56',
               'indeksKeparahan': '0,11',
             }),
-            2023: PovertyData.fromMap(2023, {
+            2023: PovertyData.fromMap(2023, const {
               'pendudukMiskin': '80,53 Ribu',
               'pendudukMiskinValue': 80.53,
               'persentase': '4,23%',
@@ -171,7 +171,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
               'indeksKedalaman': '0,54',
               'indeksKeparahan': '0,10',
             }),
-            2024: PovertyData.fromMap(2024, {
+            2024: PovertyData.fromMap(2024, const {
               'pendudukMiskin': '77,79 Ribu',
               'pendudukMiskinValue': 77.79,
               'persentase': '4,03%',
@@ -180,7 +180,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
               'indeksKedalaman': '0,59',
               'indeksKeparahan': '0,12',
             }),
-            2025: PovertyData.fromMap(2025, {
+            2025: PovertyData.fromMap(2025, const {
               'pendudukMiskin': '74,36 Ribu',
               'pendudukMiskinValue': 74.36,
               'persentase': '3,80%',
@@ -210,7 +210,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
       debugPrint('Error loading data: $e');
       if (mounted) {
         setState(() {
-          errorMessage = 'Gagal memuat data: ${e.toString()}';
+          errorMessage = 'Gagal memuat data: $e';
           isLoading = false;
         });
       }
@@ -310,7 +310,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: bpsBlue,
         boxShadow: [
@@ -691,7 +691,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                     color: bpsBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -699,7 +699,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                         color: bpsBlue,
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Tap untuk detail',
                         style: TextStyle(
@@ -825,7 +825,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
 
               // Value (flex: 2, right-aligned)
               Expanded(
@@ -844,7 +844,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(width: 6),
+              const SizedBox(width: 6),
 
               // Chevron indicator
               Icon(
@@ -880,7 +880,6 @@ class _KemiskinanScreenContent extends StatelessWidget {
   ) {
     showDialog(
       context: context,
-      barrierDismissible: true,
       builder: (dialogContext) {
         final dialogSizing = ResponsiveSizing(dialogContext);
         final isDialogSmall = dialogSizing.isVerySmall || dialogSizing.isSmall;
@@ -939,7 +938,7 @@ class _KemiskinanScreenContent extends StatelessWidget {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
                               'Tahun $selectedYear',
                               style: TextStyle(
@@ -1202,11 +1201,10 @@ class _PovertyTrendChart extends StatelessWidget {
               child: LineChart(
                 LineChartData(
                   gridData: FlGridData(
-                    show: true,
                     drawVerticalLine: false,
                     horizontalInterval: yInterval,
                     getDrawingHorizontalLine: (value) {
-                      return FlLine(
+                      return const FlLine(
                         color: bpsBorder,
                         strokeWidth: 0.5,
                       );
@@ -1235,7 +1233,7 @@ class _PovertyTrendChart extends StatelessWidget {
                       ),
                     ),
                     rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                        ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -1261,18 +1259,17 @@ class _PovertyTrendChart extends StatelessWidget {
                       ),
                     ),
                     topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                        ),
                   ),
                   borderData: FlBorderData(show: false),
                   minY: minY,
                   maxY: maxY,
                   lineTouchData: LineTouchData(
-                    enabled: true,
                     touchTooltipData: LineTouchTooltipData(
                       getTooltipColor: (spot) => bpsCardBg,
                       tooltipRoundedRadius: 8,
                       tooltipBorder:
-                          BorderSide(color: Colors.grey[300]!, width: 1),
+                          BorderSide(color: Colors.grey[300]!),
                       tooltipPadding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 8),
                       getTooltipItems: (touchedSpots) {
@@ -1305,7 +1302,6 @@ class _PovertyTrendChart extends StatelessWidget {
                       barWidth: isSmallScreen ? 2.5 : 3.5,
                       isStrokeCapRound: true,
                       dotData: FlDotData(
-                        show: true,
                         getDotPainter: (spot, percent, barData, index) {
                           return FlDotCirclePainter(
                             radius: isSmallScreen ? 3 : 5,
@@ -1362,11 +1358,11 @@ class _PovertyTrendChart extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         selectedYear == baseYear
                             ? indicatorValue
-                            : '${NumberFormatUtils.formatDecimal(perubahan.abs(), decimalPlaces: 2)}$yAxisSuffix',
+                            : '${NumberFormatUtils.formatDecimal(perubahan.abs())}$yAxisSuffix',
                         style: TextStyle(
                           fontSize: isSmallScreen ? 24 : 28,
                           fontWeight: FontWeight.w800,
@@ -1380,7 +1376,7 @@ class _PovertyTrendChart extends StatelessWidget {
 
                 // Right section: Badge (only when comparing years)
                 if (selectedYear != baseYear) ...[
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: isSmallScreen ? 10 : 12,
@@ -1406,7 +1402,7 @@ class _PovertyTrendChart extends StatelessWidget {
                           size: isSmallScreen ? 14 : 16,
                           color: Colors.white,
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           isPositive ? 'Menurun' : 'Meningkat',
                           style: TextStyle(
@@ -1521,7 +1517,7 @@ class _PovertyInformationPanel extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(
                   'Mencerminkan nilai pengeluaran kebutuhan minimum makanan yang disetarakan dengan 2.100 kalori per kapita per hari.',
                   style: TextStyle(
@@ -1563,7 +1559,7 @@ class _PovertyInformationPanel extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(
                   'Mencakup kebutuhan minimum untuk perumahan, sandang, pendidikan, dan kesehatan.',
                   style: TextStyle(

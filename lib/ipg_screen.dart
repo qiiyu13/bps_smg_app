@@ -298,27 +298,27 @@ class _IPGScreenState extends State<IPGScreen>
               },
             ];
 
-            Map<int, IPGData> processedData = {};
-            for (var row in rawData) {
+            final Map<int, IPGData> processedData = {};
+            for (final row in rawData) {
               final int year = row["Tahun"] as int;
               processedData[year] = IPGData(
                 year: year,
-                uhh: (((row["UHH_Laki"] as num) +
+                uhh: ((row["UHH_Laki"] as num) +
                             (row["UHH_Perempuan"] as num)) /
-                        2)
-                    .toDouble(),
-                hls: (((row["HLS_Laki"] as num) +
+                        2
+                    ,
+                hls: ((row["HLS_Laki"] as num) +
                             (row["HLS_Perempuan"] as num)) /
-                        2)
-                    .toDouble(),
-                rls: (((row["RLS_Laki"] as num) +
+                        2
+                    ,
+                rls: ((row["RLS_Laki"] as num) +
                             (row["RLS_Perempuan"] as num)) /
-                        2)
-                    .toDouble(),
-                ppp: (((row["PPP_Laki"] as num) +
+                        2
+                    ,
+                ppp: ((row["PPP_Laki"] as num) +
                             (row["PPP_Perempuan"] as num)) /
-                        2)
-                    .toDouble(),
+                        2
+                    ,
                 ipg: (row["IPG"] as num?)?.toDouble(),
                 ikg: (row["IKG"] as num?)?.toDouble(),
                 uhhMale: (row["UHH_Laki"] as num).toDouble(),
@@ -493,7 +493,7 @@ class _IPGScreenState extends State<IPGScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: bpsOrange,
         boxShadow: [
@@ -701,7 +701,7 @@ class _IPGScreenState extends State<IPGScreen>
                     color: bpsOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -709,7 +709,7 @@ class _IPGScreenState extends State<IPGScreen>
                         color: bpsOrange,
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Tap untuk detail',
                         style: TextStyle(
@@ -753,8 +753,7 @@ class _IPGScreenState extends State<IPGScreen>
               _buildCompactIndicatorRow(
                 context: context,
                 value: data.ipmMale != null
-                    ? NumberFormatUtils.formatDecimal(data.ipmMale!,
-                        decimalPlaces: 2)
+                    ? NumberFormatUtils.formatDecimal(data.ipmMale!)
                     : 'N/A',
                 label: 'IPM Laki-laki',
                 color: Colors.indigo,
@@ -767,8 +766,7 @@ class _IPGScreenState extends State<IPGScreen>
               _buildCompactIndicatorRow(
                 context: context,
                 value: data.ipmFemale != null
-                    ? NumberFormatUtils.formatDecimal(data.ipmFemale!,
-                        decimalPlaces: 2)
+                    ? NumberFormatUtils.formatDecimal(data.ipmFemale!)
                     : 'N/A',
                 label: 'IPM Perempuan',
                 color: Colors.pink,
@@ -837,7 +835,7 @@ class _IPGScreenState extends State<IPGScreen>
                     color: bpsOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -845,7 +843,7 @@ class _IPGScreenState extends State<IPGScreen>
                         color: bpsOrange,
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Tap untuk detail',
                         style: TextStyle(
@@ -960,9 +958,9 @@ class _IPGScreenState extends State<IPGScreen>
   }
 
   Widget _buildIPGChart(ResponsiveSizing sizing, bool isSmallScreen) {
-    List<FlSpot> ipgSpots = [];
-    List<String> yearLabels = [];
-    List<int> validYearIndices = [];
+    final List<FlSpot> ipgSpots = [];
+    final List<String> yearLabels = [];
+    final List<int> validYearIndices = [];
 
     for (int i = 0; i < availableYears.length; i++) {
       final year = availableYears[i];
@@ -974,26 +972,26 @@ class _IPGScreenState extends State<IPGScreen>
       }
     }
 
-    bool hasValidData = ipgSpots.isNotEmpty;
+    final bool hasValidData = ipgSpots.isNotEmpty;
 
-    double minY = 94.0;
-    double maxY = 97.0;
+    double minY = 94;
+    double maxY = 97;
     double yInterval = 0.5;
 
     if (hasValidData) {
-      double minIPG = ipgSpots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
-      double maxIPG = ipgSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
+      final double minIPG = ipgSpots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
+      final double maxIPG = ipgSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
 
       minY = (minIPG - 0.5).floorToDouble();
       maxY = (maxIPG + 0.5).ceilToDouble();
 
       if (maxY - minY < 2.0) {
-        double mid = (minY + maxY) / 2;
+        final double mid = (minY + maxY) / 2;
         minY = mid - 1.0;
         maxY = mid + 1.0;
       }
 
-      double range = maxY - minY;
+      final double range = maxY - minY;
       yInterval = (range / 5 * 10).round() / 10;
       if (yInterval < 0.5) yInterval = 0.5;
     }
@@ -1072,7 +1070,6 @@ class _IPGScreenState extends State<IPGScreen>
                   minY: minY,
                   maxY: maxY,
                   gridData: FlGridData(
-                    show: true,
                     drawVerticalLine: false,
                     horizontalInterval: yInterval,
                     getDrawingHorizontalLine: (value) {
@@ -1083,11 +1080,10 @@ class _IPGScreenState extends State<IPGScreen>
                     },
                   ),
                   titlesData: FlTitlesData(
-                    show: true,
                     rightTitles:
-                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        const AxisTitles(),
                     topTitles:
-                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        const AxisTitles(),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -1098,7 +1094,7 @@ class _IPGScreenState extends State<IPGScreen>
                           if (index >= 0 && index < availableYears.length) {
                             return Text(
                               availableYears[index].toString(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 color: bpsPurple,
@@ -1145,7 +1141,6 @@ class _IPGScreenState extends State<IPGScreen>
                       color: bpsPurple,
                       barWidth: 3,
                       dotData: FlDotData(
-                        show: true,
                         getDotPainter: (spot, percent, bar, index) {
                           return FlDotCirclePainter(
                             radius: 6,
@@ -1162,13 +1157,11 @@ class _IPGScreenState extends State<IPGScreen>
                     ),
                   ],
                   lineTouchData: LineTouchData(
-                    enabled: true,
                     touchTooltipData: LineTouchTooltipData(
                       getTooltipColor: (spot) => Colors.white,
                       tooltipRoundedRadius: 8,
                       tooltipBorder: BorderSide(
                         color: Colors.grey.shade300,
-                        width: 1,
                       ),
                       getTooltipItems: (touchedSpots) {
                         return touchedSpots.map((spot) {
@@ -1205,9 +1198,9 @@ class _IPGScreenState extends State<IPGScreen>
   }
 
   Widget _buildIKGChart(ResponsiveSizing sizing, bool isSmallScreen) {
-    List<BarChartGroupData> barGroups = [];
-    List<String> yearLabels = [];
-    List<int> validYearIndices = [];
+    final List<BarChartGroupData> barGroups = [];
+    final List<String> yearLabels = [];
+    final List<int> validYearIndices = [];
 
     for (int i = 0; i < availableYears.length; i++) {
       final year = availableYears[i];
@@ -1239,7 +1232,7 @@ class _IPGScreenState extends State<IPGScreen>
       }
     }
 
-    bool hasValidData = barGroups.isNotEmpty;
+    final bool hasValidData = barGroups.isNotEmpty;
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -1316,10 +1309,9 @@ class _IPGScreenState extends State<IPGScreen>
                         maxY: 0.06,
                         minY: 0,
                         gridData: FlGridData(
-                          show: true,
                           drawVerticalLine: false,
                           horizontalInterval: 0.01,
-                          getDrawingHorizontalLine: (value) => FlLine(
+                          getDrawingHorizontalLine: (value) => const FlLine(
                             color: bpsBorder,
                             strokeWidth: 0.5,
                           ),
@@ -1367,9 +1359,9 @@ class _IPGScreenState extends State<IPGScreen>
                             ),
                           ),
                           rightTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
+                              ),
                           topTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
+                              ),
                         ),
                         borderData: FlBorderData(show: false),
                         barGroups: barGroups,
@@ -1378,7 +1370,7 @@ class _IPGScreenState extends State<IPGScreen>
                           touchTooltipData: BarTouchTooltipData(
                             tooltipRoundedRadius: 8,
                             tooltipBorder:
-                                BorderSide(color: Colors.grey[300]!, width: 1),
+                                BorderSide(color: Colors.grey[300]!),
                             tooltipPadding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 8),
                             getTooltipColor: (group) => bpsCardBg,
@@ -1388,7 +1380,7 @@ class _IPGScreenState extends State<IPGScreen>
                                   index < validYearIndices.length) {
                                 return BarTooltipItem(
                                   '${yearLabels[index]}\nIKG: ${NumberFormatUtils.formatDecimal(rod.toY, decimalPlaces: 3)}',
-                                  TextStyle(
+                                  const TextStyle(
                                     color: bpsBlue,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 11,
@@ -1401,7 +1393,7 @@ class _IPGScreenState extends State<IPGScreen>
                         ),
                       ),
                     )
-                  : Center(
+                  : const Center(
                       child: Text(
                         'Data tidak tersedia',
                         style: TextStyle(color: bpsTextSecondary),
@@ -1727,7 +1719,6 @@ class _IPGScreenState extends State<IPGScreen>
 
     showDialog(
       context: context,
-      barrierDismissible: true,
       builder: (dialogContext) {
         return Dialog(
           insetPadding: EdgeInsets.all(isSmallScreen ? 12 : 20),

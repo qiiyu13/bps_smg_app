@@ -3,7 +3,7 @@ import 'package:video_player/video_player.dart';
 import 'dart:async';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen>
     });
     _maxDurationTimer = Timer(const Duration(seconds: 8), () {
       if (!_hasNavigated && !_isDisposed) {
-        print('Max splash duration reached, forcing navigation');
+        debugPrint('Max splash duration reached, forcing navigation');
         _navigateToHome();
       }
     });
@@ -45,8 +45,8 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
     );
     _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _fadeController,
       curve: Curves.easeInOut,
@@ -58,13 +58,13 @@ class _SplashScreenState extends State<SplashScreen>
     precacheImage(const AssetImage('assets/images/logo_white.png'), context);
   }
 
-  void _initializeVideo() async {
+  Future<void> _initializeVideo() async {
     try {
       if (_isDisposed) return;
 
       _timeoutTimer = Timer(const Duration(seconds: 5), () {
         if (!_isVideoInitialized && !_isDisposed) {
-          print('Video loading timeout, using fallback');
+          debugPrint('Video loading timeout, using fallback');
           _showFallbackSplash();
         }
       });
@@ -73,7 +73,6 @@ class _SplashScreenState extends State<SplashScreen>
         'assets/animations/ringan.mp4',
         videoPlayerOptions: VideoPlayerOptions(
           mixWithOthers: true, // Allow playing without taking audio focus
-          allowBackgroundPlayback: false,
         ),
       );
 
@@ -91,23 +90,23 @@ class _SplashScreenState extends State<SplashScreen>
 
       _fadeController.forward();
       await _videoController!.setLooping(false);
-      await _videoController!.setVolume(0.0);
+      await _videoController!.setVolume(0);
 
-      print('Video duration: ${_videoController!.value.duration}');
+      debugPrint('Video duration: ${_videoController!.value.duration}');
 
       // Try to play video with error handling
       try {
         await _videoController!.play();
         _videoController!.addListener(_checkVideoCompletion);
       } catch (playError) {
-        print('Error playing video: $playError');
+        debugPrint('Error playing video: $playError');
         // If video fails to play (e.g., audio focus issue), show fallback
         if (!_isDisposed && mounted) {
           _showFallbackSplash();
         }
       }
     } catch (error) {
-      print('Error initializing video: $error');
+      debugPrint('Error initializing video: $error');
       _timeoutTimer?.cancel();
       if (!_isDisposed) {
         _showFallbackSplash();
@@ -121,14 +120,14 @@ class _SplashScreenState extends State<SplashScreen>
     final position = _videoController!.value.position;
     final duration = _videoController!.value.duration;
 
-    print('Video position: $position / $duration');
+    debugPrint('Video position: $position / $duration');
 
     // Check if video is stuck (position not changing)
     if (position == _lastPosition) {
       _stuckCounter++;
       if (_stuckCounter > 3) {
         // Stuck for ~3 seconds
-        print('Video appears stuck, using fallback');
+        debugPrint('Video appears stuck, using fallback');
         _videoController?.pause();
         _showFallbackSplash();
         return;
@@ -140,7 +139,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Check if video completed
     if (position >= duration && !_hasNavigated) {
-      print('Video completed, navigating to home');
+      debugPrint('Video completed, navigating to home');
       _navigateToHome();
     }
   }
@@ -172,7 +171,7 @@ class _SplashScreenState extends State<SplashScreen>
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/home');
     } catch (e) {
-      print('Error navigating: $e');
+      debugPrint('Error navigating: $e');
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/home');
       }
@@ -202,7 +201,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
-      body: Container(
+      body: ColoredBox(
         color: const Color(0xFFF4F4F4),
         child: SafeArea(
           child: Stack(
@@ -213,7 +212,7 @@ class _SplashScreenState extends State<SplashScreen>
                 Center(
                   child: FadeTransition(
                     opacity: _fadeAnimation,
-                    child: Container(
+                    child: SizedBox(
                       width: screenSize.width * 0.6,
                       height: screenSize.width * 0.6,
                       child: FittedBox(
@@ -233,10 +232,10 @@ class _SplashScreenState extends State<SplashScreen>
                 Center(
                   child: FadeTransition(
                     opacity: _fadeAnimation,
-                    child: CircularProgressIndicator(
+                    child: const CircularProgressIndicator(
                       strokeWidth: 3,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        const Color(0xFF84CC16), // Lime green
+                        Color(0xFF84CC16), // Lime green
                       ),
                     ),
                   ),

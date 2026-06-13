@@ -27,19 +27,19 @@ class IDGData {
   });
 
   String get idgFormatted => idg != null
-      ? NumberFormatUtils.formatDecimal(idg!, decimalPlaces: 2)
+      ? NumberFormatUtils.formatDecimal(idg!)
       : 'N/A';
   String get ikgFormatted => ikg != null
-      ? NumberFormatUtils.formatDecimal(ikg!, decimalPlaces: 2)
+      ? NumberFormatUtils.formatDecimal(ikg!)
       : 'N/A';
   String get sumbanganFormatted => sumbangan != null
-      ? NumberFormatUtils.formatDecimal(sumbangan!, decimalPlaces: 2)
+      ? NumberFormatUtils.formatDecimal(sumbangan!)
       : 'N/A';
   String get tenagaFormatted => tenaga != null
-      ? NumberFormatUtils.formatDecimal(tenaga!, decimalPlaces: 2)
+      ? NumberFormatUtils.formatDecimal(tenaga!)
       : 'N/A';
   String get parlemenFormatted => parlemen != null
-      ? NumberFormatUtils.formatDecimal(parlemen!, decimalPlaces: 2)
+      ? NumberFormatUtils.formatDecimal(parlemen!)
       : 'N/A';
 }
 
@@ -97,7 +97,7 @@ class _IDGScreenState extends State<IDGScreen>
       final githubData = GitHubDataService.getData('idg');
       if (githubData != null && githubData['idgData'] != null) {
         final idgDataRaw = githubData['idgData'] as Map<String, dynamic>;
-        Map<int, IDGData> processedData = {};
+        final Map<int, IDGData> processedData = {};
         idgDataRaw.forEach((key, value) {
           final int year = int.parse(key);
           final Map<String, dynamic> data = Map<String, dynamic>.from(value as Map);
@@ -126,13 +126,13 @@ class _IDGScreenState extends State<IDGScreen>
         return;
       }
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? savedData = prefs.getString('idg_data');
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? savedData = prefs.getString('idg_data');
 
-      Map<int, IDGData> processedData = {};
+      final Map<int, IDGData> processedData = {};
 
       if (savedData != null) {
-        Map<String, dynamic> decoded =
+        final Map<String, dynamic> decoded =
             json.decode(savedData) as Map<String, dynamic>;
         decoded.forEach((key, value) {
           final int year = int.parse(key);
@@ -198,7 +198,7 @@ class _IDGScreenState extends State<IDGScreen>
           },
         ];
 
-        for (var row in rawData) {
+        for (final row in rawData) {
           final int year = row["Tahun"] as int;
           processedData[year] = IDGData(
             year: year,
@@ -332,7 +332,7 @@ class _IDGScreenState extends State<IDGScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: bpsOrange,
         boxShadow: [
@@ -529,7 +529,7 @@ class _IDGScreenState extends State<IDGScreen>
                     color: bpsOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -537,7 +537,7 @@ class _IDGScreenState extends State<IDGScreen>
                         color: bpsOrange,
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Tap untuk detail',
                         style: TextStyle(
@@ -718,7 +718,6 @@ class _IDGScreenState extends State<IDGScreen>
 
     showDialog(
       context: context,
-      barrierDismissible: true,
       builder: (dialogContext) {
         return Dialog(
           insetPadding: EdgeInsets.all(isSmallScreen ? 12 : 20),
@@ -888,9 +887,9 @@ class _IDGScreenState extends State<IDGScreen>
   }
 
   Widget _buildIDGOnlyChart(ResponsiveSizing sizing, bool isSmallScreen) {
-    List<FlSpot> idgSpots = [];
-    List<String> yearLabels = [];
-    List<int> validYearIndices = [];
+    final List<FlSpot> idgSpots = [];
+    final List<String> yearLabels = [];
+    final List<int> validYearIndices = [];
 
     for (int i = 0; i < availableYears.length; i++) {
       final year = availableYears[i];
@@ -902,29 +901,29 @@ class _IDGScreenState extends State<IDGScreen>
       }
     }
 
-    double minY = 70.0;
-    double maxY = 80.0;
-    double yInterval = 2.0;
+    double minY = 70;
+    double maxY = 80;
+    double yInterval = 2;
 
     if (idgSpots.isNotEmpty) {
-      double minIDG = idgSpots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
-      double maxIDG = idgSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
+      final double minIDG = idgSpots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
+      final double maxIDG = idgSpots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
 
       minY = (minIDG - 2.0).floorToDouble();
       maxY = (maxIDG + 2.0).ceilToDouble();
 
       if (maxY - minY < 4.0) {
-        double mid = (minY + maxY) / 2;
+        final double mid = (minY + maxY) / 2;
         minY = mid - 2.0;
         maxY = mid + 2.0;
       }
 
-      double range = maxY - minY;
+      final double range = maxY - minY;
       yInterval = (range / 5).roundToDouble();
       if (yInterval < 1.0) yInterval = 1.0;
     }
 
-    List<FlSpot> chartSpots = List.from(idgSpots);
+    final List<FlSpot> chartSpots = List.from(idgSpots);
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen
@@ -969,15 +968,13 @@ class _IDGScreenState extends State<IDGScreen>
             ],
           ),
           SizedBox(height: isSmallScreen ? 16 : 20),
-          idgSpots.isNotEmpty
-              ? SizedBox(
+          if (idgSpots.isNotEmpty) SizedBox(
                   height: isSmallScreen ? 200 : 240,
                   child: LineChart(
                     LineChartData(
                       minY: minY,
                       maxY: maxY,
                       gridData: FlGridData(
-                        show: true,
                         drawVerticalLine: false,
                         horizontalInterval: yInterval,
                         getDrawingHorizontalLine: (value) {
@@ -988,11 +985,10 @@ class _IDGScreenState extends State<IDGScreen>
                         },
                       ),
                       titlesData: FlTitlesData(
-                        show: true,
-                        rightTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
-                        topTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
+                        rightTitles: const AxisTitles(
+                            ),
+                        topTitles: const AxisTitles(
+                            ),
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
@@ -1004,7 +1000,7 @@ class _IDGScreenState extends State<IDGScreen>
                                   index < validYearIndices.length) {
                                 return Text(
                                   yearLabels[index],
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                     color: bpsPurple,
@@ -1051,13 +1047,11 @@ class _IDGScreenState extends State<IDGScreen>
                           color: bpsPurple,
                           barWidth: 3,
                           dotData: FlDotData(
-                            show: true,
                             getDotPainter: (spot, percent, bar, index) {
                               if (spot.y.isNaN) {
                                 return FlDotCirclePainter(
                                   radius: 0,
                                   color: Colors.transparent,
-                                  strokeWidth: 0,
                                   strokeColor: Colors.transparent,
                                 );
                               }
@@ -1076,13 +1070,11 @@ class _IDGScreenState extends State<IDGScreen>
                         ),
                       ],
                       lineTouchData: LineTouchData(
-                        enabled: true,
                         touchTooltipData: LineTouchTooltipData(
                           getTooltipColor: (spot) => Colors.white,
                           tooltipRoundedRadius: 8,
                           tooltipBorder: BorderSide(
                             color: Colors.grey.shade300,
-                            width: 1,
                           ),
                           getTooltipItems: (touchedSpots) {
                             return touchedSpots.map((spot) {
@@ -1103,8 +1095,7 @@ class _IDGScreenState extends State<IDGScreen>
                       ),
                     ),
                   ),
-                )
-              : const Center(
+                ) else const Center(
                   child: Text('Data tidak tersedia',
                       style: TextStyle(color: bpsTextSecondary))),
         ],
@@ -1113,8 +1104,8 @@ class _IDGScreenState extends State<IDGScreen>
   }
 
   Widget _buildIKGOnlyChart(ResponsiveSizing sizing, bool isSmallScreen) {
-    List<BarChartGroupData> barGroups = [];
-    List<String> yearLabels = [];
+    final List<BarChartGroupData> barGroups = [];
+    final List<String> yearLabels = [];
 
     for (int i = 0; i < availableYears.length; i++) {
       final year = availableYears[i];
@@ -1196,11 +1187,10 @@ class _IDGScreenState extends State<IDGScreen>
                       maxY: 0.30,
                       minY: 0,
                       gridData: FlGridData(
-                        show: true,
                         drawVerticalLine: false,
                         horizontalInterval: 0.05,
                         getDrawingHorizontalLine: (value) =>
-                            FlLine(color: bpsBorder, strokeWidth: 0.5),
+                            const FlLine(color: bpsBorder, strokeWidth: 0.5),
                       ),
                       titlesData: FlTitlesData(
                         leftTitles: AxisTitles(
@@ -1209,8 +1199,7 @@ class _IDGScreenState extends State<IDGScreen>
                             reservedSize: 40,
                             interval: 0.05,
                             getTitlesWidget: (value, meta) => Text(
-                              NumberFormatUtils.formatDecimal(value,
-                                  decimalPlaces: 2),
+                              NumberFormatUtils.formatDecimal(value),
                               style: TextStyle(
                                   fontSize: isSmallScreen ? 9 : 10,
                                   color: bpsTextSecondary),
@@ -1237,9 +1226,9 @@ class _IDGScreenState extends State<IDGScreen>
                           ),
                         ),
                         rightTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
+                            ),
                         topTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)),
+                            ),
                       ),
                       borderData: FlBorderData(show: false),
                       barGroups: barGroups,
@@ -1267,7 +1256,7 @@ class _IDGScreenState extends State<IDGScreen>
                       ),
                     ),
                   )
-                : Center(
+                : const Center(
                     child: Text('Data tidak tersedia',
                         style: TextStyle(color: bpsTextSecondary))),
           ),

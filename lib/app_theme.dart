@@ -116,17 +116,12 @@ final ThemeData bpsTheme = ThemeData(
   fontFamily: 'Inter',
   primaryColor: bpsBlue,
   scaffoldBackgroundColor: bpsBackground,
-  colorScheme: ColorScheme.light(
+  colorScheme: const ColorScheme.light(
     primary: bpsBlue,
     secondary: bpsOrange,
-    surface: bpsCardBg,
-    background: bpsBackground,
     error: bpsRed,
-    onPrimary: Colors.white,
     onSecondary: Colors.white,
     onSurface: bpsTextPrimary,
-    onBackground: bpsTextPrimary,
-    onError: Colors.white,
   ),
   textTheme: const TextTheme(
     displayLarge: TextStyle(fontFamily: 'PlusJakartaSans'),
@@ -387,7 +382,7 @@ class ParallaxPageTransitionsBuilder extends PageTransitionsBuilder {
     Widget child,
   ) {
     final foregroundSlide = Tween<Offset>(
-      begin: const Offset(1.0, 0.0),
+      begin: const Offset(1, 0),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: animation,
@@ -397,7 +392,7 @@ class ParallaxPageTransitionsBuilder extends PageTransitionsBuilder {
 
     final backgroundSlide = Tween<Offset>(
       begin: Offset.zero,
-      end: const Offset(-0.3, 0.0),
+      end: const Offset(-0.3, 0),
     ).animate(CurvedAnimation(
       parent: secondaryAnimation,
       curve: Curves.fastOutSlowIn,
@@ -405,7 +400,7 @@ class ParallaxPageTransitionsBuilder extends PageTransitionsBuilder {
     ));
 
     // Scrim: dim this page as it recedes behind a pushed page.
-    final scrim = Tween<double>(begin: 0.0, end: 0.18).animate(CurvedAnimation(
+    final scrim = Tween<double>(begin: 0, end: 0.18).animate(CurvedAnimation(
       parent: secondaryAnimation,
       curve: Curves.fastOutSlowIn,
       reverseCurve: Curves.fastOutSlowIn,
@@ -420,16 +415,14 @@ class ParallaxPageTransitionsBuilder extends PageTransitionsBuilder {
           children: [
             // Leading-edge shadow — glued just left of the page. Off-screen at
             // rest (offset 0), only visible while the page slides over the one below.
-            Positioned(
+            const Positioned(
               top: 0,
               bottom: 0,
               left: -10,
               width: 10,
-              child: const DecoratedBox(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
                     colors: [Colors.transparent, Color(0x33000000)],
                   ),
                 ),

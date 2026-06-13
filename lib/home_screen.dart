@@ -95,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildBottomNav(ResponsiveSizing sizing) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [BPSShadows.bottomNavShadow],
@@ -216,7 +216,7 @@ class _HomeBody extends StatelessWidget {
   }
 
   Widget _buildHeader(ResponsiveSizing sizing) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.only(
@@ -246,7 +246,6 @@ class _HomeBody extends StatelessWidget {
               SvgPicture.asset(
                 'assets/images/logo-bps.svg',
                 width: sizing.headerLogoSize * 1.9,
-                fit: BoxFit.contain,
                 placeholderBuilder: (context) => Icon(
                   Icons.account_balance_rounded,
                   color: bpsBlue,
@@ -299,10 +298,9 @@ class _HomeBody extends StatelessWidget {
         children: [
           _StaggeredReveal(
             controller: animationController,
-            start: 0.0,
+            start: 0,
             end: 0.45,
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
                   width: 4,
@@ -542,11 +540,11 @@ class _BentoTile1State extends State<_BentoTile1> {
     return _BentoCellWidget(
       label: 'Penduduk',
       value: _value != null
-          ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
+          ? NumberFormatUtils.formatDecimal(_value!)
           : '—',
       unit: 'Jt',
       change: _change != null
-          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
+          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!)}%'
           : '—',
       isPositive: _change != null ? _change! >= 0 : true,
       color: bpsSocialColor,
@@ -604,11 +602,11 @@ class _BentoTile2State extends State<_BentoTile2> {
     return _BentoCellWidget(
       label: 'IPM',
       value: _value != null
-          ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
+          ? NumberFormatUtils.formatDecimal(_value!)
           : '—',
       unit: '',
       change: _change != null
-          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
+          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!)}%'
           : '—',
       isPositive: _change != null ? _change! >= 0 : true,
       color: bpsDevelopmentColor,
@@ -663,11 +661,11 @@ class _BentoTile3State extends State<_BentoTile3> {
     return _BentoCellWidget(
       label: 'Kemiskinan',
       value: _value != null
-          ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
+          ? NumberFormatUtils.formatDecimal(_value!)
           : '—',
       unit: '%',
       change: _change != null
-          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
+          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!)}%'
           : '—',
       isPositive: _change != null ? _change! < 0 : false,
       color: bpsSocialColor,
@@ -725,11 +723,11 @@ class _BentoTile4State extends State<_BentoTile4> {
     return _BentoCellWidget(
       label: 'Inflasi',
       value: _value != null
-          ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
+          ? NumberFormatUtils.formatDecimal(_value!)
           : '—',
       unit: '%',
       change: _change != null
-          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
+          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!)}%'
           : '—',
       isPositive: _change != null ? _change! >= 0 : true,
       color: bpsBlue,
@@ -788,11 +786,11 @@ class _BentoTile5State extends State<_BentoTile5> {
     return _HeroCellWidget(
       label: 'Pertumbuhan Ekonomi',
       value: _value != null
-          ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
+          ? NumberFormatUtils.formatDecimal(_value!)
           : '—',
       unit: '%',
       change: _change != null
-          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
+          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!)}%'
           : '—',
       isPositive: _change != null ? _change! >= 0 : true,
       color: bpsEconomicColor,
@@ -849,11 +847,11 @@ class _BentoTile6State extends State<_BentoTile6> {
     return _BentoCellWidget(
       label: 'Pengangguran',
       value: _value != null
-          ? NumberFormatUtils.formatDecimal(_value!, decimalPlaces: 2)
+          ? NumberFormatUtils.formatDecimal(_value!)
           : '—',
       unit: '%',
       change: _change != null
-          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!, decimalPlaces: 2)}%'
+          ? '${_change! >= 0 ? '+' : ''}${NumberFormatUtils.formatDecimal(_change!)}%'
           : '—',
       isPositive: _change != null ? _change! < 0 : false,
       color: bpsSocialColor,
@@ -925,7 +923,7 @@ class _HeroCellWidgetState extends State<_HeroCellWidget>
   @override
   Widget build(BuildContext context) {
     final prevText = widget.prevVal != null && widget.prevYear != null
-        ? 'vs ${NumberFormatUtils.formatDecimal(widget.prevVal!, decimalPlaces: 2)}% in ${widget.prevYear}'
+        ? 'vs ${NumberFormatUtils.formatDecimal(widget.prevVal!)}% in ${widget.prevYear}'
         : null;
 
     return AnimatedBuilder(
@@ -944,7 +942,7 @@ class _HeroCellWidgetState extends State<_HeroCellWidget>
           );
         },
         onTapCancel: () => _pressController.reverse(),
-        child: Container(
+        child: DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(22),
             gradient: LinearGradient(
@@ -993,7 +991,7 @@ class _HeroCellWidgetState extends State<_HeroCellWidget>
                         end: Alignment.center,
                         colors: [
                           Colors.white.withOpacity(0.14),
-                          Colors.white.withOpacity(0.0),
+                          Colors.white.withOpacity(0),
                         ],
                       ),
                     ),
@@ -1011,7 +1009,7 @@ class _HeroCellWidgetState extends State<_HeroCellWidget>
                       gradient: RadialGradient(
                         colors: [
                           Colors.white.withOpacity(0.18),
-                          Colors.white.withOpacity(0.0),
+                          Colors.white.withOpacity(0),
                         ],
                       ),
                     ),
@@ -1183,7 +1181,7 @@ class _BentoCellWidgetState extends State<_BentoCellWidget>
           );
         },
         onTapCancel: () => _pressController.reverse(),
-        child: Container(
+        child: DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             gradient: LinearGradient(
@@ -1224,7 +1222,7 @@ class _BentoCellWidgetState extends State<_BentoCellWidget>
                         end: Alignment.center,
                         colors: [
                           Colors.white.withOpacity(0.12),
-                          Colors.white.withOpacity(0.0),
+                          Colors.white.withOpacity(0),
                         ],
                       ),
                     ),
@@ -1242,7 +1240,7 @@ class _BentoCellWidgetState extends State<_BentoCellWidget>
                       gradient: RadialGradient(
                         colors: [
                           Colors.white.withOpacity(0.16),
-                          Colors.white.withOpacity(0.0),
+                          Colors.white.withOpacity(0),
                         ],
                       ),
                     ),
@@ -1364,7 +1362,7 @@ class _CTATile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         splashColor: bpsBlue.withOpacity(0.12),
         highlightColor: bpsBlue.withOpacity(0.06),
-        child: Container(
+        child: DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -1475,7 +1473,6 @@ class _TileWatermark extends StatelessWidget {
             asset,
             width: size,
             height: size,
-            fit: BoxFit.contain,
             colorFilter: const ColorFilter.mode(
               Colors.white,
               BlendMode.srcIn,
@@ -1553,7 +1550,7 @@ class _DotGridPainter extends CustomPainter {
     const gap = 14.0;
     for (double y = 8; y < size.height; y += gap) {
       for (double x = 8; x < size.width; x += gap) {
-        canvas.drawCircle(Offset(x, y), 1.0, paint);
+        canvas.drawCircle(Offset(x, y), 1, paint);
       }
     }
   }

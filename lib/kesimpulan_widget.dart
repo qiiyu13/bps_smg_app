@@ -118,7 +118,7 @@ class KesimpulanWidget extends StatelessWidget {
                         letterSpacing: 0.5,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       title,
                       style: TextStyle(
@@ -141,7 +141,6 @@ class KesimpulanWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: status.color.withOpacity(0.3),
-                    width: 1,
                   ),
                 ),
                 child: Row(
@@ -152,7 +151,7 @@ class KesimpulanWidget extends StatelessWidget {
                       color: status.color,
                       size: isSmallScreen ? 12 : 14,
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text(
                       status.label,
                       style: TextStyle(
@@ -175,21 +174,20 @@ class KesimpulanWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: status.color.withOpacity(0.15),
-                width: 1,
               ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  margin: EdgeInsets.only(top: 2),
+                  margin: const EdgeInsets.only(top: 2),
                   child: Icon(
                     Icons.format_quote,
                     color: status.color.withOpacity(0.6),
                     size: isSmallScreen ? 16 : 18,
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     conclusion,
@@ -216,7 +214,7 @@ class KesimpulanWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: 6),
+                      margin: const EdgeInsets.only(top: 6),
                       width: 6,
                       height: 6,
                       decoration: BoxDecoration(
@@ -224,7 +222,7 @@ class KesimpulanWidget extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         point,
@@ -238,7 +236,7 @@ class KesimpulanWidget extends StatelessWidget {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ],
       ),
@@ -288,7 +286,7 @@ class KesimpulanGenerator {
           'Tahun $latestYear, persentase kemiskinan Kota Semarang mencapai ${NumberFormatUtils.formatValue(latestPercentage, decimalPlaces: 2)}%, mengalami $statusText sebesar ${NumberFormatUtils.formatValue(absChange, decimalPlaces: 2)} poin persentase dibandingkan tahun $firstYear. Kondisi ini memerlukan perhatian khusus dan intervensi kebijakan yang lebih intensif.';
     }
 
-    List<String> additionalPoints = [];
+    final List<String> additionalPoints = [];
     additionalPoints.add(
         'Garis kemiskinan tahun $latestYear sebesar $garisKemiskinan menunjukkan ambang batas pengeluaran minimum untuk memenuhi kebutuhan dasar.');
     additionalPoints.add(
@@ -341,7 +339,7 @@ class KesimpulanGenerator {
           'Nilai ini mengalami penurunan, memerlukan evaluasi dan perbaikan program pembangunan.';
     }
 
-    List<String> additionalPoints = [];
+    final List<String> additionalPoints = [];
     if (nationalAverage != null) {
       final diff = latestIPM - nationalAverage;
       if (diff > 0) {
@@ -404,7 +402,7 @@ class KesimpulanGenerator {
           'Tren pertumbuhan relatif stabil dengan rata-rata ${NumberFormatUtils.formatValue(averageGrowth, decimalPlaces: 2)}% selama periode teramati.';
     }
 
-    List<String> additionalPoints = [];
+    final List<String> additionalPoints = [];
     if (averageGrowth >= 5.0) {
       additionalPoints.add(
           'Rata-rata pertumbuhan ${NumberFormatUtils.formatValue(averageGrowth, decimalPlaces: 2)}% menunjukkan fundamental ekonomi yang kuat dan berkelanjutan.');
@@ -460,7 +458,7 @@ class KesimpulanGenerator {
           'Nilai relatif stabil, perlu percepatan program pemberdayaan perempuan.';
     }
 
-    List<String> additionalPoints = [];
+    final List<String> additionalPoints = [];
     if (latestIDG < 95) {
       additionalPoints.add(
           'Fokus pada akses pendidikan, kesehatan reproduksi, dan partisipasi ekonomi perempuan dapat meningkatkan IDG.');
@@ -553,7 +551,7 @@ class KesimpulanGenerator {
       conclusion += 'Relatif stabil dibandingkan tahun $firstYear.';
     }
 
-    List<String> additionalPoints = [];
+    final List<String> additionalPoints = [];
     if (averageInflasi <= 3.5) {
       additionalPoints.add(
           'Rata-rata inflasi ${NumberFormatUtils.formatValue(averageInflasi, decimalPlaces: 2)}% berada dalam kisaran target Bank Indonesia, menunjukkan manajemen moneter yang efektif.');
@@ -606,7 +604,7 @@ class KesimpulanGenerator {
       conclusion += 'Relatif stabil dibandingkan tahun $firstYear.';
     }
 
-    List<String> additionalPoints = [];
+    final List<String> additionalPoints = [];
     if (participationRate >= 70) {
       additionalPoints.add(
           'Tingkat partisipasi angkatan kerja yang tinggi (${NumberFormatUtils.formatValue(participationRate, decimalPlaces: 1)}%) menunjukkan potensi sumber daya manusia yang produktif.');
@@ -653,9 +651,9 @@ class KesimpulanGenerator {
 
     final populationChange = latestPopulation - firstPopulation;
     conclusion +=
-        'Terdapat penambahan ${populationChange >= 1000000 ? "${NumberFormatUtils.formatValue((populationChange / 1000000), decimalPlaces: 2)} juta" : "${NumberFormatUtils.formatValue((populationChange / 1000), decimalPlaces: 0)} ribu"} jiwa sejak tahun $firstYear.';
+        'Terdapat penambahan ${populationChange >= 1000000 ? "${NumberFormatUtils.formatValue(populationChange / 1000000, decimalPlaces: 2)} juta" : "${NumberFormatUtils.formatValue(populationChange / 1000, decimalPlaces: 0)} ribu"} jiwa sejak tahun $firstYear.';
 
-    List<String> additionalPoints = [];
+    final List<String> additionalPoints = [];
     if (density > 10000) {
       additionalPoints.add(
           'Kepadatan penduduk yang tinggi (${NumberFormatUtils.formatValue(density, decimalPlaces: 0)} jiwa/km²) memerlukan manajemen perkotaan yang efektif dan penyediaan infrastruktur memadai.');
@@ -708,7 +706,7 @@ class KesimpulanGenerator {
       conclusion += 'Relatif stabil dibandingkan tahun $firstYear.';
     }
 
-    List<String> additionalPoints = [];
+    final List<String> additionalPoints = [];
     if (teacherRatio <= 20) {
       additionalPoints.add(
           'Rasio guru-siswa yang ideal ($teacherRatio:1) mendukung kualitas pembelajaran yang lebih baik.');
@@ -748,10 +746,10 @@ class KesimpulanGenerator {
       progressLevel = 'kemajuan yang perlu dipercepat';
     }
 
-    String conclusion =
+    final String conclusion =
         'Tahun $latestYear, pencapaian Tujuan Pembangunan Berkelanjutan (SDGs) Kota Semarang menunjukkan $progressLevel dengan rata-rata skor ${NumberFormatUtils.formatValue(averageScore, decimalPlaces: 2)}. Dari $totalIndicators indikator, terdapat $onTrackCount indikator yang berada pada jalur target.';
 
-    List<String> additionalPoints = [];
+    final List<String> additionalPoints = [];
     if (progressRate > 0) {
       additionalPoints.add(
           'Tingkat kemajuan $progressRate% per tahun menunjukkan konsistensi dalam implementasi program SDGs.');
@@ -769,9 +767,9 @@ class KesimpulanGenerator {
   // Helper method
   static String _formatPopulation(int population) {
     if (population >= 1000000) {
-      return '${NumberFormatUtils.formatValue((population / 1000000), decimalPlaces: 2)} juta jiwa';
+      return '${NumberFormatUtils.formatValue(population / 1000000, decimalPlaces: 2)} juta jiwa';
     } else if (population >= 1000) {
-      return '${NumberFormatUtils.formatValue((population / 1000), decimalPlaces: 0)} ribu jiwa';
+      return '${NumberFormatUtils.formatValue(population / 1000, decimalPlaces: 0)} ribu jiwa';
     }
     return '$population jiwa';
   }

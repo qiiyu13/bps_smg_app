@@ -123,7 +123,7 @@ class _IpmScreenState extends State<IpmScreen>
           if (_cachedSortedYears.isNotEmpty) {
             selectedYear = _cachedSortedYears.last;
           }
-          errorMessage = 'Gagal memuat data: ${e.toString()}';
+          errorMessage = 'Gagal memuat data: $e';
           isLoading = false;
         });
       }
@@ -287,7 +287,7 @@ class _IpmScreenState extends State<IpmScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: bpsOrange,
         boxShadow: [
@@ -622,7 +622,7 @@ class _IpmScreenContent extends StatelessWidget {
                     color: bpsOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -630,7 +630,7 @@ class _IpmScreenContent extends StatelessWidget {
                         color: bpsOrange,
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Tap untuk detail',
                         style: TextStyle(
@@ -650,8 +650,7 @@ class _IpmScreenContent extends StatelessWidget {
             children: [
               _buildCompactIndicatorRow(
                 context: context,
-                value: NumberFormatUtils.formatDecimal(data['ipm'] as double,
-                    decimalPlaces: 2),
+                value: NumberFormatUtils.formatDecimal(data['ipm'] as double),
                 label: 'IPM',
                 color: bpsGreen,
                 icon: Icons.trending_up_rounded,
@@ -663,7 +662,7 @@ class _IpmScreenContent extends StatelessWidget {
               _buildCompactIndicatorRow(
                 context: context,
                 value:
-                    '${NumberFormatUtils.formatDecimal(data['uhh'] as double, decimalPlaces: 2)} Tahun',
+                    '${NumberFormatUtils.formatDecimal(data['uhh'] as double)} Tahun',
                 label: 'UHH',
                 color: bpsRed,
                 icon: Icons.favorite,
@@ -674,7 +673,7 @@ class _IpmScreenContent extends StatelessWidget {
               _buildCompactIndicatorRow(
                 context: context,
                 value:
-                    '${NumberFormatUtils.formatDecimal(data['hls'] as double, decimalPlaces: 2)} Tahun',
+                    '${NumberFormatUtils.formatDecimal(data['hls'] as double)} Tahun',
                 label: 'HLS',
                 color: bpsBlue,
                 icon: Icons.school,
@@ -685,7 +684,7 @@ class _IpmScreenContent extends StatelessWidget {
               _buildCompactIndicatorRow(
                 context: context,
                 value:
-                    '${NumberFormatUtils.formatDecimal(data['rls'] as double, decimalPlaces: 2)} Tahun',
+                    '${NumberFormatUtils.formatDecimal(data['rls'] as double)} Tahun',
                 label: 'RLS',
                 color: bpsGreen,
                 icon: Icons.auto_stories,
@@ -695,7 +694,7 @@ class _IpmScreenContent extends StatelessWidget {
               _buildIndicatorDivider(),
               _buildCompactIndicatorRow(
                 context: context,
-                value: formatNumber(data['pengeluaran']),
+                value: formatNumber((data['pengeluaran'] as num?)?.toDouble() ?? 0.0),
                 label: 'Pengeluaran per Kapita',
                 color: bpsOrange,
                 icon: Icons.monetization_on,
@@ -806,7 +805,6 @@ class _IpmScreenContent extends StatelessWidget {
   ) {
     showDialog(
       context: context,
-      barrierDismissible: true,
       builder: (dialogContext) {
         final dialogSizing = ResponsiveSizing(dialogContext);
         final isDialogSmall = dialogSizing.isVerySmall || dialogSizing.isSmall;
@@ -1013,9 +1011,12 @@ class _IpmComparisonChart extends StatelessWidget {
       final year = cachedSortedYears[i];
       if (!komponenData.containsKey(year)) continue;
       final data = komponenData[year]!;
-      nasionalSpots.add(FlSpot(i.toDouble(), data['ipmNasional'].toDouble()));
-      jatengSpots.add(FlSpot(i.toDouble(), data['ipmJateng'].toDouble()));
-      semarangSpots.add(FlSpot(i.toDouble(), data['ipmSemarang'].toDouble()));
+      nasionalSpots
+          .add(FlSpot(i.toDouble(), (data['ipmNasional'] as num).toDouble()));
+      jatengSpots
+          .add(FlSpot(i.toDouble(), (data['ipmJateng'] as num).toDouble()));
+      semarangSpots
+          .add(FlSpot(i.toDouble(), (data['ipmSemarang'] as num).toDouble()));
       yearLabels.add(year.toString());
     }
 
@@ -1096,11 +1097,10 @@ class _IpmComparisonChart extends StatelessWidget {
                   minY: 70,
                   maxY: 88,
                   gridData: FlGridData(
-                    show: true,
                     drawVerticalLine: false,
                     horizontalInterval: 2,
                     getDrawingHorizontalLine: (value) {
-                      return FlLine(
+                      return const FlLine(
                         color: bpsBorder,
                         strokeWidth: 0.5,
                       );
@@ -1151,36 +1151,35 @@ class _IpmComparisonChart extends StatelessWidget {
                       ),
                     ),
                     rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                        ),
                     topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
+                        ),
                   ),
                   borderData: FlBorderData(show: false),
                   lineTouchData: LineTouchData(
-                    enabled: true,
                     touchTooltipData: LineTouchTooltipData(
                       getTooltipColor: (spot) => bpsCardBg,
                       tooltipRoundedRadius: 8,
                       tooltipBorder:
-                          BorderSide(color: Colors.grey[300]!, width: 1),
+                          BorderSide(color: Colors.grey[300]!),
                       tooltipPadding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 8),
                       getTooltipItems: (touchedSpots) {
                         return touchedSpots.map((barSpot) {
                           final index = barSpot.x.toInt();
                           if (index >= 0 && index < yearLabels.length) {
-                            String label = barSpot.barIndex == 0
+                            final String label = barSpot.barIndex == 0
                                 ? 'Semarang'
                                 : (barSpot.barIndex == 1
                                     ? 'Jateng'
                                     : 'Nasional');
-                            Color color = barSpot.barIndex == 0
+                            final Color color = barSpot.barIndex == 0
                                 ? bpsGreen
                                 : (barSpot.barIndex == 1
                                     ? bpsBlue
                                     : bpsOrange);
                             return LineTooltipItem(
-                              '${yearLabels[index]}\n$label: ${NumberFormatUtils.formatDecimal(barSpot.y, decimalPlaces: 2)}',
+                              '${yearLabels[index]}\n$label: ${NumberFormatUtils.formatDecimal(barSpot.y)}',
                               TextStyle(
                                 color: color,
                                 fontWeight: FontWeight.bold,
@@ -1215,7 +1214,6 @@ class _IpmComparisonChart extends StatelessWidget {
       barWidth: isSmallScreen ? 2.5 : 3.5,
       isStrokeCapRound: true,
       dotData: FlDotData(
-        show: true,
         getDotPainter: (spot, percent, barData, index) {
           return FlDotCirclePainter(
             radius: isSmallScreen ? 3 : 5,

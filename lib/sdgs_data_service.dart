@@ -45,8 +45,8 @@ class KotaData {
 
   factory KotaData.fromJson(Map<String, dynamic> json) {
     return KotaData(
-      id: json['id'] ?? '',
-      nama: json['nama'] ?? '',
+      id: json['id']?.toString() ?? '',
+      nama: json['nama']?.toString() ?? '',
       samitasilayak: _parseMap(json['cuciTangan']),
       tikRemaja: _parseMap(json['tikRemaja']),
       tikDewasa: _parseMap(json['tikDewasa']),
@@ -54,7 +54,7 @@ class KotaData {
       apm: _parseMap(json['apm']),
       apk: _parseMap(json['apk']),
       lastModified: json['lastModified'] != null
-          ? DateTime.parse(json['lastModified'])
+          ? DateTime.parse(json['lastModified'].toString())
           : DateTime.now(),
     );
   }
@@ -83,7 +83,7 @@ class KotaData {
     return KotaData(
       id: id ?? this.id,
       nama: nama ?? this.nama,
-      samitasilayak: cuciTangan ?? this.samitasilayak,
+      samitasilayak: cuciTangan ?? samitasilayak,
       tikRemaja: tikRemaja ?? this.tikRemaja,
       tikDewasa: tikDewasa ?? this.tikDewasa,
       aktaLahir: aktaLahir ?? this.aktaLahir,
@@ -133,23 +133,23 @@ class SDGsDataService {
     final existingData = await getAllKota();
 
     if (existingData.isEmpty) {
-      if (kDebugMode) print('Initializing SDGs data...');
+      if (kDebugMode) debugPrint('Initializing SDGs data...');
 
       // Try to fetch from GitHub cache first
       final githubData = GitHubDataService.getData('sdgs');
 
       if (githubData != null) {
         // Parse GitHub JSON data
-        if (kDebugMode) print('Loading data from GitHub cache...');
+        if (kDebugMode) debugPrint('Loading data from GitHub cache...');
         final cities = githubData['cities'] as List<dynamic>;
-        for (var cityJson in cities) {
+        for (final cityJson in cities) {
           final kota = _parseKotaFromJson(cityJson as Map<String, dynamic>);
           await createKota(kota);
         }
       } else {
         // Fallback to hardcoded data
-        if (kDebugMode) print('GitHub cache unavailable, using hardcoded data...');
-        for (var kota in _getDefaultData()) {
+        if (kDebugMode) debugPrint('GitHub cache unavailable, using hardcoded data...');
+        for (final kota in _getDefaultData()) {
           await createKota(kota);
         }
       }
@@ -159,8 +159,8 @@ class SDGsDataService {
   // Parse city data from JSON (for GitHub integration)
   static KotaData _parseKotaFromJson(Map<String, dynamic> json) {
     return KotaData(
-      id: json['id'] ?? '',
-      nama: json['nama'] ?? '',
+      id: json['id']?.toString() ?? '',
+      nama: json['nama']?.toString() ?? '',
       samitasilayak: _parseJsonMap(json['samitasilayak']),
       tikRemaja: _parseJsonMap(json['tikRemaja']),
       tikDewasa: _parseJsonMap(json['tikDewasa']),
@@ -1243,12 +1243,12 @@ class SDGsDataService {
   static Future<bool> createKota(KotaData kota) async {
     try {
       await init();
-      List<KotaData> allData = await getAllKota();
+      final List<KotaData> allData = await getAllKota();
 
       // Cek duplikasi
       if (allData.any((k) => k.nama.toLowerCase() == kota.nama.toLowerCase())) {
         if (kDebugMode) {
-          print('Error: Kota dengan nama ${kota.nama} sudah ada');
+          debugPrint('Error: Kota dengan nama ${kota.nama} sudah ada');
         }
         return false;
       }
@@ -1258,12 +1258,12 @@ class SDGsDataService {
 
       final result = await _saveAllData(allData);
       if (kDebugMode) {
-        print('Data created successfully: ${kota.nama}');
+        debugPrint('Data created successfully: ${kota.nama}');
       }
       return result;
     } catch (e) {
       if (kDebugMode) {
-        print('Error creating kota: $e');
+        debugPrint('Error creating kota: $e');
       }
       return false;
     }
@@ -1274,8 +1274,9 @@ class SDGsDataService {
     try {
       // Return cached data if valid
       if (_isCacheValid && _cachedData != null) {
-        if (kDebugMode)
-          print('Returning cached data: ${_cachedData!.length} kota');
+        if (kDebugMode) {
+          debugPrint('Returning cached data: ${_cachedData!.length} kota');
+        }
         return _cachedData!;
       }
 
@@ -1283,22 +1284,22 @@ class SDGsDataService {
       final jsonList = _prefs.getStringList(_storageKey) ?? [];
 
       if (jsonList.isEmpty) {
-        if (kDebugMode) print('No data found in storage');
+        if (kDebugMode) debugPrint('No data found in storage');
         return [];
       }
 
       final data =
-          jsonList.map((json) => KotaData.fromJson(jsonDecode(json))).toList();
+          jsonList.map((json) => KotaData.fromJson(jsonDecode(json) as Map<String, dynamic>)).toList();
 
       // Update cache
       _cachedData = data;
       _cacheTimestamp = DateTime.now();
 
-      if (kDebugMode) print('Loaded ${data.length} kota from storage');
+      if (kDebugMode) debugPrint('Loaded ${data.length} kota from storage');
       return data;
     } catch (e) {
       if (kDebugMode) {
-        print('Error getting all kota: $e');
+        debugPrint('Error getting all kota: $e');
       }
       return [];
     }
@@ -1308,7 +1309,7 @@ class SDGsDataService {
   static Future<KotaData?> getKotaById(String id) async {
     try {
       final allData = await getAllKota();
-      for (var kota in allData) {
+      for (final kota in allData) {
         if (kota.id == id) {
           return kota;
         }
@@ -1316,7 +1317,7 @@ class SDGsDataService {
       return null;
     } catch (e) {
       if (kDebugMode) {
-        print('Error getting kota by id: $e');
+        debugPrint('Error getting kota by id: $e');
       }
       return null;
     }
@@ -1332,7 +1333,7 @@ class SDGsDataService {
           .toList();
     } catch (e) {
       if (kDebugMode) {
-        print('Error searching kota: $e');
+        debugPrint('Error searching kota: $e');
       }
       return [];
     }
@@ -1341,7 +1342,7 @@ class SDGsDataService {
   // UPDATE - Ubah data
   static Future<bool> updateKota(KotaData kota) async {
     try {
-      List<KotaData> allData = await getAllKota();
+      final List<KotaData> allData = await getAllKota();
       final index = allData.indexWhere((k) => k.id == kota.id);
 
       if (index != -1) {
@@ -1352,7 +1353,7 @@ class SDGsDataService {
       return false;
     } catch (e) {
       if (kDebugMode) {
-        print('Error updating kota: $e');
+        debugPrint('Error updating kota: $e');
       }
       return false;
     }
@@ -1374,22 +1375,16 @@ class SDGsDataService {
       switch (indicator) {
         case 'cuciTangan':
           updatedKota.samitasilayak[year] = value;
-          break;
         case 'tikRemaja':
           updatedKota.tikRemaja[year] = value;
-          break;
         case 'tikDewasa':
           updatedKota.tikDewasa[year] = value;
-          break;
         case 'aktaLahir':
           updatedKota.aktaLahir[year] = value;
-          break;
         case 'apm':
           updatedKota.apm[year] = value;
-          break;
         case 'apk':
           updatedKota.apk[year] = value;
-          break;
         default:
           return false;
       }
@@ -1397,7 +1392,7 @@ class SDGsDataService {
       return await updateKota(updatedKota);
     } catch (e) {
       if (kDebugMode) {
-        print('Error updating indicator: $e');
+        debugPrint('Error updating indicator: $e');
       }
       return false;
     }
@@ -1406,12 +1401,12 @@ class SDGsDataService {
   // DELETE - Hapus data
   static Future<bool> deleteKota(String id) async {
     try {
-      List<KotaData> allData = await getAllKota();
+      final List<KotaData> allData = await getAllKota();
       allData.removeWhere((kota) => kota.id == id);
       return await _saveAllData(allData);
     } catch (e) {
       if (kDebugMode) {
-        print('Error deleting kota: $e');
+        debugPrint('Error deleting kota: $e');
       }
       return false;
     }
@@ -1426,7 +1421,7 @@ class SDGsDataService {
       return true;
     } catch (e) {
       if (kDebugMode) {
-        print('Error deleting all kota: $e');
+        debugPrint('Error deleting all kota: $e');
       }
       return false;
     }
@@ -1443,11 +1438,11 @@ class SDGsDataService {
       _cachedData = data;
       _cacheTimestamp = DateTime.now();
 
-      if (kDebugMode) print('Data saved successfully: ${data.length} items');
+      if (kDebugMode) debugPrint('Data saved successfully: ${data.length} items');
       return true;
     } catch (e) {
       if (kDebugMode) {
-        print('Error saving data: $e');
+        debugPrint('Error saving data: $e');
       }
       return false;
     }
@@ -1457,7 +1452,7 @@ class SDGsDataService {
   static void clearCache() {
     _cachedData = null;
     _cacheTimestamp = null;
-    if (kDebugMode) print('Cache cleared');
+    if (kDebugMode) debugPrint('Cache cleared');
   }
 
   // UTILITY - Ambil statistik
@@ -1473,7 +1468,7 @@ class SDGsDataService {
       }
 
       int totalDataPoints = 0;
-      for (var kota in allData) {
+      for (final kota in allData) {
         totalDataPoints += kota.samitasilayak.length +
             kota.tikRemaja.length +
             kota.tikDewasa.length +
@@ -1491,7 +1486,7 @@ class SDGsDataService {
       };
     } catch (e) {
       if (kDebugMode) {
-        print('Error getting statistics: $e');
+        debugPrint('Error getting statistics: $e');
       }
       return {'totalKota': 0, 'totalData': 0, 'lastUpdated': null};
     }

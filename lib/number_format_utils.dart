@@ -27,7 +27,7 @@ class NumberFormatUtils {
       count++;
     }
 
-    final String formatted = result.toString().split('').reversed.join('');
+    final String formatted = result.toString().split('').reversed.join();
     return number < 0 ? '-$formatted' : formatted;
   }
 
@@ -102,7 +102,7 @@ class NumberFormatUtils {
   /// Examples: 12.34 → 12,34%
   static String formatPercentage(double value) {
     if (value.isNaN || value.isInfinite) return 'N/A';
-    return '${formatDecimal(value, decimalPlaces: 2)}%';
+    return '${formatDecimal(value)}%';
   }
 
   /// Parse Indonesian formatted number string back to double
@@ -137,7 +137,7 @@ class NumberFormatUtils {
   /// Parse Indonesian formatted integer
   static int? parseIndonesianInteger(String text) {
     final double? value = parseIndonesianNumber(text);
-    return value != null ? value.toInt() : null;
+    return value?.toInt();
   }
 
   /// Helper method to format value for display
@@ -206,16 +206,16 @@ class IndonesianNumberInputFormatter extends TextInputFormatter {
     }
 
     // Split into integer and decimal parts
-    List<String> parts = text.split(',');
+    final List<String> parts = text.split(',');
     String integerPart = parts[0];
     String? decimalPart = parts.length > 1 ? parts[1] : null;
 
     // Clean integer part (remove all non-digits)
-    integerPart = integerPart.replaceAll(RegExp(r'[^0-9]'), '');
+    integerPart = integerPart.replaceAll(RegExp('[^0-9]'), '');
 
     // Remove leading zeros (except if it's just "0")
     if (integerPart.length > 1 && integerPart.startsWith('0')) {
-      integerPart = integerPart.replaceFirst(RegExp(r'^0+'), '');
+      integerPart = integerPart.replaceFirst(RegExp('^0+'), '');
     }
 
     if (integerPart.isEmpty) {
@@ -233,7 +233,7 @@ class IndonesianNumberInputFormatter extends TextInputFormatter {
       count++;
     }
 
-    String result = formattedInteger.toString().split('').reversed.join('');
+    String result = formattedInteger.toString().split('').reversed.join();
 
     // Add decimal part if allowed and present
     if (allowDecimal && decimalPart != null) {
@@ -242,7 +242,7 @@ class IndonesianNumberInputFormatter extends TextInputFormatter {
         decimalPart = decimalPart.substring(0, decimalPlaces);
       }
       // Clean decimal part
-      decimalPart = decimalPart.replaceAll(RegExp(r'[^0-9]'), '');
+      decimalPart = decimalPart.replaceAll(RegExp('[^0-9]'), '');
       if (decimalPart.isNotEmpty) {
         result = '$result,$decimalPart';
       }
@@ -280,16 +280,16 @@ class IndonesianPercentageInputFormatter extends TextInputFormatter {
     }
 
     // Split into integer and decimal parts
-    List<String> parts = text.split(',');
+    final List<String> parts = text.split(',');
     String integerPart = parts[0];
     String? decimalPart = parts.length > 1 ? parts[1] : null;
 
     // Clean integer part
-    integerPart = integerPart.replaceAll(RegExp(r'[^0-9]'), '');
+    integerPart = integerPart.replaceAll(RegExp('[^0-9]'), '');
 
     // Remove leading zeros
     if (integerPart.length > 1 && integerPart.startsWith('0')) {
-      integerPart = integerPart.replaceFirst(RegExp(r'^0+'), '');
+      integerPart = integerPart.replaceFirst(RegExp('^0+'), '');
     }
 
     if (integerPart.isEmpty) {
@@ -307,14 +307,14 @@ class IndonesianPercentageInputFormatter extends TextInputFormatter {
       count++;
     }
 
-    String result = formattedInteger.toString().split('').reversed.join('');
+    String result = formattedInteger.toString().split('').reversed.join();
 
     // Add decimal part (max 2 places for percentage)
     if (decimalPart != null) {
       if (decimalPart.length > 2) {
         decimalPart = decimalPart.substring(0, 2);
       }
-      decimalPart = decimalPart.replaceAll(RegExp(r'[^0-9]'), '');
+      decimalPart = decimalPart.replaceAll(RegExp('[^0-9]'), '');
       if (decimalPart.isNotEmpty) {
         result = '$result,$decimalPart';
       }

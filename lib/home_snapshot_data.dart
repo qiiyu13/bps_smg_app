@@ -31,7 +31,7 @@ class HomeSnapshotData {
             final prevYear = years[years.length - 2];
             final latestPop = (decoded[latestYear]!['population'] as num).toDouble();
             final prevPop = (decoded[prevYear]!['population'] as num).toDouble();
-            final change = ((latestPop - prevPop) / prevPop * 100);
+            final change = (latestPop - prevPop) / prevPop * 100;
 
             final spots = years.map((y) {
               final pop = (decoded[y]!['population'] as num).toDouble();
@@ -70,7 +70,7 @@ class HomeSnapshotData {
       final prevYear = years[years.length - 2];
       final latestPop = (decoded[latestYear]!['population'] as num).toDouble();
       final prevPop = (decoded[prevYear]!['population'] as num).toDouble();
-      final change = ((latestPop - prevPop) / prevPop * 100);
+      final change = (latestPop - prevPop) / prevPop * 100;
 
       final spots = years.map((y) {
         final pop = (decoded[y]!['population'] as num).toDouble();
@@ -104,7 +104,7 @@ class HomeSnapshotData {
             final prevYear = years[years.length - 2];
             final latestIPM = (decoded[latestYear]!['ipm'] as num).toDouble();
             final prevIPM = (decoded[prevYear]!['ipm'] as num).toDouble();
-            final change = ((latestIPM - prevIPM) / prevIPM * 100);
+            final change = (latestIPM - prevIPM) / prevIPM * 100;
 
             final spots = years.map((y) {
               final ipm = (decoded[y]!['ipm'] as num).toDouble();
@@ -143,7 +143,7 @@ class HomeSnapshotData {
       final prevYear = years[years.length - 2];
       final latestIPM = (decoded[latestYear]!['ipm'] as num).toDouble();
       final prevIPM = (decoded[prevYear]!['ipm'] as num).toDouble();
-      final change = ((latestIPM - prevIPM) / prevIPM * 100);
+      final change = (latestIPM - prevIPM) / prevIPM * 100;
 
       final spots = years.map((y) {
         final ipm = (decoded[y]!['ipm'] as num).toDouble();
@@ -436,13 +436,13 @@ class HomeSnapshotData {
   }
 
   static final List<FlSpot> _defaultEkonomiSpots = [
-    FlSpot(0, -1.85), FlSpot(1, 5.16), FlSpot(2, 5.73),
-    FlSpot(3, 5.77), FlSpot(4, 5.68), FlSpot(5, 6.49),
+    const FlSpot(0, -1.85), const FlSpot(1, 5.16), const FlSpot(2, 5.73),
+    const FlSpot(3, 5.77), const FlSpot(4, 5.68), const FlSpot(5, 6.49),
   ];
 
   static final List<FlSpot> _defaultTPTSpots = [
-    FlSpot(0, 9.57), FlSpot(1, 9.54), FlSpot(2, 7.60),
-    FlSpot(3, 5.99), FlSpot(4, 5.82), FlSpot(5, 5.65),
+    const FlSpot(0, 9.57), const FlSpot(1, 9.54), const FlSpot(2, 7.60),
+    const FlSpot(3, 5.99), const FlSpot(4, 5.82), const FlSpot(5, 5.65),
   ];
 
   // Default data matching what individual screens use

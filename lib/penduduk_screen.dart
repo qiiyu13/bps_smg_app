@@ -87,7 +87,7 @@ class DistrictDensity {
       {required this.name, required this.density, required this.population}) {
     densityFormatted = NumberFormatUtils.formatInteger(density);
     populationFormatted =
-        NumberFormatUtils.formatDecimal(population, decimalPlaces: 2);
+        NumberFormatUtils.formatDecimal(population);
   }
 }
 
@@ -165,10 +165,10 @@ class _PendudukScreenState extends State<PendudukScreen>
   Future<void> _loadData() async {
     try {
       final githubData = GitHubDataService.getData('penduduk');
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? savedData = prefs.getString('penduduk_data');
-      String? savedAgeData = prefs.getString('age_distribution_data');
-      String? savedDistrictData = prefs.getString('district_density_data');
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? savedData = prefs.getString('penduduk_data');
+      final String? savedAgeData = prefs.getString('age_distribution_data');
+      final String? savedDistrictData = prefs.getString('district_density_data');
 
       Map<int, SemarangData> processedData;
       Map<int, Map<String, dynamic>> loadedAgeData;
@@ -179,8 +179,8 @@ class _PendudukScreenState extends State<PendudukScreen>
       if (pendudukSection != null) {
         processedData = {};
         pendudukSection.forEach((key, value) {
-          int year = int.parse(key);
-          Map<String, dynamic> data = value as Map<String, dynamic>;
+          final int year = int.parse(key);
+          final Map<String, dynamic> data = value as Map<String, dynamic>;
           processedData[year] = SemarangData(
             year: year,
             population: (data['population'] as num?)?.toInt(),
@@ -199,7 +199,7 @@ class _PendudukScreenState extends State<PendudukScreen>
         processedData = {};
 
         decoded.forEach((key, value) {
-          int year = int.parse(key);
+          final int year = int.parse(key);
           final data = value as Map<String, dynamic>;
           processedData[year] = SemarangData(
             year: year,
@@ -217,11 +217,11 @@ class _PendudukScreenState extends State<PendudukScreen>
         processedData = _getDefaultData();
       }
 
-      List<int> years = processedData.keys.toList()
+      final List<int> years = processedData.keys.toList()
         ..sort((a, b) => a.compareTo(b));
       _cachedSpots = [];
       for (int i = 0; i < years.length; i++) {
-        double growthRate = processedData[years[i]]?.growthRate ?? 0.0;
+        final double growthRate = processedData[years[i]]?.growthRate ?? 0.0;
         _cachedSpots.add(FlSpot(i.toDouble(), growthRate / 100));
       }
 
@@ -266,7 +266,7 @@ class _PendudukScreenState extends State<PendudukScreen>
       });
 
       _cachedPieDataByYear = {};
-      for (int year in _ageDataByYear.keys) {
+      for (final int year in _ageDataByYear.keys) {
         final ageData = _ageDataByYear[year]!;
         final usiaMudaPct = (ageData['usiaMuda']['percentage'] as num).toDouble();
         final usiaProduktifPct = (ageData['usiaProduktif']['percentage'] as num).toDouble();
@@ -304,10 +304,10 @@ class _PendudukScreenState extends State<PendudukScreen>
       if (districtSection != null) {
         loadedDistrictData = {};
         districtSection.forEach((key, value) {
-          int year = int.parse(key);
-          List<dynamic> districts = value as List<dynamic>;
+          final int year = int.parse(key);
+          final List<dynamic> districts = value as List<dynamic>;
           loadedDistrictData[year] = districts.map((d) {
-            Map<String, dynamic> district = d as Map<String, dynamic>;
+            final Map<String, dynamic> district = d as Map<String, dynamic>;
             return DistrictDensity(
               name: district['name'] as String,
               density: (district['density'] as num).toInt(),
@@ -320,8 +320,8 @@ class _PendudukScreenState extends State<PendudukScreen>
         final decoded = json.decode(savedDistrictData) as Map<String, dynamic>;
         loadedDistrictData = {};
         decoded.forEach((key, value) {
-          int year = int.parse(key);
-          List<dynamic> districts = value as List<dynamic>;
+          final int year = int.parse(key);
+          final List<dynamic> districts = value as List<dynamic>;
           loadedDistrictData[year] = districts.map((d) {
             final district = d as Map<String, dynamic>;
             return DistrictDensity(
@@ -361,13 +361,13 @@ class _PendudukScreenState extends State<PendudukScreen>
           density: 4425,
           districts: 16,
           villages: 177,
-          growthRate: 0.0),
+          growthRate: 0),
       2021: SemarangData(
           year: 2021,
           population: 1656564,
           malePopulation: 819785,
           femalePopulation: 836779,
-          area: 374.0,
+          area: 374,
           density: 4433,
           districts: 16,
           villages: 177,
@@ -377,7 +377,7 @@ class _PendudukScreenState extends State<PendudukScreen>
           population: 1659975,
           malePopulation: 821305,
           femalePopulation: 838670,
-          area: 374.0,
+          area: 374,
           density: 4442,
           districts: 16,
           villages: 177,
@@ -387,7 +387,7 @@ class _PendudukScreenState extends State<PendudukScreen>
           population: 1694743,
           malePopulation: 838437,
           femalePopulation: 856306,
-          area: 374.0,
+          area: 374,
           density: 4535,
           districts: 16,
           villages: 177,
@@ -397,7 +397,7 @@ class _PendudukScreenState extends State<PendudukScreen>
           population: 1708833,
           malePopulation: 845177,
           femalePopulation: 863656,
-          area: 374.0,
+          area: 374,
           density: 4573,
           districts: 16,
           villages: 177,
@@ -632,12 +632,12 @@ class _PendudukScreenState extends State<PendudukScreen>
     };
 
     _cachedPieDataByYear = {};
-    for (int year in _ageDataByYear.keys) {
+    for (final int year in _ageDataByYear.keys) {
       final ageData = _ageDataByYear[year]!;
       _cachedPieDataByYear[year] = [
         PieChartSectionData(
             color: bpsBlue,
-            value: ageData['usiaMuda']['percentage'].toDouble(),
+            value: (ageData['usiaMuda']['percentage'] as num).toDouble(),
             title: '${ageData['usiaMuda']['percentage']}%',
             radius: 60,
             titleStyle: const TextStyle(
@@ -646,7 +646,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                 color: Colors.white)),
         PieChartSectionData(
             color: bpsGreen,
-            value: ageData['usiaProduktif']['percentage'].toDouble(),
+            value: (ageData['usiaProduktif']['percentage'] as num).toDouble(),
             title: '${ageData['usiaProduktif']['percentage']}%',
             radius: 60,
             titleStyle: const TextStyle(
@@ -655,7 +655,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                 color: Colors.white)),
         PieChartSectionData(
             color: bpsOrange,
-            value: ageData['usiaTua']['percentage'].toDouble(),
+            value: (ageData['usiaTua']['percentage'] as num).toDouble(),
             title: '${ageData['usiaTua']['percentage']}%',
             radius: 60,
             titleStyle: const TextStyle(
@@ -756,7 +756,7 @@ class _PendudukScreenState extends State<PendudukScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: bpsGreen,
         boxShadow: [
@@ -967,7 +967,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                     color: bpsGreen.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -975,7 +975,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                         color: bpsGreen,
                         size: 14,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text(
                         'Tap untuk detail',
                         style: TextStyle(
@@ -1158,7 +1158,6 @@ class _PendudukScreenState extends State<PendudukScreen>
 
     showDialog(
       context: context,
-      barrierDismissible: true,
       builder: (dialogContext) {
         return Dialog(
           insetPadding: EdgeInsets.all(isSmallScreen ? 12 : 20),
@@ -1414,12 +1413,11 @@ class _PendudukScreenState extends State<PendudukScreen>
                   minY: minY,
                   maxY: maxY,
                   titlesData: FlTitlesData(
-                    show: true,
-                    rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                    rightTitles: const AxisTitles(
+                      
                     ),
-                    topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                    topTitles: const AxisTitles(
+                      
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -1466,7 +1464,6 @@ class _PendudukScreenState extends State<PendudukScreen>
                     ),
                   ),
                   gridData: FlGridData(
-                    show: true,
                     drawVerticalLine: false,
                     horizontalInterval: interval,
                     getDrawingHorizontalLine: (value) {
@@ -1484,7 +1481,6 @@ class _PendudukScreenState extends State<PendudukScreen>
                       color: bpsGreen,
                       barWidth: 3,
                       dotData: FlDotData(
-                        show: true,
                         getDotPainter: (spot, percent, bar, index) {
                           return FlDotCirclePainter(
                             radius: 6,
@@ -1501,13 +1497,11 @@ class _PendudukScreenState extends State<PendudukScreen>
                     ),
                   ],
                   lineTouchData: LineTouchData(
-                    enabled: true,
                     touchTooltipData: LineTouchTooltipData(
                       getTooltipColor: (spot) => Colors.white,
                       tooltipRoundedRadius: 8,
                       tooltipBorder: BorderSide(
                         color: Colors.grey.shade300,
-                        width: 1,
                       ),
                       getTooltipItems: (touchedSpots) {
                         return touchedSpots.map((spot) {
@@ -1536,8 +1530,9 @@ class _PendudukScreenState extends State<PendudukScreen>
 
   Widget _buildAgeDistributionChart(
       ResponsiveSizing sizing, bool isSmallScreen) {
-    if (!_ageDataByYear.containsKey(selectedYear))
+    if (!_ageDataByYear.containsKey(selectedYear)) {
       return const SizedBox.shrink();
+    }
 
     final ageData = _ageDataByYear[selectedYear]!;
     final sections = [
@@ -1703,13 +1698,13 @@ class _PendudukScreenState extends State<PendudukScreen>
           Column(
             children: [
               _buildAgeLegendItem('Usia Muda (0-14)', bpsBlue,
-                  ageData['usiaMuda']['total'], isSmallScreen),
+                  (ageData['usiaMuda']['total'] as num?)?.toInt() ?? 0, isSmallScreen),
               const SizedBox(height: 8),
               _buildAgeLegendItem('Usia Produktif (15-64)', bpsGreen,
-                  ageData['usiaProduktif']['total'], isSmallScreen),
+                  (ageData['usiaProduktif']['total'] as num?)?.toInt() ?? 0, isSmallScreen),
               const SizedBox(height: 8),
               _buildAgeLegendItem('Usia Tua (65+)', bpsOrange,
-                  ageData['usiaTua']['total'], isSmallScreen),
+                  (ageData['usiaTua']['total'] as num?)?.toInt() ?? 0, isSmallScreen),
             ],
           ),
         ],
@@ -1720,8 +1715,8 @@ class _PendudukScreenState extends State<PendudukScreen>
   PieChartSectionData _buildAgePieSection(
       String ageKey, Color color, int index, bool isSmallScreen) {
     final ageData = _ageDataByYear[selectedYear]!;
-    final percentage = ageData[ageKey]['percentage'].toDouble();
-    final total = ageData[ageKey]['total'] as int;
+    final double percentage = (ageData[ageKey]['percentage'] as num).toDouble();
+    final total = (ageData[ageKey]['total'] as num).toInt();
     final isTouched = index == touchedPieIndex;
     final radius = isTouched ? (isSmallScreen ? 70.0 : 75.0) : 60.0;
     final fontSize = isTouched
@@ -1921,7 +1916,7 @@ class _PendudukScreenState extends State<PendudukScreen>
               final districtPopulationCount =
                   (district.population * 1000).toInt();
               final percentage =
-                  (districtPopulationCount / totalCityPopulation * 100);
+                  districtPopulationCount / totalCityPopulation * 100;
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 12),

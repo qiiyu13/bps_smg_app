@@ -79,7 +79,7 @@ class EkonomiDataManager {
   // Semarang growth rates (Pertumbuhan Ekonomi %)
   // Source: BPS - PDRB ADHK Kabupaten/Kota di Jawa Tengah (6 Maret 2026)
   // 2020: -1.85%, 2021: 5.16%, 2022: 5.73%, 2023: 5.77% (dihitung), 2024: 5.68%, 2025: 6.49%
-  static final List<ChartDataPoint> _semarangChartData = const [
+  static const List<ChartDataPoint> _semarangChartData = [
     ChartDataPoint(year: 2020, value: -1.85),
     ChartDataPoint(year: 2021, value: 5.16),
     ChartDataPoint(year: 2022, value: 5.73),
@@ -91,7 +91,7 @@ class EkonomiDataManager {
   // Jawa Tengah growth rates (Pertumbuhan Ekonomi %)
   // Source: BPS - PDRB ADHK Kabupaten/Kota di Jawa Tengah (6 Maret 2026)
   // 2020: -2.63%, 2021: 3.36%, 2022: 5.40%, 2023: 4.97% (dihitung), 2024: 4.95%, 2025: 5.37%
-  static final List<ChartDataPoint> _jatengChartData = const [
+  static const List<ChartDataPoint> _jatengChartData = [
     ChartDataPoint(year: 2020, value: -2.63),
     ChartDataPoint(year: 2021, value: 3.36),
     ChartDataPoint(year: 2022, value: 5.40),
