@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+// device_preview is a dev-only tool, kept out of release via kReleaseMode below.
+// ignore: depend_on_referenced_packages
 import 'package:device_preview/device_preview.dart';
 import 'services/github_data_service.dart';
 import 'splash_screen.dart';
@@ -17,8 +20,12 @@ void main() {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]).then((_) {
-    runApp(DevicePreview(
-        builder: (context) => const MyApp()));
+    // DevicePreview must never wrap the app in release builds.
+    runApp(
+      kReleaseMode
+          ? const MyApp()
+          : DevicePreview(builder: (context) => const MyApp()),
+    );
   });
 }
 
