@@ -1,6 +1,7 @@
 import 'package:lawang/number_format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'models/penduduk_age_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'responsive_sizing.dart';
@@ -108,7 +109,7 @@ class _PendudukScreenState extends State<PendudukScreen>
 
   List<FlSpot> _cachedSpots = [];
   Map<int, List<PieChartSectionData>> _cachedPieDataByYear = {};
-  Map<int, Map<String, dynamic>> _ageDataByYear = {};
+  Map<int, AgeDistribution> _ageDataByYear = {};
   List<Color> _districtColors = [];
 
   int? touchedPieIndex;
@@ -245,32 +246,15 @@ class _PendudukScreenState extends State<PendudukScreen>
         loadedAgeData = _getDefaultAgeData();
       }
 
-      _ageDataByYear = loadedAgeData.map((year, ageData) {
-        return MapEntry(year, {
-          'usiaMuda': {
-            'total': (ageData['usiaMuda'] as num).toInt(),
-            'percentage': (ageData['usiaMudaPercentage'] as num).toDouble()
-          },
-          'usiaProduktif': {
-            'total': (ageData['usiaProduktif'] as num).toInt(),
-            'percentage': (ageData['usiaProduktifPercentage'] as num).toDouble()
-          },
-          'usiaTua': {
-            'total': (ageData['usiaTua'] as num).toInt(),
-            'percentage': (ageData['usiaTuaPercentage'] as num).toDouble()
-          },
-          'totalPopulation': (ageData['usiaMuda'] as num).toInt() +
-              (ageData['usiaProduktif'] as num).toInt() +
-              (ageData['usiaTua'] as num).toInt(),
-        });
-      });
+      _ageDataByYear = loadedAgeData
+          .map((year, ageData) => MapEntry(year, AgeDistribution.fromRaw(ageData)));
 
       _cachedPieDataByYear = {};
       for (final int year in _ageDataByYear.keys) {
         final ageData = _ageDataByYear[year]!;
-        final usiaMudaPct = (ageData['usiaMuda']['percentage'] as num).toDouble();
-        final usiaProduktifPct = (ageData['usiaProduktif']['percentage'] as num).toDouble();
-        final usiaTuaPct = (ageData['usiaTua']['percentage'] as num).toDouble();
+        final usiaMudaPct = ageData.usiaMuda.percentage;
+        final usiaProduktifPct = ageData.usiaProduktif.percentage;
+        final usiaTuaPct = ageData.usiaTua.percentage;
         _cachedPieDataByYear[year] = [
           PieChartSectionData(
             color: bpsBlue,
@@ -533,102 +517,70 @@ class _PendudukScreenState extends State<PendudukScreen>
     ];
 
     _ageDataByYear = {
-      2020: {
-        'usiaMuda': {'total': 367018, 'percentage': 22.20},
-        'usiaProduktif': {'total': 1182010, 'percentage': 71.48},
-        'usiaTua': {'total': 104496, 'percentage': 6.32},
-        'totalPopulation': 1653524
-      },
-      2021: {
-        'usiaMuda': {'total': 363757, 'percentage': 21.96},
-        'usiaProduktif': {'total': 1182986, 'percentage': 71.41},
-        'usiaTua': {'total': 109821, 'percentage': 6.63},
-        'totalPopulation': 1656564
-      },
-      2012: {
-        'usiaMuda': {'total': 357600, 'percentage': 22.70},
-        'usiaProduktif': {'total': 1136500, 'percentage': 72.17},
-        'usiaTua': {'total': 80930, 'percentage': 5.14},
-        'totalPopulation': 1575030
-      },
-      2013: {
-        'usiaMuda': {'total': 352700, 'percentage': 22.25},
-        'usiaProduktif': {'total': 1146200, 'percentage': 72.33},
-        'usiaTua': {'total': 85749, 'percentage': 5.41},
-        'totalPopulation': 1584649
-      },
-      2014: {
-        'usiaMuda': {'total': 347800, 'percentage': 21.80},
-        'usiaProduktif': {'total': 1155900, 'percentage': 72.50},
-        'usiaTua': {'total': 90632, 'percentage': 5.68},
-        'totalPopulation': 1594332
-      },
-      2015: {
-        'usiaMuda': {'total': 342900, 'percentage': 21.38},
-        'usiaProduktif': {'total': 1165600, 'percentage': 72.66},
-        'usiaTua': {'total': 95581, 'percentage': 5.95},
-        'totalPopulation': 1604081
-      },
-      2016: {
-        'usiaMuda': {'total': 338000, 'percentage': 20.94},
-        'usiaProduktif': {'total': 1175300, 'percentage': 72.82},
-        'usiaTua': {'total': 100596, 'percentage': 6.23},
-        'totalPopulation': 1613896
-      },
-      2017: {
-        'usiaMuda': {'total': 333100, 'percentage': 20.51},
-        'usiaProduktif': {'total': 1185000, 'percentage': 72.98},
-        'usiaTua': {'total': 105677, 'percentage': 6.51},
-        'totalPopulation': 1623777
-      },
-      2018: {
-        'usiaMuda': {'total': 328200, 'percentage': 20.09},
-        'usiaProduktif': {'total': 1194700, 'percentage': 73.13},
-        'usiaTua': {'total': 110825, 'percentage': 6.78},
-        'totalPopulation': 1633725
-      },
-      2019: {
-        'usiaMuda': {'total': 323300, 'percentage': 19.67},
-        'usiaProduktif': {'total': 1204400, 'percentage': 73.27},
-        'usiaTua': {'total': 116041, 'percentage': 7.06},
-        'totalPopulation': 1643741
-      },
-      2020: {
-        'usiaMuda': {'total': 318400, 'percentage': 19.25},
-        'usiaProduktif': {'total': 1214100, 'percentage': 73.42},
-        'usiaTua': {'total': 121024, 'percentage': 7.32},
-        'totalPopulation': 1653524
-      },
-      2021: {
-        'usiaMuda': {'total': 363757, 'percentage': 21.96},
-        'usiaProduktif': {'total': 1182986, 'percentage': 71.41},
-        'usiaTua': {'total': 109821, 'percentage': 6.63},
-        'totalPopulation': 1656564
-      },
-      2022: {
-        'usiaMuda': {'total': 360777, 'percentage': 21.73},
-        'usiaProduktif': {'total': 1183941, 'percentage': 71.32},
-        'usiaTua': {'total': 115257, 'percentage': 6.94},
-        'totalPopulation': 1659975
-      },
-      2023: {
-        'usiaMuda': {'total': 359130, 'percentage': 21.19},
-        'usiaProduktif': {'total': 1207250, 'percentage': 71.23},
-        'usiaTua': {'total': 128400, 'percentage': 7.58},
-        'totalPopulation': 1694780
-      },
-      2024: {
-        'usiaMuda': {'total': 356758, 'percentage': 20.88},
-        'usiaProduktif': {'total': 1214892, 'percentage': 71.09},
-        'usiaTua': {'total': 137183, 'percentage': 8.03},
-        'totalPopulation': 1708833
-      },
-      2025: {
-        'usiaMuda': {'total': 354365, 'percentage': 20.57},
-        'usiaProduktif': {'total': 1221858, 'percentage': 70.94},
-        'usiaTua': {'total': 146198, 'percentage': 8.49},
-        'totalPopulation': 1722421
-      },
+      2020: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 367018, percentage: 22.20),
+          usiaProduktif: AgeGroup(total: 1182010, percentage: 71.48),
+          usiaTua: AgeGroup(total: 104496, percentage: 6.32)),
+      2021: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 363757, percentage: 21.96),
+          usiaProduktif: AgeGroup(total: 1182986, percentage: 71.41),
+          usiaTua: AgeGroup(total: 109821, percentage: 6.63)),
+      2012: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 357600, percentage: 22.70),
+          usiaProduktif: AgeGroup(total: 1136500, percentage: 72.17),
+          usiaTua: AgeGroup(total: 80930, percentage: 5.14)),
+      2013: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 352700, percentage: 22.25),
+          usiaProduktif: AgeGroup(total: 1146200, percentage: 72.33),
+          usiaTua: AgeGroup(total: 85749, percentage: 5.41)),
+      2014: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 347800, percentage: 21.80),
+          usiaProduktif: AgeGroup(total: 1155900, percentage: 72.50),
+          usiaTua: AgeGroup(total: 90632, percentage: 5.68)),
+      2015: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 342900, percentage: 21.38),
+          usiaProduktif: AgeGroup(total: 1165600, percentage: 72.66),
+          usiaTua: AgeGroup(total: 95581, percentage: 5.95)),
+      2016: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 338000, percentage: 20.94),
+          usiaProduktif: AgeGroup(total: 1175300, percentage: 72.82),
+          usiaTua: AgeGroup(total: 100596, percentage: 6.23)),
+      2017: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 333100, percentage: 20.51),
+          usiaProduktif: AgeGroup(total: 1185000, percentage: 72.98),
+          usiaTua: AgeGroup(total: 105677, percentage: 6.51)),
+      2018: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 328200, percentage: 20.09),
+          usiaProduktif: AgeGroup(total: 1194700, percentage: 73.13),
+          usiaTua: AgeGroup(total: 110825, percentage: 6.78)),
+      2019: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 323300, percentage: 19.67),
+          usiaProduktif: AgeGroup(total: 1204400, percentage: 73.27),
+          usiaTua: AgeGroup(total: 116041, percentage: 7.06)),
+      2020: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 318400, percentage: 19.25),
+          usiaProduktif: AgeGroup(total: 1214100, percentage: 73.42),
+          usiaTua: AgeGroup(total: 121024, percentage: 7.32)),
+      2021: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 363757, percentage: 21.96),
+          usiaProduktif: AgeGroup(total: 1182986, percentage: 71.41),
+          usiaTua: AgeGroup(total: 109821, percentage: 6.63)),
+      2022: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 360777, percentage: 21.73),
+          usiaProduktif: AgeGroup(total: 1183941, percentage: 71.32),
+          usiaTua: AgeGroup(total: 115257, percentage: 6.94)),
+      2023: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 359130, percentage: 21.19),
+          usiaProduktif: AgeGroup(total: 1207250, percentage: 71.23),
+          usiaTua: AgeGroup(total: 128400, percentage: 7.58)),
+      2024: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 356758, percentage: 20.88),
+          usiaProduktif: AgeGroup(total: 1214892, percentage: 71.09),
+          usiaTua: AgeGroup(total: 137183, percentage: 8.03)),
+      2025: const AgeDistribution(
+          usiaMuda: AgeGroup(total: 354365, percentage: 20.57),
+          usiaProduktif: AgeGroup(total: 1221858, percentage: 70.94),
+          usiaTua: AgeGroup(total: 146198, percentage: 8.49)),
     };
 
     _cachedPieDataByYear = {};
@@ -637,8 +589,8 @@ class _PendudukScreenState extends State<PendudukScreen>
       _cachedPieDataByYear[year] = [
         PieChartSectionData(
             color: bpsBlue,
-            value: (ageData['usiaMuda']['percentage'] as num).toDouble(),
-            title: '${ageData['usiaMuda']['percentage']}%',
+            value: ageData.usiaMuda.percentage,
+            title: '${ageData.usiaMuda.percentage}%',
             radius: 60,
             titleStyle: const TextStyle(
                 fontSize: 10,
@@ -646,8 +598,8 @@ class _PendudukScreenState extends State<PendudukScreen>
                 color: Colors.white)),
         PieChartSectionData(
             color: bpsGreen,
-            value: (ageData['usiaProduktif']['percentage'] as num).toDouble(),
-            title: '${ageData['usiaProduktif']['percentage']}%',
+            value: ageData.usiaProduktif.percentage,
+            title: '${ageData.usiaProduktif.percentage}%',
             radius: 60,
             titleStyle: const TextStyle(
                 fontSize: 10,
@@ -655,8 +607,8 @@ class _PendudukScreenState extends State<PendudukScreen>
                 color: Colors.white)),
         PieChartSectionData(
             color: bpsOrange,
-            value: (ageData['usiaTua']['percentage'] as num).toDouble(),
-            title: '${ageData['usiaTua']['percentage']}%',
+            value: ageData.usiaTua.percentage,
+            title: '${ageData.usiaTua.percentage}%',
             radius: 60,
             titleStyle: const TextStyle(
                 fontSize: 10,
@@ -1678,7 +1630,7 @@ class _PendudukScreenState extends State<PendudukScreen>
                           if (ageIndex >= 0 && ageIndex < ageKeys.length) {
                             final ageKey = ageKeys[ageIndex];
                             final ageLabel = ageLabels[ageIndex];
-                            final total = ageData[ageKey]['total'] as int;
+                            final total = ageData.byKey(ageKey).total;
                             selectedAgeGroup = ageLabel;
                             selectedAgeValue = _formatCompactNumber(total);
                           } else {
@@ -1698,13 +1650,13 @@ class _PendudukScreenState extends State<PendudukScreen>
           Column(
             children: [
               _buildAgeLegendItem('Usia Muda (0-14)', bpsBlue,
-                  (ageData['usiaMuda']['total'] as num?)?.toInt() ?? 0, isSmallScreen),
+                  ageData.usiaMuda.total, isSmallScreen),
               const SizedBox(height: 8),
               _buildAgeLegendItem('Usia Produktif (15-64)', bpsGreen,
-                  (ageData['usiaProduktif']['total'] as num?)?.toInt() ?? 0, isSmallScreen),
+                  ageData.usiaProduktif.total, isSmallScreen),
               const SizedBox(height: 8),
               _buildAgeLegendItem('Usia Tua (65+)', bpsOrange,
-                  (ageData['usiaTua']['total'] as num?)?.toInt() ?? 0, isSmallScreen),
+                  ageData.usiaTua.total, isSmallScreen),
             ],
           ),
         ],
@@ -1715,8 +1667,8 @@ class _PendudukScreenState extends State<PendudukScreen>
   PieChartSectionData _buildAgePieSection(
       String ageKey, Color color, int index, bool isSmallScreen) {
     final ageData = _ageDataByYear[selectedYear]!;
-    final double percentage = (ageData[ageKey]['percentage'] as num).toDouble();
-    final total = (ageData[ageKey]['total'] as num).toInt();
+    final double percentage = ageData.byKey(ageKey).percentage;
+    final total = ageData.byKey(ageKey).total;
     final isTouched = index == touchedPieIndex;
     final radius = isTouched ? (isSmallScreen ? 70.0 : 75.0) : 60.0;
     final fontSize = isTouched
