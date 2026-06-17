@@ -8,6 +8,7 @@ import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
 import 'dart:async';
 import 'app_theme.dart';
+import 'widgets/section_kit.dart';
 import 'models/ipm_data.dart';
 
 class IpmScreen extends StatefulWidget {
@@ -260,60 +261,12 @@ class _IpmScreenState extends State<IpmScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bpsOrange,
-        boxShadow: [
-          BoxShadow(
-            color: bpsOrange.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.all(sizing.horizontalPadding),
-          child: Row(
-            children: [
-              InkWell(
-                onTap: () => Navigator.of(context).pop(),
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                  child: Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: isSmallScreen ? 20 : 24,
-                  ),
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Indeks Pembangunan Manusia',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isSmallScreen
-                        ? sizing.headerTitleSize + 4
-                        : sizing.headerTitleSize + 8,
-                    fontWeight: FontWeight.w700,
-                    height: 1.1,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Icon(
-                Icons.trending_up_rounded,
-                color: Colors.white,
-                size: isSmallScreen ? 20 : 24,
-              ),
-            ],
-          ),
-        ),
-      ),
+    return CategoryHeader(
+      overline: 'INDEKS PEMBANGUNAN',
+      title: 'Indeks Pembangunan Manusia',
+      icon: Icons.trending_up_rounded,
+      accent: bpsOrange,
+      isSmall: isSmallScreen,
     );
   }
 }
@@ -392,19 +345,52 @@ class _IpmScreenContent extends StatelessWidget {
             delegate: SliverChildListDelegate([
               _buildYearSelector(),
               SizedBox(height: sizing.sectionSpacing),
-              _buildIndicatorsCard(context, currentData),
+              _buildHero(context, sizing, isSmallScreen),
               SizedBox(height: sizing.sectionSpacing),
-              _IpmComparisonChart(
-                komponenData: komponenData,
-                cachedSortedYears: cachedSortedYears,
-                sizing: sizing,
-                isSmallScreen: isSmallScreen,
+              SpineSection(
+                number: '01',
+                overline: 'Indikator',
+                title: 'Indikator Utama IPM',
+                subtitle: 'Ketuk untuk penjelasan',
+                accent: bpsOrange,
+                surface: false,
+                isFirst: true,
+                isSmall: isSmallScreen,
+                child: _buildIndicatorsCard(context, currentData),
               ),
-              SizedBox(height: sizing.sectionSpacing),
-              _IpmInformationPanel(
-                  sizing: sizing, isSmallScreen: isSmallScreen),
-              SizedBox(height: sizing.sectionSpacing),
-              _buildKesimpulanCard(context, sizing, isSmallScreen),
+              SpineSection(
+                number: '02',
+                overline: 'Perbandingan',
+                title: 'Perbandingan IPM antar Wilayah',
+                accent: bpsOrange,
+                surface: false,
+                isSmall: isSmallScreen,
+                child: _IpmComparisonChart(
+                  komponenData: komponenData,
+                  cachedSortedYears: cachedSortedYears,
+                  sizing: sizing,
+                  isSmallScreen: isSmallScreen,
+                ),
+              ),
+              SpineSection(
+                number: '03',
+                overline: 'Tentang',
+                title: 'Tentang IPM',
+                accent: bpsOrange,
+                surface: false,
+                isSmall: isSmallScreen,
+                child: _IpmInformationPanel(
+                    sizing: sizing, isSmallScreen: isSmallScreen),
+              ),
+              SpineSection(
+                overline: 'Ringkasan',
+                title: 'Kesimpulan',
+                accent: bpsOrange,
+                surface: false,
+                isLast: true,
+                isSmall: isSmallScreen,
+                child: _buildKesimpulanCard(context, sizing, isSmallScreen),
+              ),
               SizedBox(height: sizing.sectionSpacing),
             ]),
           ),
@@ -447,178 +433,47 @@ class _IpmScreenContent extends StatelessWidget {
   }
 
   Widget _buildYearSelector() {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_today_rounded,
-                color: bpsOrange,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Text(
-                'Pilih Tahun Data',
-                style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? sizing.groupTitleSize - 2
-                      : sizing.groupTitleSize,
-                  fontWeight: FontWeight.w700,
-                  color: bpsTextPrimary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          SizedBox(
-            height: isSmallScreen ? 38 : 42,
-            child: ListView.separated(
-              controller: yearScrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: cachedSortedYears.length,
-              separatorBuilder: (_, __) =>
-                  SizedBox(width: isSmallScreen ? 6 : 8),
-              itemBuilder: (_, i) {
-                final year = cachedSortedYears[i];
-                final isSelected = year == selectedYear;
-                return Material(
-                  color: isSelected ? bpsOrange : bpsBackground,
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    onTap: () => onYearSelected(year),
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 16 : 20,
-                        vertical: isSmallScreen ? 8 : 10,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: isSelected ? bpsOrange : bpsBorder,
-                          width: isSelected ? 2 : 1.5,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: bpsOrange.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: Text(
-                        year.toString(),
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 14 : 16,
-                          fontWeight:
-                              isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? Colors.white : bpsTextSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+    return YearRail(
+      years: [...cachedSortedYears]..sort(),
+      selected: selectedYear,
+      onSelect: onYearSelected,
+      accent: bpsOrange,
+      isSmall: isSmallScreen,
+      controller: yearScrollController,
+    );
+  }
+
+  Widget _buildHero(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+    final data = ipmData[selectedYear];
+    if (data == null) return const SizedBox.shrink();
+    final sorted = [...cachedSortedYears]..sort();
+    final prev = ipmData[selectedYear - 1];
+    final delta = prev != null ? data.ipm - prev.ipm : null;
+    final spark = sorted.map((y) => ipmData[y]?.ipm ?? 0.0).toList();
+    return IndicatorHero(
+      overline: 'INDEKS PEMBANGUNAN MANUSIA',
+      value: NumberFormatUtils.formatDecimal(data.ipm),
+      subtitle: 'IPM • Kota Semarang',
+      badge: 'Tahun $selectedYear',
+      accent: bpsOrange,
+      delta: delta,
+      deltaUnit: 'poin',
+      sparkline: spark.length > 1 ? spark : null,
+      isSmall: isSmallScreen,
+      facts: [
+        HeroFact('UHH', '${NumberFormatUtils.formatDecimal(data.uhh)} th'),
+        HeroFact('HLS', '${NumberFormatUtils.formatDecimal(data.hls)} th'),
+        HeroFact('RLS', '${NumberFormatUtils.formatDecimal(data.rls)} th'),
+      ],
     );
   }
 
   Widget _buildIndicatorsCard(BuildContext context, IpmYear data) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.analytics_rounded,
-                color: bpsOrange,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Indikator Utama IPM',
-                  style: TextStyle(
-                    fontSize: isSmallScreen
-                        ? sizing.groupTitleSize - 2
-                        : sizing.groupTitleSize,
-                    fontWeight: FontWeight.w700,
-                    color: bpsTextPrimary,
-                  ),
-                ),
-              ),
-              if (!isSmallScreen) ...[
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: sizing.itemSpacing,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: bpsOrange.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.touch_app_rounded,
-                        color: bpsOrange,
-                        size: 14,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        'Tap untuk detail',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: bpsOrange,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
           Column(
             children: [
               _buildCompactIndicatorRow(
@@ -992,62 +847,11 @@ class _IpmComparisonChart extends StatelessWidget {
 
     if (semarangSpots.isEmpty) return const SizedBox.shrink();
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.show_chart,
-                color: bpsGreen,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Perbandingan IPM antar Wilayah',
-                      style: TextStyle(
-                        fontSize: isSmallScreen
-                            ? sizing.groupTitleSize - 2
-                            : sizing.groupTitleSize,
-                        fontWeight: FontWeight.w800,
-                        color: bpsTextPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Tren dari tahun ${cachedSortedYears.first} hingga ${cachedSortedYears.last}',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 12 : 13,
-                        color: bpsTextSecondary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -1256,41 +1060,11 @@ class _IpmInformationPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.info_outline_rounded,
-                color: bpsOrange,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Tentang IPM',
-                  style: TextStyle(
-                    fontSize: isSmallScreen
-                        ? sizing.groupTitleSize - 2
-                        : sizing.groupTitleSize,
-                    fontWeight: FontWeight.w800,
-                    color: bpsTextPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
           Text(
             'Indeks Pembangunan Manusia (IPM) mengukur capaian pembangunan manusia berbasis dimensi dasar: umur panjang dan hidup sehat (UHH), pengetahuan (HLS & RLS), dan standar hidup layak (pengeluaran per kapita).',
             style: TextStyle(

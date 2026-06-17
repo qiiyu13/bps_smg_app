@@ -7,6 +7,7 @@ import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
 import 'dart:async';
 import 'app_theme.dart';
+import 'widgets/section_kit.dart';
 
 class UserSDGsScreen extends StatefulWidget {
   const UserSDGsScreen({super.key});
@@ -240,15 +241,53 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                       SizedBox(height: sizing.sectionSpacing),
                       _buildKotaSelector(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
-                      _buildIndicatorCards(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildChartSection(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildComparisonChart(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildSDGsInfo(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildKesimpulanCard(sizing, isSmallScreen),
+                      SpineSection(
+                        number: '01',
+                        overline: 'Indikator',
+                        title: 'Indikator SDGs',
+                        subtitle: 'Tahun $selectedYear',
+                        accent: bpsOrange,
+                        surface: false,
+                        isFirst: true,
+                        isSmall: isSmallScreen,
+                        child: _buildIndicatorCards(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '02',
+                        overline: 'Perbandingan',
+                        title: 'Perbandingan Indikator',
+                        accent: bpsOrange,
+                        surface: false,
+                        isSmall: isSmallScreen,
+                        child: _buildChartSection(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '03',
+                        overline: 'Antar Kota',
+                        title: 'TIK Remaja Antar Kota',
+                        accent: bpsOrange,
+                        surface: false,
+                        isSmall: isSmallScreen,
+                        child: _buildComparisonChart(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '04',
+                        overline: 'Tentang',
+                        title: 'Tentang TPB/SDGs',
+                        accent: bpsOrange,
+                        surface: false,
+                        isSmall: isSmallScreen,
+                        child: _buildSDGsInfo(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        overline: 'Ringkasan',
+                        title: 'Kesimpulan',
+                        accent: bpsOrange,
+                        surface: false,
+                        isLast: true,
+                        isSmall: isSmallScreen,
+                        child: _buildKesimpulanCard(sizing, isSmallScreen),
+                      ),
                       SizedBox(height: sizing.sectionSpacing),
                     ]),
                   ),
@@ -263,168 +302,29 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return DecoratedBox(
-      decoration: BoxDecoration(color: bpsOrange, boxShadow: [
-        BoxShadow(
-            color: bpsOrange.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 4))
-      ]),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.all(sizing.horizontalPadding),
-          child: Row(
-            children: [
-              InkWell(
-                  onTap: () => Navigator.of(context).pop(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                      padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                      child: Icon(Icons.arrow_back_rounded,
-                          color: Colors.white, size: isSmallScreen ? 20 : 24))),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text('SDGs Jawa Tengah',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: isSmallScreen
-                            ? sizing.headerTitleSize + 4
-                            : sizing.headerTitleSize + 8,
-                        fontWeight: FontWeight.w700,
-                        height: 1.1),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
-              ),
-              Icon(Icons.public_rounded,
-                  color: Colors.white, size: isSmallScreen ? 20 : 24),
-            ],
-          ),
-        ),
-      ),
+    return CategoryHeader(
+      overline: 'INDEKS PEMBANGUNAN',
+      title: 'SDGs Jawa Tengah',
+      icon: Icons.public_rounded,
+      accent: bpsOrange,
+      isSmall: isSmallScreen,
     );
   }
 
   Widget _buildYearSelector(ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.calendar_today_rounded,
-                  color: bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Text(
-                'Pilih Tahun Data',
-                style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? sizing.groupTitleSize - 2
-                      : sizing.groupTitleSize,
-                  fontWeight: FontWeight.w700,
-                  color: bpsTextPrimary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          SizedBox(
-            height: isSmallScreen ? 38 : 42,
-            child: ListView.separated(
-              controller: _yearScrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: availableYears.length,
-              separatorBuilder: (_, __) =>
-                  SizedBox(width: isSmallScreen ? 6 : 8),
-              itemBuilder: (_, i) {
-                final year = availableYears[i];
-                final isSelected = year == selectedYear;
-                return Material(
-                  color: isSelected ? bpsOrange : bpsBackground,
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    onTap: () => _changeYear(year),
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 16 : 20,
-                        vertical: isSmallScreen ? 8 : 10,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: isSelected ? bpsOrange : bpsBorder,
-                          width: isSelected ? 2 : 1.5,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: bpsOrange.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: Text(
-                        year.toString(),
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 14 : 16,
-                          fontWeight:
-                              isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? Colors.white : bpsTextSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+    return YearRail(
+      years: [...availableYears]..sort(),
+      selected: selectedYear,
+      onSelect: _changeYear,
+      accent: bpsOrange,
+      isSmall: isSmallScreen,
+      controller: _yearScrollController,
     );
   }
 
   Widget _buildSearchBar(ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-          color: bpsCardBg,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2))
-          ]),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Container(
@@ -472,19 +372,8 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
   }
 
   Widget _buildKotaSelector(ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-          color: bpsCardBg,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2))
-          ]),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Container(
@@ -538,13 +427,12 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
   Widget _buildIndicatorCards(ResponsiveSizing sizing, bool isSmallScreen) {
     final kotaData = _getSelectedKotaData();
     if (kotaData == null) {
-      return Container(
-          padding: EdgeInsets.all(sizing.statsCardPadding),
-          decoration: BoxDecoration(
-              color: bpsCardBg, borderRadius: BorderRadius.circular(16)),
-          child: const Center(
+      return SectionPanel(
+      isSmall: isSmallScreen,
+      child: const Center(
               child: Text('Tidak ada data untuk kota yang dipilih',
-                  style: TextStyle(color: bpsTextSecondary))));
+                  style: TextStyle(color: bpsTextSecondary))),
+    );
     }
 
     final stats = [
@@ -593,36 +481,9 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
       },
     ];
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-          color: bpsCardBg,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2))
-          ]),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Container(
-              padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-              decoration: BoxDecoration(
-                  color: bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10)),
-              child: Icon(Icons.analytics_rounded,
-                  color: bpsOrange, size: isSmallScreen ? 16 : 18)),
-          SizedBox(width: sizing.itemSpacing),
-          Text('Indikator SDGs - $selectedYear',
-              style: TextStyle(
-                  fontSize: isSmallScreen ? 14 : 16,
-                  fontWeight: FontWeight.w700,
-                  color: bpsTextPrimary))
-        ]),
-        SizedBox(height: isSmallScreen ? 12 : 16),
         SizedBox(
           height: 140,
           child: ListView.builder(
@@ -706,45 +567,9 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
             _isYearAvailable('apm') ||
             _isYearAvailable('apk'));
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-          color: bpsCardBg,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2))
-          ]),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Container(
-              padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-              decoration: BoxDecoration(
-                  color: bpsGreen.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10)),
-              child: Icon(Icons.bar_chart_rounded,
-                  color: bpsGreen, size: isSmallScreen ? 16 : 18)),
-          SizedBox(width: sizing.itemSpacing),
-          Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text('Perbandingan Indikator',
-                    style: TextStyle(
-                        fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight: FontWeight.w700,
-                        color: bpsTextPrimary)),
-                Text('${kotaData?.nama ?? 'Kota'} - Tahun $selectedYear',
-                    style: TextStyle(
-                        fontSize: isSmallScreen ? 10 : 11,
-                        color: bpsTextSecondary))
-              ]))
-        ]),
-        SizedBox(height: isSmallScreen ? 16 : 20),
         if (!hasData)
           Container(
               height: 200,
@@ -845,45 +670,9 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
     final highest = sortedValues.first;
     final lowest = sortedValues.last;
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-          color: bpsCardBg,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2))
-          ]),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Container(
-              padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-              decoration: BoxDecoration(
-                  color: bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10)),
-              child: Icon(Icons.leaderboard_rounded,
-                  color: bpsOrange, size: isSmallScreen ? 16 : 18)),
-          SizedBox(width: sizing.itemSpacing),
-          Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text('TIK Remaja - Antar Kota',
-                    style: TextStyle(
-                        fontSize: isSmallScreen ? 14 : 16,
-                        fontWeight: FontWeight.w700,
-                        color: bpsTextPrimary)),
-                Text('Tahun $selectedYear',
-                    style: TextStyle(
-                        fontSize: isSmallScreen ? 10 : 11,
-                        color: bpsTextSecondary))
-              ]))
-        ]),
-        SizedBox(height: isSmallScreen ? 12 : 16),
         Container(
           padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
           decoration: BoxDecoration(
@@ -1060,17 +849,6 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
                 offset: const Offset(0, 4))
           ]),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Icon(Icons.eco,
-              color: Colors.white, size: isSmallScreen ? 20 : 24),
-          SizedBox(width: sizing.itemSpacing),
-          Text('Tentang TPB/SDGs',
-              style: TextStyle(
-                  fontSize: isSmallScreen ? 16 : 18,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white))
-        ]),
-        SizedBox(height: isSmallScreen ? 12 : 16),
         Container(
           padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
           decoration: BoxDecoration(

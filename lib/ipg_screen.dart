@@ -8,6 +8,7 @@ import 'kesimpulan_widget.dart';
 import 'services/github_data_service.dart';
 import 'dart:async';
 import 'app_theme.dart';
+import 'widgets/section_kit.dart';
 
 class IPGData {
   final int year;
@@ -431,17 +432,67 @@ class _IPGScreenState extends State<IPGScreen>
                               delegate: SliverChildListDelegate([
                                 _buildYearSelector(sizing, isSmallScreen),
                                 SizedBox(height: sizing.sectionSpacing),
-                                _buildMainIndicators(sizing, isSmallScreen),
+                                _buildHero(sizing, isSmallScreen),
                                 SizedBox(height: sizing.sectionSpacing),
-                                _buildGenderComparison(sizing, isSmallScreen),
-                                SizedBox(height: sizing.sectionSpacing),
-                                _buildIPGChart(sizing, isSmallScreen),
-                                SizedBox(height: sizing.sectionSpacing),
-                                _buildIKGChart(sizing, isSmallScreen),
-                                SizedBox(height: sizing.sectionSpacing),
-                                _buildInfoCard(sizing, isSmallScreen),
-                                SizedBox(height: sizing.sectionSpacing),
-                                _buildKesimpulanCard(sizing, isSmallScreen),
+                                SpineSection(
+                                  number: '01',
+                                  overline: 'Indikator',
+                                  title: 'Indikator Utama IPG',
+                                  subtitle: 'Ketuk untuk penjelasan',
+                                  accent: bpsOrange,
+                                  surface: false,
+                                  isFirst: true,
+                                  isSmall: isSmallScreen,
+                                  child: _buildMainIndicators(
+                                      sizing, isSmallScreen),
+                                ),
+                                SpineSection(
+                                  number: '02',
+                                  overline: 'Gender',
+                                  title: 'Perbandingan Gender',
+                                  accent: bpsOrange,
+                                  surface: false,
+                                  isSmall: isSmallScreen,
+                                  child: _buildGenderComparison(
+                                      sizing, isSmallScreen),
+                                ),
+                                SpineSection(
+                                  number: '03',
+                                  overline: 'Tren',
+                                  title: 'Tren IPG',
+                                  accent: bpsOrange,
+                                  surface: false,
+                                  isSmall: isSmallScreen,
+                                  child: _buildIPGChart(sizing, isSmallScreen),
+                                ),
+                                SpineSection(
+                                  number: '04',
+                                  overline: 'Tren',
+                                  title: 'Tren IKG',
+                                  accent: bpsOrange,
+                                  surface: false,
+                                  isSmall: isSmallScreen,
+                                  child: _buildIKGChart(sizing, isSmallScreen),
+                                ),
+                                SpineSection(
+                                  number: '05',
+                                  overline: 'Tentang',
+                                  title: 'Tentang IPG',
+                                  accent: bpsOrange,
+                                  surface: false,
+                                  isSmall: isSmallScreen,
+                                  child: _buildInfoCard(sizing, isSmallScreen),
+                                ),
+                                SpineSection(
+                                  overline: 'Ringkasan',
+                                  title: 'Kesimpulan',
+                                  accent: bpsOrange,
+                                  surface: false,
+                                  isLast: true,
+                                  isSmall: isSmallScreen,
+                                  child: _buildKesimpulanCard(
+                                      sizing, isSmallScreen),
+                                ),
                                 SizedBox(height: sizing.sectionSpacing),
                               ]),
                             ),
@@ -493,238 +544,60 @@ class _IPGScreenState extends State<IPGScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bpsOrange,
-        boxShadow: [
-          BoxShadow(
-            color: bpsOrange.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.all(sizing.horizontalPadding),
-          child: Row(
-            children: [
-              InkWell(
-                onTap: () => Navigator.of(context).pop(),
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                  child: Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: isSmallScreen ? 20 : 24,
-                  ),
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Indeks Pembangunan Gender',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isSmallScreen
-                        ? sizing.headerTitleSize + 4
-                        : sizing.headerTitleSize + 8,
-                    fontWeight: FontWeight.w700,
-                    height: 1.1,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Icon(
-                Icons.balance_rounded,
-                color: Colors.white,
-                size: isSmallScreen ? 20 : 24,
-              ),
-            ],
-          ),
-        ),
-      ),
+    return CategoryHeader(
+      overline: 'INDEKS PEMBANGUNAN',
+      title: 'Indeks Pembangunan Gender',
+      icon: Icons.balance_rounded,
+      accent: bpsOrange,
+      isSmall: isSmallScreen,
     );
   }
 
   Widget _buildYearSelector(ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_today_rounded,
-                color: bpsOrange,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Text(
-                'Pilih Tahun Data',
-                style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? sizing.groupTitleSize - 2
-                      : sizing.groupTitleSize,
-                  fontWeight: FontWeight.w700,
-                  color: bpsTextPrimary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          SizedBox(
-            height: isSmallScreen ? 38 : 42,
-            child: ListView.separated(
-              controller: _yearScrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: availableYears.length,
-              separatorBuilder: (_, __) =>
-                  SizedBox(width: isSmallScreen ? 6 : 8),
-              itemBuilder: (_, i) {
-                final year = availableYears[i];
-                final isSelected = year == selectedYear;
-                return Material(
-                  color: isSelected ? bpsOrange : bpsBackground,
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    onTap: () => _changeYear(year),
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 16 : 20,
-                        vertical: isSmallScreen ? 8 : 10,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: isSelected ? bpsOrange : bpsBorder,
-                          width: isSelected ? 2 : 1.5,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: bpsOrange.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: Text(
-                        year.toString(),
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 14 : 16,
-                          fontWeight:
-                              isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? Colors.white : bpsTextSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+    return YearRail(
+      years: [...availableYears]..sort(),
+      selected: selectedYear,
+      onSelect: _changeYear,
+      accent: bpsOrange,
+      isSmall: isSmallScreen,
+      controller: _yearScrollController,
+    );
+  }
+
+  Widget _buildHero(ResponsiveSizing sizing, bool isSmallScreen) {
+    final data = currentIPGData;
+    final sorted = [...availableYears]..sort();
+    final prev = ipgDataByYear[selectedYear - 1];
+    final delta = (data.ipg != null && prev?.ipg != null)
+        ? data.ipg! - prev!.ipg!
+        : null;
+    final spark = sorted.map((y) => ipgDataByYear[y]?.ipg ?? 0.0).toList();
+    return IndicatorHero(
+      overline: 'INDEKS PEMBANGUNAN GENDER',
+      value: data.ipgFormatted,
+      subtitle: 'IPG • Kota Semarang',
+      badge: 'Tahun $selectedYear',
+      accent: bpsOrange,
+      delta: delta,
+      deltaUnit: 'poin',
+      sparkline: spark.length > 1 ? spark : null,
+      isSmall: isSmallScreen,
+      facts: [
+        HeroFact('IKG', '${data.ikgFormatted}%'),
+        HeroFact('IPM Laki-laki', data.ipmMale != null ? NumberFormatUtils.formatDecimal(data.ipmMale!) : 'N/A'),
+        HeroFact('IPM Perempuan', data.ipmFemale != null ? NumberFormatUtils.formatDecimal(data.ipmFemale!) : 'N/A'),
+      ],
     );
   }
 
   Widget _buildMainIndicators(ResponsiveSizing sizing, bool isSmallScreen) {
     final data = currentIPGData;
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.analytics_rounded,
-                color: bpsOrange,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Indikator Utama IPG',
-                  style: TextStyle(
-                    fontSize: isSmallScreen
-                        ? sizing.groupTitleSize - 2
-                        : sizing.groupTitleSize,
-                    fontWeight: FontWeight.w700,
-                    color: bpsTextPrimary,
-                  ),
-                ),
-              ),
-              if (!isSmallScreen) ...[
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: sizing.itemSpacing,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: bpsOrange.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.touch_app_rounded,
-                        color: bpsOrange,
-                        size: 14,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        'Tap untuk detail',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: bpsOrange,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
           Column(
             children: [
               _buildCompactIndicatorRow(
@@ -786,22 +659,8 @@ class _IPGScreenState extends State<IPGScreen>
   Widget _buildGenderComparison(ResponsiveSizing sizing, bool isSmallScreen) {
     final data = currentIPGData;
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -996,22 +855,8 @@ class _IPGScreenState extends State<IPGScreen>
       if (yInterval < 0.5) yInterval = 0.5;
     }
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1234,22 +1079,8 @@ class _IPGScreenState extends State<IPGScreen>
 
     final bool hasValidData = barGroups.isNotEmpty;
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1407,15 +1238,8 @@ class _IPGScreenState extends State<IPGScreen>
   }
 
   Widget _buildInfoCard(ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

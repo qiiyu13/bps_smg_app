@@ -6,6 +6,7 @@ import 'kesimpulan_widget.dart';
 import 'services/github_data_service.dart';
 import 'dart:async';
 import 'app_theme.dart';
+import 'widgets/section_kit.dart';
 
 class InflasiScreen extends StatefulWidget {
   const InflasiScreen({super.key});
@@ -1134,17 +1135,69 @@ class _InflasiScreenState extends State<InflasiScreen>
                     delegate: SliverChildListDelegate([
                       _buildYearSelector(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
-                      _buildMonthSelector(sizing, isSmallScreen),
+                      _buildHero(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
-                      _buildMainIndicators(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildInflationChart(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildMonthlyInflationChart(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildInflationComponents(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildKesimpulanCard(sizing, isSmallScreen),
+                      SpineSection(
+                        number: '01',
+                        overline: 'Periode',
+                        title: 'Pilih Bulan',
+                        accent: bpsBlue,
+                        framed: false,
+                        isFirst: true,
+                        isSmall: isSmallScreen,
+                        trailing: selectedMonth != null
+                            ? _buildMonthResetButton(sizing)
+                            : null,
+                        child: _buildMonthSelector(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '02',
+                        overline: 'Indikator',
+                        title: 'Indikator Utama Inflasi',
+                        subtitle: 'Ketuk untuk penjelasan',
+                        accent: bpsBlue,
+                        isSmall: isSmallScreen,
+                        child: _buildMainIndicators(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '03',
+                        overline: 'Tren',
+                        title: 'Tren Inflasi Tahunan',
+                        subtitle: 'Persentase Year-on-Year',
+                        accent: bpsBlue,
+                        framed: false,
+                        isSmall: isSmallScreen,
+                        child: _buildInflationChart(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '04',
+                        overline: 'Tren',
+                        title: 'Inflasi Bulanan',
+                        subtitle: 'Persentase Month-to-Month',
+                        accent: bpsBlue,
+                        framed: false,
+                        isSmall: isSmallScreen,
+                        child:
+                            _buildMonthlyInflationChart(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '05',
+                        overline: 'Rincian',
+                        title: 'Komponen Inflasi',
+                        subtitle: 'Peringkat menurut andil',
+                        accent: bpsBlue,
+                        isSmall: isSmallScreen,
+                        child: _buildInflationComponents(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        overline: 'Ringkasan',
+                        title: 'Kesimpulan',
+                        accent: bpsBlue,
+                        surface: false,
+                        isLast: true,
+                        isSmall: isSmallScreen,
+                        child: _buildKesimpulanCard(sizing, isSmallScreen),
+                      ),
                       SizedBox(height: sizing.sectionSpacing),
                     ]),
                   ),
@@ -1159,228 +1212,80 @@ class _InflasiScreenState extends State<InflasiScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bpsBlue,
-        boxShadow: [
-          BoxShadow(
-            color: bpsBlue.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
+    return CategoryHeader(
+      overline: 'INDIKATOR EKONOMI',
+      title: 'Data Inflasi',
+      icon: Icons.payments_rounded,
+      accent: bpsBlue,
+      isSmall: isSmallScreen,
+    );
+  }
+
+  Widget _buildYearSelector(ResponsiveSizing sizing, bool isSmallScreen) {
+    return YearRail(
+      years: availableYears,
+      selected: selectedYear,
+      onSelect: _changeYear,
+      accent: bpsBlue,
+      isSmall: isSmallScreen,
+      controller: _yearScrollController,
+    );
+  }
+
+  Widget _buildHero(ResponsiveSizing sizing, bool isSmallScreen) {
+    final yearInflation = yearlyInflation[selectedYear] ?? 0.0;
+    final ihk = ihkData[selectedYear] ?? 0.0;
+    final prev = yearlyInflation[selectedYear - 1];
+    final delta = prev != null ? yearInflation - prev : null;
+    final years = [...availableYears]..sort();
+    final spark = years.map((y) => yearlyInflation[y] ?? 0.0).toList();
+
+    return IndicatorHero(
+      overline: 'INFLASI TAHUNAN',
+      value: NumberFormatUtils.formatPercentage(yearInflation),
+      subtitle: 'Year-on-Year • Kota Semarang',
+      badge: 'Tahun $selectedYear',
+      accent: bpsBlue,
+      delta: delta,
+      sparkline: spark.length > 1 ? spark : null,
+      isSmall: isSmallScreen,
+      facts: [
+        HeroFact('IHK (2018=100)', NumberFormatUtils.formatDecimal(ihk)),
+        HeroFact(
+          selectedMonth == null ? 'Inflasi Bulanan' : 'Inflasi $currentMonthLabel',
+          NumberFormatUtils.formatPercentage(currentInflationValue),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMonthResetButton(ResponsiveSizing sizing) {
+    return Material(
+      color: bpsOrange.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: () => setState(() => selectedMonth = null),
+        borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: EdgeInsets.all(sizing.horizontalPadding),
-          child: Row(
-            children: [
-              InkWell(
-                onTap: () => Navigator.of(context).pop(),
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                  child: Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: isSmallScreen ? 20 : 24,
-                  ),
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Data Inflasi',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isSmallScreen
-                        ? sizing.headerTitleSize + 4
-                        : sizing.headerTitleSize + 8,
-                    fontWeight: FontWeight.w700,
-                    height: 1.1,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Icon(
-                Icons.analytics_rounded,
-                color: Colors.white,
-                size: isSmallScreen ? 20 : 24,
-              ),
-            ],
+          padding: EdgeInsets.symmetric(
+            horizontal: sizing.itemSpacing,
+            vertical: 4,
+          ),
+          child: Text(
+            'Reset',
+            style: TextStyle(
+              fontSize: sizing.bottomNavLabelSize,
+              color: bpsOrange,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildYearSelector(ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_today_rounded,
-                color: bpsBlue,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Text(
-                'Pilih Tahun Data',
-                style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? sizing.groupTitleSize - 2
-                      : sizing.groupTitleSize,
-                  fontWeight: FontWeight.w700,
-                  color: bpsTextPrimary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          SizedBox(
-            height: isSmallScreen ? 38 : 42,
-            child: ListView.separated(
-              controller: _yearScrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: availableYears.length,
-              separatorBuilder: (_, __) =>
-                  SizedBox(width: isSmallScreen ? 6 : 8),
-              itemBuilder: (_, i) {
-                final year = availableYears[i];
-                final isSelected = year == selectedYear;
-                return Material(
-                  color: isSelected ? bpsBlue : bpsBackground,
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    onTap: () => _changeYear(year),
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 16 : 20,
-                        vertical: isSmallScreen ? 8 : 10,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: isSelected ? bpsBlue : bpsBorder,
-                          width: isSelected ? 2 : 1.5,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: bpsBlue.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: Text(
-                        year.toString(),
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 14 : 16,
-                          fontWeight:
-                              isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? Colors.white : bpsTextSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildMonthSelector(ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_month_rounded,
-                color: bpsOrange,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Text(
-                'Pilih Bulan',
-                style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? sizing.groupTitleSize - 2
-                      : sizing.groupTitleSize,
-                  fontWeight: FontWeight.w700,
-                  color: bpsTextPrimary,
-                ),
-              ),
-              const Spacer(),
-              if (selectedMonth != null)
-                Material(
-                  color: bpsOrange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  child: InkWell(
-                    onTap: () => setState(() => selectedMonth = null),
-                    borderRadius: BorderRadius.circular(8),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: sizing.itemSpacing,
-                        vertical: 4,
-                      ),
-                      child: Text(
-                        'Reset',
-                        style: TextStyle(
-                          fontSize: sizing.bottomNavLabelSize,
-                          color: bpsOrange,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          SingleChildScrollView(
+    return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             child: Row(
@@ -1434,130 +1339,50 @@ class _InflasiScreenState extends State<InflasiScreen>
                 },
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 
   Widget _buildMainIndicators(ResponsiveSizing sizing, bool isSmallScreen) {
     final yearInflation = yearlyInflation[selectedYear] ?? 0.0;
     final ihk = ihkData[selectedYear] ?? 0.0;
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.analytics_rounded,
-                color: bpsBlue,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Indikator Utama Inflasi',
-                  style: TextStyle(
-                    fontSize: isSmallScreen
-                        ? sizing.groupTitleSize - 2
-                        : sizing.groupTitleSize,
-                    fontWeight: FontWeight.w700,
-                    color: bpsTextPrimary,
-                  ),
-                ),
-              ),
-              if (!isSmallScreen) ...[
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: sizing.itemSpacing,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: bpsBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.touch_app_rounded,
-                        color: bpsBlue,
-                        size: 14,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        'Tap untuk detail',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: bpsBlue,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
+          _buildCompactIndicatorRow(
+            context: context,
+            value: NumberFormatUtils.formatPercentage(yearInflation),
+            label: 'Inflasi Tahunan',
+            color: bpsBlue,
+            icon: Icons.trending_up_rounded,
+            description:
+                'Inflasi tahunan (Year-on-Year) mengukur perubahan harga barang dan jasa secara umum selama satu tahun. Angka ini menjadi acuan utama kebijakan moneter.',
+            isFirst: true,
           ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          Column(
-            children: [
-              _buildCompactIndicatorRow(
-                context: context,
-                value: NumberFormatUtils.formatPercentage(yearInflation),
-                label: 'Inflasi Tahunan',
-                color: bpsBlue,
-                icon: Icons.trending_up_rounded,
-                description:
-                    'Inflasi tahunan (Year-on-Year) mengukur perubahan harga barang dan jasa secara umum selama satu tahun. Angka ini menjadi acuan utama kebijakan moneter.',
-                isFirst: true,
-              ),
-              _buildIndicatorDivider(isSmallScreen),
-              _buildCompactIndicatorRow(
-                context: context,
-                value:
-                    NumberFormatUtils.formatPercentage(currentInflationValue),
-                label: selectedMonth == null
-                    ? 'Inflasi Bulanan'
-                    : 'Inflasi $currentMonthLabel',
-                color: inflationColor,
-                icon: Icons.calendar_month_rounded,
-                description:
-                    'Inflasi bulanan (Month-to-Month) mengukur perubahan harga barang dan jasa dari bulan ke bulan. Fluktuasi bulanan dipengaruhi oleh faktor musiman dan kebijakan harga.',
-              ),
-              _buildIndicatorDivider(isSmallScreen),
-              _buildCompactIndicatorRow(
-                context: context,
-                value: NumberFormatUtils.formatDecimal(ihk),
-                label: 'Indeks Harga Konsumen',
-                color: bpsPurple,
-                icon: Icons.assessment_rounded,
-                description:
-                    'Indeks Harga Konsumen (IHK) mengukur rata-rata perubahan harga dari suatu paket barang dan jasa yang dikonsumsi oleh rumah tangga. Basis perhitungan 2018=100.',
-                isLast: true,
-              ),
-            ],
+          _buildIndicatorDivider(isSmallScreen),
+          _buildCompactIndicatorRow(
+            context: context,
+            value: NumberFormatUtils.formatPercentage(currentInflationValue),
+            label: selectedMonth == null
+                ? 'Inflasi Bulanan'
+                : 'Inflasi $currentMonthLabel',
+            color: inflationColor,
+            icon: Icons.calendar_month_rounded,
+            description:
+                'Inflasi bulanan (Month-to-Month) mengukur perubahan harga barang dan jasa dari bulan ke bulan. Fluktuasi bulanan dipengaruhi oleh faktor musiman dan kebijakan harga.',
+          ),
+          _buildIndicatorDivider(isSmallScreen),
+          _buildCompactIndicatorRow(
+            context: context,
+            value: NumberFormatUtils.formatDecimal(ihk),
+            label: 'Indeks Harga Konsumen',
+            color: bpsPurple,
+            icon: Icons.assessment_rounded,
+            description:
+                'Indeks Harga Konsumen (IHK) mengukur rata-rata perubahan harga dari suatu paket barang dan jasa yang dikonsumsi oleh rumah tangga. Basis perhitungan 2018=100.',
+            isLast: true,
           ),
         ],
-      ),
-    );
+      );
   }
 
   Widget _buildCompactIndicatorRow({
@@ -1621,10 +1446,12 @@ class _InflasiScreenState extends State<InflasiScreen>
                 child: Text(
                   value,
                   style: TextStyle(
+                    fontFamily: kDisplayFont,
                     fontSize: isSmallScreen ? 15 : 17,
                     fontWeight: FontWeight.w800,
                     color: bpsTextPrimary,
                     letterSpacing: -0.3,
+                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                   textAlign: TextAlign.right,
                   maxLines: 1,
@@ -1848,62 +1675,7 @@ class _InflasiScreenState extends State<InflasiScreen>
         ? 5.0
         : (validValues.reduce((a, b) => a > b ? a : b) + 0.5).ceilToDouble();
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.show_chart_rounded,
-                color: bpsBlue,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Tren Inflasi Tahunan',
-                      style: TextStyle(
-                        fontSize: isSmallScreen
-                            ? sizing.groupTitleSize - 2
-                            : sizing.groupTitleSize,
-                        fontWeight: FontWeight.w700,
-                        color: bpsTextPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Persentase Year-on-Year (${years.first}-${years.last})',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 12 : 13,
-                        color: bpsTextSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          SizedBox(
+    return SizedBox(
             height: isSmallScreen ? 200 : 220,
             child: LineChart(
               LineChartData(
@@ -2032,10 +1804,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 
   Widget _buildMonthlyInflationChart(
@@ -2071,63 +1840,9 @@ class _InflasiScreenState extends State<InflasiScreen>
     final maxValue = monthlyData.reduce((a, b) => a > b ? a : b) + 0.2;
     final minValue = monthlyData.reduce((a, b) => a < b ? a : b) - 0.2;
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.bar_chart_rounded,
-                color: bpsGreen,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      selectedMonth == null
-                          ? 'Inflasi Bulanan $selectedYear'
-                          : 'Inflasi $currentMonthLabel $selectedYear',
-                      style: TextStyle(
-                        fontSize: isSmallScreen
-                            ? sizing.groupTitleSize - 2
-                            : sizing.groupTitleSize,
-                        fontWeight: FontWeight.w700,
-                        color: bpsTextPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Persentase Month-to-Month',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 12 : 13,
-                        color: bpsTextSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -2252,148 +1967,178 @@ class _InflasiScreenState extends State<InflasiScreen>
             ),
           ),
         ],
-      ),
-    );
+      );
   }
 
   Widget _buildInflationComponents(
       ResponsiveSizing sizing, bool isSmallScreen) {
-    final yearStr = selectedYear.toString();
     // Check if selected year has monthly component data
     final hasMonthlyData = inflationComponentsMonthly.values.any(
       (categoryData) => categoryData.containsKey(selectedYear),
     );
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.category_rounded,
-                color: bpsOrange,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Komponen Inflasi',
-                  style: TextStyle(
-                    fontSize: isSmallScreen
-                        ? sizing.groupTitleSize - 2
-                        : sizing.groupTitleSize,
-                    fontWeight: FontWeight.w700,
-                    color: bpsTextPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
           // Month selector for 2023 data
           if (hasMonthlyData) ...[
             SizedBox(height: isSmallScreen ? 12 : 16),
             _buildComponentMonthSelector(sizing, isSmallScreen),
           ],
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          ...inflationComponentsYearly.entries.map((entry) {
-            final color = _getComponentColor(entry.key);
-            double value;
+          SizedBox(height: isSmallScreen ? 14 : 18),
+          ..._buildComponentRanking(sizing, isSmallScreen, hasMonthlyData),
+        ],
+      );
+  }
 
-            // Use monthly data if available and month selected
-            if (hasMonthlyData && selectedComponentMonth != null) {
-              final monthlyData =
-                  inflationComponentsMonthly[entry.key]?[selectedYear];
-              if (monthlyData != null &&
-                  selectedComponentMonth! < monthlyData.length) {
-                value = monthlyData[selectedComponentMonth!] ?? 0.0;
-              } else {
-                value = 0.0;
-              }
-            } else {
-              // Use yearly data
-              value = entry.value[yearStr] ?? 0.0;
-            }
+  /// Resolve the displayed value for one component, honouring the monthly
+  /// selector when monthly data is available.
+  double _componentValue(String key, bool hasMonthlyData) {
+    if (hasMonthlyData && selectedComponentMonth != null) {
+      final monthlyData = inflationComponentsMonthly[key]?[selectedYear];
+      if (monthlyData != null && selectedComponentMonth! < monthlyData.length) {
+        return monthlyData[selectedComponentMonth!] ?? 0.0;
+      }
+      return 0.0;
+    }
+    return inflationComponentsYearly[key]?[selectedYear.toString()] ?? 0.0;
+  }
 
-            return Padding(
-              padding: EdgeInsets.only(bottom: sizing.itemSpacing),
-              child: Container(
-                padding: EdgeInsets.all(isSmallScreen ? 12 : 14),
-                decoration: BoxDecoration(
-                  color: bpsBackground,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: bpsBorder),
-                ),
-                child: Row(
+  /// One side of a diverging bar — gradient runs outward from the centre line.
+  Widget _divergingFill(Color color, double barH, bool isNeg) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [color.withOpacity(0.65), color],
+          begin: isNeg ? Alignment.centerRight : Alignment.centerLeft,
+          end: isNeg ? Alignment.centerLeft : Alignment.centerRight,
+        ),
+        borderRadius: BorderRadius.circular(barH),
+      ),
+    );
+  }
+
+  /// Ranked diverging-bar list: components sorted by value, each drawn as a
+  /// proportional bar growing from a centred zero baseline (inflation right,
+  /// deflation left). Reads as a mini ranking chart instead of a chip list.
+  List<Widget> _buildComponentRanking(
+      ResponsiveSizing sizing, bool isSmallScreen, bool hasMonthlyData) {
+    final items = inflationComponentsYearly.keys
+        .map((k) => MapEntry(k, _componentValue(k, hasMonthlyData)))
+        .toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    if (items.isEmpty) return const [];
+
+    final maxAbs = items
+        .map((e) => e.value.abs())
+        .reduce((a, b) => a > b ? a : b)
+        .clamp(0.01, double.infinity);
+
+    final barH = isSmallScreen ? 9.0 : 10.0;
+    final labelSize = isSmallScreen ? 12.5 : 13.5;
+    final valueSize = isSmallScreen ? 13.0 : 14.5;
+
+    return [
+      for (int i = 0; i < items.length; i++) ...[
+        if (i > 0) SizedBox(height: isSmallScreen ? 14 : 16),
+        Builder(builder: (context) {
+          final key = items[i].key;
+          final value = items[i].value;
+          final isNeg = value < 0;
+          final color = isNeg ? bpsRed : _getComponentColor(key);
+          final frac = (value.abs() / maxAbs).clamp(0.0, 1.0);
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(_getComponentIcon(key),
+                      color: color, size: isSmallScreen ? 15 : 16),
+                  SizedBox(width: isSmallScreen ? 7 : 9),
+                  Expanded(
+                    child: Text(
+                      key,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: labelSize,
+                        fontWeight: FontWeight.w600,
+                        color: bpsTextPrimary,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: sizing.itemSpacing),
+                  Text(
+                    NumberFormatUtils.formatPercentage(value),
+                    style: TextStyle(
+                      fontFamily: kDisplayFont,
+                      fontSize: valueSize,
+                      fontWeight: FontWeight.w800,
+                      color: color,
+                      letterSpacing: -0.3,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: isSmallScreen ? 7 : 8),
+              // Diverging bar: centre line = zero, grows right (+) or left (-).
+              SizedBox(
+                height: barH,
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Container(
-                      padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                    // track
+                    DecoratedBox(
                       decoration: BoxDecoration(
-                        color: color.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        _getComponentIcon(entry.key),
-                        color: color,
-                        size: isSmallScreen ? 18 : 20,
+                        color: bpsBackground,
+                        borderRadius: BorderRadius.circular(barH),
                       ),
                     ),
-                    SizedBox(width: sizing.itemSpacing),
-                    Expanded(
-                      child: Text(
-                        entry.key,
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 13 : 14,
-                          fontWeight: FontWeight.w600,
-                          color: bpsTextPrimary,
+                    // two halves around the centre zero line
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: isNeg
+                                ? FractionallySizedBox(
+                                    widthFactor: frac,
+                                    child: _divergingFill(
+                                        color, barH, isNeg),
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
                         ),
-                      ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: !isNeg
+                                ? FractionallySizedBox(
+                                    widthFactor: frac,
+                                    child: _divergingFill(
+                                        color, barH, isNeg),
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: sizing.itemSpacing),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: sizing.itemSpacing,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: color.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: color.withOpacity(0.3),
-                        ),
-                      ),
-                      child: Text(
-                        NumberFormatUtils.formatPercentage(value),
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 13 : 14,
-                          fontWeight: FontWeight.w700,
-                          color: color,
-                        ),
-                      ),
+                    // centre zero tick
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(width: 1, color: bpsBorder),
                     ),
                   ],
                 ),
               ),
-            );
-          }),
-        ],
-      ),
-    );
+            ],
+          );
+        }),
+      ],
+    ];
   }
 
   Widget _buildComponentMonthSelector(

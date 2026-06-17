@@ -8,6 +8,7 @@ import 'models/pdrb_ranking.dart';
 import 'services/pdrb_ranking_service.dart';
 import 'kesimpulan_widget.dart';
 import 'app_theme.dart';
+import 'widgets/section_kit.dart';
 
 class PertumbuhanEkonomiScreen extends StatefulWidget {
   const PertumbuhanEkonomiScreen({super.key});
@@ -87,8 +88,23 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
   EkonomiData? get currentData =>
       dataManager.getDataByYear(selectedYear.toString());
 
+  // ── Helpers ──────────────────────────────────────────────────────────────
+
+  /// Parse an Indonesian-formatted percentage string ("6,49%") to a double.
+  double _parseGrowth(String raw) {
+    final cleaned = raw.replaceAll('%', '').replaceAll(',', '.').trim();
+    return double.tryParse(cleaned) ?? 0.0;
+  }
+
+  /// Format a double back to Indonesian decimal notation ("6.49" → "6,49").
+  String _fmt(double v, {int decimals = 2}) =>
+      v.toStringAsFixed(decimals).replaceAll('.', ',');
+
+  // ── Build ────────────────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final sizing = ResponsiveSizing(context);
     final isSmallScreen = sizing.isVerySmall || sizing.isSmall;
 
@@ -114,6 +130,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       Text(
                         'Belum Ada Data',
                         style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
                           fontSize: sizing.sectionTitleSize,
                           fontWeight: FontWeight.bold,
                           color: bpsTextPrimary,
@@ -152,17 +169,57 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                   padding: EdgeInsets.all(sizing.horizontalPadding),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
-                      _buildYearSelector(sizing, isSmallScreen),
+                      _buildYearRail(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
-                      _buildMainIndicators(sizing, isSmallScreen),
+                      _buildHero(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
-                      _buildPDRBSection(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildChartSection(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildRankingSection(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildKesimpulanCard(sizing, isSmallScreen),
+                      SpineSection(
+                        number: '01',
+                        overline: 'Indikator',
+                        title: 'Indikator Utama',
+                        subtitle: 'Ketuk untuk penjelasan',
+                        accent: bpsBlue,
+                        isFirst: true,
+                        isSmall: isSmallScreen,
+                        child: _buildMainIndicators(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '02',
+                        overline: 'Rincian',
+                        title: 'PDRB per Kapita',
+                        subtitle: 'Atas dasar harga berlaku',
+                        accent: bpsBlue,
+                        isSmall: isSmallScreen,
+                        child: _buildPDRBSection(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '03',
+                        overline: 'Tren',
+                        title: 'Tren Pertumbuhan',
+                        subtitle: '2020 – 2025 (%)',
+                        accent: bpsBlue,
+                        framed: false,
+                        isSmall: isSmallScreen,
+                        child: _buildChartSection(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '04',
+                        overline: 'Peringkat',
+                        title: 'Peringkat PDRB',
+                        subtitle: 'Top 10 • Jawa Tengah',
+                        accent: bpsBlue,
+                        isSmall: isSmallScreen,
+                        child: _buildRankingSection(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        overline: 'Ringkasan',
+                        title: 'Kesimpulan',
+                        accent: bpsBlue,
+                        surface: false,
+                        isLast: true,
+                        isSmall: isSmallScreen,
+                        child: _buildKesimpulanCard(sizing, isSmallScreen),
+                      ),
                       SizedBox(height: sizing.sectionSpacing),
                     ]),
                   ),
@@ -177,272 +234,116 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bpsBlue,
-        boxShadow: [
-          BoxShadow(
-            color: bpsBlue.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.all(sizing.horizontalPadding),
-          child: Row(
-            children: [
-              InkWell(
-                onTap: () => Navigator.of(context).pop(),
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                  child: Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: isSmallScreen ? 20 : 24,
-                  ),
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Pertumbuhan Ekonomi',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isSmallScreen
-                        ? sizing.headerTitleSize + 4
-                        : sizing.headerTitleSize + 8,
-                    fontWeight: FontWeight.w700,
-                    height: 1.1,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Icon(
-                Icons.show_chart_rounded,
-                color: Colors.white,
-                size: isSmallScreen ? 20 : 24,
-              ),
-            ],
-          ),
-        ),
-      ),
+    return CategoryHeader(
+      overline: 'INDIKATOR EKONOMI',
+      title: 'Pertumbuhan Ekonomi',
+      icon: Icons.show_chart_rounded,
+      accent: bpsBlue,
+      isSmall: isSmallScreen,
     );
   }
 
-  Widget _buildYearSelector(ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_today_rounded,
-                color: bpsBlue,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Text(
-                'Pilih Tahun Data',
-                style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? sizing.groupTitleSize - 2
-                      : sizing.groupTitleSize,
-                  fontWeight: FontWeight.w700,
-                  color: bpsTextPrimary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          SizedBox(
-            height: isSmallScreen ? 38 : 42,
-            child: ListView.separated(
-              controller: _yearScrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: availableYears.length,
-              separatorBuilder: (_, __) =>
-                  SizedBox(width: isSmallScreen ? 6 : 8),
-              itemBuilder: (_, i) {
-                final year = availableYears[i];
-                final isSelected = year == selectedYear;
-                return Material(
-                  color: isSelected ? bpsBlue : bpsBackground,
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    onTap: () => _changeYear(year),
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 16 : 20,
-                        vertical: isSmallScreen ? 8 : 10,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: isSelected ? bpsBlue : bpsBorder,
-                          width: isSelected ? 2 : 1.5,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: bpsBlue.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: Text(
-                        year.toString(),
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 14 : 16,
-                          fontWeight:
-                              isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? Colors.white : bpsTextSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+  // ── Year rail ──────────────────────────────────────────────────────────────
+
+  Widget _buildYearRail(ResponsiveSizing sizing, bool isSmallScreen) {
+    return YearRail(
+      years: availableYears,
+      selected: selectedYear,
+      onSelect: _changeYear,
+      accent: bpsBlue,
+      isSmall: isSmallScreen,
+      controller: _yearScrollController,
     );
   }
+
+  // ── Hero (headline indicator) ────────────────────────────────────────────
+
+  Widget _buildHero(ResponsiveSizing sizing, bool isSmallScreen) {
+    final data = currentData!;
+    final cur = _parseGrowth(data.pertumbuhanEkonomi);
+    final prevData = dataManager.getDataByYear((selectedYear - 1).toString());
+    final delta = prevData != null
+        ? cur - _parseGrowth(prevData.pertumbuhanEkonomi)
+        : null;
+    final jatengLatest =
+        data.jatengData.isNotEmpty ? data.jatengData.last.value : null;
+
+    return IndicatorHero(
+      overline: 'PERTUMBUHAN EKONOMI',
+      value: data.pertumbuhanEkonomi,
+      subtitle: 'PDRB atas dasar harga konstan • Kota Semarang',
+      badge: 'Tahun $selectedYear',
+      accent: bpsBlue,
+      delta: delta,
+      sparkline: data.semarangData.map((e) => e.value).toList(),
+      isSmall: isSmallScreen,
+      facts: [
+        HeroFact('Jawa Tengah',
+            jatengLatest != null ? '${_fmt(jatengLatest)}%' : '–'),
+        HeroFact('Peringkat Provinsi', data.vsJawaTengah),
+      ],
+    );
+  }
+
+  // ── Shared section chrome (delegates to section_kit) ────────────────────────
+
+  // Section chrome now comes from the editorial spine (SpineSection): the
+  // per-section panel + header are supplied by the wrapper, so these legacy
+  // helpers collapse to pass-throughs to keep builder bodies untouched.
+  Widget _panel({required Widget child, bool isSmallScreen = false}) => child;
+
+  Widget _sectionHead({
+    required String title,
+    String? subtitle,
+    Color accent = bpsBlue,
+    bool isSmallScreen = false,
+  }) =>
+      const SizedBox.shrink();
+
+  // ── Main indicators ────────────────────────────────────────────────────────
 
   Widget _buildMainIndicators(ResponsiveSizing sizing, bool isSmallScreen) {
     final data = currentData!;
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return _panel(
+      isSmallScreen: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.analytics_rounded,
-                color: bpsBlue,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Indikator Utama Ekonomi',
-                  style: TextStyle(
-                    fontSize: isSmallScreen
-                        ? sizing.groupTitleSize - 2
-                        : sizing.groupTitleSize,
-                    fontWeight: FontWeight.w700,
-                    color: bpsTextPrimary,
-                  ),
-                ),
-              ),
-              if (!isSmallScreen) ...[
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: sizing.itemSpacing,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: bpsBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.touch_app_rounded,
-                        color: bpsBlue,
-                        size: 14,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        'Tap untuk detail',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: bpsBlue,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
+          _sectionHead(
+            title: 'Indikator Utama',
+            subtitle: 'Ketuk untuk penjelasan',
+            isSmallScreen: isSmallScreen,
           ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          Column(
-            children: [
-              _buildCompactIndicatorRow(
-                context: context,
-                value: data.pertumbuhanEkonomi,
-                label: 'Pertumbuhan Ekonomi',
-                color: bpsBlue,
-                icon: Icons.trending_up_rounded,
-                description:
-                    'Pertumbuhan ekonomi menunjukkan peningkatan aktivitas ekonomi dalam periode tertentu. Angka positif menandakan ekonomi sedang berkembang.',
-                isFirst: true,
-              ),
-              _buildIndicatorDivider(isSmallScreen),
-              _buildCompactIndicatorRow(
-                context: context,
-                value: data.kontribusiPDRB,
-                label: 'Kontribusi PDRB',
-                color: bpsGreen,
-                icon: Icons.pie_chart_rounded,
-                description:
-                    'Kontribusi PDRB menunjukkan seberapa besar peran wilayah ini terhadap produk domestik regional bruto.',
-              ),
-              _buildIndicatorDivider(isSmallScreen),
-              _buildCompactIndicatorRow(
-                context: context,
-                value: data.sektorIndustri,
-                label: 'Sektor Industri Pengolahan',
-                color: bpsOrange,
-                icon: Icons.factory_rounded,
-                description:
-                    'Sektor Industri Pengolahan merupakan sektor terbesar kontributor PDRB Kota Semarang.',
-                isLast: true,
-              ),
-            ],
+          SizedBox(height: isSmallScreen ? 8 : 12),
+          _buildCompactIndicatorRow(
+            context: context,
+            value: data.pertumbuhanEkonomi,
+            label: 'Pertumbuhan Ekonomi',
+            color: bpsBlue,
+            icon: Icons.trending_up_rounded,
+            description:
+                'Pertumbuhan ekonomi menunjukkan peningkatan aktivitas ekonomi dalam periode tertentu. Angka positif menandakan ekonomi sedang berkembang.',
+          ),
+          _buildIndicatorDivider(isSmallScreen),
+          _buildCompactIndicatorRow(
+            context: context,
+            value: data.kontribusiPDRB,
+            label: 'Kontribusi PDRB',
+            color: bpsGreen,
+            icon: Icons.pie_chart_rounded,
+            description:
+                'Kontribusi PDRB menunjukkan seberapa besar peran wilayah ini terhadap produk domestik regional bruto.',
+          ),
+          _buildIndicatorDivider(isSmallScreen),
+          _buildCompactIndicatorRow(
+            context: context,
+            value: data.sektorIndustri,
+            label: 'Sektor Industri Pengolahan',
+            color: bpsOrange,
+            icon: Icons.factory_rounded,
+            description:
+                'Sektor Industri Pengolahan merupakan sektor terbesar kontributor PDRB Kota Semarang.',
           ),
         ],
       ),
@@ -456,8 +357,6 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
     required Color color,
     required IconData icon,
     required String description,
-    bool isFirst = false,
-    bool isLast = false,
   }) {
     final sizing = ResponsiveSizing(context);
     final isSmallScreen = sizing.isVerySmall || sizing.isSmall;
@@ -473,57 +372,54 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
           color,
           description,
         ),
-        splashColor: color.withOpacity(0.1),
-        highlightColor: color.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        splashColor: color.withOpacity(0.08),
+        highlightColor: color.withOpacity(0.04),
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: isSmallScreen ? 12 : 16,
-            vertical: isSmallScreen ? 8 : 10,
+            horizontal: isSmallScreen ? 6 : 8,
+            vertical: isSmallScreen ? 10 : 12,
           ),
           child: Row(
             children: [
               Container(
-                width: isSmallScreen ? 10 : 12,
-                height: isSmallScreen ? 10 : 12,
+                width: isSmallScreen ? 34 : 38,
+                height: isSmallScreen ? 34 : 38,
                 decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
                 ),
+                child: Icon(icon, color: color, size: isSmallScreen ? 18 : 20),
               ),
-              SizedBox(width: isSmallScreen ? 8 : 10),
+              SizedBox(width: isSmallScreen ? 10 : 12),
               Expanded(
-                flex: 3,
                 child: Text(
                   label,
                   style: TextStyle(
-                    fontSize: isSmallScreen ? 13 : 14,
+                    fontSize: isSmallScreen ? 13 : 14.5,
                     fontWeight: FontWeight.w600,
                     color: bpsTextPrimary,
                   ),
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(width: 8),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: isSmallScreen ? 15 : 17,
-                    fontWeight: FontWeight.w800,
-                    color: bpsTextPrimary,
-                    letterSpacing: -0.3,
-                  ),
-                  textAlign: TextAlign.right,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+              Text(
+                value,
+                style: TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: isSmallScreen ? 17 : 19,
+                  fontWeight: FontWeight.w800,
+                  color: bpsTextPrimary,
+                  letterSpacing: -0.4,
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
-              const SizedBox(width: 6),
+              SizedBox(width: isSmallScreen ? 2 : 4),
               Icon(
                 Icons.chevron_right_rounded,
-                color: color.withOpacity(0.5),
+                color: bpsTextLabel,
                 size: isSmallScreen ? 18 : 20,
               ),
             ],
@@ -534,13 +430,11 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
   }
 
   Widget _buildIndicatorDivider(bool isSmallScreen) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 12 : 16),
-      child: Divider(
-        height: 1,
-        thickness: 1,
-        color: bpsBorder.withOpacity(0.5),
-      ),
+    return Divider(
+      height: 1,
+      thickness: 1,
+      color: bpsBorder.withOpacity(0.5),
+      indent: isSmallScreen ? 50 : 58,
     );
   }
 
@@ -597,6 +491,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                             Text(
                               title,
                               style: TextStyle(
+                                fontFamily: 'PlusJakartaSans',
                                 fontSize: isSmallScreen ? 16 : 18,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
@@ -661,6 +556,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                               Text(
                                 value,
                                 style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
                                   fontSize: isSmallScreen ? 28 : 32,
                                   fontWeight: FontWeight.w800,
                                   color: bpsTextPrimary,
@@ -725,263 +621,302 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
     );
   }
 
+  // ── PDRB per kapita ──────────────────────────────────────────────────────
+
   Widget _buildPDRBSection(ResponsiveSizing sizing, bool isSmallScreen) {
     final data = currentData!;
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return _panel(
+      isSmallScreen: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.account_balance_wallet_rounded,
-                color: bpsBlue,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Text(
-                'PDRB per Kapita',
-                style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? sizing.groupTitleSize - 2
-                      : sizing.groupTitleSize,
-                  fontWeight: FontWeight.w700,
-                  color: bpsTextPrimary,
-                ),
-              ),
-            ],
+          _sectionHead(
+            title: 'PDRB per Kapita',
+            subtitle: 'Atas dasar harga berlaku',
+            isSmallScreen: isSmallScreen,
           ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-            decoration: BoxDecoration(
-              color: bpsBlue,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: bpsBlue.withOpacity(0.2),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
+          SizedBox(height: isSmallScreen ? 14 : 18),
+          _buildPerKapitaCard(data, isSmallScreen),
+          SizedBox(height: isSmallScreen ? 10 : 12),
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  'Nilai PDRB per Kapita',
-                  style: TextStyle(
-                    fontSize: isSmallScreen ? 13 : 14,
-                    color: Colors.white70,
-                    fontWeight: FontWeight.w500,
+                Expanded(
+                  child: _buildPerKapitaStat(
+                    value: data.vsJawaTengah,
+                    label: 'vs Jawa Tengah',
+                    icon: Icons.emoji_events_rounded,
+                    color: bpsGreen,
+                    isSmallScreen: isSmallScreen,
                   ),
                 ),
-                SizedBox(height: isSmallScreen ? 8 : 12),
-                Text(
-                  data.pdrbPerKapita,
-                  style: TextStyle(
-                    fontSize: isSmallScreen ? 28 : 32,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                SizedBox(height: isSmallScreen ? 8 : 12),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isSmallScreen ? 12 : 16,
-                    vertical: isSmallScreen ? 6 : 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.trending_up_rounded,
-                        color: Colors.white,
-                        size: isSmallScreen ? 14 : 16,
-                      ),
-                      SizedBox(width: isSmallScreen ? 4 : 6),
-                      Text(
-                        'Tahun ${data.tahun}',
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 12 : 14,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                SizedBox(width: sizing.gridSpacing),
+                Expanded(
+                  child: _buildPerKapitaStat(
+                    value: data.tpt,
+                    label: 'Tingkat Pengangguran',
+                    icon: Icons.work_off_rounded,
+                    color: bpsOrange,
+                    isSmallScreen: isSmallScreen,
                   ),
                 ),
               ],
             ),
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildPDRBComparisonCard(
-                  value: data.vsJawaTengah,
-                  label: 'vs Jawa Tengah',
-                  icon: Icons.compare_arrows_rounded,
-                  color: bpsGreen,
-                  isSmallScreen: isSmallScreen,
-                ),
-              ),
-              SizedBox(width: sizing.gridSpacing),
-              Expanded(
-                child: _buildPDRBComparisonCard(
-                  value: data.tpt,
-                  label: 'TPT',
-                  icon: Icons.work_off_rounded,
-                  color: bpsOrange,
-                  isSmallScreen: isSmallScreen,
-                ),
-              ),
-            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPDRBComparisonCard({
+  /// Headline "feature" card for PDRB per kapita — a filled blue field with a
+  /// large faint watermark, year pill and oversized white value.
+  Widget _buildPerKapitaCard(EkonomiData data, bool isSmallScreen) {
+    final pad = isSmallScreen ? 18.0 : 22.0;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF38A8E0), bpsBlue, Color(0xFF1B6C9C)],
+            stops: [0.0, 0.45, 1.0],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: bpsBlue.withOpacity(0.28),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Oversized watermark, bleeding off the bottom-right edge.
+            Positioned(
+              right: -20,
+              bottom: -26,
+              child: Icon(
+                Icons.account_balance_wallet_rounded,
+                size: isSmallScreen ? 124 : 150,
+                color: Colors.white.withOpacity(0.10),
+              ),
+            ),
+            // Soft top-left sheen for depth.
+            Positioned(
+              left: -40,
+              top: -50,
+              child: Container(
+                width: 140,
+                height: 140,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(0.06),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(pad),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'PDRB PER KAPITA',
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 10.5 : 11.5,
+                          color: Colors.white.withOpacity(0.85),
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isSmallScreen ? 9 : 11,
+                          vertical: isSmallScreen ? 4 : 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.18),
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        child: Text(
+                          '${data.tahun}',
+                          style: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            fontSize: isSmallScreen ? 11 : 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: isSmallScreen ? 14 : 18),
+                  Text(
+                    data.pdrbPerKapita,
+                    style: TextStyle(
+                      fontFamily: 'PlusJakartaSans',
+                      fontSize: isSmallScreen ? 27 : 33,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      letterSpacing: -1.0,
+                      height: 1.05,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                  SizedBox(height: isSmallScreen ? 7 : 9),
+                  Row(
+                    children: [
+                      Container(
+                        width: 14,
+                        height: 2.5,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Atas dasar harga berlaku',
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 11.5 : 12.5,
+                          color: Colors.white.withOpacity(0.82),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Supporting stat tile paired with the per-kapita feature card. Soft tinted
+  /// field, filled icon chip, faint watermark — echoes the hero's language.
+  Widget _buildPerKapitaStat({
     required String value,
     required String label,
     required IconData icon,
     required Color color,
     required bool isSmallScreen,
   }) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withOpacity(0.2),
-          width: 2,
+    final pad = isSmallScreen ? 13.0 : 15.0;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [color.withOpacity(0.12), color.withOpacity(0.04)],
+          ),
+          border: Border.all(color: color.withOpacity(0.22), width: 1.5),
+          borderRadius: BorderRadius.circular(18),
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: color,
-            size: isSmallScreen ? 20 : 24,
-          ),
-          SizedBox(height: isSmallScreen ? 8 : 10),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: isSmallScreen ? 18 : 20,
-              fontWeight: FontWeight.w800,
-              color: bpsTextPrimary,
+        child: Stack(
+          children: [
+            Positioned(
+              right: -14,
+              bottom: -16,
+              child: Icon(
+                icon,
+                size: isSmallScreen ? 64 : 76,
+                color: color.withOpacity(0.08),
+              ),
             ),
-          ),
-          SizedBox(height: isSmallScreen ? 4 : 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: isSmallScreen ? 12 : 14,
-              color: bpsTextSecondary,
-              fontWeight: FontWeight.w600,
+            Padding(
+              padding: EdgeInsets.all(pad),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: isSmallScreen ? 30 : 34,
+                    height: isSmallScreen ? 30 : 34,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: color.withOpacity(0.35),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      icon,
+                      color: Colors.white,
+                      size: isSmallScreen ? 16 : 18,
+                    ),
+                  ),
+                  SizedBox(height: isSmallScreen ? 12 : 14),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontFamily: 'PlusJakartaSans',
+                      fontSize: isSmallScreen ? 19 : 22,
+                      fontWeight: FontWeight.w800,
+                      color: bpsTextPrimary,
+                      letterSpacing: -0.6,
+                      height: 1.0,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                  SizedBox(height: isSmallScreen ? 3 : 4),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 11 : 12,
+                      color: bpsTextSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
+  // ── Trend chart ──────────────────────────────────────────────────────────
 
   Widget _buildChartSection(ResponsiveSizing sizing, bool isSmallScreen) {
     final data = currentData!;
     final double chartHeight = isSmallScreen ? 180 : 220;
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return _panel(
+      isSmallScreen: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.show_chart_rounded,
-                color: bpsBlue,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Grafik Pertumbuhan Ekonomi',
-                      style: TextStyle(
-                        fontSize: isSmallScreen
-                            ? sizing.groupTitleSize - 2
-                            : sizing.groupTitleSize,
-                        fontWeight: FontWeight.w700,
-                        color: bpsTextPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Tren Pertumbuhan Tahun 2020–2025 (%)',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 12 : 14,
-                        color: bpsTextSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          _sectionHead(
+            title: 'Tren Pertumbuhan',
+            subtitle: '2020 – 2025 (%)',
+            isSmallScreen: isSmallScreen,
           ),
           SizedBox(height: isSmallScreen ? 12 : 16),
           Wrap(
             spacing: isSmallScreen ? 8 : 12,
             runSpacing: isSmallScreen ? 8 : 12,
-            alignment: WrapAlignment.center,
             children: [
               _buildLegendItem('Kota Semarang', bpsBlue, isSmallScreen),
               _buildLegendItem('Jawa Tengah', bpsOrange, isSmallScreen),
             ],
           ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
+          SizedBox(height: isSmallScreen ? 16 : 20),
           SizedBox(
             height: chartHeight,
             child: LineChart(
@@ -1045,19 +980,16 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       },
                     ),
                   ),
-                  rightTitles: const AxisTitles(
-                    
-                  ),
-                  topTitles: const AxisTitles(
-                    
-                  ),
+                  rightTitles: const AxisTitles(),
+                  topTitles: const AxisTitles(),
                 ),
                 lineTouchData: LineTouchData(
                   touchTooltipData: LineTouchTooltipData(
                     getTooltipColor: (touchedSpot) => Colors.white,
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots.map((spot) {
-                        final label = spot.barIndex == 0 ? 'Semarang' : 'Jawa Tengah';
+                        final label =
+                            spot.barIndex == 0 ? 'Semarang' : 'Jawa Tengah';
                         final yearData = spot.barIndex == 0
                             ? data.semarangData[spot.x.toInt()]
                             : data.jatengData[spot.x.toInt()];
@@ -1071,7 +1003,8 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                           children: [
                             const TextSpan(text: '\n'),
                             TextSpan(
-                              text: '${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}%',
+                              text:
+                                  '${NumberFormatUtils.formatValue(spot.y, decimalPlaces: 2)}%',
                               style: TextStyle(
                                 color: spot.barIndex == 0 ? bpsBlue : bpsOrange,
                                 fontWeight: FontWeight.w700,
@@ -1090,7 +1023,6 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                 minY: -3,
                 maxY: 7,
                 lineBarsData: [
-                  // Kota Semarang Line
                   LineChartBarData(
                     spots: data.semarangData.asMap().entries.map((e) {
                       return FlSpot(e.key.toDouble(), e.value.value);
@@ -1121,7 +1053,6 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                       ),
                     ),
                   ),
-                  // Jawa Tengah Line
                   LineChartBarData(
                     spots: data.jatengData.asMap().entries.map((e) {
                       return FlSpot(e.key.toDouble(), e.value.value);
@@ -1140,9 +1071,7 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                         );
                       },
                     ),
-                    belowBarData: BarAreaData(
-                      
-                    ),
+                    belowBarData: BarAreaData(),
                   ),
                 ],
               ),
@@ -1154,88 +1083,44 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
   }
 
   Widget _buildLegendItem(String label, Color color, bool isSmallScreen) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 10 : 12,
-        vertical: isSmallScreen ? 6 : 8,
-      ),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1.5,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: isSmallScreen ? 14 : 16,
+          height: 4,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+          ),
         ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: isSmallScreen ? 8 : 10,
-            height: isSmallScreen ? 8 : 10,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+        SizedBox(width: isSmallScreen ? 5 : 6),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: isSmallScreen ? 12 : 13,
+            color: bpsTextSecondary,
+            fontWeight: FontWeight.w600,
           ),
-          SizedBox(width: isSmallScreen ? 4 : 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: isSmallScreen ? 12 : 14,
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
+  // ── Ranking ────────────────────────────────────────────────────────────────
+
   Widget _buildRankingSection(ResponsiveSizing sizing, bool isSmallScreen) {
-    // Show loading indicator if data is still loading
     if (_isLoadingRankings) {
-      return Container(
-        padding: EdgeInsets.all(isSmallScreen
-            ? sizing.statsCardPadding - 4
-            : sizing.statsCardPadding),
-        decoration: BoxDecoration(
-          color: bpsCardBg,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: bpsBorder, width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+      return _panel(
+        isSmallScreen: isSmallScreen,
         child: Column(
           children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.emoji_events_rounded,
-                  color: bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
-                SizedBox(width: sizing.itemSpacing),
-                Expanded(
-                  child: Text(
-                    'Peringkat PDRB Jawa Tengah',
-                    style: TextStyle(
-                      fontSize: isSmallScreen
-                          ? sizing.groupTitleSize - 2
-                          : sizing.groupTitleSize,
-                      fontWeight: FontWeight.w700,
-                      color: bpsTextPrimary,
-                    ),
-                  ),
-                ),
-              ],
+            _sectionHead(
+              title: 'Peringkat PDRB',
+              accent: bpsOrange,
+              isSmallScreen: isSmallScreen,
             ),
-            SizedBox(height: isSmallScreen ? 20 : 30),
+            SizedBox(height: isSmallScreen ? 24 : 32),
             const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(bpsBlue),
             ),
@@ -1247,57 +1132,25 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
                 color: bpsTextSecondary,
               ),
             ),
+            SizedBox(height: isSmallScreen ? 8 : 12),
           ],
         ),
       );
     }
 
-    // Use loaded data from CSV
     final rankingData = _rankings;
 
-    // Check if data is empty
     if (rankingData.isEmpty) {
-      return Container(
-        padding: EdgeInsets.all(isSmallScreen
-            ? sizing.statsCardPadding - 4
-            : sizing.statsCardPadding),
-        decoration: BoxDecoration(
-          color: bpsCardBg,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: bpsBorder, width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+      return _panel(
+        isSmallScreen: isSmallScreen,
         child: Column(
           children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.emoji_events_rounded,
-                  color: bpsOrange,
-                  size: isSmallScreen ? 16 : 20,
-                ),
-                SizedBox(width: sizing.itemSpacing),
-                Expanded(
-                  child: Text(
-                    'Peringkat PDRB Jawa Tengah',
-                    style: TextStyle(
-                      fontSize: isSmallScreen
-                          ? sizing.groupTitleSize - 2
-                          : sizing.groupTitleSize,
-                      fontWeight: FontWeight.w700,
-                      color: bpsTextPrimary,
-                    ),
-                  ),
-                ),
-              ],
+            _sectionHead(
+              title: 'Peringkat PDRB',
+              accent: bpsOrange,
+              isSmallScreen: isSmallScreen,
             ),
-            SizedBox(height: isSmallScreen ? 20 : 30),
+            SizedBox(height: isSmallScreen ? 20 : 28),
             Icon(
               Icons.error_outline_rounded,
               color: bpsRed,
@@ -1325,225 +1178,195 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
       );
     }
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return _panel(
+      isSmallScreen: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _sectionHead(
+            title: 'Peringkat PDRB',
+            subtitle: 'Top 10 • Jawa Tengah 2024',
+            accent: bpsOrange,
+            isSmallScreen: isSmallScreen,
+          ),
+          SizedBox(height: isSmallScreen ? 14 : 18),
+          ...() {
+            final maxPdrb = rankingData
+                .map((e) => e.pdrb)
+                .fold<double>(0, (a, b) => b > a ? b : a);
+            return rankingData.map(
+                (item) => _buildRankRow(item, maxPdrb, isSmallScreen));
+          }(),
+          SizedBox(height: isSmallScreen ? 6 : 8),
           Row(
             children: [
               Icon(
-                Icons.emoji_events_rounded,
-                color: bpsOrange,
-                size: isSmallScreen ? 16 : 20,
+                Icons.info_outline_rounded,
+                color: bpsTextLabel,
+                size: isSmallScreen ? 14 : 16,
               ),
-              SizedBox(width: sizing.itemSpacing),
+              SizedBox(width: isSmallScreen ? 6 : 8),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Text(
+                  'Semarang menempati peringkat #1 dari 35 kota/kabupaten di Jawa Tengah',
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 11 : 12.5,
+                    color: bpsTextSecondary,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Medal colors for the podium positions.
+  Color _medalColor(int rank) {
+    switch (rank) {
+      case 1:
+        return const Color(0xFFF5B301); // gold
+      case 2:
+        return const Color(0xFF9AA5B1); // silver
+      case 3:
+        return const Color(0xFFCD7F32); // bronze
+      default:
+        return bpsTextLabel;
+    }
+  }
+
+  /// One ranking row: medal-tinted rank badge, name, value and a proportional
+  /// magnitude bar so the gap between cities reads at a glance.
+  Widget _buildRankRow(PDRBRanking item, double maxPdrb, bool isSmallScreen) {
+    final isSemarang = item.isKotaSemarang;
+    final isPodium = item.rank <= 3;
+    final accent = isSemarang ? bpsOrange : _medalColor(item.rank);
+    final ratio = maxPdrb > 0 ? (item.pdrb / maxPdrb).clamp(0.04, 1.0) : 0.0;
+
+    return Container(
+      margin: EdgeInsets.only(bottom: isSmallScreen ? 7 : 9),
+      padding: EdgeInsets.fromLTRB(
+        isSmallScreen ? 10 : 12,
+        isSmallScreen ? 9 : 11,
+        isSmallScreen ? 12 : 14,
+        isSmallScreen ? 10 : 12,
+      ),
+      decoration: BoxDecoration(
+        color: isSemarang ? bpsOrange.withOpacity(0.07) : bpsCardBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isSemarang ? bpsOrange.withOpacity(0.45) : bpsBorder,
+          width: isSemarang ? 1.5 : 1,
+        ),
+        boxShadow: isSemarang
+            ? [
+                BoxShadow(
+                  color: bpsOrange.withOpacity(0.15),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              // Rank badge — filled medal for podium, soft tint otherwise.
+              Container(
+                width: isSmallScreen ? 30 : 34,
+                height: isSmallScreen ? 30 : 34,
+                decoration: BoxDecoration(
+                  color: (isSemarang || isPodium)
+                      ? accent
+                      : accent.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: (isSemarang || isPodium)
+                      ? [
+                          BoxShadow(
+                            color: accent.withOpacity(0.35),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Center(
+                  child: isPodium && !isSemarang
+                      ? Icon(
+                          Icons.workspace_premium_rounded,
+                          color: Colors.white,
+                          size: isSmallScreen ? 17 : 19,
+                        )
+                      : Text(
+                          '${item.rank}',
+                          style: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            fontSize: isSmallScreen ? 13 : 15,
+                            fontWeight: FontWeight.w800,
+                            color: isSemarang ? Colors.white : accent,
+                          ),
+                        ),
+                ),
+              ),
+              SizedBox(width: isSmallScreen ? 10 : 12),
+              Expanded(
+                child: Row(
                   children: [
-                    Text(
-                      'Peringkat PDRB Jawa Tengah',
-                      style: TextStyle(
-                        fontSize: isSmallScreen
-                            ? sizing.groupTitleSize - 2
-                            : sizing.groupTitleSize,
-                        fontWeight: FontWeight.w700,
-                        color: bpsTextPrimary,
-                      ),
-                    ),
-                    SizedBox(height: isSmallScreen ? 2 : 4),
-                    Text(
-                      'Top 10 Kota/Kabupaten 2024',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 12 : 14,
-                        color: bpsTextSecondary,
+                    if (isSemarang) ...[
+                      Icon(Icons.star_rounded,
+                          color: bpsOrange, size: isSmallScreen ? 14 : 16),
+                      SizedBox(width: isSmallScreen ? 4 : 6),
+                    ],
+                    Flexible(
+                      child: Text(
+                        item.nama,
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 13 : 14.5,
+                          fontWeight:
+                              isSemarang ? FontWeight.w700 : FontWeight.w600,
+                          color: isSemarang ? bpsOrange : bpsTextPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
               ),
+              Text(
+                item.formattedPdrb,
+                style: TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: isSmallScreen ? 12.5 : 14,
+                  fontWeight: FontWeight.w700,
+                  color: isSemarang ? bpsOrange : bpsTextPrimary,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
+              ),
             ],
           ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-
-          // Header Row
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: isSmallScreen ? 12 : 16,
-              vertical: isSmallScreen ? 8 : 10,
-            ),
-            decoration: BoxDecoration(
-              color: bpsBlue.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
+          SizedBox(height: isSmallScreen ? 8 : 9),
+          // Proportional magnitude bar.
+          ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: Stack(
               children: [
-                SizedBox(
-                  width: isSmallScreen ? 40 : 50,
-                  child: Text(
-                    'Rank',
-                    style: TextStyle(
-                      fontSize: isSmallScreen ? 12 : 14,
-                      fontWeight: FontWeight.w700,
-                      color: bpsBlue,
-                    ),
-                  ),
+                Container(
+                  height: isSmallScreen ? 4 : 5,
+                  color: bpsBorder.withOpacity(0.5),
                 ),
-                Expanded(
-                  child: Text(
-                    'Kota/Kabupaten',
-                    style: TextStyle(
-                      fontSize: isSmallScreen ? 12 : 14,
-                      fontWeight: FontWeight.w700,
-                      color: bpsBlue,
-                    ),
-                  ),
-                ),
-                Text(
-                  'PDRB (Milyar)',
-                  style: TextStyle(
-                    fontSize: isSmallScreen ? 12 : 14,
-                    fontWeight: FontWeight.w700,
-                    color: bpsBlue,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: isSmallScreen ? 8 : 10),
-
-          // Data Rows
-          ...rankingData.map((item) {
-            final isSemarang = item.isKotaSemarang;
-            return Container(
-              margin: EdgeInsets.only(bottom: isSmallScreen ? 6 : 8),
-              padding: EdgeInsets.symmetric(
-                horizontal: isSmallScreen ? 12 : 16,
-                vertical: isSmallScreen ? 10 : 12,
-              ),
-              decoration: BoxDecoration(
-                color:
-                    isSemarang ? bpsOrange.withOpacity(0.08) : bpsBackground,
-                borderRadius: BorderRadius.circular(10),
-                border: isSemarang
-                    ? Border.all(color: bpsOrange.withOpacity(0.4), width: 1.5)
-                    : null,
-              ),
-              child: Row(
-                children: [
-                  // Rank
-                  Container(
-                    width: isSmallScreen ? 32 : 36,
-                    height: isSmallScreen ? 32 : 36,
+                FractionallySizedBox(
+                  widthFactor: ratio.toDouble(),
+                  child: Container(
+                    height: isSmallScreen ? 4 : 5,
                     decoration: BoxDecoration(
-                      color: isSemarang
-                          ? bpsOrange
-                          : item.rank <= 3
-                              ? bpsBlue.withOpacity(0.15)
-                              : bpsBackground,
-                      borderRadius: BorderRadius.circular(8),
-                      border: item.rank <= 3 && !isSemarang
-                          ? Border.all(color: bpsBlue.withOpacity(0.3))
-                          : null,
-                    ),
-                    child: Center(
-                      child: Text(
-                        '#${item.rank}',
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 11 : 13,
-                          fontWeight: FontWeight.w700,
-                          color: isSemarang
-                              ? Colors.white
-                              : item.rank <= 3
-                                  ? bpsBlue
-                                  : bpsTextSecondary,
-                        ),
+                      gradient: LinearGradient(
+                        colors: [accent.withOpacity(0.55), accent],
                       ),
-                    ),
-                  ),
-                  SizedBox(width: isSmallScreen ? 8 : 12),
-
-                  // City Name
-                  Expanded(
-                    child: Row(
-                      children: [
-                        if (isSemarang) ...[
-                          Icon(
-                            Icons.star_rounded,
-                            color: bpsOrange,
-                            size: isSmallScreen ? 14 : 16,
-                          ),
-                          SizedBox(width: isSmallScreen ? 4 : 6),
-                        ],
-                        Flexible(
-                          child: Text(
-                            item.nama,
-                            style: TextStyle(
-                              fontSize: isSmallScreen ? 13 : 15,
-                              fontWeight: isSemarang
-                                  ? FontWeight.w700
-                                  : FontWeight.w600,
-                              color: isSemarang ? bpsOrange : bpsTextPrimary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // PDRB Value
-                  Text(
-                    item.formattedPdrb,
-                    style: TextStyle(
-                      fontSize: isSmallScreen ? 12 : 14,
-                      fontWeight: FontWeight.w700,
-                      color: isSemarang ? bpsOrange : bpsTextPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-
-          SizedBox(height: isSmallScreen ? 8 : 10),
-
-          // Note
-          Container(
-            padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-            decoration: BoxDecoration(
-              color: bpsBlue.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.info_outline_rounded,
-                  color: bpsBlue,
-                  size: isSmallScreen ? 14 : 16,
-                ),
-                SizedBox(width: isSmallScreen ? 6 : 8),
-                Expanded(
-                  child: Text(
-                    'Semarang menempati peringkat #1 dari 35 kota/kabupaten di Jawa Tengah',
-                    style: TextStyle(
-                      fontSize: isSmallScreen ? 11 : 13,
-                      color: bpsTextSecondary,
+                      borderRadius: BorderRadius.circular(3),
                     ),
                   ),
                 ),
@@ -1571,16 +1394,9 @@ class _PertumbuhanEkonomiScreenState extends State<PertumbuhanEkonomiScreen>
       return const SizedBox.shrink();
     }
 
-    // Parse growth values from string (e.g., "5,62%" -> 5.62)
-    double parseGrowth(String growthStr) {
-      final cleaned = growthStr.replaceAll('%', '').replaceAll(',', '.');
-      return double.tryParse(cleaned) ?? 0.0;
-    }
+    final latestGrowth = _parseGrowth(latestData.pertumbuhanEkonomi);
+    final firstGrowth = _parseGrowth(firstData.pertumbuhanEkonomi);
 
-    final latestGrowth = parseGrowth(latestData.pertumbuhanEkonomi);
-    final firstGrowth = parseGrowth(firstData.pertumbuhanEkonomi);
-
-    // Calculate average growth from chart data
     double totalGrowth = 0;
     int count = 0;
     for (final dataPoint in latestData.semarangData) {

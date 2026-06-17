@@ -8,6 +8,7 @@ import 'number_format_utils.dart';
 import 'kesimpulan_widget.dart';
 import 'dart:async';
 import 'app_theme.dart';
+import 'widgets/section_kit.dart';
 
 // Poverty data model - Made immutable for better performance
 @immutable
@@ -310,60 +311,12 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bpsBlue,
-        boxShadow: [
-          BoxShadow(
-            color: bpsBlue.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.all(sizing.horizontalPadding),
-          child: Row(
-            children: [
-              InkWell(
-                onTap: () => Navigator.of(context).pop(),
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                  child: Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: isSmallScreen ? 20 : 24,
-                  ),
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Data Kemiskinan',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isSmallScreen
-                        ? sizing.headerTitleSize + 4
-                        : sizing.headerTitleSize + 8,
-                    fontWeight: FontWeight.w700,
-                    height: 1.1,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Icon(
-                Icons.volunteer_activism_rounded,
-                color: Colors.white,
-                size: isSmallScreen ? 20 : 24,
-              ),
-            ],
-          ),
-        ),
-      ),
+    return CategoryHeader(
+      overline: 'INDIKATOR SOSIAL',
+      title: 'Data Kemiskinan',
+      icon: Icons.volunteer_activism_rounded,
+      accent: bpsGreen,
+      isSmall: isSmallScreen,
     );
   }
 }
@@ -438,13 +391,28 @@ class _KemiskinanScreenContent extends StatelessWidget {
             delegate: SliverChildListDelegate([
               _buildYearSelector(),
               SizedBox(height: sizing.sectionSpacing),
-              _buildPovertyStatsGrid(context, currentData),
+              _buildHero(context, sizing, isSmallScreen),
               SizedBox(height: sizing.sectionSpacing),
-              _PovertyTrendChart(
-                title: 'Jumlah Penduduk Miskin (Ribu Jiwa)',
-                subtitle:
-                    'Tren dari tahun ${cachedSortedYears.first} hingga ${cachedSortedYears.last}',
-                icon: Icons.people_outline,
+              SpineSection(
+                number: '01',
+                overline: 'Indikator',
+                title: 'Indikator Utama Kemiskinan',
+                subtitle: 'Ketuk untuk penjelasan',
+                accent: bpsGreen,
+                surface: false,
+                isFirst: true,
+                isSmall: isSmallScreen,
+                child: _buildPovertyStatsGrid(context, currentData),
+              ),
+              SpineSection(
+                number: '02',
+                overline: 'Tren',
+                title: 'Jumlah Penduduk Miskin',
+                subtitle: 'Ribu jiwa • Kota Semarang',
+                accent: bpsGreen,
+                surface: false,
+                isSmall: isSmallScreen,
+                child: _PovertyTrendChart(
                 accentColor: bpsRed,
                 years: cachedSortedYears,
                 values: cachedSortedYears
@@ -463,13 +431,17 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 baseYear: cachedSortedYears.first,
                 sizing: sizing,
                 isSmallScreen: isSmallScreen,
+                ),
               ),
-              SizedBox(height: sizing.sectionSpacing),
-              _PovertyTrendChart(
-                title: 'Persentase Kemiskinan (%)',
-                subtitle:
-                    'Tren dari tahun ${cachedSortedYears.first} hingga ${cachedSortedYears.last}',
-                icon: Icons.percent,
+              SpineSection(
+                number: '03',
+                overline: 'Tren',
+                title: 'Persentase Kemiskinan',
+                subtitle: 'Persen • Kota Semarang',
+                accent: bpsGreen,
+                surface: false,
+                isSmall: isSmallScreen,
+                child: _PovertyTrendChart(
                 accentColor: bpsOrange,
                 years: cachedSortedYears,
                 values: cachedSortedYears
@@ -488,12 +460,27 @@ class _KemiskinanScreenContent extends StatelessWidget {
                 baseYear: cachedSortedYears.first,
                 sizing: sizing,
                 isSmallScreen: isSmallScreen,
+                ),
               ),
-              SizedBox(height: sizing.sectionSpacing),
-              _PovertyInformationPanel(
-                  sizing: sizing, isSmallScreen: isSmallScreen),
-              SizedBox(height: sizing.sectionSpacing),
-              _buildKesimpulanCard(context, sizing, isSmallScreen),
+              SpineSection(
+                number: '04',
+                overline: 'Metodologi',
+                title: 'Metodologi Pengukuran',
+                accent: bpsGreen,
+                surface: false,
+                isSmall: isSmallScreen,
+                child: _PovertyInformationPanel(
+                    sizing: sizing, isSmallScreen: isSmallScreen),
+              ),
+              SpineSection(
+                overline: 'Ringkasan',
+                title: 'Kesimpulan',
+                accent: bpsGreen,
+                surface: false,
+                isLast: true,
+                isSmall: isSmallScreen,
+                child: _buildKesimpulanCard(context, sizing, isSmallScreen),
+              ),
               SizedBox(height: sizing.sectionSpacing),
             ]),
           ),
@@ -536,185 +523,42 @@ class _KemiskinanScreenContent extends StatelessWidget {
   }
 
   Widget _buildYearSelector() {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_today_rounded,
-                color: bpsBlue,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Text(
-                'Pilih Tahun Data',
-                style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? sizing.groupTitleSize - 2
-                      : sizing.groupTitleSize,
-                  fontWeight: FontWeight.w700,
-                  color: bpsTextPrimary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          SizedBox(
-            height: isSmallScreen ? 38 : 42,
-            child: ListView.separated(
-              controller: yearScrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: cachedSortedYears.length,
-              separatorBuilder: (_, __) =>
-                  SizedBox(width: isSmallScreen ? 6 : 8),
-              itemBuilder: (_, i) {
-                final year = cachedSortedYears[i];
-                final isSelected = year == selectedYear;
-                return Material(
-                  color: isSelected ? bpsBlue : bpsBackground,
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    onTap: () => onYearSelected(year),
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 16 : 20,
-                        vertical: isSmallScreen ? 8 : 10,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: isSelected ? bpsBlue : bpsBorder,
-                          width: isSelected ? 2 : 1.5,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: bpsBlue.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: Text(
-                        year.toString(),
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 14 : 16,
-                          fontWeight:
-                              isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? Colors.white : bpsTextSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+    return YearRail(
+      years: [...cachedSortedYears]..sort(),
+      selected: selectedYear,
+      onSelect: onYearSelected,
+      accent: bpsGreen,
+      isSmall: isSmallScreen,
+      controller: yearScrollController,
+    );
+  }
+
+  Widget _buildHero(BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
+    final data = yearlyData[selectedYear];
+    if (data == null) return const SizedBox.shrink();
+    final sorted = [...cachedSortedYears]..sort();
+    final spark = sorted.map((y) => yearlyData[y]?.persentaseValue ?? 0.0).toList();
+    return IndicatorHero(
+      overline: 'PERSENTASE KEMISKINAN',
+      value: data.persentaseDisplay,
+      subtitle: 'Tingkat kemiskinan • Kota Semarang',
+      badge: 'Tahun $selectedYear',
+      accent: bpsGreen,
+      sparkline: spark.length > 1 ? spark : null,
+      isSmall: isSmallScreen,
+      facts: [
+        HeroFact('Penduduk Miskin', data.pendudukMiskinDisplay),
+        HeroFact('Garis Kemiskinan', data.garisMiskin),
+      ],
     );
   }
 
   Widget _buildPovertyStatsGrid(BuildContext context, PovertyData data) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: bpsBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.analytics_rounded,
-                  color: bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Indikator Utama Kemiskinan',
-                  style: TextStyle(
-                    fontSize: isSmallScreen
-                        ? sizing.groupTitleSize - 2
-                        : sizing.groupTitleSize,
-                    fontWeight: FontWeight.w700,
-                    color: bpsTextPrimary,
-                  ),
-                ),
-              ),
-              if (!isSmallScreen) ...[
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: sizing.itemSpacing,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: bpsBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.touch_app_rounded,
-                        color: bpsBlue,
-                        size: 14,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        'Tap untuk detail',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: bpsBlue,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
           Column(
             children: [
               _buildCompactIndicatorRow(
@@ -1069,9 +913,6 @@ class _KemiskinanScreenContent extends StatelessWidget {
 // Year selector widget
 // Unified poverty trend chart widget - eliminates 400+ lines of duplication
 class _PovertyTrendChart extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
   final Color accentColor;
   final List<int> years;
   final List<double> values;
@@ -1088,9 +929,6 @@ class _PovertyTrendChart extends StatelessWidget {
   final bool isSmallScreen;
 
   const _PovertyTrendChart({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
     required this.accentColor,
     required this.years,
     required this.values,
@@ -1132,69 +970,12 @@ class _PovertyTrendChart extends StatelessWidget {
     final perubahan = baseValue - currentValue;
     final isPositive = perubahan > 0;
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: accentColor.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  icon,
-                  color: accentColor,
-                  size: isSmallScreen ? 16 : 20,
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: isSmallScreen
-                            ? sizing.groupTitleSize - 2
-                            : sizing.groupTitleSize,
-                        fontWeight: FontWeight.w800,
-                        color: bpsTextPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 12 : 13,
-                        color: bpsTextSecondary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
+          // header now supplied by the spine section
           RepaintBoundary(
             child: SizedBox(
               height: isSmallScreen ? 220 : 240,
@@ -1437,48 +1218,12 @@ class _PovertyInformationPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: bpsBlue.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.info_outline_rounded,
-                  color: bpsBlue,
-                  size: isSmallScreen ? 16 : 20,
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Metodologi Pengukuran Kemiskinan',
-                  style: TextStyle(
-                    fontSize: isSmallScreen
-                        ? sizing.groupTitleSize - 2
-                        : sizing.groupTitleSize,
-                    fontWeight: FontWeight.w800,
-                    color: bpsTextPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
+          // header now supplied by the spine section
           Text(
             'BPS mengukur kemiskinan menggunakan pendekatan kebutuhan dasar (basic need approach). Kemiskinan dipandang sebagai ketidakmampuan ekonomi seseorang dalam memenuhi kebutuhan dasar makanan maupun bukan makanan.',
             style: TextStyle(

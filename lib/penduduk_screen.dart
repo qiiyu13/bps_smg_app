@@ -9,6 +9,7 @@ import 'kesimpulan_widget.dart';
 import 'services/github_data_service.dart';
 import 'dart:async';
 import 'app_theme.dart';
+import 'widgets/section_kit.dart';
 
 class SemarangData {
   final int year;
@@ -683,17 +684,67 @@ class _PendudukScreenState extends State<PendudukScreen>
                     delegate: SliverChildListDelegate([
                       _buildYearSelector(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
-                      _buildPopulationStats(sizing, isSmallScreen),
+                      _buildHero(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
-                      _buildPopulationChart(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildAgeDistributionChart(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildAdministrativeData(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildDistrictDensitySection(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildKesimpulanCard(sizing, isSmallScreen),
+                      SpineSection(
+                        number: '01',
+                        overline: 'Indikator',
+                        title: 'Indikator Utama Penduduk',
+                        subtitle: 'Ketuk untuk penjelasan',
+                        accent: bpsGreen,
+                        surface: false,
+                        isFirst: true,
+                        isSmall: isSmallScreen,
+                        child: _buildPopulationStats(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '02',
+                        overline: 'Tren',
+                        title: 'Laju Pertumbuhan Penduduk',
+                        subtitle: 'Persentase • Kota Semarang',
+                        accent: bpsGreen,
+                        surface: false,
+                        isSmall: isSmallScreen,
+                        child: _buildPopulationChart(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '03',
+                        overline: 'Struktur',
+                        title: 'Distribusi Umur',
+                        accent: bpsGreen,
+                        surface: false,
+                        isSmall: isSmallScreen,
+                        child:
+                            _buildAgeDistributionChart(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '04',
+                        overline: 'Administrasi',
+                        title: 'Data Administrasi',
+                        accent: bpsGreen,
+                        surface: false,
+                        isSmall: isSmallScreen,
+                        child: _buildAdministrativeData(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '05',
+                        overline: 'Kepadatan',
+                        title: 'Kepadatan per Kecamatan',
+                        accent: bpsGreen,
+                        surface: false,
+                        isSmall: isSmallScreen,
+                        child: _buildDistrictDensitySection(
+                            sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        overline: 'Ringkasan',
+                        title: 'Kesimpulan',
+                        accent: bpsGreen,
+                        surface: false,
+                        isLast: true,
+                        isSmall: isSmallScreen,
+                        child: _buildKesimpulanCard(sizing, isSmallScreen),
+                      ),
                       SizedBox(height: sizing.sectionSpacing),
                     ]),
                   ),
@@ -708,241 +759,57 @@ class _PendudukScreenState extends State<PendudukScreen>
 
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bpsGreen,
-        boxShadow: [
-          BoxShadow(
-              color: bpsGreen.withOpacity(0.2),
-              blurRadius: 20,
-              offset: const Offset(0, 4))
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.all(sizing.horizontalPadding),
-          child: Row(
-            children: [
-              InkWell(
-                onTap: () => Navigator.of(context).pop(),
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                  child: Icon(Icons.arrow_back_rounded,
-                      color: Colors.white, size: isSmallScreen ? 20 : 24),
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text('Data Penduduk',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: isSmallScreen
-                            ? sizing.headerTitleSize + 4
-                            : sizing.headerTitleSize + 8,
-                        fontWeight: FontWeight.w700,
-                        height: 1.1),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
-              ),
-              Icon(Icons.groups_rounded,
-                  color: Colors.white, size: isSmallScreen ? 20 : 24),
-            ],
-          ),
-        ),
-      ),
+    return CategoryHeader(
+      overline: 'INDIKATOR SOSIAL',
+      title: 'Data Penduduk',
+      icon: Icons.groups_rounded,
+      accent: bpsGreen,
+      isSmall: isSmallScreen,
     );
   }
 
   Widget _buildYearSelector(ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: bpsGreen.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.calendar_today_rounded,
-                  color: bpsGreen,
-                  size: isSmallScreen ? 16 : 20,
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Text(
-                'Pilih Tahun Data',
-                style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? sizing.groupTitleSize - 2
-                      : sizing.groupTitleSize,
-                  fontWeight: FontWeight.w700,
-                  color: bpsTextPrimary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          SizedBox(
-            height: isSmallScreen ? 38 : 42,
-            child: ListView.separated(
-              controller: _yearScrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: availableYears.length,
-              separatorBuilder: (_, __) =>
-                  SizedBox(width: isSmallScreen ? 6 : 8),
-              itemBuilder: (_, i) {
-                final year = availableYears[i];
-                final isSelected = year == selectedYear;
-                return Material(
-                  color: isSelected ? bpsGreen : bpsBackground,
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    onTap: () => _changeYear(year),
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 16 : 20,
-                        vertical: isSmallScreen ? 8 : 10,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: isSelected ? bpsGreen : bpsBorder,
-                          width: isSelected ? 2 : 1.5,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: bpsGreen.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: Text(
-                        year.toString(),
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 14 : 16,
-                          fontWeight:
-                              isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? Colors.white : bpsTextSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+    return YearRail(
+      years: availableYears,
+      selected: selectedYear,
+      onSelect: _changeYear,
+      accent: bpsGreen,
+      isSmall: isSmallScreen,
+      controller: _yearScrollController,
+    );
+  }
+
+  Widget _buildHero(ResponsiveSizing sizing, bool isSmallScreen) {
+    final data = currentSemarangData;
+    final years = [...availableYears]..sort();
+    final spark = years
+        .map((y) => (semarangDataByYear[y]?.population ?? 0) / 1000000.0)
+        .toList();
+    return IndicatorHero(
+      overline: 'TOTAL PENDUDUK',
+      value: '${data.populationInMillions} Jt',
+      subtitle: 'Jumlah penduduk • Kota Semarang',
+      badge: 'Tahun $selectedYear',
+      accent: bpsGreen,
+      delta: data.growthRate,
+      deltaUnit: '%',
+      sparkline: spark.length > 1 ? spark : null,
+      isSmall: isSmallScreen,
+      facts: [
+        HeroFact('Kepadatan', '${data.densityFormatted}/km²'),
+        HeroFact('Laki-laki', NumberFormatUtils.formatPercentage(data.malePercentage)),
+        HeroFact('Perempuan', NumberFormatUtils.formatPercentage(data.femalePercentage)),
+      ],
     );
   }
 
   Widget _buildPopulationStats(ResponsiveSizing sizing, bool isSmallScreen) {
     final data = currentSemarangData;
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: bpsGreen.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.analytics_rounded,
-                  color: bpsGreen,
-                  size: isSmallScreen ? 16 : 20,
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Indikator Utama Penduduk',
-                  style: TextStyle(
-                    fontSize: isSmallScreen
-                        ? sizing.groupTitleSize - 2
-                        : sizing.groupTitleSize,
-                    fontWeight: FontWeight.w700,
-                    color: bpsTextPrimary,
-                  ),
-                ),
-              ),
-              if (!isSmallScreen) ...[
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: sizing.itemSpacing,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: bpsGreen.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.touch_app_rounded,
-                        color: bpsGreen,
-                        size: 14,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        'Tap untuk detail',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: bpsGreen,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
           Column(
             children: [
               _buildCompactIndicatorRow(
@@ -1313,49 +1180,11 @@ class _PendudukScreenState extends State<PendudukScreen>
     final yRange = maxY - minY;
     final interval = yRange <= 1.0 ? 0.2 : (yRange <= 2.0 ? 0.5 : 1.0);
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-          color: bpsCardBg,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2))
-          ]),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                  decoration: BoxDecoration(
-                      color: bpsGreen.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Icon(Icons.show_chart,
-                      color: bpsGreen, size: isSmallScreen ? 16 : 18)),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                    Text('Laju Pertumbuhan Penduduk (%)',
-                        style: TextStyle(
-                            fontSize: isSmallScreen ? 14 : 16,
-                            fontWeight: FontWeight.w700,
-                            color: bpsTextPrimary)),
-                    Text('Kota Semarang',
-                        style: TextStyle(
-                            fontSize: isSmallScreen ? 11 : 12,
-                            color: bpsTextSecondary))
-                  ])),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 16 : 20),
           Padding(
             padding: const EdgeInsets.only(left: 8),
             child: SizedBox(
@@ -1493,19 +1322,8 @@ class _PendudukScreenState extends State<PendudukScreen>
       _buildAgePieSection('usiaTua', bpsOrange, 2, isSmallScreen),
     ];
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-          color: bpsCardBg,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2))
-          ]),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1735,40 +1553,11 @@ class _PendudukScreenState extends State<PendudukScreen>
 
   Widget _buildAdministrativeData(ResponsiveSizing sizing, bool isSmallScreen) {
     final data = currentSemarangData;
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-          color: bpsCardBg,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2))
-          ]),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                  padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                  decoration: BoxDecoration(
-                      color: bpsGreen.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Icon(Icons.account_balance,
-                      color: bpsGreen, size: isSmallScreen ? 16 : 18)),
-              SizedBox(width: sizing.itemSpacing),
-              Text('Data Administrasi',
-                  style: TextStyle(
-                      fontSize: isSmallScreen ? 14 : 16,
-                      fontWeight: FontWeight.w700,
-                      color: bpsTextPrimary)),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
           Row(
             children: [
               Expanded(
@@ -1823,19 +1612,8 @@ class _PendudukScreenState extends State<PendudukScreen>
   Widget _buildDistrictDensitySection(
       ResponsiveSizing sizing, bool isSmallScreen) {
     final districts = currentDistrictDensity;
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-          color: bpsCardBg,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2))
-          ]),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -8,6 +8,7 @@ import 'responsive_sizing.dart';
 import 'kesimpulan_widget.dart';
 import 'dart:async';
 import 'app_theme.dart';
+import 'widgets/section_kit.dart';
 
 class PengangguranData {
   final int year;
@@ -287,13 +288,47 @@ class _PengangguranScreenState extends State<PengangguranScreen>
                     delegate: SliverChildListDelegate([
                       _buildYearSelector(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
-                      _buildMainIndicators(sizing, isSmallScreen),
+                      _buildHero(sizing, isSmallScreen),
                       SizedBox(height: sizing.sectionSpacing),
-                      _buildTPTChart(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildTPAKChart(sizing, isSmallScreen),
-                      SizedBox(height: sizing.sectionSpacing),
-                      _buildKesimpulanCard(sizing, isSmallScreen),
+                      SpineSection(
+                        number: '01',
+                        overline: 'Indikator',
+                        title: 'Indikator Utama',
+                        accent: bpsGreen,
+                        surface: false,
+                        isFirst: true,
+                        isSmall: isSmallScreen,
+                        child: _buildMainIndicators(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '02',
+                        overline: 'Tren',
+                        title: 'Tingkat Pengangguran Terbuka',
+                        subtitle: 'TPT • Semarang vs Jawa Tengah',
+                        accent: bpsGreen,
+                        surface: false,
+                        isSmall: isSmallScreen,
+                        child: _buildTPTChart(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        number: '03',
+                        overline: 'Tren',
+                        title: 'Tingkat Partisipasi Angkatan Kerja',
+                        subtitle: 'TPAK • Semarang vs Jawa Tengah',
+                        accent: bpsGreen,
+                        surface: false,
+                        isSmall: isSmallScreen,
+                        child: _buildTPAKChart(sizing, isSmallScreen),
+                      ),
+                      SpineSection(
+                        overline: 'Ringkasan',
+                        title: 'Kesimpulan',
+                        accent: bpsGreen,
+                        surface: false,
+                        isLast: true,
+                        isSmall: isSmallScreen,
+                        child: _buildKesimpulanCard(sizing, isSmallScreen),
+                      ),
                       SizedBox(height: sizing.sectionSpacing),
                     ]),
                   ),
@@ -309,168 +344,49 @@ class _PengangguranScreenState extends State<PengangguranScreen>
   // ── HEADER ────────────────────────────────────────────────────────────────
   Widget _buildHeader(
       BuildContext context, ResponsiveSizing sizing, bool isSmallScreen) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bpsBlue,
-        boxShadow: [
-          BoxShadow(
-            color: bpsBlue.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.all(sizing.horizontalPadding),
-          child: Row(
-            children: [
-              // Back button — white semi-transparent pill
-              InkWell(
-                onTap: () => Navigator.of(context).pop(),
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                  child: Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: isSmallScreen ? 20 : 24,
-                  ),
-                ),
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              // Title + subtitle
-              Expanded(
-                child: Text(
-                  'Pengangguran',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isSmallScreen
-                        ? sizing.headerTitleSize + 4
-                        : sizing.headerTitleSize + 8,
-                    fontWeight: FontWeight.w700,
-                    height: 1.1,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              // Icon badge
-              Icon(
-                Icons.work_rounded,
-                color: Colors.white,
-                size: isSmallScreen ? 20 : 24,
-              ),
-            ],
-          ),
-        ),
-      ),
+    return CategoryHeader(
+      overline: 'INDIKATOR SOSIAL',
+      title: 'Pengangguran',
+      icon: Icons.work_off_rounded,
+      accent: bpsGreen,
+      isSmall: isSmallScreen,
     );
   }
 
-  // ── YEAR SELECTOR ─────────────────────────────────────────────────────────
   Widget _buildYearSelector(ResponsiveSizing sizing, bool isSmallScreen) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header row
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_today_rounded,
-                color: bpsBlue,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Text(
-                'Pilih Tahun Data',
-                style: TextStyle(
-                  fontSize: isSmallScreen
-                      ? sizing.groupTitleSize - 2
-                      : sizing.groupTitleSize,
-                  fontWeight: FontWeight.w700,
-                  color: bpsTextPrimary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          SizedBox(
-            height: isSmallScreen ? 38 : 42,
-            child: ListView.separated(
-              controller: _yearScrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: availableYears.length,
-              separatorBuilder: (_, __) =>
-                  SizedBox(width: isSmallScreen ? 6 : 8),
-              itemBuilder: (_, i) {
-                final year = availableYears[i];
-                final isSelected = year == selectedYear;
-                return Material(
-                  color: isSelected ? bpsBlue : bpsBackground,
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
-                    onTap: () => _changeYear(year),
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 16 : 20,
-                        vertical: isSmallScreen ? 8 : 10,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: isSelected ? bpsBlue : bpsBorder,
-                          width: isSelected ? 2 : 1.5,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: bpsBlue.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: Text(
-                        year.toString(),
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 14 : 16,
-                          fontWeight:
-                              isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? Colors.white : bpsTextSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+    return YearRail(
+      years: [...availableYears]..sort(),
+      selected: selectedYear,
+      onSelect: _changeYear,
+      accent: bpsGreen,
+      isSmall: isSmallScreen,
+      controller: _yearScrollController,
     );
   }
 
-  // ── MAIN INDICATORS ───────────────────────────────────────────────────────
+  Widget _buildHero(ResponsiveSizing sizing, bool isSmallScreen) {
+    final data = yearlyData[selectedYear];
+    if (data == null) return const SizedBox.shrink();
+    final sorted = [...availableYears]..sort();
+    final prevData = yearlyData[selectedYear - 1];
+    final delta = prevData != null ? data.tptSemarang - prevData.tptSemarang : null;
+    final spark = sorted.map((y) => yearlyData[y]?.tptSemarang ?? 0.0).toList();
+    return IndicatorHero(
+      overline: 'TINGKAT PENGANGGURAN TERBUKA',
+      value: '${NumberFormatUtils.formatValue(data.tptSemarang, decimalPlaces: 2)}%',
+      subtitle: 'TPT • Kota Semarang',
+      badge: 'Tahun $selectedYear',
+      accent: bpsGreen,
+      delta: delta,
+      sparkline: spark.length > 1 ? spark : null,
+      isSmall: isSmallScreen,
+      facts: [
+        HeroFact('TPAK', '${NumberFormatUtils.formatValue(data.tpakSemarang, decimalPlaces: 2)}%'),
+        HeroFact('TPT Jawa Tengah', '${NumberFormatUtils.formatValue(data.tptJateng, decimalPlaces: 2)}%'),
+      ],
+    );
+  }
+
   Widget _buildMainIndicators(ResponsiveSizing sizing, bool isSmallScreen) {
     final data = yearlyData[selectedYear];
     if (data == null) return const SizedBox.shrink();
@@ -486,50 +402,12 @@ class _PengangguranScreenState extends State<PengangguranScreen>
     final tptColor = tptChange < 0 ? bpsGreen : bpsRed;
     final tpakColor = tpakChange > 0 ? bpsGreen : bpsOrange;
 
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section header
-          Row(
-            children: [
-              Icon(
-                Icons.analytics_rounded,
-                color: bpsBlue,
-                size: isSmallScreen ? 16 : 20,
-              ),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  'Indikator Utama $selectedYear',
-                  style: TextStyle(
-                    fontSize: isSmallScreen
-                        ? sizing.groupTitleSize - 2
-                        : sizing.groupTitleSize,
-                    fontWeight: FontWeight.w700,
-                    color: bpsTextPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          // Indicator rows
+          // Indicator rows (header supplied by the spine section)
           _buildIndicatorRow(
             label: 'TPT Kota Semarang',
             value:
@@ -648,9 +526,6 @@ class _PengangguranScreenState extends State<PengangguranScreen>
     }
 
     return _buildChartCard(
-      icon: Icons.show_chart_rounded,
-      iconColor: bpsBlue,
-      title: 'Tren Tingkat Pengangguran Terbuka (TPT)',
       sizing: sizing,
       isSmallScreen: isSmallScreen,
       minY: 0,
@@ -677,9 +552,6 @@ class _PengangguranScreenState extends State<PengangguranScreen>
     }
 
     return _buildChartCard(
-      icon: Icons.people_alt_rounded,
-      iconColor: bpsGreen,
-      title: 'Tren Tingkat Partisipasi Angkatan Kerja (TPAK)',
       sizing: sizing,
       isSmallScreen: isSmallScreen,
       minY: 60,
@@ -693,9 +565,6 @@ class _PengangguranScreenState extends State<PengangguranScreen>
   }
 
   Widget _buildChartCard({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
     required ResponsiveSizing sizing,
     required bool isSmallScreen,
     required double minY,
@@ -706,46 +575,12 @@ class _PengangguranScreenState extends State<PengangguranScreen>
     required List<Color> colors,
     required List<String> labels,
   }) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen
-          ? sizing.statsCardPadding - 4
-          : sizing.statsCardPadding),
-      decoration: BoxDecoration(
-        color: bpsCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: bpsBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SectionPanel(
+      isSmall: isSmallScreen,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Card header
-          Row(
-            children: [
-              Icon(icon, color: iconColor, size: isSmallScreen ? 16 : 20),
-              SizedBox(width: sizing.itemSpacing),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: isSmallScreen
-                        ? sizing.groupTitleSize - 2
-                        : sizing.groupTitleSize,
-                    fontWeight: FontWeight.w700,
-                    color: bpsTextPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 12 : 16),
-          // Chart
+          // Chart (header now supplied by the spine section)
           SizedBox(
             height: isSmallScreen ? 200 : 250,
             child: LineChart(
