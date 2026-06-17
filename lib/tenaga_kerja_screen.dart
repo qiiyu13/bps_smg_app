@@ -219,7 +219,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
 
     if (isLoading) {
       return const Scaffold(
-        backgroundColor: bpsBackground,
+        backgroundColor: Colors.white,
         body: Center(
           child: CircularProgressIndicator(color: bpsBlue),
         ),
@@ -228,7 +228,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
 
     if (availableYears.isEmpty || yearData.isEmpty) {
       return Scaffold(
-        backgroundColor: bpsBackground,
+        backgroundColor: Colors.white,
         body: Column(
           children: [
             _buildHeader(context, sizing, isSmallScreen),
@@ -273,7 +273,7 @@ class _TenagaKerjaScreenState extends State<TenagaKerjaScreen>
     }
 
     return Scaffold(
-      backgroundColor: bpsBackground,
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),

@@ -172,7 +172,7 @@ class _IpmScreenState extends State<IpmScreen>
     final isSmallScreen = sizing.isVerySmall || sizing.isSmall;
 
     return Scaffold(
-      backgroundColor: bpsBackground,
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),

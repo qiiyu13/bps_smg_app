@@ -541,71 +541,82 @@ class YearRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final sorted = [...years]..sort();
+    final menuYears = sorted.reversed.toList(); // latest first
+
+    return Row(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 2, bottom: 10),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: isSmall ? 10 : 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.4,
-              color: bpsTextLabel,
-            ),
+        Text(
+          label,
+          style: TextStyle(
+            fontFamily: kDisplayFont,
+            fontSize: isSmall ? 9.5 : 10,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.6,
+            color: bpsTextLabel,
           ),
         ),
-        SizedBox(
-          height: isSmall ? 38 : 42,
-          child: ListView.separated(
-            controller: controller,
-            scrollDirection: Axis.horizontal,
-            itemCount: years.length,
-            separatorBuilder: (_, __) => SizedBox(width: isSmall ? 8 : 10),
-            itemBuilder: (_, i) {
-              final year = years[i];
-              final isSelected = year == selected;
-              return Material(
-                color: isSelected ? accent : bpsCardBg,
-                borderRadius: BorderRadius.circular(40),
-                child: InkWell(
-                  onTap: () => onSelect(year),
-                  borderRadius: BorderRadius.circular(40),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    padding: EdgeInsets.symmetric(horizontal: isSmall ? 16 : 20),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(40),
-                      border: Border.all(
-                        color: isSelected ? accent : bpsBorder,
-                        width: 1.5,
-                      ),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: accent.withOpacity(0.28),
-                                blurRadius: 10,
-                                offset: const Offset(0, 3),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Text(
-                      year.toString(),
-                      style: TextStyle(
-                        fontFamily: kDisplayFont,
-                        fontSize: isSmall ? 14 : 15,
-                        fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : bpsTextSecondary,
+        SizedBox(width: isSmall ? 10 : 12),
+        // compact dropdown chip
+        PopupMenuButton<int>(
+          initialValue: selected,
+          onSelected: onSelect,
+          tooltip: 'Pilih tahun',
+          offset: const Offset(0, 44),
+          color: bpsCardBg,
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+            side: BorderSide(color: bpsBorder),
+          ),
+          itemBuilder: (_) => [
+            for (final year in menuYears)
+              PopupMenuItem<int>(
+                value: year,
+                height: 42,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        year.toString(),
+                        style: TextStyle(
+                          fontFamily: kDisplayFont,
+                          fontSize: 15,
+                          fontWeight: year == selected
+                              ? FontWeight.w800
+                              : FontWeight.w500,
+                          color: year == selected ? accent : bpsTextPrimary,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
                       ),
                     ),
+                    if (year == selected)
+                      Icon(Icons.check_rounded, color: accent, size: 18),
+                  ],
+                ),
+              ),
+          ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  selected.toString(),
+                  style: TextStyle(
+                    fontFamily: kDisplayFont,
+                    fontSize: isSmall ? 16 : 17.5,
+                    fontWeight: FontWeight.w800,
+                    color: bpsTextPrimary,
+                    letterSpacing: 0.2,
+                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
-              );
-            },
+                SizedBox(width: isSmall ? 2 : 4),
+                Icon(Icons.keyboard_arrow_down_rounded,
+                    color: accent, size: isSmall ? 20 : 22),
+              ],
+            ),
           ),
         ),
       ],
@@ -637,6 +648,7 @@ class SpineSection extends StatelessWidget {
   final Widget child;
   final bool framed;
   final bool surface;
+  final bool spine;
   final bool isFirst;
   final bool isLast;
   final bool isSmall;
@@ -652,6 +664,7 @@ class SpineSection extends StatelessWidget {
     this.accent = bpsBlue,
     this.framed = true,
     this.surface = true,
+    this.spine = false,
     this.isFirst = false,
     this.isLast = false,
     this.isSmall = false,
@@ -669,6 +682,8 @@ class SpineSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!spine) return _buildReport(context);
+
     final lineX = _nodeSize / 2; // rail line runs through the node centre
     final headerExtra = _nodeSize + 8 - _bodyIndent; // header clears the node
     final line = accent.withOpacity(0.22);
@@ -826,6 +841,83 @@ class SpineSection extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  /// Report mode (`spine: false`): no rail, no node, no per-section card —
+  /// the section sits directly on the white "sheet" page, full width, with a
+  /// numbered overline + title + hairline rule acting as the divider.
+  Widget _buildReport(BuildContext context) {
+    final bottomGap = isLast ? 0.0 : (isSmall ? 26.0 : 30.0);
+    final kicker = [
+      if (number != null) number!,
+      if (overline != null) overline!.toUpperCase(),
+    ].join('  ·  ');
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomGap),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (kicker.isNotEmpty) ...[
+            Text(
+              kicker,
+              style: TextStyle(
+                fontFamily: kDisplayFont,
+                fontSize: isSmall ? 9.5 : 10,
+                fontWeight: FontWeight.w700,
+                color: accent,
+                letterSpacing: 1.6,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+            ),
+            const SizedBox(height: 4),
+          ],
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontFamily: kDisplayFont,
+                    fontSize: isSmall ? 18 : 20,
+                    fontWeight: FontWeight.w800,
+                    color: bpsTextPrimary,
+                    letterSpacing: -0.4,
+                    height: 1.05,
+                  ),
+                ),
+              ),
+              if (trailing != null) ...[
+                const SizedBox(width: 8),
+                trailing!,
+              ],
+            ],
+          ),
+          if (subtitle != null) ...[
+            const SizedBox(height: 3),
+            Text(
+              subtitle!,
+              style: TextStyle(
+                fontSize: isSmall ? 11.5 : 12.5,
+                color: bpsTextSecondary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+          SizedBox(height: isSmall ? 10 : 12),
+          // divider rule: short accent lead + hairline
+          Row(
+            children: [
+              Container(width: 26, height: 2.5, color: accent),
+              Expanded(child: Container(height: 1, color: bpsBorder)),
+            ],
+          ),
+          SizedBox(height: isSmall ? 14 : 16),
+          child,
+        ],
+      ),
     );
   }
 }

@@ -224,7 +224,7 @@ class _KemiskinanScreenState extends State<KemiskinanScreen>
     final isSmallScreen = sizing.isVerySmall || sizing.isSmall;
 
     return Scaffold(
-      backgroundColor: bpsBackground,
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),

@@ -646,7 +646,7 @@ class _PendudukScreenState extends State<PendudukScreen>
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor: bpsBackground,
+        backgroundColor: Colors.white,
         body: Column(
           children: [
             _buildHeader(context, sizing, isSmallScreen),
@@ -669,7 +669,7 @@ class _PendudukScreenState extends State<PendudukScreen>
     }
 
     return Scaffold(
-      backgroundColor: bpsBackground,
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),

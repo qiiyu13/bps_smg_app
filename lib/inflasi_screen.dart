@@ -1120,7 +1120,7 @@ class _InflasiScreenState extends State<InflasiScreen>
     }
 
     return Scaffold(
-      backgroundColor: bpsBackground,
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
@@ -1142,6 +1142,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         overline: 'Periode',
                         title: 'Pilih Bulan',
                         accent: bpsBlue,
+                        spine: false,
                         framed: false,
                         isFirst: true,
                         isSmall: isSmallScreen,
@@ -1156,6 +1157,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         title: 'Indikator Utama Inflasi',
                         subtitle: 'Ketuk untuk penjelasan',
                         accent: bpsBlue,
+                        spine: false,
                         isSmall: isSmallScreen,
                         child: _buildMainIndicators(sizing, isSmallScreen),
                       ),
@@ -1165,6 +1167,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         title: 'Tren Inflasi Tahunan',
                         subtitle: 'Persentase Year-on-Year',
                         accent: bpsBlue,
+                        spine: false,
                         framed: false,
                         isSmall: isSmallScreen,
                         child: _buildInflationChart(sizing, isSmallScreen),
@@ -1175,6 +1178,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         title: 'Inflasi Bulanan',
                         subtitle: 'Persentase Month-to-Month',
                         accent: bpsBlue,
+                        spine: false,
                         framed: false,
                         isSmall: isSmallScreen,
                         child:
@@ -1186,6 +1190,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         title: 'Komponen Inflasi',
                         subtitle: 'Peringkat menurut andil',
                         accent: bpsBlue,
+                        spine: false,
                         isSmall: isSmallScreen,
                         child: _buildInflationComponents(sizing, isSmallScreen),
                       ),
@@ -1193,6 +1198,7 @@ class _InflasiScreenState extends State<InflasiScreen>
                         overline: 'Ringkasan',
                         title: 'Kesimpulan',
                         accent: bpsBlue,
+                        spine: false,
                         surface: false,
                         isLast: true,
                         isSmall: isSmallScreen,

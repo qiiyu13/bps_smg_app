@@ -202,7 +202,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor: bpsBackground,
+        backgroundColor: Colors.white,
         body: Column(
           children: [
             _buildHeader(context, sizing, isSmallScreen),
@@ -231,7 +231,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
 
     if (errorMessage != null) {
       return Scaffold(
-        backgroundColor: bpsBackground,
+        backgroundColor: Colors.white,
         body: Column(
           children: [
             _buildHeader(context, sizing, isSmallScreen),
@@ -273,7 +273,7 @@ class _PengangguranScreenState extends State<PengangguranScreen>
     }
 
     return Scaffold(
-      backgroundColor: bpsBackground,
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),

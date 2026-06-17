@@ -243,7 +243,7 @@ class _IDGScreenState extends State<IDGScreen>
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor: bpsBackground,
+        backgroundColor: Colors.white,
         body: Column(
           children: [
             _buildHeader(context, sizing, isSmallScreen),
@@ -258,7 +258,7 @@ class _IDGScreenState extends State<IDGScreen>
     }
 
     return Scaffold(
-      backgroundColor: bpsBackground,
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),

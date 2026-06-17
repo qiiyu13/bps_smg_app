@@ -212,7 +212,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
 
     if (isLoading) {
       return Scaffold(
-        backgroundColor: bpsBackground,
+        backgroundColor: Colors.white,
         body: Column(children: [
           _buildHeader(context, sizing, isSmallScreen),
           const Expanded(
@@ -223,7 +223,7 @@ class _UserSDGsScreenState extends State<UserSDGsScreen>
     }
 
     return Scaffold(
-      backgroundColor: bpsBackground,
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           _buildHeader(context, sizing, isSmallScreen),
